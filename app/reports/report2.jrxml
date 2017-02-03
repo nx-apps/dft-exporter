@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report2" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7ab00411-f197-4f02-9091-e25ab6106afe">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="date_start" class="java.lang.String"/>
+	<parameter name="date_end" class="java.lang.String"/>
+	<field name="exporter_no_name" class="java.lang.String"/>
+	<field name="seller_name_th" class="java.lang.String"/>
+	<field name="seller_tax_id" class="java.lang.String"/>
+	<field name="type_lic_name" class="java.lang.String"/>
+	<field name="exporter_status_name" class="java.lang.String"/>
+	<field name="trader_date_approve" class="java.lang.String"/>
+	<field name="trader_no" class="java.lang.String"/>
+	<field name="seller_agent" class="java.util.Collection"/>
+	<field name="count_exporter" class="java.lang.String"/>
+	<variable name="ROW" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[($F{exporter_no_name}?true:false)]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<pageHeader>
+		<band height="89" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="802" height="64" uuid="575369d5-c47f-40d8-8eb8-2b4f230c41aa"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="20" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[รายชื่อผู้ส่งออกข้าวออกต่างประเทศ และ คณะกรรมการบริษัท
+ประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศ (ทั่วไป,ชายแดน,ไม่เกิน 12 ก.ก)]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="64" width="802" height="25" uuid="90005564-606c-4042-94ce-d47612543e17"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="TH SarabunPSK" size="20" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ระหว่างวันที่ "+
+new nylon.utility.NumberFormat().toThaiDate($P{date_start})+
+" ถึง "+
+new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="46" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="9" width="30" height="37" uuid="e019646d-d4ab-4c2c-8eef-11e785572e57"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ลำดับ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="9" width="70" height="37" uuid="0c826f1c-6e1f-4de4-8a15-9117bb5a9fb2"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[เลขที่ผู้ส่งออก]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="9" width="150" height="37" uuid="da4ccedf-bd72-4f44-b2cb-1bb24062e08b"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ชื่อผู้ส่งออก]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="250" y="9" width="140" height="37" uuid="7439733e-7ab1-4f1c-b8d6-b6845b8d42c6"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[คณะกรรมการ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="9" width="91" height="37" uuid="ccb2c16d-76bf-44e5-879f-8848e2e02720"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ประเภทการค้าข้าว]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="481" y="9" width="120" height="37" uuid="52661573-db88-4ccd-98df-6b8fce9f5a9a"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[สมาชิกสมาคมผู้ส่งออกฯ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="601" y="9" width="111" height="37" uuid="2f9086d7-e3f4-41df-9859-615b25354826"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[วันที่กรมอนุมัติฯ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="712" y="9" width="90" height="37" uuid="7b306155-0b5a-46ff-a81c-534ac12d0652"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[เลขที่หนังสือ
+ปกข.]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="100" y="0" width="150" height="25" uuid="eeec59ac-a06b-4827-a3f3-7d7afe11d689"/>
+				<box leftPadding="5">
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{seller_name_th}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="30" y="0" width="70" height="25" uuid="bbcaba11-1e2c-47ff-8910-d169d7df7de9"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{exporter_no_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="390" y="0" width="91" height="25" uuid="0b8f7ed5-765d-415d-874e-932fbfe297e9"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{type_lic_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="481" y="0" width="120" height="25" uuid="aa115351-2cff-461f-a71f-cc3f7d06578d"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{exporter_status_name}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="30" height="25" uuid="adf88bd0-dae3-4def-a4df-505f3dfb892f"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{ROW}++]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="601" y="0" width="111" height="25" uuid="4480f8c7-76bc-4ff7-9e0a-94c64db94266"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new nylon.utility.NumberFormat().toThaiDate($F{trader_date_approve})]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="712" y="0" width="90" height="25" uuid="e8364d1b-6e2f-4254-9f85-4df5955c8f62"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{trader_no}]]></textFieldExpression>
+			</textField>
+			<subreport>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="802" height="25" isPrintWhenDetailOverflows="true" uuid="88c02011-06a8-4cfb-9305-e3788948ce32"/>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRMapCollectionDataSource($F{seller_agent})]]></dataSourceExpression>
+				<subreportExpression><![CDATA["E:\\Polymer\\Project_Rice\\report-exporter\\app\\reports\\report2_subreport1.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<noData>
+		<band height="189">
+			<staticText>
+				<reportElement x="0" y="161" width="802" height="25" uuid="a52bc9e1-cc80-4115-be46-1e04b402e7a9"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ไม่มีข้อมูล]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="481" y="124" width="120" height="37" uuid="2079145e-46aa-4741-b96f-e07edfe31936"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[สมาชิกสมาคมผู้ส่งออกฯ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="712" y="124" width="90" height="37" uuid="baa64b4c-7808-4822-94f7-d637d371c216"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[เลขที่หนังสือ
+ปกข.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="124" width="91" height="37" uuid="e08f79f8-4b62-4a34-9125-77b96d85b446"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ประเภทการค้าข้าว]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="250" y="124" width="140" height="37" uuid="431d1307-46e6-4b54-a95c-c1775373b252"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[คณะกรรมการ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="124" width="150" height="37" uuid="ae91f6b5-3f6d-4770-8c24-7c024c6ea28d"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ชื่อผู้ส่งออก]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="124" width="70" height="37" uuid="f7d2b816-845a-4d52-b711-8e63b607cb34"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[เลขที่ผู้ส่งออก]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="124" width="30" height="37" uuid="cbf4072f-0032-4169-b0a6-b6debdd7f5ce"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[ลำดับ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="601" y="124" width="111" height="37" uuid="69d7b978-5031-4c11-85fe-a7abbe30f13e"/>
+				<box>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[วันที่กรมอนุมัติฯ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="88" width="802" height="25" uuid="94fc5967-ded5-4363-985f-15e97f06f1fa"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="TH SarabunPSK" size="20" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ระหว่างวันที่ "+
+new nylon.utility.NumberFormat().toThaiDate($P{date_start})+
+" ถึง "+
+new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="24" width="802" height="64" uuid="dcf6a02e-e671-493b-a75b-77b7484bdcb7"/>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="TH SarabunPSK" size="20" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[รายชื่อผู้ส่งออกข้าวออกต่างประเทศ และ คณะกรรมการบริษัท
+ประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศ (ทั่วไป,ชายแดน,ไม่เกิน 12 ก.ก)]]></text>
+			</staticText>
+		</band>
+	</noData>
+</jasperReport>
