@@ -1,6 +1,6 @@
 module.exports = function (app) {
 
-    var exporter = require('../controllers/external/exporter.controller');
+    var exporter = require('../../controllers/external/exporter.controller');
     app.route('/').get(exporter.exporter);
     app.route('/id/:exporter_id').get(exporter.exporterId);
     app.route('/insert').post(exporter.insert);

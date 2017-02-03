@@ -1,4 +1,4 @@
-exports.documentFile = function (req, res) {
+exports.document_file = function (req, res) {
     var r = req._r;
     r.db('external_f3').table('document_file')
         .innerJoin(r.db('external_f3').table('document_type'),
@@ -20,7 +20,7 @@ exports.documentFile = function (req, res) {
             res.json(err);
         })
 }
-exports.documentFileId = function (req, res) {
+exports.document_fileId = function (req, res) {
     var r = req._r;
     r.db('external_f3').table('document_file')
         .get(req.params.id)

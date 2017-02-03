@@ -1,6 +1,6 @@
 module.exports = function (app) {
 
-    var upload = require('../controllers/upload.controller');
+    var upload = require('../../controllers/upload.controller');
     app.route('/file').post(upload.uploadFile);
     app.route('/file/:id').delete(upload.deleteFile);
     app.route('/file/:id').get(upload.downloadFile);

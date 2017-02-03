@@ -1,6 +1,6 @@
 module.exports = function (app) {
 
-    var trader = require('../controllers/external/trader.controller');
+    var trader = require('../../controllers/external/trader.controller');
     app.route('/').get(trader.trader);
     app.route('/id/:trader_id').get(trader.traderId);
     app.route('/seller').get(trader.seller);

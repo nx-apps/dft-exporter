@@ -1,44 +1,3 @@
-var DataContext = require('../../class/DataContext.js');
-var datacontext = new DataContext();
-
-var Ajv = require('ajv');
-var ajv = Ajv({ allErrors: true });
-var schema = {
-    //'type': 'object',
-    "properties": {
-        "id": {
-            "type": "string"
-        },
-        "seller_id": {
-            "type": "string"
-        },
-        "trader_date_approve": {
-            "type": "string",
-            "format": "date-time"
-        },
-        "trader_no": {
-            "type": "string"
-        },
-        "trader_name": {
-            "type": "string"
-        },
-        "trader_distric": {
-            "type": "string"
-        },
-        "trader_office": {
-            "type": "string"
-        },
-        "province_id": {
-            "type": "string"
-        },
-        "type_lic_id": {
-            "type": "string"
-        }
-    },
-    "required": ["trader_date_approve"]
-};
-var validate = ajv.compile(schema);
-
 exports.trader = function (req, res) {
     var r = req._r;
     var q = {};
@@ -106,59 +65,146 @@ exports.traderId = function (req, res) {
 }
 exports.seller = function (req, res) {
     var r = req._r;
-        r.db('external_f3').table("trader")
-            .eqJoin("seller_id", r.db('external_f3').table("seller")).without({ right: ["id", "date_created", "date_updated"] }).zip()
-            //.eqJoin("exporter_id", r.db('external_f3').table("exporter")).not()
-            // ,function(t,e){
-            //     return t("exporter_id").eq(e("id"));
-            // })
-            // .filter(
-            //     r.row('seller_name_th').match(req.params.seller_name)
-            // )
-            // .pluck(
-            //     "seller_id","seller_name_th","seller_name_en","seller_address_th",
-            //     "trader_id","trader_no","trader_name"
-            // )
-            .run()
-            .then(function(result){
-                res.json(result);
-            })
-            .error(function(err){
-                res.json(err);
-            })
+    r.db('external_f3').table("trader")
+        .eqJoin("seller_id", r.db('external_f3').table("seller")).without({ right: ["id", "date_created", "date_updated"] }).zip()
+        //.eqJoin("exporter_id", r.db('external_f3').table("exporter")).not()
+        // ,function(t,e){
+        //     return t("exporter_id").eq(e("id"));
+        // })
+        // .filter(
+        //     r.row('seller_name_th').match(req.params.seller_name)
+        // )
+        // .pluck(
+        //     "seller_id","seller_name_th","seller_name_en","seller_address_th",
+        //     "trader_id","trader_no","trader_name"
+        // )
+        .run()
+        .then(function (result) {
+            res.json(result);
+        })
+        .error(function (err) {
+            res.json(err);
+        })
 }
 exports.insert = function (req, res, next) {
     var r = req._r;
-    //console.log(req.body);
-    var valid = validate(req.body);
+    var valid = req._validator.validate('exporter.trader', req.body);
     var result = { result: false, message: null, id: null };
     if (valid) {
         //console.log(req.body);
         if (req.body.id == null) {
-            datacontext.insert("external_f3", "trader", req.body, res, req);
+            req.body = Object.assign(req.body, {
+                creater: 'admin',
+                updater: 'admin',
+                date_created: new Date().toISOString(),
+                date_updated: new Date().toISOString()
+            });
+            r.db('external_f3').table('trader')
+                .insert(req.body)
+                .run()
+                .then(function (response) {
+                    result.message = response;
+                    if (response.errors == 0) {
+                        result.result = true;
+                        result.id = response.generated_keys;
+                    }
+                    res.json(result);
+                })
+                .error(function (err) {
+                    result.message = err;
+                    res.json(result);
+                })
         } else {
             result.message = 'field "id" must do not have data';
             res.json(result);
         }
     } else {
-        result.message = ajv.errorsText(validate.errors);
+        result.message = req._validator.errorsText()
         res.json(result);
     }
 }
 exports.update = function (req, res, next) {
     var r = req._r;
-    //console.log(req.body);
-    var valid = validate(req.body);
+    var valid = req._validator.validate('exporter.trader', req.body);
     var result = { result: false, message: null, id: null };
     if (valid) {
-        datacontext.update("external_f3", "trader", req.body, res, req);
+        if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
+            result.id = req.body.id;
+            req.body = Object.assign(req.body, { date_updated: this.date_updated, updater: 'admin' });
+            r.db('external_f3').table('trader')
+                .get(req.body.id)
+                .update(req.body, { returnChanges: true })
+                .run()
+                .then(function (response) {
+                    result.message = response;
+                    if (response.errors == 0) {
+                        result.result = true;
+                        var history = {
+                            tb_name: 'trader',
+                            action: "update",
+                            id_value: req.body.id,
+                            old_value: null,
+                            new_value: req.body,
+                            date_created: new Date(),
+                            actor: 'admin'
+                        };
+                        if (response.changes != [] && response.unchanged != 1 || response.replaced == 1) {
+                            // console.log(history.old_value);
+                            history.old_value = response.changes[0].old_val;
+                            //console.log(history.old_value);
+                        }
+
+                        r.db('external_f3').table('history').insert(history).run().then()
+                    }
+                    res.json(result);
+                })
+                .error(function (err) {
+                    result.message = err;
+                    res.json(result);
+                })
+        } else {
+            result.message = 'require field id';
+            res.json(result);
+        }
     } else {
-        result.message = ajv.errorsText(validate.errors);
+        result.message = req._validator.errorsText()
         res.json(result);
     }
 }
 exports.delete = function (req, res, next) {
-    datacontext.delete("external_f3", "trader", req.params.id, res, req);
+    var r = req._r;
+    var result = { result: false, message: null, id: null };
+    if (req.params.id != '' || req.params.id != null) {
+        // result.id = req.params.id;
+        r.db('external_f3').table('trader')
+            .get(req.params.id)
+            .delete()
+            .run()
+            .then(function (response) {
+                result.message = response;
+                if (response.errors == 0) {
+                    result.result = true;
+                    var history = {
+                        tb_name: 'trader',
+                        action: "delete",
+                        id_value: req.params.id,
+                        old_value: response.changes[0].old_val,
+                        new_value: null,
+                        date_created: new Date(),
+                        actor: 'admin'
+                    }
+                    r.db('external_f3').table('history').insert(history).run().then()
+                }
+                res.json(response);
+            })
+            .error(function (err) {
+                // result.message = err;
+                res.json(err);
+            })
+    } else {
+        result.message = 'require field id';
+        res.json(result);
+    }
 }
 
 

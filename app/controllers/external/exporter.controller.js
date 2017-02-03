@@ -1,31 +1,31 @@
-var DataContext = require('../../class/DataContext.js');
-var datacontext = new DataContext();
+// var DataContext = require('../../class/DataContext.js');
+// var datacontext = new DataContext();
 
-var Ajv = require('ajv');
-var ajv = Ajv({ allErrors: true });
-var schema = {
-    //'type': 'object',
-    "properties": {
-        "id": {
-            "type": "string"
-        },
-        "exporter_no": {
-            "type": "number"
-        },
-        "exporter_date_approve": {
-            "type": "string",
-            "format": "date-time"
-        },
-        "exporter_remark": {
-            "type": "string"
-        },
-        "trader_id": {
-            "type": "string"
-        }
-    },
-    "required": ["exporter_date_approve", "trader_id"]
-};
-var validate = ajv.compile(schema);
+// var Ajv = require('ajv');
+// var ajv = Ajv({ allErrors: true });
+// var schema = {
+//     //'type': 'object',
+//     "properties": {
+//         "id": {
+//             "type": "string"
+//         },
+//         "exporter_no": {
+//             "type": "number"
+//         },
+//         "exporter_date_approve": {
+//             "type": "string",
+//             "format": "date-time"
+//         },
+//         "exporter_remark": {
+//             "type": "string"
+//         },
+//         "trader_id": {
+//             "type": "string"
+//         }
+//     },
+//     "required": ["exporter_date_approve", "trader_id"]
+// };
+// var validate = ajv.compile(schema);
 
 var dd = new Date();
 var y = dd.getFullYear();
@@ -179,19 +179,37 @@ exports.exporterId = function (req, res) {
 }
 exports.insert = function (req, res) {
     var r = req._r;
-    var valid = validate(req.body);
+    var valid = req._validator.validate('exporter.exporter', req.body);
     var result = { result: false, message: null, id: null };
     if (valid) {
         if (req.body.id == null) {
             r.db('external_f3').table('exporter').max('exporter_no').getField('exporter_no').add(1)
                 .run()
                 .then(function (response) {
-                    // console.log('new exporter_no >' + response);
-                    console.log(req.body);
                     if (response > 0) {
                         req.body.exporter_no = response;
                         req.body.exporter_date_approve = req.body.exporter_date_approve;
-                        datacontext.insert("external_f3", "exporter", req.body, res, req);
+                        req.body = Object.assign(req.body, {
+                            creater: 'admin',
+                            updater: 'admin',
+                            date_created: new Date().toISOString(),
+                            date_updated: new Date().toISOString()
+                        });
+                        r.db('external_f3').table('exporter')
+                            .insert(req.body)
+                            .run()
+                            .then(function (response) {
+                                result.message = response;
+                                if (response.errors == 0) {
+                                    result.result = true;
+                                    result.id = response.generated_keys;
+                                }
+                                res.json(result);
+                            })
+                            .error(function (err) {
+                                result.message = err;
+                                res.json(result);
+                            })
                     }
                 })
         } else {
@@ -199,23 +217,92 @@ exports.insert = function (req, res) {
             res.json(result);
         }
     } else {
-        result.message = ajv.errorsText(validate.errors);
+        result.message = req._validator.errorsText()
         res.json(result);
     }
 }
 exports.update = function (req, res) {
     var r = req._r;
-    var valid = validate(req.body);
+    var valid = req._validator.validate('exporter.exporter', req.body);
     var result = { result: false, message: null, id: null };
     if (valid) {
-        datacontext.update("external_f3", "exporter", req.body, res, req);
+        if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
+            result.id = req.body.id;
+            req.body = Object.assign(req.body, { date_updated: this.date_updated, updater: 'admin' });
+            r.db('external_f3').table('exporter')
+                .get(req.body.id)
+                .update(req.body, { returnChanges: true })
+                .run()
+                .then(function (response) {
+                    result.message = response;
+                    if (response.errors == 0) {
+                        result.result = true;
+                        var history = {
+                            tb_name: 'exporter',
+                            action: "update",
+                            id_value: req.body.id,
+                            old_value: null,
+                            new_value: req.body,
+                            date_created: new Date(),
+                            actor: 'admin'
+                        };
+                        if (response.changes != [] && response.unchanged != 1 || response.replaced == 1) {
+                            // console.log(history.old_value);
+                            history.old_value = response.changes[0].old_val;
+                            //console.log(history.old_value);
+                        }
+
+                        r.db('external_f3').table('history').insert(history).run().then()
+                    }
+                    res.json(result);
+                })
+                .error(function (err) {
+                    result.message = err;
+                    res.json(result);
+                })
+        } else {
+            result.message = 'require field id';
+            res.json(result);
+        }
     } else {
-        result.message = ajv.errorsText(validate.errors);
+        result.message = req._validator.errorsText()
         res.json(result);
     }
 }
 exports.delete = function (req, res) {
-    datacontext.delete("external_f3", "exporter", req.params.id, res, req);
+    var r = req._r;
+    var result = { result: false, message: null, id: null };
+    if (req.params.id != '' || req.params.id != null) {
+        // result.id = req.params.id;
+        r.db('external_f3').table('exporter')
+            .get(req.params.id)
+            .delete()
+            .run()
+            .then(function (response) {
+                result.message = response;
+                if (response.errors == 0) {
+                    result.result = true;
+                    var history = {
+                        tb_name: 'exporter',
+                        action: "delete",
+                        id_value: req.params.id,
+                        old_value: response.changes[0].old_val,
+                        new_value: null,
+                        date_created: new Date(),
+                        actor: 'admin'
+                    }
+                    r.db('external_f3').table('history').insert(history).run().then()
+                }
+                res.json(response);
+            })
+            .error(function (err) {
+                // result.message = err;
+                res.json(err);
+            })
+    } else {
+        result.message = 'require field id';
+        res.json(result);
+    }
 }
 exports.exporter = function (req, res) {
     var r = req._r;

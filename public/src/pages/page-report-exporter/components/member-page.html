@@ -2,7 +2,7 @@
 <link rel="import" href="../../components/dataBehavior.html">
 <link rel="import" href="member/member-show.html">
 <link rel="import" href="member/member-fileup.html">
-<!-- <link rel="import" href="member/member-edit.html"> -->
+ <!--<link rel="import" href="member/member-edit.html"> -->
 <link rel="import" href="../../components/panel-right/panel-right.html">
 <dom-module id="member-page">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-toast">
@@ -62,7 +62,7 @@
       <div class="horizontal end-justified layout">
         <paper-button id="buttomActive" raised class="gl-btn-success button" on-tap="_dialogRemark" title="ยกเลิกการระงับ" hidden>ยกเลิกการระงับ</paper-button>
         <paper-button id="buttomTrader" raised class="gl-btn-danger button" on-tap="_dialogRemark" title="ต่ออายุ คน." hidden>ต่ออายุ คน.</paper-button>
-        <!-- <paper-icon-button icon="create" on-tap="editChange" title="แก้ไขข้อมูล"></paper-icon-button> -->
+         <!--<paper-icon-button icon="create" on-tap="editChange" title="แก้ไขข้อมูล"></paper-icon-button> -->
       </div>
               <div class="bd">
                   <gl-form-panel>
@@ -73,7 +73,7 @@
                     <iron-pages selected="{{pages}}">
                       <member-show data="{{data}}"></member-show>
                       <member-fileup data="{{data}}" doc-type="[[docType]]"></member-fileup>
-                      <!-- <member-edit data="{{data}}"></member-edit> -->
+                       <!--<member-edit data="{{data}}"></member-edit> -->
                     </iron-pages>
                   </gl-form-panel>
               </div>
