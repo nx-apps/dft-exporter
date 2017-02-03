@@ -274,7 +274,7 @@
               this.$$('#notfound').setAttribute("hidden", "hidden");
             },
             getExporters: function() {
-              this.read('./exporter?exporter_status=true',(data)=>{
+              this.read('./external/exporter?exporter_status=true',(data)=>{
                 data.map((empty)=>{
                   if (empty.exporter_no_name == undefined || empty.export_status_name == null || empty.exporter_date_approve == null) {
                     empty.exporter_no_name = '-';
@@ -287,7 +287,7 @@
             },
             getIdExporters:function(){
               this.exporter_id = this.exporter_id || this.$.exporter_id;
-              this.read('./exporter?exporter_status=true',(data)=>{
+              this.read('./external/exporter?exporter_status=true',(data)=>{
                 data.map((type)=>{
                   type.seller_name_th = type.seller_name_th+" ("+type.type_lic_name+")";
                 });
@@ -295,7 +295,7 @@
               });
             },
             getDocType: function(){
-              this.read('./document_type',(data)=>{
+              this.read('./external/document_type',(data)=>{
                 this.docType = data;
               })
             },
@@ -320,7 +320,7 @@
               else if (this.dataSelected.date_end != undefined && this.dataSelected.date_end != '' && (this.dataSelected.date_start == undefined || this.dataSelected.date_start == '')) {
                 this.fire('toast',{status:'connectError',text:'กรุณาใส่วันที่เริ่มต้นค้นหา'})
               }
-              this.read('./exporter?exporter_status=true'+str,(data)=>{
+              this.read('./external/exporter?exporter_status=true'+str,(data)=>{
                 data.map((empty)=>{
                   if (empty.exporter_no_name == undefined || empty.export_status_name == null || empty.exporter_date_approve == null) {
                     empty.exporter_no_name = '-';
@@ -342,7 +342,7 @@
             },
             _report:function(e) {
               var str = this._search();
-              window.open('./api/reportExporter/'+e.target.getAttribute('report')+(str != ''?str:''),'_blank');
+              window.open('./api/external/report_exporter/'+e.target.getAttribute('report')+(str != ''?str:''),'_blank');
             },
             _selectData:function(e){
               this.layerContent = "detailRegExporter";

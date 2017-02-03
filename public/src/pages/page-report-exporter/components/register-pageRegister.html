@@ -126,7 +126,7 @@
       _search:function(val){
         if(val!=""){
           // console.log(this.selectedItem);
-          this.read('./exporter?trader_id='+this.dataTrader,(data)=>{
+          this.read('./external/exporter?trader_id='+this.dataTrader,(data)=>{
             data.map((traders)=>{
               this.trader = traders;
             })
@@ -174,7 +174,7 @@
       _confirmToast:function(result,detail){
         if(result == true){
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-          this.insert('./exporter/insert', detail.datas, (respone) => {
+          this.insert('./external/exporter/insert', detail.datas, (respone) => {
             this.exporterId = respone.id[0];
             this.$$('#removeButtom').setAttribute("hidden", "hidden");
             this.$$('#buttomF').removeAttribute("hidden");
@@ -213,7 +213,7 @@
       getExporterTrader:function() {
         this.trader_id = this.trader_id || this.$.trader_id;
         // console.log(this.seller_id);
-        this.read('./exporter/?exporter_status=false',(data)=>{
+        this.read('./external/exporter/?exporter_status=false',(data)=>{
           data.map((type)=>{
             type.seller_name_th = type.seller_tax_id+" ("+type.seller_name_th+")"+" ("+type.type_lic_name+")";
           });

@@ -1,6 +1,6 @@
 module.exports = function (app) {
 
-    var report_exporter = require('../../controllers/report_exporter.controller');
+    var report_exporter = require('../../controllers/external/report_exporter.controller');
     app.route('/report1').get(report_exporter.report1);
     app.route('/report2').get(report_exporter.report2);
     app.route('/report3').get(report_exporter.report3);

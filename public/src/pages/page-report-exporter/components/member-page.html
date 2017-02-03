@@ -131,7 +131,7 @@
       // },
       print:function() {
         // console.log(this.data.trader_id);
-        window.open('./api/reportExporter/report11/'+this.data.trader_id,'_blank');
+        window.open('./api/external/report_exporter/report11/'+this.data.trader_id,'_blank');
       },
       editChange:function(e){
         // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
@@ -150,7 +150,7 @@
         this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
         // console.log(datas);
         // console.log(this.exporterId);
-        this.update('./exporter/update', datas, () => {
+        this.update('./external/exporter/update', datas, () => {
           this.fire('refresh-exporter');
           this.pages = 0;
           this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
@@ -262,7 +262,7 @@
       _confirmToast:function(result,detail){
         if(result == true){
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-          this.update('./exporter/update', detail.datas, () => {
+          this.update('./external/exporter/update', detail.datas, () => {
             this.$.dialog.toggle();
             this.fire('refresh-exporter');
             this.fire('close-toggle');
@@ -285,7 +285,7 @@
       _confirmTrader:function(result,detail){
         if(result == true){
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-          this.update('./trader/update', detail.datas, () => {
+          this.update('./external/trader/update', detail.datas, () => {
             this.$.dialog.toggle();
             this.fire('refresh-exporter');
             this.fire('close-toggle');
