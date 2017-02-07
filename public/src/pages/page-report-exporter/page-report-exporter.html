@@ -77,66 +77,66 @@
             <div class="horizontal layout">
               <!-- <div class="flex"></div> -->
                 <div style="margin:30px 10px 0px 20px;"><iron-icon icon="print"></iron-icon></div>
-                  <gl-form-dropdown-menu style="width:250px" placeholder="เลือกประเภทรายงาน" name="report">
+                  <gl-form-dropdown-menu style="width:250px" placeholder="{{localize('select_report')}}" name="report">
                     <paper-menu class="dropdown-content" attr-for-selected="report" selected="{{report}}">
-                      <paper-item on-tap="_report" report="report1">รายชื่อผู้ได้รับหนังสืออนุญาต</paper-item>
-                      <paper-item on-tap="_report" report="report2">รายชื่อคณะกรรมการบริษัท</paper-item>
-                      <paper-item on-tap="_report" report="report3">รายชื่อและที่อยู่ของผู้ส่งออกข้าว</paper-item>
+                      <paper-item on-tap="_report" report="report1">{{localize('report1')}}</paper-item>
+                      <paper-item on-tap="_report" report="report2">{{localize('report2')}}</paper-item>
+                      <paper-item on-tap="_report" report="report3">{{localize('report3')}}</paper-item>
                     </paper-menu>
                   </gl-form-dropdown-menu>
                 <!-- <paper-button class="gl-btn-info gl-small" on-tap="_print" raised><iron-icon icon="print"></iron-icon>พิมพ์</paper-button> -->
             </div>
-            <paper-button raised class="gl-btn-primary"on-tap="_toggleDrawer" title="เพิ่มผู้ส่งออกข้าว" id="addRedRegExporter"><iron-icon icon="add"></iron-icon> เพิ่มทะเบียนผู้ส่งออกข้าว</paper-button>
+            <paper-button raised class="gl-btn-primary"on-tap="_toggleDrawer" title="{{localize('add_exporter')}}" id="addRedRegExporter"><iron-icon icon="add"></iron-icon>{{localize('add_exporter')}}</paper-button>
           </div>
 
           <div class="flex title">
-              ข้อมูลผู้ส่งออกข้าวไปต่างประเทศ
+              {{localize('title_exporter')}}
           </div>
 
           <div class="searchBox searchBorder">
             <gl-grid-row width="{{getWidth}}">
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]"></gl-grid-col>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-                <gl-combo-box id="exporter_id" label="ชื่อผู้ส่งออก" item-label-path="seller_name_th"
+                <gl-combo-box id="exporter_id" label="{{localize('name_exporter')}}" item-label-path="seller_name_th"
                     item-value-path="exporter_id" value="{{dataSelected.exporter_id}}" name="exporter_id"></gl-combo-box>
               </gl-grid-col>
             </gl-grid-row>
             <gl-grid-row>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]"></gl-grid-col>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-                <gl-form-dropdown-menu label="ประเภทใบอนุญาต" placeholder="ทั้งหมด">
+                <gl-form-dropdown-menu label="{{localize('type_license')}}" placeholder="{{localize('all')}}">
                   <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.type_lic_id}}" name="type_lic_id">
-                    <paper-item>ทั้งหมด</paper-item>
-                    <paper-item value="KK6">ทั่วไป</paper-item>
-                    <paper-item value="KK7">ไม่เกิน 12 ก.ก.</paper-item>
-                    <paper-item value="KK8">ชายแดน</paper-item>
+                    <paper-item>{{localize('all')}}</paper-item>
+                    <paper-item value="KK6">{{localize('general')}}</paper-item>
+                    <paper-item value="KK7">{{localize('not_than12')}}</paper-item>
+                    <paper-item value="KK8">{{localize('frontier')}}</paper-item>
                   </paper-menu>
                 </gl-form-dropdown-menu>
               </gl-grid-col>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-                <gl-form-dropdown-menu label="สถานะสมาชิกสมาคมผู้ส่งออก" placeholder="ทั้งหมด">
+                <gl-form-dropdown-menu label="{{localize('status_export')}}" placeholder="{{localize('all')}}">
                   <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.exporter_status}}" name="exporter_status">
-                    <paper-item>ทั้งหมด</paper-item>
-                    <paper-item value="true">เป็นสมาชิก</paper-item>
-                    <paper-item value="false">ไม่เป็นสมาชิก</paper-item>
+                    <paper-item>{{localize('all')}}</paper-item>
+                    <paper-item value="true">{{localize('member')}}</paper-item>
+                    <paper-item value="false">{{localize('no_member')}}</paper-item>
                   </paper-menu>
                 </gl-form-dropdown-menu>
               </gl-grid-col>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-                <gl-form-dropdown-menu label="สถานะ คน." placeholder="ทั้งหมด">
+                <gl-form-dropdown-menu label="{{localize('status_dit')}}" placeholder="{{localize('all')}}">
                   <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.trader_active}}" name="trader_active">
-                    <paper-item>ทั้งหมด</paper-item>
-                    <paper-item value="true">ปกติ</paper-item>
-                    <paper-item value="false">หมดอายุ</paper-item>
+                    <paper-item>{{localize('all')}}</paper-item>
+                    <paper-item value="true">{{localize('normally')}}</paper-item>
+                    <paper-item value="false">{{localize('expire')}}</paper-item>
                   </paper-menu>
                 </gl-form-dropdown-menu>
               </gl-grid-col>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-                <gl-form-dropdown-menu label="สถานะเลข ข." placeholder="ทั้งหมด">
+                <gl-form-dropdown-menu label="{{localize('status_exporter')}}" placeholder="{{localize('all')}}">
                   <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.export_status}}" name="exporter_active">
-                    <paper-item>ทั้งหมด</paper-item>
-                    <paper-item value="true">ปกติ</paper-item>
-                    <paper-item value="false">หมดอายุ</paper-item>
+                    <paper-item>{{localize('all')}}</paper-item>
+                    <paper-item value="true">{{localize('normally')}}</paper-item>
+                    <paper-item value="false">{{localize('expire')}}</paper-item>
                   </paper-menu>
                 </gl-form-dropdown-menu>
               </gl-grid-col>
@@ -145,38 +145,37 @@
             <gl-grid-row>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,1]]">
-                <div style="margin-top:30px; text-align:right;">ลงทะเบียน</div>
+                <div style="margin-top:30px; text-align:right;">{{localize('register')}}</div>
               </gl-grid-col>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-                <vaadin-date-picker label="วันที่" value="{{dataSelected.date_start}}" name="date_start"></vaadin-date-picker>
+                <vaadin-date-picker label="{{localize('date')}}" value="{{dataSelected.date_start}}" name="date_start"></vaadin-date-picker>
               </gl-grid-col>
-              <div style="margin-top:30px;"> ถึง </div>
+              <div style="margin-top:30px;"> {{localize('to')}} </div>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-                <vaadin-date-picker label="วันที่" value="{{dataSelected.date_end}}" name="date_end"></vaadin-date-picker>
+                <vaadin-date-picker label="{{localize('date')}}" value="{{dataSelected.date_end}}" name="date_end"></vaadin-date-picker>
               </gl-grid-col>
             </gl-grid-row>
             <gl-grid-row>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,5]]"></gl-grid-col>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
-                <paper-button class="gl-btn-info buttonSearch" on-tap="_search" title="ค้นหาข้อมูล" raised>ค้นหา</paper-button>
+                <paper-button class="gl-btn-info buttonSearch" on-tap="_search" title="{{localize('search')}}" raised>{{localize('search')}}</paper-button>
               </gl-grid-col>
             </gl-grid-row>
           </div>
-
 
           <div id="found" hidden>
             <div class="searchBorder" style="overflow-x:auto;">
               <table class="gl-table-default">
                 <thead class="table-head">
                   <tr>
-                    <th><div class="text-table">เลข ข.</div></th>
-                    <th><div class="text-table">เลขที่ผู้เสียภาษี</div></th>
-                    <th><div class="text-table">ชื่อบริษัท</div></th>
-                    <th><div class="text-table">ประเภทใบอนุญาต</div></th>
-                    <th><div class="text-table">สถานะสมาชิกสมาคมฯ</div></th>
-                    <th><div class="text-table">สถานะ คน.</div></th>
-                    <th><div class="text-table">สถานะเลข ข.</div></th>
-                    <th><div class="text-table">วันที่ลงทะเบียน</div></th>
+                    <th><div class="text-table">{{localize('no_exporter')}}</div></th>
+                    <th><div class="text-table">{{localize('no_tax')}}</div></th>
+                    <th><div class="text-table">{{localize('name_company')}}</div></th>
+                    <th><div class="text-table">{{localize('type_license')}}</div></th>
+                    <th><div class="text-table">{{localize('status_export')}}</div></th>
+                    <th><div class="text-table">{{localize('status_dit')}}</div></th>
+                    <th><div class="text-table">{{localize('status_exporter')}}</div></th>
+                    <th><div class="text-table">{{localize('date')}}{{localize('register')}}</div></th>
                   </tr>
                 </thead>
 
@@ -203,7 +202,7 @@
 
         <div id="notfound" hidden>
         <div class="horizontal center-justified layout searchBorder">
-          <div class="title" style="margin:20px">ไม่พบข้อมูลที่ค้นหา</div>
+          <div class="title" style="margin:20px">{{localize('not_found')}}</div>
         </div>
         </div>
 
@@ -212,7 +211,7 @@
         <panel-right title="{{titleName}}">
           <div class="left">
             <iron-pages selected="{{layerContent}}" attr-for-selected="name">
-              <div name="addRedRegExporter"><register-pageRegister trader-id="[[traderId]]" doc-type="[[docType]]"></register-pageRegister></div>
+              <div name="addRedRegExporter"><register-pageRegister traders="[[traders]]" trader-id="[[traderId]]" doc-type="[[docType]]"></register-pageRegister></div>
               <div name="detailRegExporter">
                 <member-page data={{dataSelect}} doc-type="[[docType]]"></member-page>
               </div>
@@ -242,10 +241,13 @@
                 observer: '_search'
               }
             },
-            behaviors: [dataBehavior,nylonBehavior],
+            behaviors: [dataBehavior,nylonBehavior, nylonLocalizeBehavior],
             listeners:{
               'refresh-exporter':'getExporters',
               'close-toggle':'_closeToggle'
+            },
+            created:function(){
+                this.nylonLocalizeImport('/i18n-page1.json');
             },
             nylonPageActive:function() {
               // console.log('55555');
@@ -267,6 +269,7 @@
             attached: function() {
               this.getIdExporters();
               this.getDocType();
+              this.getTrader();
               // this._dateEnd();
             },
             ready: function() {
@@ -297,6 +300,11 @@
             getDocType: function(){
               this.read('./external/document_type',(data)=>{
                 this.docType = data;
+              })
+            },
+            getTrader: function(){
+              this.read('./external/confirm_exporter',(data)=>{
+                this.traders = data;
               })
             },
             // _dateEnd:function() {

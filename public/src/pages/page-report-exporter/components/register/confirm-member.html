@@ -1,0 +1,88 @@
+<link rel="import" href="detail-member.html">
+
+<dom-module id="confirm-member">
+  <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
+    * {
+        font-family: 'rsuregular', sans-serif;
+        -webkit-font-smoothing: antialiased;
+    }
+    .searchBorder{
+      border: 1px solid var(--gl-gray-light-color);
+      margin: 15px;
+      border-radius: 3px;
+    }
+    .text-table{
+      text-align: center;
+       font-size: var(--font-size-h4);
+    }
+    .gl-table-default{
+         border-collapse: collapse;
+         width: 100%;
+         white-space: nowrap;
+     }
+  </style>
+  <template>
+    <iron-pages selected="{{pageSelected}}" attr-for-selected="name">
+      <div name="listExporter">
+        <div class="horizontal layout end-justified">
+          <div style="margin-top:10px">พิมพ์ใบอนุมัติ</div>
+          <paper-icon-button icon="print"></paper-icon-button>
+        </div>
+        <div class="searchBorder" style="overflow-x:auto;">
+          <table class="gl-table-default">
+            <thead class="table-head">
+              <tr>
+                <th></th>
+                <th><div class="text-table">เลข ข.</div></th>
+                <th><div class="text-table">ชื่อบริษัท</div></th>
+                <th><div class="text-table">วันที่ลงทะเบียน</div></th>
+                <th><div class="text-table">สถานะ</div></th>
+              </tr>
+            </thead>
+
+
+            <template is="dom-repeat" items="{{traders}}">
+              <tbody>
+                <tr id="detailRegExporter" on-tap="_selectData" data="[[item]]" style="cursor:pointer;">
+                  <td><paper-checkbox checked="{{item.check}}" class="checkbox"></paper-checkbox></td>
+                  <td><div class="text-table">{{item.exporter_no_name}}</div></td>
+                  <td><div class="text-table">{{item.seller_name_th}}</div></td>
+                  <td><div class="text-table">{{item.trader_date_approve}}</div></td>
+                  <td><div class="text-table">{{item.status_approve}}</div></td>
+                </tr>
+              </tbody>
+            </template>
+          </table>
+        </div>
+      </div>
+      <div name="detailExporter">
+        <detail-member data={{dataSelect}}></detail-member>
+      </div>
+    </iron-pages>
+  </template>
+  <script>
+    Polymer({
+      is: "confirm-member",
+      properties: {
+        pageSelected: {
+          type: String,
+          value:'listExporter'
+        },
+        dataSelected:{
+          type:Object,
+          value:{}
+        }
+      },
+      listeners:{
+        'backPage' : '_backPage'
+      },
+      _selectData:function(e){
+        this.pageSelected = "detailExporter";
+        this.dataSelect = e.currentTarget.data;
+      },
+      _backPage:function (data) {
+        this.pageSelected='listExporter';
+      }
+    });
+  </script>
+</dom-module>

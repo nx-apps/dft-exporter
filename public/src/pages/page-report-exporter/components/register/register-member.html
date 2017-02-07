@@ -1,5 +1,9 @@
+<link rel="import" href="../../../components/dataBehavior.html">
+<link rel="import" href="detail-member.html">
+<link rel="import" href="register-fileup.html">
+
 <dom-module id="register-member">
-  <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
+<style include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
     .title {
         text-align: center;
         font-size: var(--font-size-h4);
@@ -7,118 +11,212 @@
         -webkit-font-smoothing: antialiased;
         margin: 20px 0px 20px 0px;
     }
-    /*.bd{
-      border: 1px solid black;
-      padding: 15px;
-    }*/
-    vaadin-date-picker{
-      width: 70%;
+    .searchBox{
+      padding: 5px;
+      background-color: var(--gl-gray-lighter-color);
     }
-    paper-icon-button{
-      margin-top: 20px;
+    .searchBorder{
+      border: 1px solid var(--gl-gray-light-color);
+      margin: 15px;
+      border-radius: 3px
     }
-    .padding{
-      padding: 20px;
+    paper-tabs{
+      background-color: #f7941e;
+      margin : 0px 15px 0px 15px;
+      color: #F2F2F2;
+      --paper-tabs-selection-bar:{
+        height: 5px;
+        background-color: var(--gl-info-color);
+      }
     }
-    .text{
-      margin-top: 25px;
-      font-size: var(--font-size-h4);
+    paper-tab:focus > div.tab-content{
+      background-color: yellow;
+      opacity: 1;
+      font-weight: 0;
     }
-  </style>
+    paper-tab:not(:last-of-type) {
+      border-right: 3px solid var(--gl-gray-light-color);
+      font-size: var(--font-size-h5);
+      /*font-family: 'rsubold', sans-serif;
+      -webkit-font-smoothing: antialiased;*/
+    }
+    paper-tabs paper-tab.iron-selected {
+      font-size: var(--font-size-h5);
+      color: var(--gl-white-color);
+      background-color: var(--gl-info-color);
+    }
+</style>
   <template>
-      <form is="iron-form" id="insertMember">
-        <gl-form-panel-body set-padding="0px" set-border="0px">
+    <!-- <gl-form-panel-head set-padding="0px 0px 0px 0px">
+    <div id="removePen" hidden>
+      <paper-icon-button icon="create" on-tap="editChange"></paper-icon-button>
+    </div> -->
+    <div id="changTitle" class="title" hidden>เพิ่มทะเบียนผู้ส่งออกข้าวไปต่างประเทศ</div>
+    <div id="changTitle2" class="title" hidden>ขึ้นทะเบียนผู้ส่งออกข้าวส่งออกไปจำหน่ายต่างประเทศ</div>
+      <div class="searchBox searchBorder">
         <gl-grid-row width="{{getWidth}}">
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input label="เลขประจำตัวผู้เสียภาษี :" value="{{data.seller_tax_id}}"></gl-form-label-input>
+          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]"></gl-grid-col>
+          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,8]]">
+          <gl-combo-box style="margin-left:2em;" id="trader_id" label="ชื่อบริษัท" item-label-path="seller_name_th"
+              item-value-path="trader_id" value="{{dataTrader}}" on-value-changed="getTrader"></gl-combo-box>
           </gl-grid-col>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-textarea label="ชื่อบริษัท :" value="{{data.seller_name_th}}"></gl-form-label-textarea>
-          </gl-grid-col>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-textarea  label="ชื่อบริษัท (อังกฤษ) :" value="{{data.seller_name_en}}"></gl-form-label-textarea>
-          </gl-grid-col>
+          <!-- <paper-button class="gl-btn-info" raised on-tap="_search">ค้นหา</paper-button> -->
         </gl-grid-row>
+      </div>
 
-        <gl-grid-row>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,10]]">
-            <gl-form-label-textarea label="ที่อยู่ :" value="{{data.seller_address_th}}"></gl-form-label-textarea>
-          </gl-grid-col>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,10]]">
-            <gl-form-label-textarea label="ที่อยู่ (อังกฤษ) :" value="{{data.seller_address_en}}"></gl-form-label-textarea>
-          </gl-grid-col>
-        </gl-grid-row>
+      <div id="formData" class="bd" hidden>
+        <paper-tabs selected="{{pages}}" align-bottom no-slide>
+            <paper-tab>รายละเอียด</paper-tab>
+            <paper-tab id="tabFile">เอกสารหลักฐาน</paper-tab>
+        </paper-tabs>
+        <gl-form-panel>
+          <iron-pages selected="{{pages}}">
+              <detail-member data="{{trader}}"></detail-member>
+              <register-fileup data="{{exporterId}}" doc-type="[[docType]]"></register-fileup>
+          </iron-pages>
+        </gl-form-panel>
+      </div>
 
-        <gl-grid-row>
-          <!-- <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input  label="รหัสไปรษณีย์ :" value=""></gl-form-label-input>
-          </gl-grid-col> -->
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-textarea  label="หมายเลขโทรศัพท์ :" value="{{data.seller_phone}}"></gl-form-label-textarea>
-          </gl-grid-col>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input  label="FAX :" value="{{data.seller_fax}}"></gl-form-label-input>
-          </gl-grid-col>
-
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input  label="E-Mail Address :" value="{{data.seller_email}}"></gl-form-label-input>
-          </gl-grid-col>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input  label="เลขที่หนังสืออนุญาต ปกข. :" value="{{data.trader_no}}"></gl-form-label-input>
-          </gl-grid-col>
-          <!-- <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input  label="สถานะเป็นสมาชิกผู้ส่งออกข้าว :" value="{{data.exporter_status_name}}"></gl-form-label-input>
-          </gl-grid-col> -->
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input  label="ประเภทอนุญาต :" value="{{data.type_lic_name}}"></gl-form-label-input>
-          </gl-grid-col>
-        </gl-grid-row>
-        <div class="horizontal layout">
-          <div class="text">รายชื่อคณะกรรมการ</div>
-          <!-- <paper-icon-button icon="icons:add-circle" on-tap="_addAgent"></paper-icon-button> -->
-        </div>
-        <gl-grid-row>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <template is="dom-repeat" items="{{data.seller_agent}}">
-              <gl-form-label-input label="ชื่อกรรมการ" auto-validate error-message="กรุณาใส่ชื่อคณะกรรมการ" required value="{{item.agent_name}}" no-label-float></gl-form-label-input>
-            </template>
-          </gl-grid-col>
-        </gl-grid-row>
-      </gl-form-panel-body>
-<!--
-      <gl-form-panel-body set-border="1px">
-        <gl-grid-row>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-input label="เลขประจำตัวผู้ส่งออกข้าว :" placeholder="ใส่เลขประจำตัวผู้ส่งออก" value="{{data.exporter_no}}"></gl-form-input>
-          </gl-grid-col>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <vaadin-date-picker label="วันที่อนุมัติ :" value="{{data.exporter_date_approve}}"></vaadin-date-picker>
-          </gl-grid-col>
-        </gl-grid-row>
-      </gl-form-panel-body> -->
-    </form>
-
+      <div class="horizontal end-justified layout">
+        <paper-button id="removeButtomC" class="gl-btn-danger" on-tap="_cancel" raised title="ยกเลิก">ยกเลิก</paper-button>
+        <paper-button id="removeButtom" class="gl-btn-success" on-tap="_saveData" raised title="บันทึกข้อมูลสมาชิก">บันทึก</paper-button>
+        <paper-button id="buttomF" class="gl-btn-success" on-tap="_saveFile" raised title="บันทึกไฟล์">บันทึก</paper-button>
+      </div>
   </template>
   <script>
     Polymer({
       is: "register-member",
-      behaviors: [
-          // gl.behavior.core
-      ],
-      properties:{
-        data:{
-          type:Object,
-          notify:true
+      behaviors: [dataBehavior],
+      properties: {
+        pages:{
+            type:Number,
+            notify:true,
+            value: 0
+        },
+        dataTrader:{
+          type:String,
+          observer:'_search'
+        },
+        trader:{
+          type:Object
+        },
+        exporterId:{
+          type:Object
         }
       },
-      // _addAgent:function() {
-      //   // console.log(this.data.seller_agent=[{agent_name:'สวัสดี'}]);
-      //   // this.data.seller_agent = this.datatest;
-      //   // console.log(this.data);
-      //   this.push('data.seller_agent', {
-      //     agent_name: ''
-      //   });
-      // }
+      listeners:{
+        'refresh-exporterTrader':'getExporterTrader'
+      },
+      ready: function() {
+        this.$$('#changTitle').removeAttribute("hidden");
+        this.$$('#removeButtom').setAttribute("hidden", "hidden");
+        this.$$('#removeButtomC').setAttribute("hidden", "hidden");
+        this.$$('#buttomF').setAttribute("hidden", "hidden");
+        this.$$('#tabFile').setAttribute("disabled", "disabled");
+      },
+      getTrader:function (e) {
+        // console.log(e.detail.value);
+        this.dataTrader = e.detail.value;
+      },
+      _search:function(val){
+        if(val!=""){
+          // console.log(this.selectedItem);
+          this.read('./external/exporter?trader_id='+this.dataTrader,(data)=>{
+            data.map((traders)=>{
+              this.trader = traders;
+            })
+            this.$$('#formData').removeAttribute("hidden");
+            this.$$('#removeButtom').removeAttribute("hidden");
+            this.$$('#removeButtomC').removeAttribute("hidden");
+            this.$$('#buttomF').setAttribute("hidden", "hidden");
+            this.$$('#changTitle').setAttribute("hidden", "hidden");
+            this.$$('#changTitle2').removeAttribute("hidden");
+            this.$$('#tabFile').setAttribute("disabled", "disabled");
+            // console.log(this.trader);
+          });
+          }
+          else {
+            this.$$('#formData').setAttribute("hidden", "hidden");
+            this.$$('#removeButtom').setAttribute("hidden", "hidden");
+            this.$$('#removeButtomC').setAttribute("hidden", "hidden");
+            this.$$('#buttomF').setAttribute("hidden", "hidden");
+            this.$$('#changTitle').removeAttribute("hidden");
+            this.$$('#changTitle2').setAttribute("hidden", "hidden");
+            this.$$('#tabFile').setAttribute("disabled", "disabled");
+          }
+      },
+      _cancel:function() {
+        this.$$('#removeButtom').setAttribute("hidden", "hidden");
+        this.$$('#removeButtomC').setAttribute("hidden", "hidden");
+        this.$$('#buttomF').setAttribute("hidden", "hidden");
+        this.$$('#formData').setAttribute("hidden", "hidden");
+        this.$$('#changTitle').removeAttribute("hidden");
+        this.$$('#changTitle2').setAttribute("hidden", "hidden");
+        this.$$('#tabFile').setAttribute("disabled", "disabled");
+        this.dataTrader = "";
+      },
+      _saveData:function(e) {
+        // console.log(this.trader);
+        this.fire('toast',{status:'dialog',
+          text:'คุณต้องการจะยืนยันการลงทะเบียนใช่หรือไม่ ?',
+          confirmed : this._confirmToast.bind(this),
+          datas: {
+            exporter_date_approve:new Date,
+            trader_id:this.trader.trader_id
+          }
+        });
+      },
+      _confirmToast:function(result,detail){
+        if(result == true){
+          this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+          this.insert('./external/exporter/insert', detail.datas, (respone) => {
+            this.exporterId = respone.id[0];
+            this.$$('#removeButtom').setAttribute("hidden", "hidden");
+            this.$$('#buttomF').removeAttribute("hidden");
+            this.$$('#tabFile').removeAttribute("disabled");
+            this.pages = 1;
+            this.fire('refresh-exporter');
+            this.fire('refresh-exporterTrader');
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+              console.log('success');
+            }});
+           });
+        }
+      },
+      _saveFile:function(){
+        this.fire('toast',{status:'dialog',
+          text:'คุณต้องการจะยืนยันการเพิ่มไฟล์ใช่หรือไม่ ?',
+          confirmed : this._confirmFile.bind(this)
+        });
+      },
+      _confirmFile:function(result,detail){
+        if(result == true){
+            this.$$('#formData').setAttribute("hidden", "hidden");
+            this.$$('#changTitle').removeAttribute("hidden");
+            this.$$('#changTitle2').setAttribute("hidden", "hidden");
+            this.$$('#buttomF').setAttribute("hidden", "hidden");
+            this.$$('#tabFile').setAttribute("disabled", "disabled");
+            this.dataTrader = "";
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+              console.log('success');
+            }});
+        }
+      },
+      attached: function() {
+        this.getExporterTrader();
+      },
+      getExporterTrader:function() {
+        this.trader_id = this.trader_id || this.$.trader_id;
+        // console.log(this.seller_id);
+        this.read('./external/exporter/?exporter_status=false',(data)=>{
+          data.map((type)=>{
+            type.seller_name_th = type.seller_tax_id+" ("+type.seller_name_th+")"+" ("+type.type_lic_name+")";
+          });
+          this.trader_id.items = data;
+          // console.log(this.seller_id.items);
+        });
+      }
+
     });
   </script>
 </dom-module>

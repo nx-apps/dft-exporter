@@ -1,32 +1,3 @@
-// var DataContext = require('../../class/DataContext.js');
-// var datacontext = new DataContext();
-
-// var Ajv = require('ajv');
-// var ajv = Ajv({ allErrors: true });
-// var schema = {
-//     //'type': 'object',
-//     "properties": {
-//         "id": {
-//             "type": "string"
-//         },
-//         "exporter_no": {
-//             "type": "number"
-//         },
-//         "exporter_date_approve": {
-//             "type": "string",
-//             "format": "date-time"
-//         },
-//         "exporter_remark": {
-//             "type": "string"
-//         },
-//         "trader_id": {
-//             "type": "string"
-//         }
-//     },
-//     "required": ["exporter_date_approve", "trader_id"]
-// };
-// var validate = ajv.compile(schema);
-
 var dd = new Date();
 var y = dd.getFullYear();
 var m = dd.getMonth();
