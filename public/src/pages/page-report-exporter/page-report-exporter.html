@@ -211,7 +211,7 @@
         <panel-right title="{{titleName}}">
           <div class="left">
             <iron-pages selected="{{layerContent}}" attr-for-selected="name">
-              <div name="addRedRegExporter"><register-pageRegister traders="[[traders]]" trader-id="[[traderId]]" doc-type="[[docType]]"></register-pageRegister></div>
+              <div name="addRedRegExporter"><register-pageRegister sellers="[[sellers]]" trader-id="[[traderId]]" doc-type="[[docType]]"></register-pageRegister></div>
               <div name="detailRegExporter">
                 <member-page data={{dataSelect}} doc-type="[[docType]]"></member-page>
               </div>
@@ -267,9 +267,9 @@
               this.$$('panel-right').open();
             },
             attached: function() {
-              this.getIdExporters();
+              // this.getIdExporters();
               this.getDocType();
-              this.getTrader();
+              this.getSeller();
               // this._dateEnd();
             },
             ready: function() {
@@ -277,34 +277,32 @@
               this.$$('#notfound').setAttribute("hidden", "hidden");
             },
             getExporters: function() {
-              this.read('./external/exporter?exporter_status=true',(data)=>{
-                data.map((empty)=>{
-                  if (empty.exporter_no_name == undefined || empty.export_status_name == null || empty.exporter_date_approve == null) {
-                    empty.exporter_no_name = '-';
-                    empty.export_status_name = '-';
-                    empty.exporter_date_approve = '-';
-                  }
-                });
-                this.exporters = data;
-              });
-            },
-            getIdExporters:function(){
               this.exporter_id = this.exporter_id || this.$.exporter_id;
               this.read('./external/exporter?exporter_status=true',(data)=>{
-                data.map((type)=>{
-                  type.seller_name_th = type.seller_name_th+" ("+type.type_lic_name+")";
+                this.exporters = data;
+                var type = data.map((type)=>{
+                  return type.seller_name_th+" ("+type.type_lic_name+")";
                 });
-                this.exporter_id.items = data;
+                this.exporter_id.items = type;
               });
             },
+            // getIdExporters:function(){
+            //   this.exporter_id = this.exporter_id || this.$.exporter_id;
+            //   this.read('./external/exporter?exporter_status=true',(data)=>{
+            //     data.map((type)=>{
+            //       type.seller_name_th = type.seller_name_th+" ("+type.type_lic_name+")";
+            //     });
+            //     this.exporter_id.items = data;
+            //   });
+            // },
             getDocType: function(){
               this.read('./external/document_type',(data)=>{
                 this.docType = data;
               })
             },
-            getTrader: function(){
+            getSeller: function(){
               this.read('./external/confirm_exporter',(data)=>{
-                this.traders = data;
+                this.sellers = data;
               })
             },
             // _dateEnd:function() {

@@ -66,7 +66,7 @@ exports.listFilePath = function (req, res) {
     var params = req.params;
     r.db('external_f3').table('document_file')
         .eqJoin('file_id', r.db('files').table('files')).without({ right: ["id", "contents"] }).zip()
-        .eqJoin('exporter_id', r.db('external_f3').table('exporter')).pluck('left', { right: 'exporter_id' }).zip()
+        .eqJoin('seller_id', r.db('external_f3').table('seller')).pluck('left', { right: 'seller_id' }).zip()
         .merge(function (m) {
             return { timestamp: m('timestamp').toISO8601().split("T")(0) }
         })
@@ -82,7 +82,7 @@ exports.listFilePath = function (req, res) {
                 progress: 100, complete: true
             }
         })
-        .filter({ exporter_id: params.exporter_id, ref_path: params.refPath, file_status: true })
+        .filter({ seller_id: params.seller_id, ref_path: params.refPath, file_status: true })
         .orderBy(r.desc('date_upload'))
         .run()
         .then(function (result) {
@@ -159,7 +159,7 @@ exports.uploadFileExporter = function (req, res) {
                         file_id: file_id,
                         file_status: true,
                         doc_type_id: doc_type_id,
-                        exporter_id: params.exporter_id,
+                        seller_id: params.seller_id,
                         date_upload: new Date()
                     })
                 })

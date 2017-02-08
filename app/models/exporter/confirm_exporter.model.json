@@ -1,0 +1,22 @@
+{
+    "name": "exporter.confirm_exporter",
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "exporter_no": {
+            "type": "number"
+        },
+        "exporter_date_approve": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "seller_id": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "exporter_date_approve",
+        "seller_id"
+    ]
+}
