@@ -66,7 +66,7 @@ exports.listFilePath = function (req, res) {
     var params = req.params;
     r.db('external').table('document_file')
         .eqJoin('file_id', r.db('files').table('files')).without({ right: ["id", "contents"] }).zip()
-        .eqJoin('seller_id', r.db('external').table('seller')).pluck('left', { right: 'seller_id' }).zip()
+        // .eqJoin('seller_id', r.db('external').table('seller')).pluck('left', { right: 'seller_id' }).zip()
         .merge(function (m) {
             return { timestamp: m('timestamp').toISO8601().split("T")(0) }
         })

@@ -28,11 +28,11 @@
     <template is="dom-repeat" items="[[docType]]">
       <div class="title">[[item.doc_name_th]]</div>
       <nylon-upload
-        target="/api/external/upload/exporter/file/[[exporterId]]"
+        target="/api/external/upload/exporter/file/[[sellerId]]"
         accept="application/pdf"
         ref-path="exporter.document.[[item.doc_code]]"
         doc-type-id="[[item.doc_type_id]]"
-        exporter-id="[[exporterId]]"
+        seller-id="[[sellerId]]"
         >
       </nylon-upload>
     </template>
@@ -46,7 +46,7 @@
         '_dataInput(data)'
       ],
       _dataInput:function(data) {
-        this.exporterId = data.exporter_id;
+        this.sellerId = data.seller_id;
         // console.log(this.docType);
       }
     });

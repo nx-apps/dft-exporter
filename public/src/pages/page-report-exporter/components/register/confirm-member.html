@@ -94,7 +94,8 @@
         </div>
         <div class="horizontal layout end-justified">
           <paper-button class="gl-btn-danger" on-tap="_close" raised>ยกเลิก</paper-button>
-          <paper-button class="gl-btn-success" style="margin-right:15px" on-tap="_approve" raised>บันทึก</paper-button>
+          <paper-button class="gl-btn-warning" style="margin-right:15px" on-tap="_dialogRemark" raised>เอกสารไม่ครบ</paper-button>
+          <paper-button class="gl-btn-success" style="margin-right:15px" on-tap="_approve" raised>อนุมัติ</paper-button>
         </div>
       </div>
       <div name="detailExporter">
@@ -109,8 +110,26 @@
               <register-fileup data="{{dataSelect}}" doc-type="[[docType]]"></register-fileup>
           </iron-pages>
         </gl-form-panel>
+
+        <div class="horizontal layout end-justified">
+          <paper-button class="gl-btn-danger" on-tap="_backPage" raised>ยกเลิก</paper-button>
+          <paper-button class="gl-btn-success" style="margin-right:15px" on-tap="_save" raised>บันทึก</paper-button>
+        </div>
       </div>
     </iron-pages>
+
+    <paper-dialog id="dialog" style="width:60%;">
+      <gl-grid-row width="{{getWidth}}">
+        <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,12]]">
+          <gl-form-textarea label="หมายเหตุ : " always-float-label value="{{seller_remark}}"></gl-form-textarea>
+        </gl-grid-col>
+      </gl-grid-row>
+      <div>
+        <paper-button class="gl-btn-danger button-size" raised on-tap="_dialogcancle">ยกเลิก</paper-button>
+        <paper-button id="active" class="gl-btn-primary button-size" raised on-tap="_reject">บันทึก</paper-button>
+      </div>
+    </paper-dialog>
+
   </template>
   <script>
     Polymer({
@@ -139,15 +158,15 @@
         }
       },
       behaviors: [dataBehavior],
-      listeners:{
-        'backPage' : '_backPage'
-      },
       _selectData:function(e){
         this.pageSelected = "detailExporter";
         this.dataSelect = e.currentTarget.data;
       },
       _backPage:function (data) {
         this.pageSelected='listExporter';
+      },
+      _save:function () {
+        console.log(this.dataSelect);
       },
       _changeselectDataAll:function (val) {
         // console.log(val);
@@ -196,7 +215,54 @@
            });
           }
         });
-      }
+      },
+      _dialogRemark: function(){
+        this.$.dialog.toggle();
+      },
+      _dialogcancle:function() {
+        this.$.dialog.toggle();
+        this.seller_remark = "";
+      },
+      _reject: function(){
+        const check = (item)=>{
+            return item.check == true;
+        }
+        this.sellers.filter(check).map((datas)=>{
+          // console.log(datas);
+          let {seller_id, id, approve_status, seller_remark} = datas;
+          let newData = {seller_id, id, approve_status, seller_remark};
+          // console.log(newData);
+          this.data.push(newData);
+        });
+        this.fire('toast',{status:'dialog',
+        text:'คุณต้องการจะให้ผู้ส่งออกส่งเอกสารเพิ่มเติมใช่หรือไม่ ?',
+        confirmed : this._confirmReject.bind(this)
+        });
+      },
+      _confirmReject:function(result,detail){
+        this.data.map((datas)=>{
+          datas={
+            id : datas.id,
+            seller_id : datas.seller_id,
+            approve_status : 'reject',
+            seller_remark : this.seller_remark
+          }
+        if(result == true){
+          // console.log(datas);
+          this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+          this.update('./external/confirm_exporter/update', datas, () => {
+            this.$.dialog.toggle()
+            this.seller_remark = "";
+            this.fire('refresh-seller');
+            this.fire('refresh-exporter');
+            this.selectDataAll = false;
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+              console.log('success');
+            }});
+           });
+          }
+        });
+      },
     });
   </script>
 </dom-module>

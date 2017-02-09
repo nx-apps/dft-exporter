@@ -32,7 +32,7 @@
         accept="application/pdf"
         ref-path="exporter.document.[[item.doc_code]]"
         doc-type-id="[[item.doc_type_id]]"
-        exporter-id="[[sellerId]]"
+        seller-id="[[sellerId]]"
         >
       </nylon-upload>
     </template>
@@ -47,8 +47,7 @@
       ],
       _dataInput:function(data) {
         this.sellerId = data.seller_id;
-        console.log(this.sellerId);
-        // console.log(this.exporterId);
+        // console.log(this.sellerId);
       }
     });
   </script>

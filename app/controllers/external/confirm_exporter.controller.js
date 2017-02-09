@@ -39,7 +39,9 @@ exports.confirm = function (req, res) {
         .eqJoin("seller_id", r.db('external').table("seller")).without({ right: 'id' }).zip()
         .merge({ date_created: r.row('date_created').split('T')(0) })
         .orderBy('exporter_no')
-        // .filter(q)
+        .filter(function (c) {
+            return c('approve_status').ne('approve')
+        })
         .run()
         .then(function (result) {
             res.json(result)
@@ -77,6 +79,54 @@ exports.insert = function (req, res) {
                     result.message = err;
                     res.json(result);
                 })
+    } else {
+        result.message = req._validator.errorsText()
+        res.json(result);
+    }
+}
+exports.update = function (req, res){
+    var r = req._r;
+    var valid = req._validator.validate('exporter.confirm_exporter', req.body);
+    var result = { result: false, message: null, id: null };
+    if (valid) {
+        if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
+            result.id = req.body.id;
+            req.body = Object.assign(req.body, { date_updated: new Date().toISOString(), updater: 'admin' });
+            r.db('external').table('confirm_exporter')
+                .get(req.body.id)
+                .update(req.body, { returnChanges: true })
+                .run()
+                .then(function (response) {
+                    result.message = response;
+                    if (response.errors == 0) {
+                        result.result = true;
+                        var history = {
+                            tb_name: 'confirm_exporter',
+                            action: "update",
+                            id_value: req.body.id,
+                            old_value: null,
+                            new_value: req.body,
+                            date_created: new Date(),
+                            actor: 'admin'
+                        };
+                        if (response.changes != [] && response.unchanged != 1 || response.replaced == 1) {
+                            // console.log(history.old_value);
+                            history.old_value = response.changes[0].old_val;
+                            //console.log(history.old_value);
+                        }
+
+                        r.db('external').table('history').insert(history).run().then()
+                    }
+                    res.json(result);
+                })
+                .error(function (err) {
+                    result.message = err;
+                    res.json(result);
+                })
+        } else {
+            result.message = 'require field id';
+            res.json(result);
+        }
     } else {
         result.message = req._validator.errorsText()
         res.json(result);
