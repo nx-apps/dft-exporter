@@ -7,16 +7,12 @@
         "exporter_no": {
             "type": "number"
         },
-        "exporter_date_approve": {
-            "type": "string",
-            "format": "date-time"
-        },
         "seller_id": {
             "type": "string"
         }
     },
     "required": [
-        "exporter_date_approve",
+        "exporter_no",
         "seller_id"
     ]
 }

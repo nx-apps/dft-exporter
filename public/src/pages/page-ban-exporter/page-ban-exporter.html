@@ -121,7 +121,7 @@
           },
           _getExporters: function(){
             this.exporter_id = this.exporter_id || this.$.exporter_id;
-            this.read('./exporter/?export_status=false',(data)=>{
+            this.read('./external/exporter?export_status=false',(data)=>{
                 this.exporters = data;
                 for (var i = 0; i < this.exporters.length; i++) {
                   this.exporters[i]['check'] = false;

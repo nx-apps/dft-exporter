@@ -6,6 +6,9 @@
         font-family: 'rsuregular', sans-serif;
         -webkit-font-smoothing: antialiased;
     }
+    .marginCheckbox{
+      margin: 10px 0px 0px 30px;
+    }
     .searchBorder{
       border: 1px solid var(--gl-gray-light-color);
       margin: 15px;
@@ -20,13 +23,45 @@
          width: 100%;
          white-space: nowrap;
      }
+     paper-tabs{
+       background-color: #f7941e;
+       margin : 0px 15px 0px 15px;
+       color: #F2F2F2;
+       --paper-tabs-selection-bar:{
+         height: 5px;
+         background-color: var(--gl-info-color);
+       }
+     }
+     paper-tab:focus > div.tab-content{
+       background-color: yellow;
+       opacity: 1;
+       font-weight: 0;
+     }
+     paper-tab:not(:last-of-type) {
+       border-right: 3px solid var(--gl-gray-light-color);
+       font-size: var(--font-size-h5);
+       /*font-family: 'rsubold', sans-serif;
+       -webkit-font-smoothing: antialiased;*/
+     }
+     paper-tabs paper-tab.iron-selected {
+       font-size: var(--font-size-h5);
+       color: var(--gl-white-color);
+       background-color: var(--gl-info-color);
+     }
+     .table-head > tr > th:nth-child(2) {
+       width: 15%;
+     }
   </style>
   <template>
     <iron-pages selected="{{pageSelected}}" attr-for-selected="name">
       <div name="listExporter">
-        <div class="horizontal layout end-justified">
-          <div style="margin-top:10px">พิมพ์ใบอนุมัติ</div>
-          <paper-icon-button icon="print"></paper-icon-button>
+        <div class="horizontal layout justified">
+          <div>
+            <paper-checkbox class="marginCheckbox" checked={{selectDataAll}}>เลือกทั้งหมด</paper-checkbox>
+          </div>
+          <div>
+            พิมพ์ใบอนุมัติ<paper-icon-button icon="print"></paper-icon-button>
+          </div>
         </div>
         <div class="searchBorder" style="overflow-x:auto;">
           <table class="gl-table-default">
@@ -44,25 +79,36 @@
 
             <template is="dom-repeat" items="{{sellers}}">
               <tbody>
-                <tr id="detailRegExporter" on-tap="_selectData" data="[[item]]" style="cursor:pointer;">
+                <tr style="cursor:pointer;">
                   <td><paper-checkbox checked="{{item.check}}" class="checkbox"></paper-checkbox></td>
-                  <td><div class="text-table">{{item.exporter_no_name}}</div></td>
-                  <td><div class="text-table">{{item.seller_name_th}}</div></td>
-                  <td><div class="text-table">{{item.type_lic_name}}</div></td>
-                  <td><div class="text-table">{{item.date_create}}</div></td>
-                  <td><div class="text-table">{{item.approve_status_name}}</div></td>
+                  <td style="text-align:center"><gl-form-input value="{{item.exporter_no_name}}"></gl-form-input></td>
+                  <!-- <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.exporter_no_name}}</div></td> -->
+                  <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.seller_name_th}}</div></td>
+                  <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.type_lic_name}}</div></td>
+                  <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.date_created}}</div></td>
+                  <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.approve_status_name}}</div></td>
                 </tr>
               </tbody>
             </template>
           </table>
         </div>
         <div class="horizontal layout end-justified">
-          <paper-button class="gl-btn-danger" on-tap="backPage" raised>ยกเลิก</paper-button>
-          <paper-button class="gl-btn-success" style="margin-right:15px" on-tap="" raised>บันทึก</paper-button>
+          <paper-button class="gl-btn-danger" on-tap="_close" raised>ยกเลิก</paper-button>
+          <paper-button class="gl-btn-success" style="margin-right:15px" on-tap="_approve" raised>บันทึก</paper-button>
         </div>
       </div>
       <div name="detailExporter">
-        <detail-member data={{dataSelect}}></detail-member>
+        <!-- <detail-member data={{dataSelect}}></detail-member> -->
+        <paper-tabs selected="{{pages}}" align-bottom no-slide>
+            <paper-tab>รายละเอียด</paper-tab>
+            <paper-tab id="tabFile">เอกสารหลักฐาน</paper-tab>
+        </paper-tabs>
+        <gl-form-panel>
+          <iron-pages selected="{{pages}}">
+              <detail-member data={{dataSelect}}></detail-member>
+              <register-fileup data="{{dataSelect}}" doc-type="[[docType]]"></register-fileup>
+          </iron-pages>
+        </gl-form-panel>
       </div>
     </iron-pages>
   </template>
@@ -70,6 +116,10 @@
     Polymer({
       is: "confirm-member",
       properties: {
+        pages:{
+          type: String,
+          value: 0
+        },
         pageSelected: {
           type: String,
           value:'listExporter'
@@ -77,8 +127,18 @@
         dataSelected:{
           type:Object,
           value:{}
+        },
+        data:{
+          type: Array,
+          value: []
+        },
+        selectDataAll: {
+          type: Boolean,
+          value: false,
+          observer: '_changeselectDataAll'
         }
       },
+      behaviors: [dataBehavior],
       listeners:{
         'backPage' : '_backPage'
       },
@@ -88,6 +148,54 @@
       },
       _backPage:function (data) {
         this.pageSelected='listExporter';
+      },
+      _changeselectDataAll:function (val) {
+        // console.log(val);
+        if (typeof this.sellers != 'undefined') {
+          this.sellers.map((item,index)=>{
+            this.set('sellers.'+index+'.check',val);
+          });
+        }
+      },
+      _close:function(){
+        this.fire('close-toggle');
+      },
+      _approve:function(){
+        const check = (item)=>{
+            return item.check == true;
+        }
+        this.sellers.filter(check).map((datas)=>{
+          // console.log(datas);
+          let {exporter_no, seller_id, id} = datas;
+          let newData = {exporter_no, seller_id, id};
+          // console.log(newData);
+          this.data.push(newData);
+        });
+        this.fire('toast',{status:'dialog',
+        text:'คุณต้องการจะอนุมัติใช่หรือไม่ ?',
+        confirmed : this._confirm.bind(this)
+        });
+      },
+      _confirm:function(result,detail){
+        this.data.map((datas)=>{
+          datas={
+            confirm_id : datas.id,
+            seller_id : datas.seller_id,
+            exporter_no : datas.exporter_no
+          }
+        if(result == true){
+          // console.log(datas);
+          this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+          this.insert('./external/confirm_exporter/insert', datas, () => {
+            this.fire('refresh-seller');
+            this.fire('refresh-exporter');
+            this.selectDataAll = false;
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+              console.log('success');
+            }});
+           });
+          }
+        });
       }
     });
   </script>

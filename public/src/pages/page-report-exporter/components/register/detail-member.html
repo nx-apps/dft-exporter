@@ -28,7 +28,7 @@
   <template>
       <!-- <form is="iron-form" id="insertMember"> -->
       <div class="title">ข้อมูลผู้ค้าข้าว</div>
-        <gl-form-panel>
+        <gl-form-panel set-border="0">
           <gl-grid-row width="{{getWidth}}">
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
               <gl-form-input label="เลขประจำตัวผู้เสียภาษี :" value="{{data.seller_tax_id}}" disabled></gl-form-input>
@@ -64,9 +64,9 @@
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-input label="E-Mail Address :" value="{{data.seller_email}}" disabled></gl-form-input>
           </gl-grid-col>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+          <!-- <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-input label="เลขที่หนังสืออนุญาต ปกข. :" value="{{data.trader_no}}" disabled></gl-form-input>
-          </gl-grid-col>
+          </gl-grid-col> -->
           <!-- <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-label-input  label="สถานะเป็นสมาชิกผู้ส่งออกข้าว :" value="{{data.exporter_status_name}}"></gl-form-label-input>
           </gl-grid-col> -->
@@ -104,7 +104,7 @@
 
     <div class="horizontal layout end-justified">
       <paper-button class="gl-btn-danger" on-tap="backPage" raised>ยกเลิก</paper-button>
-      <paper-button class="gl-btn-success" style="margin-right:15px" on-tap="" raised>บันทึก</paper-button>
+      <paper-button class="gl-btn-success" style="margin-right:15px" on-tap="save" raised>บันทึก</paper-button>
     </div>
 
   </template>
@@ -122,6 +122,9 @@
       },
       backPage:function() {
         this.fire('backPage');
+      },
+      save:function () {
+        console.log(this.data);
       }
       // _addAgent:function() {
       //   // console.log(this.data.seller_agent=[{agent_name:'สวัสดี'}]);

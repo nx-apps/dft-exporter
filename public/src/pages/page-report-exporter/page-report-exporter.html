@@ -173,7 +173,7 @@
                     <th><div class="text-table">{{localize('name_company')}}</div></th>
                     <th><div class="text-table">{{localize('type_license')}}</div></th>
                     <th><div class="text-table">{{localize('status_export')}}</div></th>
-                    <th><div class="text-table">{{localize('status_dit')}}</div></th>
+                    <!-- <th><div class="text-table">{{localize('status_dit')}}</div></th> -->
                     <th><div class="text-table">{{localize('status_exporter')}}</div></th>
                     <th><div class="text-table">{{localize('date')}}{{localize('register')}}</div></th>
                   </tr>
@@ -188,7 +188,7 @@
                       <td><div class="text-table">{{item.seller_name_th}}</div></td>
                       <td><div class="text-table">{{item.type_lic_name}}</div></td>
                       <td><div class="text-table">{{item.exporter_status_name}}</div></td>
-                      <td><div class="text-table">{{item.trader_active_name}}</div></td>
+                      <!-- <td><div class="text-table">{{item.trader_active_name}}</div></td> -->
                       <td><div class="text-table">{{item.export_status_name}}</div></td>
                       <td><div class="text-table">{{item.exporter_date_approve}}</div></td>
                     </tr>
@@ -244,7 +244,8 @@
             behaviors: [dataBehavior,nylonBehavior, nylonLocalizeBehavior],
             listeners:{
               'refresh-exporter':'getExporters',
-              'close-toggle':'_closeToggle'
+              'close-toggle':'_closeToggle',
+              'refresh-seller':'getSeller'
             },
             created:function(){
                 this.nylonLocalizeImport('/i18n-page1.json');
@@ -303,6 +304,9 @@
             getSeller: function(){
               this.read('./external/confirm_exporter',(data)=>{
                 this.sellers = data;
+                for (var i = 0; i < this.sellers.length; i++) {
+                  this.sellers[i]['check'] = false;
+                }
               })
             },
             // _dateEnd:function() {

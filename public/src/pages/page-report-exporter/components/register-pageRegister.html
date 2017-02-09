@@ -20,31 +20,6 @@
       margin: 15px;
       border-radius: 3px
     }
-    paper-tabs{
-      background-color: #f7941e;
-      margin : 0px 15px 0px 15px;
-      color: #F2F2F2;
-      --paper-tabs-selection-bar:{
-        height: 5px;
-        background-color: var(--gl-info-color);
-      }
-    }
-    paper-tab:focus > div.tab-content{
-      background-color: yellow;
-      opacity: 1;
-      font-weight: 0;
-    }
-    paper-tab:not(:last-of-type) {
-      border-right: 3px solid var(--gl-gray-light-color);
-      font-size: var(--font-size-h5);
-      /*font-family: 'rsubold', sans-serif;
-      -webkit-font-smoothing: antialiased;*/
-    }
-    paper-tabs paper-tab.iron-selected {
-      font-size: var(--font-size-h5);
-      color: var(--gl-white-color);
-      background-color: var(--gl-info-color);
-    }
 </style>
   <template>
 
@@ -55,7 +30,7 @@
       </paper-tabs>
       <iron-pages selected="{{pages}}">
         <register-member trader-id="[[traderId]]" doc-type="[[docType]]"></register-member> -->
-        <confirm-member sellers="[[sellers]]"></confirm-member>
+        <confirm-member sellers="[[sellers]]" doc-type="[[docType]]"></confirm-member>
       <!-- </iron-pages> -->
 
     </gl-form-panel>

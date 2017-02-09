@@ -298,7 +298,7 @@ exports.exporter = function (req, res) {
         d = r.row('exporter_date_approve').gt(d.date_start).and(r.row('exporter_date_approve').lt(d.date_end));
     }
 
-    r.db('external_f3').table("trader").outerJoin(
+    // r.db('external_f3').table("trader").outerJoin(
         r.db('external_f3').table("exporter")
             .merge(function (m) {
                 return {
@@ -352,19 +352,19 @@ exports.exporter = function (req, res) {
                     exporter_date_expire: mmm('exporter_date_expire').toISO8601()
                 }
             })
-            .without('book'),
-        function (trader, exporter) {
-            return exporter("trader_id").eq(trader("id"))
-        })
-        .merge(function (mm) {
-            return {
-                left: {
-                    trader_id: mm('left')('id')
-                }
-            }
-        })
-        .without({ left: 'id' })
-        .zip()
+            .without('book')
+        // function (trader, exporter) {
+        //     return exporter("trader_id").eq(trader("id"))
+        // })
+        // .merge(function (mm) {
+        //     return {
+        //         left: {
+        //             trader_id: mm('left')('id')
+        //         }
+        //     }
+        // })
+        // .without({ left: 'id' })
+        // .zip()
         .merge(function (m) {
             return {
                 export_date_expire: r.branch(m.hasFields('export_date_expire'), m('export_date_expire').split('T')(0), null),
@@ -391,15 +391,15 @@ exports.exporter = function (req, res) {
                     ).add(m('exporter_no').coerceTo('string'))
                     , null
                 ),
-                trader_date_approve: m('trader_date_approve').split('T')(0),
-                trader_date_expire: m('trader_date_approve').split('T')(0).split('-')(0).add("-12-31"),
-                trader_active: r.now().toISO8601().lt(m('trader_date_approve').split('T')(0).split('-')(0).add("-12-31T00:00:00.000Z"))
+                // trader_date_approve: m('trader_date_approve').split('T')(0),
+                // trader_date_expire: m('trader_date_approve').split('T')(0).split('-')(0).add("-12-31"),
+                // trader_active: r.now().toISO8601().lt(m('trader_date_approve').split('T')(0).split('-')(0).add("-12-31T00:00:00.000Z"))
                 //r.time(m('trader_date_approve').split('T')(0).split('-')(0).coerceTo('number'), r.december, 31, 0, 0, 0, '+07:00').toISO8601()
             }
         })
         .merge(function (m) {
             return {
-                trader_active_name: r.branch(m('trader_active').eq(true), 'ปกติ', 'หมดอายุ'),
+                // trader_active_name: r.branch(m('trader_active').eq(true), 'ปกติ', 'หมดอายุ'),
                 export_status_name: r.branch(m('export_status').eq(null), null, m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
         })
