@@ -81,7 +81,7 @@
               <tbody>
                 <tr style="cursor:pointer;">
                   <td><paper-checkbox checked="{{item.check}}" class="checkbox"></paper-checkbox></td>
-                  <td style="text-align:center"><gl-form-input value="{{item.exporter_no_name}}"></gl-form-input></td>
+                  <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]"></gl-form-input></td>
                   <!-- <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.exporter_no_name}}</div></td> -->
                   <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.seller_name_th}}</div></td>
                   <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.type_lic_name}}</div></td>
@@ -263,6 +263,44 @@
           }
         });
       },
+      changeNo:function(e) {
+        var seller = e.currentTarget.data;
+        var datas = {
+          id : seller.id,
+          exporter_no : parseInt(seller.exporter_no),
+          seller_id : seller.seller_id
+        }
+        // console.log(datas);
+        this.read('./external/check/duplicate?table=confirm_exporter&field=exporter_no&value='+datas.exporter_no, (response) => {
+          if (response == 0) {
+            this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+            this.update('./external/confirm_exporter/update', datas, () => {
+              this.fire('refresh-seller');
+              this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+                console.log('success');
+              }});
+             });
+          }
+          else {
+            this.read('./external/check/myowner?table=confirm_exporter&id='+datas.id+'&field=exporter_no&value='+datas.exporter_no, (response) => {
+              if (response == 1) {
+                this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+                this.update('./external/confirm_exporter/update', datas, () => {
+                  this.fire('refresh-seller');
+                  this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+                    console.log('success');
+                  }});
+                 });
+          }
+          else {
+            this.fire('toast',{status:'connectError',text:'เลข ข. นี้มีอยู่แล้ว',
+              callback:function(){
+              }})
+          }
+          });
+        }
+        });
+      }
     });
   </script>
 </dom-module>

@@ -1,17 +1,5 @@
 exports.confirm = function (req, res) {
     var r = req._r;
-    // var q = {}
-    // for (key in req.query) {
-
-    //     if (req.query[key] == "true") {
-    //         req.query[key] = true;
-    //     } else if (req.query[key] == "false") {
-    //         req.query[key] = false;
-    //     } else if (req.query[key] == "null") {
-    //         req.query[key] = null;
-    //     }
-    //     q[key] = req.query[key];
-    // }
     r.db('external').table('confirm_exporter')
         .merge(function (m) {
             return {
