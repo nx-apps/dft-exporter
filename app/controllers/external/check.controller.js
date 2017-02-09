@@ -4,7 +4,7 @@ exports.duplicate = function (req, res) {
     var tb = req.query['table'];
     q[req.query['field']] = req.query['value'];
 
-    r.db('external_f3').table(tb)
+    r.db('external').table(tb)
         .filter(q)
         .count()
         .run()
@@ -22,7 +22,7 @@ exports.myowner = function (req, res) {
     var tb = req.query['table'];
     q['id'] = req.query['id'];
     q[req.query['field']] = req.query['value'];
-    r.db('external_f3').table(tb)
+    r.db('external').table(tb)
         .filter(q)
         .count()
         .run()

@@ -64,9 +64,9 @@ exports.listFile = function (req, res) {
 exports.listFilePath = function (req, res) {
     var r = req._r;
     var params = req.params;
-    r.db('external_f3').table('document_file')
+    r.db('external').table('document_file')
         .eqJoin('file_id', r.db('files').table('files')).without({ right: ["id", "contents"] }).zip()
-        .eqJoin('seller_id', r.db('external_f3').table('seller')).pluck('left', { right: 'seller_id' }).zip()
+        .eqJoin('seller_id', r.db('external').table('seller')).pluck('left', { right: 'seller_id' }).zip()
         .merge(function (m) {
             return { timestamp: m('timestamp').toISO8601().split("T")(0) }
         })
@@ -118,12 +118,12 @@ exports.downloadFile = function (req, res) {
 exports.deleteFile = function (req, res) {
     var r = req._r;
     var params = req.params;
-    r.db('external_f3').table('document_file').getAll(params.id, { index: 'file_id' }).update({ file_status: false })
+    r.db('external').table('document_file').getAll(params.id, { index: 'file_id' }).update({ file_status: false })
 
         // r.db('files').table('files').get(params.id).delete()
         //     .do(
         //     function (d) {
-        //         return r.db('external_f3').table('document_file').getAll(params.id, { index: 'file_id' }).delete()
+        //         return r.db('external').table('document_file').getAll(params.id, { index: 'file_id' }).delete()
         //     }
         //     )
         .run().then(function (result) {
@@ -155,7 +155,7 @@ exports.uploadFileExporter = function (req, res) {
                 ref_path: req.headers['ref-path']
             })('generated_keys')(0)
                 .do(function (file_id) {
-                    return r.db('external_f3').table('document_file').insert({
+                    return r.db('external').table('document_file').insert({
                         file_id: file_id,
                         file_status: true,
                         doc_type_id: doc_type_id,

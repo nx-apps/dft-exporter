@@ -1,6 +1,6 @@
 exports.seller = function (req, res) {
     var r = req._r;
-    r.db('external_f3').table("seller")
+    r.db('external').table("seller")
         .merge(function (row) {
             return {
                 seller_id: row('id'),
@@ -19,7 +19,7 @@ exports.seller = function (req, res) {
 }
 exports.sellerId = function (req, res, next) {
     var r = req._r;
-    r.db('external_f3').table("seller")
+    r.db('external').table("seller")
         .get(req.params.seller_id)
         .merge(
         { seller_id: r.row('id') },
@@ -47,7 +47,7 @@ exports.insert = function (req, res, next) {
                 date_created: new Date().toISOString(),
                 date_updated: new Date().toISOString()
             });
-            r.db('external_f3').table('seller')
+            r.db('external').table('seller')
                 .insert(req.body)
                 .run()
                 .then(function (response) {
@@ -77,7 +77,7 @@ exports.update = function (req, res, next) {
     if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
         result.id = req.body.id;
         req.body = Object.assign(req.body, { date_updated: this.date_updated, updater: 'admin' });
-        r.db('external_f3').table('seller')
+        r.db('external').table('seller')
             .get(req.body.id)
             .update(req.body, { returnChanges: true })
             .run()
@@ -100,7 +100,7 @@ exports.update = function (req, res, next) {
                         //console.log(history.old_value);
                     }
 
-                    r.db('external_f3').table('history').insert(history).run().then()
+                    r.db('external').table('history').insert(history).run().then()
                 }
                 res.json(result);
             })
@@ -118,7 +118,7 @@ exports.delete = function (req, res, next) {
     var result = { result: false, message: null, id: null };
     if (req.params.id != '' || req.params.id != null) {
         // result.id = req.params.id;
-        r.db('external_f3').table('seller')
+        r.db('external').table('seller')
             .get(req.params.id)
             .delete()
             .run()
@@ -135,7 +135,7 @@ exports.delete = function (req, res, next) {
                         date_created: new Date(),
                         actor: 'admin'
                     }
-                    r.db('external_f3').table('history').insert(history).run().then()
+                    r.db('external').table('history').insert(history).run().then()
                 }
                 res.json(response);
             })

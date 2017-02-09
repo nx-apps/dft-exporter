@@ -12,7 +12,7 @@ exports.confirm = function (req, res) {
     //     }
     //     q[key] = req.query[key];
     // }
-    r.db('external_f3').table('confirm_exporter')
+    r.db('external').table('confirm_exporter')
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -35,8 +35,8 @@ exports.confirm = function (req, res) {
                 approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่')
             }
         })
-        .eqJoin('type_lic_id', r.db('external_f3').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
-        .eqJoin("seller_id", r.db('external_f3').table("seller")).without({ right: 'id' }).zip()
+        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
+        .eqJoin("seller_id", r.db('external').table("seller")).without({ right: 'id' }).zip()
         .merge({ date_created: r.row('date_created').split('T')(0) })
         .orderBy('exporter_no')
         // .filter(q)
@@ -53,7 +53,7 @@ exports.insert = function (req, res) {
     var valid = req._validator.validate('exporter.confirm_exporter', req.body);
     var result = { result: false, message: null, id: null };
     if (valid) {
-        r.db('external_f3').table('confirm_exporter').get(req.body.confirm_id).update({ approve_status: 'approve' })
+        r.db('external').table('confirm_exporter').get(req.body.confirm_id).update({ approve_status: 'approve' })
             .run()
         req.body = Object.assign(req.body, {
             creater: 'admin',
@@ -62,7 +62,7 @@ exports.insert = function (req, res) {
             exporter_no: req.body.exporter_no,
             exporter_date_approve: new Date().toISOString()
         }),
-            r.db('external_f3').table('exporter')
+            r.db('external').table('exporter')
                 .insert(req.body)
                 .run()
                 .then(function (response) {

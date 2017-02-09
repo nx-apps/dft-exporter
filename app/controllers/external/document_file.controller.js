@@ -1,7 +1,7 @@
 exports.document_file = function (req, res) {
     var r = req._r;
-    r.db('external_f3').table('document_file')
-        .innerJoin(r.db('external_f3').table('document_type'),
+    r.db('external').table('document_file')
+        .innerJoin(r.db('external').table('document_type'),
         function (file, type) {
             return file('doc_type_id').eq(type('doc_code'))
         })
@@ -11,7 +11,7 @@ exports.document_file = function (req, res) {
             })
         })
         .eqJoin('file_id', r.db('files').table('files')).without({ right: ["id", "contents"] }).zip()
-        .eqJoin('exporter_id', r.db('external_f3').table('exporter')).pluck('left', { right: 'exporter_id' }).zip()
+        .eqJoin('exporter_id', r.db('external').table('exporter')).pluck('left', { right: 'exporter_id' }).zip()
         .run()
         .then(function (result) {
             res.json(result);
@@ -22,7 +22,7 @@ exports.document_file = function (req, res) {
 }
 exports.document_fileId = function (req, res) {
     var r = req._r;
-    r.db('external_f3').table('document_file')
+    r.db('external').table('document_file')
         .get(req.params.id)
         .merge({
             doc_id: r.row('id')
