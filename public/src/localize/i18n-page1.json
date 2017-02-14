@@ -1,5 +1,6 @@
 {
     "th":{
+        "Meg":"TH",
         "test":"ทดสอบ",
         "title_exporter":"ข้อมูลผู้ส่งออกข้าวไปต่างประเทศ",
         "name_exporter":"ชื่อผู้ส่งออก",
@@ -30,6 +31,7 @@
         "report3":"รายชื่อและที่อยู่ของผู้ส่งออกข้าว"
     },
     "en":{
+        "Meg":"EN",
         "test":"test",
         "title_exporter":"Data exporter",
         "name_exporter":"Name exporter",

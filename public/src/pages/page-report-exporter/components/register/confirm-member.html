@@ -60,7 +60,7 @@
             <paper-checkbox class="marginCheckbox" checked={{selectDataAll}}>เลือกทั้งหมด</paper-checkbox>
           </div>
           <div>
-            พิมพ์ใบอนุมัติ<paper-icon-button icon="print"></paper-icon-button>
+            พิมพ์ใบอนุมัติเลข ข.<paper-icon-button icon="print" on-tap="_print"></paper-icon-button>
           </div>
         </div>
         <div class="searchBorder" style="overflow-x:auto;">
@@ -81,7 +81,7 @@
               <tbody>
                 <tr style="cursor:pointer;">
                   <td><paper-checkbox checked="{{item.check}}" class="checkbox"></paper-checkbox></td>
-                  <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]"></gl-form-input></td>
+                  <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]"></gl-form-input></td>
                   <!-- <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.exporter_no_name}}</div></td> -->
                   <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.seller_name_th}}</div></td>
                   <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.type_lic_name}}</div></td>
@@ -94,10 +94,10 @@
         </div>
         <div class="horizontal layout end-justified">
           <paper-button class="gl-btn-danger" on-tap="_close" raised>ยกเลิก</paper-button>
-          <paper-button class="gl-btn-warning" style="margin-right:15px" on-tap="_dialogRemark" raised>เอกสารไม่ครบ</paper-button>
-          <paper-button class="gl-btn-success" style="margin-right:15px" on-tap="_approve" raised>อนุมัติ</paper-button>
+          <paper-button class="gl-btn-success" style="margin-right:15px" on-tap="_approveAll" raised>อนุมัติ</paper-button>
         </div>
       </div>
+
       <div name="detailExporter">
         <!-- <detail-member data={{dataSelect}}></detail-member> -->
         <paper-tabs selected="{{pages}}" align-bottom no-slide>
@@ -110,10 +110,15 @@
               <register-fileup data="{{dataSelect}}" doc-type="[[docType]]"></register-fileup>
           </iron-pages>
         </gl-form-panel>
-
-        <div class="horizontal layout end-justified">
-          <paper-button class="gl-btn-danger" on-tap="_backPage" raised>ยกเลิก</paper-button>
-          <paper-button class="gl-btn-success" style="margin-right:15px" on-tap="_save" raised>บันทึก</paper-button>
+        <div class="horizontal layout justified">
+          <div>
+            <paper-button id="btreject" class="gl-btn-warning" style="margin-right:15px" on-tap="_dialogRemark" raised>เอกสารไม่ครบ</paper-button>
+          </div>
+          <div>
+            <paper-button class="gl-btn-danger" on-tap="_backPage" raised>ยกเลิก</paper-button>
+            <paper-button id="btsave" class="gl-btn-success" style="margin-right:15px" on-tap="_save" raised>บันทึก</paper-button>
+            <paper-button id="btapprove" class="gl-btn-success" style="margin-right:15px" on-tap="approve" raised>อนุมัติ</paper-button>
+          </div>
         </div>
       </div>
     </iron-pages>
@@ -126,7 +131,7 @@
       </gl-grid-row>
       <div>
         <paper-button class="gl-btn-danger button-size" raised on-tap="_dialogcancle">ยกเลิก</paper-button>
-        <paper-button id="active" class="gl-btn-primary button-size" raised on-tap="_reject">บันทึก</paper-button>
+        <paper-button class="gl-btn-primary button-size" raised on-tap="_reject">บันทึก</paper-button>
       </div>
     </paper-dialog>
 
@@ -161,12 +166,73 @@
       _selectData:function(e){
         this.pageSelected = "detailExporter";
         this.dataSelect = e.currentTarget.data;
+        if (this.dataSelect.approve_status == 'process') {
+          this.$$('#btreject').setAttribute("hidden", "hidden");
+          this.$$('#btsave').setAttribute("hidden", "hidden");
+          this.$$('#btapprove').removeAttribute("hidden");
+        }
+        else {
+          this.$$('#btreject').removeAttribute("hidden");
+          this.$$('#btsave').removeAttribute("hidden");
+          this.$$('#btapprove').setAttribute("hidden", "hidden");
+
+
+        }
       },
       _backPage:function (data) {
         this.pageSelected='listExporter';
+        this.pages = 0;
       },
       _save:function () {
-        console.log(this.dataSelect);
+        this.fire('toast',{status:'dialog',
+        text:'เอกสารครบถ้วนแล้วใช่หรือไม่ ?',
+        confirmed : this._confirmProcess.bind(this),
+        datas : {
+          id : this.dataSelect.id,
+          seller_id : this.dataSelect.seller_id,
+          exporter_no : this.dataSelect.exporter_no,
+          approve_status : 'process'
+        }
+        });
+      },
+      _confirmProcess:function(result,detail){
+        if(result == true){
+          // console.log(detail.datas);
+          this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+          this.update('./external/confirm_exporter/update', detail.datas, () => {
+            this.pageSelected='listExporter';
+            this.fire('refresh-seller');
+            this.fire('refresh-exporter');
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+              console.log('success');
+            }});
+           });
+          }
+      },
+      approve:function () {
+        this.fire('toast',{status:'dialog',
+        text:'คุณต้องการจะอนุมัติใช่หรือไม่ ?',
+        confirmed : this._confirmApprove.bind(this),
+        datas : {
+          confirm_id : this.dataSelect.id,
+          seller_id : this.dataSelect.seller_id,
+          exporter_no : this.dataSelect.exporter_no
+        }
+        });
+      },
+      _confirmApprove:function(result,detail){
+        if(result == true){
+          // console.log(detail.datas);
+          this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+          this.update('./external/confirm_exporter/insert', detail.datas, () => {
+            this.pageSelected='listExporter';
+            this.fire('refresh-seller');
+            this.fire('refresh-exporter');
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+              console.log('success');
+            }});
+           });
+          }
       },
       _changeselectDataAll:function (val) {
         // console.log(val);
@@ -179,7 +245,7 @@
       _close:function(){
         this.fire('close-toggle');
       },
-      _approve:function(){
+      _approveAll:function(){
         const check = (item)=>{
             return item.check == true;
         }
@@ -218,6 +284,7 @@
       },
       _dialogRemark: function(){
         this.$.dialog.toggle();
+        console.log(this.dataSelect);
       },
       _dialogcancle:function() {
         this.$.dialog.toggle();
@@ -299,6 +366,18 @@
           }
           });
         }
+        });
+      },
+      _print:function(){
+        const check = (item)=>{
+            return item.check == true;
+        }
+        this.sellers.filter(check).map((datas)=>{
+          // console.log(datas);
+          let {seller_id, id, exporter_no} = datas;
+          let newData = {seller_id, id, exporter_no};
+          console.log(newData);
+          // this.data.push(newData);
         });
       }
     });

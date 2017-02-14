@@ -2,7 +2,8 @@
 <link rel="import" href="../../components/dataBehavior.html">
 <link rel="import" href="member/member-show.html">
 <link rel="import" href="member/member-fileup.html">
- <!--<link rel="import" href="member/member-edit.html"> -->
+ <!-- <link rel="import" href="member/member-edit.html"> -->
+ <link rel="import" href="member/member-fileDelete.html">
 <link rel="import" href="../../components/panel-right/panel-right.html">
 <dom-module id="member-page">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-toast">
@@ -54,14 +55,14 @@
   </style>
   <template>
     <gl-form-panel set-border="0px">
-      <div id="titleBg" class="boxNortify" hidden>
+      <div id="titleBg" class="boxNortify" hidden="[[data.export_status]]">
         <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  ผู้ส่งออกหมดอายุ</div>
-        <div id="titleTrader" class="title"><iron-icon icon="icons:info"></iron-icon>  คน. หมดอายุ</div>
-        <div id="titleSeller" class="title"><iron-icon icon="icons:info"></iron-icon>  ยังไม่ลงทะเบียนเป็นผู้ส่งออก</div>
+        <!-- <div id="titleTrader" class="title"><iron-icon icon="icons:info"></iron-icon>  คน. หมดอายุ</div>
+        <div id="titleSeller" class="title"><iron-icon icon="icons:info"></iron-icon>  ยังไม่ลงทะเบียนเป็นผู้ส่งออก</div> -->
       </div>
       <div class="horizontal end-justified layout">
-        <paper-button id="buttomActive" raised class="gl-btn-success button" on-tap="_dialogRemark" title="ยกเลิกการระงับ" hidden>ยกเลิกการระงับ</paper-button>
-        <paper-button id="buttomTrader" raised class="gl-btn-danger button" on-tap="_dialogRemark" title="ต่ออายุ คน." hidden>ต่ออายุ คน.</paper-button>
+        <paper-button id="buttomActive" raised class="gl-btn-success button" on-tap="_dialogRemark" title="ยกเลิกการระงับ" hidden="[[data.export_status]]">ยกเลิกการระงับ</paper-button>
+        <!-- <paper-button id="buttomTrader" raised class="gl-btn-danger button" on-tap="_dialogRemark" title="ต่ออายุ คน." hidden>ต่ออายุ คน.</paper-button> -->
          <!--<paper-icon-button icon="create" on-tap="editChange" title="แก้ไขข้อมูล"></paper-icon-button> -->
       </div>
               <div class="bd">
@@ -73,16 +74,16 @@
                     <iron-pages selected="{{pages}}">
                       <member-show data="{{data}}"></member-show>
                       <member-fileup data="{{data}}" doc-type="[[docType]]"></member-fileup>
-                       <!--<member-edit data="{{data}}"></member-edit> -->
+                       <!-- <member-edit data="{{data}}"></member-edit> -->
+                       <member-fileDelete data="{{listFiles}}"></member-fileDelete>
                     </iron-pages>
                   </gl-form-panel>
               </div>
-              {{_checkStatus(data.export_status,data.exporter_status,data.trader_active)}}
-
+              <!-- {{_checkStatus(data.export_status,data.exporter_status,data.trader_active)}} -->
         <gl-form-panel-footer>
           พิมพ์ข้อมูลผู้ส่งออก<paper-icon-button icon="print" on-tap="print" title="พิมพ์ข้อมูลผู้ส่งออก"></paper-icon-button>
-          <paper-button id="removeButtomC" class="gl-btn-danger" on-tap="_cancel" raised title="ยกเลิกการแก้ไข">ยกเลิก</paper-button>
-          <paper-button id="removeButtom" class="gl-btn-success" on-tap="save" raised title="บันทึกข้อมูล">บันทึก</paper-button>
+          <!-- <paper-button id="removeButtomC" class="gl-btn-danger" on-tap="_cancel" raised title="ยกเลิกการแก้ไข" hidden>ยกเลิก</paper-button>
+          <paper-button id="removeButtom" class="gl-btn-success" on-tap="save" raised title="บันทึกข้อมูล" hidden>บันทึก</paper-button> -->
         </gl-form-panel-footer>
     </gl-form-panel>
 
@@ -94,8 +95,8 @@
       </gl-grid-row>
       <div>
         <paper-button class="gl-btn-danger button-size" raised on-tap="_dialogcancle">ยกเลิก</paper-button>
-        <paper-button id="active" class="gl-btn-primary button-size" raised on-tap="_active" hidden>บันทึก</paper-button>
-        <paper-button id="retrader" class="gl-btn-primary button-size" raised on-tap="_retrader" hidden>บันทึก</paper-button>
+        <paper-button id="active" class="gl-btn-primary button-size" raised on-tap="_active">บันทึก</paper-button>
+        <!-- <paper-button id="retrader" class="gl-btn-primary button-size" raised on-tap="_retrader" hidden>บันทึก</paper-button> -->
       </div>
     </paper-dialog>
 
@@ -111,10 +112,17 @@
             notify:true,
             value: 0
         },
+        data:{
+          type:String,
+          observer:'getFile'
+        }
         // exporterId:{
         //   type:String,
         //   observer:'_exporterIdChanged'
         // }
+      },
+      listeners:{
+        'pageFileDelete' : 'fileDelete'
       },
       // _exporterIdChanged:function(val){
       //   // console.log(val);
@@ -133,12 +141,28 @@
         // console.log(this.data.trader_id);
         window.open('./api/external/report_exporter/report11/'+this.data.trader_id,'_blank');
       },
-      editChange:function(e){
-        // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
-        this.pages = 2;
-        this.$$('#removeButtom').removeAttribute("hidden");
-        this.$$('#removeButtomC').removeAttribute("hidden");
+      getFile:function(val){
+        var sellerId = this.data.seller_id;
+        if (sellerId != '' && sellerId != undefined) {
+          axios.get('/external/upload/list/'+sellerId)
+          .then( (response)=>{
+            // console.log(response);
+              this.listFiles = response.data;
+          })
+          .catch(function (error) {
+              console.log(error);
+          });
+        }
       },
+      fileDelete: function(){
+        this.pages = 2;
+      },
+      // editChange:function(e){
+      //   // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
+      //   this.pages = 2;
+      //   this.$$('#removeButtom').removeAttribute("hidden");
+      //   this.$$('#removeButtomC').removeAttribute("hidden");
+      // },
       save:function(e) {
         var datas = {
           id:this.data.exporter_id,
@@ -167,83 +191,83 @@
         // this.$$('#buttomEdit').removeAttribute("hidden");
         this.pages = 0;
       },
-      _checkStatus:function(ac,st,ta){
-        if (ac == true && st == true && ta == true) {
-          // this.$$('#buttomEdit').removeAttribute("hidden");
-          this.$$('#removeButtom').setAttribute("hidden", "hidden");
-          this.$$('#removeButtomC').setAttribute("hidden", "hidden");
-          this.$$('#buttomActive').setAttribute("hidden", "hidden");
-          this.$$('#active').setAttribute("hidden", "hidden");
-          this.$$('#buttomTrader').setAttribute("hidden", "hidden");
-          this.$$('#retrader').setAttribute("hidden", "hidden");
-          this.$$('#titleExporter').setAttribute("hidden", "hidden");
-          this.$$('#titleTrader').setAttribute("hidden", "hidden");
-          this.$$('#titleSeller').setAttribute("hidden", "hidden");
-          this.$$('#titleBg').setAttribute("hidden", "hidden");
-          this.pages = 0;
-          this.$$('#tabFile').removeAttribute("disabled");
-        }
-        else if (ac == true && st == true && ta == false) {
-          // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
-          this.$$('#removeButtom').setAttribute("hidden", "hidden");
-          this.$$('#removeButtomC').setAttribute("hidden", "hidden");
-          this.$$('#buttomActive').setAttribute("hidden", "hidden");
-          this.$$('#active').setAttribute("hidden", "hidden");
-          this.$$('#buttomTrader').removeAttribute("hidden");
-          this.$$('#retrader').removeAttribute("hidden");
-          this.$$('#titleExporter').setAttribute("hidden", "hidden");
-          this.$$('#titleTrader').removeAttribute("hidden");
-          this.$$('#titleSeller').setAttribute("hidden", "hidden");
-          this.$$('#titleBg').removeAttribute("hidden");
-          this.pages = 0;
-          this.$$('#tabFile').removeAttribute("disabled");
-        }
-        else if (ac == false && st == true && ta == false) {
-          // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
-          this.$$('#removeButtom').setAttribute("hidden", "hidden");
-          this.$$('#removeButtomC').setAttribute("hidden", "hidden");
-          this.$$('#buttomActive').setAttribute("hidden", "hidden");
-          this.$$('#active').setAttribute("hidden", "hidden");
-          this.$$('#buttomTrader').removeAttribute("hidden");
-          this.$$('#retrader').removeAttribute("hidden");
-          this.$$('#titleExporter').setAttribute("hidden", "hidden");
-          this.$$('#titleTrader').removeAttribute("hidden");
-          this.$$('#titleSeller').setAttribute("hidden", "hidden");
-          this.$$('#titleBg').removeAttribute("hidden");
-          this.pages = 0;
-          this.$$('#tabFile').removeAttribute("disabled");
-        }
-        else if (ac == false && st == true && ta == true) {
-          // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
-          this.$$('#removeButtom').setAttribute("hidden", "hidden");
-          this.$$('#removeButtomC').setAttribute("hidden", "hidden");
-          this.$$('#buttomActive').removeAttribute("hidden");
-          this.$$('#active').removeAttribute("hidden");
-          this.$$('#buttomTrader').setAttribute("hidden", "hidden");
-          this.$$('#retrader').setAttribute("hidden", "hidden");
-          this.$$('#titleExporter').removeAttribute("hidden");
-          this.$$('#titleTrader').setAttribute("hidden", "hidden");
-          this.$$('#titleSeller').setAttribute("hidden", "hidden");
-          this.$$('#titleBg').removeAttribute("hidden");
-          this.pages = 0;
-          this.$$('#tabFile').removeAttribute("disabled");
-        }
-        else if(st == false){
-          // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
-          this.$$('#removeButtom').setAttribute("hidden", "hidden");
-          this.$$('#removeButtomC').setAttribute("hidden", "hidden");
-          this.$$('#buttomActive').setAttribute("hidden", "hidden");
-          this.$$('#active').setAttribute("hidden", "hidden");
-          this.$$('#buttomTrader').setAttribute("hidden", "hidden");
-          this.$$('#retrader').setAttribute("hidden", "hidden");
-          this.$$('#titleSeller').removeAttribute("hidden");
-          this.$$('#titleExporter').setAttribute("hidden", "hidden");
-          this.$$('#titleTrader').setAttribute("hidden", "hidden");
-          this.$$('#titleBg').removeAttribute("hidden");
-          this.pages = 0;
-          this.$$('#tabFile').setAttribute("disabled", "disabled");
-        }
-      },
+      // _checkStatus:function(ac,st,ta){
+      //   if (ac == true && st == true && ta == true) {
+      //     // this.$$('#buttomEdit').removeAttribute("hidden");
+      //     this.$$('#removeButtom').setAttribute("hidden", "hidden");
+      //     this.$$('#removeButtomC').setAttribute("hidden", "hidden");
+      //     this.$$('#buttomActive').setAttribute("hidden", "hidden");
+      //     this.$$('#active').setAttribute("hidden", "hidden");
+      //     this.$$('#buttomTrader').setAttribute("hidden", "hidden");
+      //     this.$$('#retrader').setAttribute("hidden", "hidden");
+      //     this.$$('#titleExporter').setAttribute("hidden", "hidden");
+      //     this.$$('#titleTrader').setAttribute("hidden", "hidden");
+      //     this.$$('#titleSeller').setAttribute("hidden", "hidden");
+      //     this.$$('#titleBg').setAttribute("hidden", "hidden");
+      //     this.pages = 0;
+      //     this.$$('#tabFile').removeAttribute("disabled");
+      //   }
+      //   else if (ac == true && st == true && ta == false) {
+      //     // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
+      //     this.$$('#removeButtom').setAttribute("hidden", "hidden");
+      //     this.$$('#removeButtomC').setAttribute("hidden", "hidden");
+      //     this.$$('#buttomActive').setAttribute("hidden", "hidden");
+      //     this.$$('#active').setAttribute("hidden", "hidden");
+      //     this.$$('#buttomTrader').removeAttribute("hidden");
+      //     this.$$('#retrader').removeAttribute("hidden");
+      //     this.$$('#titleExporter').setAttribute("hidden", "hidden");
+      //     this.$$('#titleTrader').removeAttribute("hidden");
+      //     this.$$('#titleSeller').setAttribute("hidden", "hidden");
+      //     this.$$('#titleBg').removeAttribute("hidden");
+      //     this.pages = 0;
+      //     this.$$('#tabFile').removeAttribute("disabled");
+      //   }
+      //   else if (ac == false && st == true && ta == false) {
+      //     // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
+      //     this.$$('#removeButtom').setAttribute("hidden", "hidden");
+      //     this.$$('#removeButtomC').setAttribute("hidden", "hidden");
+      //     this.$$('#buttomActive').setAttribute("hidden", "hidden");
+      //     this.$$('#active').setAttribute("hidden", "hidden");
+      //     this.$$('#buttomTrader').removeAttribute("hidden");
+      //     this.$$('#retrader').removeAttribute("hidden");
+      //     this.$$('#titleExporter').setAttribute("hidden", "hidden");
+      //     this.$$('#titleTrader').removeAttribute("hidden");
+      //     this.$$('#titleSeller').setAttribute("hidden", "hidden");
+      //     this.$$('#titleBg').removeAttribute("hidden");
+      //     this.pages = 0;
+      //     this.$$('#tabFile').removeAttribute("disabled");
+      //   }
+      //   else if (ac == false && st == true && ta == true) {
+      //     // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
+      //     this.$$('#removeButtom').setAttribute("hidden", "hidden");
+      //     this.$$('#removeButtomC').setAttribute("hidden", "hidden");
+      //     this.$$('#buttomActive').removeAttribute("hidden");
+      //     this.$$('#active').removeAttribute("hidden");
+      //     this.$$('#buttomTrader').setAttribute("hidden", "hidden");
+      //     this.$$('#retrader').setAttribute("hidden", "hidden");
+      //     this.$$('#titleExporter').removeAttribute("hidden");
+      //     this.$$('#titleTrader').setAttribute("hidden", "hidden");
+      //     this.$$('#titleSeller').setAttribute("hidden", "hidden");
+      //     this.$$('#titleBg').removeAttribute("hidden");
+      //     this.pages = 0;
+      //     this.$$('#tabFile').removeAttribute("disabled");
+      //   }
+      //   else if(st == false){
+      //     // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
+      //     this.$$('#removeButtom').setAttribute("hidden", "hidden");
+      //     this.$$('#removeButtomC').setAttribute("hidden", "hidden");
+      //     this.$$('#buttomActive').setAttribute("hidden", "hidden");
+      //     this.$$('#active').setAttribute("hidden", "hidden");
+      //     this.$$('#buttomTrader').setAttribute("hidden", "hidden");
+      //     this.$$('#retrader').setAttribute("hidden", "hidden");
+      //     this.$$('#titleSeller').removeAttribute("hidden");
+      //     this.$$('#titleExporter').setAttribute("hidden", "hidden");
+      //     this.$$('#titleTrader').setAttribute("hidden", "hidden");
+      //     this.$$('#titleBg').removeAttribute("hidden");
+      //     this.pages = 0;
+      //     this.$$('#tabFile').setAttribute("disabled", "disabled");
+      //   }
+      // },
       _dialogRemark: function(){
         this.$.dialog.toggle();
       },

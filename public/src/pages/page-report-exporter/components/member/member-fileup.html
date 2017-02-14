@@ -36,6 +36,11 @@
         >
       </nylon-upload>
     </template>
+
+    <div class="horizontal end-justified layout" style="margin-top:20px;">
+      <paper-button class="gl-bg-danger" on-tap="pageFileDel" raised>ไฟล์ที่ถูกลบ</paper-button>
+    </div>
+
     <div style="margin-bottom:20px;"></div>
   </template>
   <script>
@@ -48,6 +53,9 @@
       _dataInput:function(data) {
         this.sellerId = data.seller_id;
         // console.log(this.docType);
+      },
+      pageFileDel:function() {
+        this.fire('pageFileDelete')
       }
     });
   </script>

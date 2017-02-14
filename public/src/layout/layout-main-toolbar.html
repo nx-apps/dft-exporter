@@ -29,11 +29,15 @@
 				font-size: 16px;
 				padding-bottom: 5px;
 			}
+			paper-button{
+				font-size: 16px;
+			}
 		</style>
 		<app-toolbar>
 				<paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
 				<iron-image src="./../../images/manifest/icon-32.png"></iron-image>
 				<div main-title>ระบบการขึ้นทะเบียนผู้ส่งออกข้าว</div>
+				<paper-button on-tap="changeLanguage">{{localize('Meg')}}</paper-button>
 				<!--<div class="sectionContent" bottom-item>
 					<iron-icon icon="chevron-right"></iron-icon>
 					รายการจัดสรรปีโควตา
@@ -42,11 +46,22 @@
 
 	</template>
 	<script>
-        Polymer({
-            is: 'layout-main-toolbar',
-            toggleDrawer:function(){
-                this.fire('toggle-drawer');
+  	Polymer({
+    is: 'layout-main-toolbar',
+		behaviors:[nylonLocalizeBehavior],
+		attached:function(){
+			 this.nylonLocalizeImport('/i18n-page1.json');
+		},
+          toggleDrawer:function(){
+              this.fire('toggle-drawer');
+          },
+		changeLanguage:function(){
+            if(this.language=='th'){
+              this.nylonLocalizeChange('en');
+            }else{
+              this.nylonLocalizeChange('th');
             }
-        });
-    </script>
+          },
+    });
+  </script>
 </dom-module>
