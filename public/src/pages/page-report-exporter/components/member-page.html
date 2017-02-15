@@ -69,13 +69,14 @@
                   <gl-form-panel>
                     <paper-tabs selected="{{pages}}" align-bottom no-slide>
                       <paper-tab>{{localize('detail')}}</paper-tab>
-                      <paper-tab id="tabFile" class="title-paper">{{localize('doc_ev')}}</paper-tab>
+                      <paper-tab id="tabFile" class="title-paper" on-tap="refreshFile">{{localize('doc_ev')}}</paper-tab>
                     </paper-tabs>
                     <iron-pages selected="{{pages}}">
                       <member-show data="{{data}}"></member-show>
                       <member-fileup data="{{data}}" doc-type="[[docType]]"></member-fileup>
                        <!-- <member-edit data="{{data}}"></member-edit> -->
                        <member-fileDelete data="{{listFiles}}"></member-fileDelete>
+
                     </iron-pages>
                   </gl-form-panel>
               </div>
@@ -144,19 +145,9 @@
         // console.log(this.data.trader_id);
         window.open('./api/external/report_exporter/report11/'+this.data.trader_id,'_blank');
       },
-      // getFile:function(val){
-      //   var sellerId = this.data.seller_id;
-      //   if (sellerId != '' && sellerId != undefined) {
-      //     axios.get('/external/upload/list/'+sellerId)
-      //     .then( (response)=>{
-      //       // console.log(response);
-      //         this.listFiles = response.data;
-      //     })
-      //     .catch(function (error) {
-      //         console.log(error);
-      //     });
-      //   }
-      // },
+      refreshFile:function(){
+        this.$$('member-fileup').checkFunction();
+      },
       fileDelete: function(){
         this.pages = 2;
       },
