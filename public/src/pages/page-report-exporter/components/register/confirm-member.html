@@ -57,10 +57,10 @@
       <div name="listExporter">
         <div class="horizontal layout justified">
           <div>
-            <paper-checkbox class="marginCheckbox" checked={{selectDataAll}}>เลือกทั้งหมด</paper-checkbox>
+            <paper-checkbox class="marginCheckbox" checked={{selectDataAll}}>{{localize('ck_select_all')}}</paper-checkbox>
           </div>
           <div>
-            พิมพ์ใบอนุมัติเลข ข.<paper-icon-button icon="print" on-tap="_print"></paper-icon-button>
+            {{localize('print_book')}}<paper-icon-button icon="print" on-tap="_print" title="{{localize('print_book')}}"></paper-icon-button>
           </div>
         </div>
         <div class="searchBorder" style="overflow-x:auto;">
@@ -68,11 +68,11 @@
             <thead class="table-head">
               <tr>
                 <th></th>
-                <th><div class="text-table">เลข ข.</div></th>
-                <th><div class="text-table">ชื่อบริษัท</div></th>
-                <th><div class="text-table">ประเภทใบอนุญาต</div></th>
-                <th><div class="text-table">วันที่ลงทะเบียน</div></th>
-                <th><div class="text-table">สถานะ</div></th>
+                <th><div class="text-table">{{localize('no_exporter')}}</div></th>
+                <th><div class="text-table">{{localize('name_company')}}</div></th>
+                <th><div class="text-table">{{localize('type_license')}}</div></th>
+                <th><div class="text-table">{{localize('date_register')}}</div></th>
+                <th><div class="text-table">{{localize('status')}}</div></th>
               </tr>
             </thead>
 
@@ -93,16 +93,16 @@
           </table>
         </div>
         <div class="horizontal layout end-justified">
-          <paper-button class="gl-btn-danger" on-tap="_close" raised>ยกเลิก</paper-button>
-          <paper-button class="gl-btn-success" style="margin-right:15px" on-tap="_approveAll" raised>อนุมัติ</paper-button>
+          <paper-button class="gl-btn-danger" on-tap="_close" raised>{{localize('bt_cancel')}}</paper-button>
+          <paper-button class="gl-btn-success" style="margin-right:15px" on-tap="_approveAll" raised>{{localize('bt_approve')}}</paper-button>
         </div>
       </div>
 
       <div name="detailExporter">
         <!-- <detail-member data={{dataSelect}}></detail-member> -->
         <paper-tabs selected="{{pages}}" align-bottom no-slide>
-            <paper-tab>รายละเอียด</paper-tab>
-            <paper-tab id="tabFile">เอกสารหลักฐาน</paper-tab>
+            <paper-tab>{{localize('detail')}}</paper-tab>
+            <paper-tab id="tabFile">{{localize('doc_ev')}}</paper-tab>
         </paper-tabs>
         <gl-form-panel>
           <iron-pages selected="{{pages}}">
@@ -112,12 +112,12 @@
         </gl-form-panel>
         <div class="horizontal layout justified">
           <div>
-            <paper-button id="btreject" class="gl-btn-warning" style="margin-right:15px" on-tap="_dialogRemark" raised>เอกสารไม่ครบ</paper-button>
+            <paper-button id="btreject" class="gl-btn-warning" style="margin-right:15px" on-tap="_dialogRemark" raised>{{localize('bt_incom_doc')}}</paper-button>
           </div>
           <div>
-            <paper-button class="gl-btn-danger" on-tap="_backPage" raised>ยกเลิก</paper-button>
-            <paper-button id="btsave" class="gl-btn-success" style="margin-right:15px" on-tap="_save" raised>บันทึก</paper-button>
-            <paper-button id="btapprove" class="gl-btn-success" style="margin-right:15px" on-tap="approve" raised>อนุมัติ</paper-button>
+            <paper-button class="gl-btn-danger" on-tap="_backPage" raised>{{localize('bt_cancel')}}</paper-button>
+            <paper-button id="btsave" class="gl-btn-success" style="margin-right:15px" on-tap="_save" raised>{{localize('bt_save')}}</paper-button>
+            <paper-button id="btapprove" class="gl-btn-success" style="margin-right:15px" on-tap="approve" raised>{{localize('bt_approve')}}</paper-button>
           </div>
         </div>
       </div>
@@ -126,12 +126,12 @@
     <paper-dialog id="dialog" style="width:60%;">
       <gl-grid-row width="{{getWidth}}">
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,12]]">
-          <gl-form-textarea label="หมายเหตุ : " always-float-label value="{{seller_remark}}"></gl-form-textarea>
+          <gl-form-textarea label="{{localize('note')}} : " always-float-label value="{{seller_remark}}"></gl-form-textarea>
         </gl-grid-col>
       </gl-grid-row>
       <div>
-        <paper-button class="gl-btn-danger button-size" raised on-tap="_dialogcancle">ยกเลิก</paper-button>
-        <paper-button class="gl-btn-primary button-size" raised on-tap="_reject">บันทึก</paper-button>
+        <paper-button class="gl-btn-danger button-size" raised on-tap="_dialogcancle">{{localize('bt_cancel')}}</paper-button>
+        <paper-button class="gl-btn-primary button-size" raised on-tap="_reject">{{localize('bt_save')}}</paper-button>
       </div>
     </paper-dialog>
 
@@ -162,7 +162,10 @@
           observer: '_changeselectDataAll'
         }
       },
-      behaviors: [dataBehavior],
+      behaviors: [dataBehavior, nylonLocalizeBehavior, nylonBehavior],
+      created:function(){
+          this.nylonLocalizeImport('/i18n-page-report-exporter.json');
+      },
       _selectData:function(e){
         this.pageSelected = "detailExporter";
         this.dataSelect = e.currentTarget.data;

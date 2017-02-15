@@ -32,26 +32,26 @@
   <template>
     <div id="formData">
       <gl-form-panel-body set-border="0px">
-        <div class="title">รายละเอียดทะเบียนผู้ส่งออกข้าว</div>
+        <div class="title">{{localize('detail_exporter')}}</div>
 
         <gl-grid-row width="{{getWidth}}">
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input label="เลขประจำตัวผู้เสียภาษี :" value="{{data.seller_tax_id}}"></gl-form-label-input>
+            <gl-form-label-input label="{{localize('tax_no')}} :" value="{{data.seller_tax_id}}"></gl-form-label-input>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-textarea label="ชื่อบริษัท :" value="{{data.seller_name_th}}"></gl-form-label-textarea>
+            <gl-form-label-textarea label="{{localize('name_company')}} :" value="{{data.seller_name_th}}"></gl-form-label-textarea>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-textarea  label="ชื่อบริษัท (อังกฤษ) :" value="{{data.seller_name_en}}"></gl-form-label-textarea>
+            <gl-form-label-textarea  label="{{localize('name_company')}} ({{localize('eng')}}) :" value="{{data.seller_name_en}}"></gl-form-label-textarea>
           </gl-grid-col>
         </gl-grid-row>
 
         <gl-grid-row>
           <gl-grid-col width="[[getWidth]]" grid="[[500,12],[700,8]]">
-            <gl-form-label-textarea label="ที่อยู่ :" value="{{data.seller_address_th}}"></gl-form-label-textarea>
+            <gl-form-label-textarea label="{{localize('address')}} :" value="{{data.seller_address_th}}"></gl-form-label-textarea>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[500,12],[700,8]]">
-            <gl-form-label-textarea label="ที่อยู่ (อังกฤษ) :" value="{{data.seller_address_en}}"></gl-form-label-textarea>
+            <gl-form-label-textarea label="{{localize('address')}} ({{localize('eng')}}) :" value="{{data.seller_address_en}}"></gl-form-label-textarea>
           </gl-grid-col>
         </gl-grid-row>
 
@@ -60,42 +60,42 @@
             <gl-form-label-input  label="รหัสไปรษณีย์ :" value=""></gl-form-label-input>
           </gl-grid-col> -->
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-textarea  label="หมายเลขโทรศัพท์ :" value="{{data.seller_phone}}"></gl-form-label-textarea>
+            <gl-form-label-textarea  label="{{localize('tel')}} :" value="{{data.seller_phone}}"></gl-form-label-textarea>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-textarea  label="FAX :" value="{{data.seller_fax}}"></gl-form-label-textarea>
+            <gl-form-label-textarea  label="{{localize('fax')}} :" value="{{data.seller_fax}}"></gl-form-label-textarea>
           </gl-grid-col>
 
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-textarea  label="E-Mail Address :" value="{{data.seller_email}}"></gl-form-label-textarea>
+            <gl-form-label-textarea  label="{{localize('e-mail')}} :" value="{{data.seller_email}}"></gl-form-label-textarea>
           </gl-grid-col>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+          <!-- <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-label-input  label="เลขที่หนังสืออนุญาต ปกข. :" value="{{data.trader_no}}"></gl-form-label-input>
-          </gl-grid-col>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+          </gl-grid-col> -->
+          <!-- <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-label-input  label="สถานะเป็นสมาชิกผู้ส่งออกข้าว :" value="{{data.exporter_status_name}}"></gl-form-label-input>
-          </gl-grid-col>
+          </gl-grid-col> -->
 
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input  label="ประเภทอนุญาต :" value="{{data.type_lic_name}}"></gl-form-label-input>
+            <gl-form-label-input  label="{{localize('type_license')}} :" value="{{data.type_lic_name}}"></gl-form-label-input>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input label="เลขประจำตัวผู้ส่งออกข้าว :" value="{{data.exporter_no_name}}"></gl-form-label-input>
+            <gl-form-label-input label="{{localize('no_exporter')}} :" value="{{data.exporter_no_name}}"></gl-form-label-input>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <vaadin-date-picker label="วันที่อนุมัติ :" value="{{data.exporter_date_approve}}" disabled></vaadin-date-picker>
+            <vaadin-date-picker label="{{localize('date_approve')}} :" value="{{data.exporter_date_approve}}" disabled></vaadin-date-picker>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,1]]">
-            <paper-radio-button checked>มีสิทธิ</paper-radio-button>
+            <paper-radio-button checked>{{localize('rt_eligible')}}</paper-radio-button>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]" style="margin-left:20px">
-            <paper-radio-button>ไม่มีสิทธิ</paper-radio-button>
+            <paper-radio-button>{{localize('rt_ineligible')}}</paper-radio-button>
           </gl-grid-col>
         </gl-grid-row>
         <gl-grid-row>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <template is="dom-repeat" items="{{data.seller_agent}}">
-              <gl-form-label-input  label="ชื่อคณะกรรมการ :" value="{{item.agent_name}}"></gl-form-label-input>
+              <gl-form-label-input  label="{{localize('name_committee')}} :" value="{{item.agent_name}}"></gl-form-label-input>
             </template>
           </gl-grid-col>
         </gl-grid-row>
@@ -114,6 +114,10 @@
           type:Object,
           value:{}
         }
+      },
+      behaviors: [nylonLocalizeBehavior, nylonBehavior],
+      created:function(){
+          this.nylonLocalizeImport('/i18n-page-report-exporter.json');
       }
     });
   </script>

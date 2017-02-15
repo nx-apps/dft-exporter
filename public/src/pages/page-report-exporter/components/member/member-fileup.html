@@ -24,7 +24,7 @@
     }
   </style>
   <template>
-    <div class="title-head">แนบเอกสารหลักฐาน</div>
+    <div class="title-head">{{localize('doc_attach')}}</div>
     <template is="dom-repeat" items="[[docType]]">
       <div class="title">[[item.doc_name_th]]</div>
       <nylon-upload
@@ -38,7 +38,7 @@
     </template>
 
     <div class="horizontal end-justified layout" style="margin-top:20px;">
-      <paper-button class="gl-bg-danger" on-tap="pageFileDel" raised>ไฟล์ที่ถูกลบ</paper-button>
+      <paper-button class="gl-bg-danger" on-tap="pageFileDel" raised>{{localize('bt_del_file')}}</paper-button>
     </div>
 
     <div style="margin-bottom:20px;"></div>
@@ -46,7 +46,10 @@
   <script>
     Polymer({
       is: "member-fileup",
-      behaviors: [dataBehavior],
+      behaviors: [dataBehavior, nylonLocalizeBehavior, nylonBehavior],
+      created:function(){
+          this.nylonLocalizeImport('/i18n-page-report-exporter.json');
+      },
       observers: [
         '_dataInput(data)'
       ],

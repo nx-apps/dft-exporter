@@ -58,25 +58,20 @@
       },
       _confirm:function(result, detail){
         if(result == true){
-          console.log(detail.datas);
-          // this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+          // console.log(detail.datas);
+          this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
           axios.put('/external/upload/update/'+detail.datas.file_id)
           .then( (response)=>{
-            console.log(response);
-            // this.fire('refresh-exporter');
-            // this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
-            //   console.log('success');
-            // }});
+            // console.log(response);
+            this.fire('refresh-exporter');
+            this.fire('getFiles');
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+              console.log('success');
+            }});
           })
           .catch(function (error) {
               console.log(error);
           });
-          // this.update('./external/upload/update/', detail.datas, () => {
-          //   this.fire('refresh-exporter');
-          //   this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
-          //     console.log('success');
-          //   }});
-          //  });
         }
       }
     });

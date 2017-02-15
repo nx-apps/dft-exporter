@@ -158,7 +158,7 @@
             <gl-grid-row>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,5]]"></gl-grid-col>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
-                <paper-button class="gl-btn-info buttonSearch" on-tap="_search" title="{{localize('search')}}" raised>{{localize('search')}}</paper-button>
+                <paper-button class="gl-btn-info buttonSearch" on-tap="_search" title="{{localize('search')}}" raised>{{localize('bt_search')}}</paper-button>
               </gl-grid-col>
             </gl-grid-row>
           </div>
@@ -175,7 +175,7 @@
                     <th><div class="text-table">{{localize('status_export')}}</div></th>
                     <!-- <th><div class="text-table">{{localize('status_dit')}}</div></th> -->
                     <th><div class="text-table">{{localize('status_exporter')}}</div></th>
-                    <th><div class="text-table">{{localize('date')}}{{localize('register')}}</div></th>
+                    <th><div class="text-table">{{localize('date_register')}}</div></th>
                   </tr>
                 </thead>
 
@@ -213,7 +213,7 @@
             <iron-pages selected="{{layerContent}}" attr-for-selected="name">
               <div name="addRedRegExporter"><register-pageRegister sellers="[[sellers]]" trader-id="[[traderId]]" doc-type="[[docType]]"></register-pageRegister></div>
               <div name="detailRegExporter">
-                <member-page data={{dataSelect}} doc-type="[[docType]]"></member-page>
+                <member-page data="{{dataSelect}}" doc-type="[[docType]]" list-files="{{listFiles}}"></member-page>
               </div>
             </iron-pages>
           </div>
@@ -245,14 +245,16 @@
             listeners:{
               'refresh-exporter':'getExporters',
               'close-toggle':'_closeToggle',
-              'refresh-seller':'getSeller'
+              'refresh-seller':'getSeller',
+              'getFiles' : 'getFile'
             },
             created:function(){
-                this.nylonLocalizeImport('/i18n-page1.json');
+                this.nylonLocalizeImport('/i18n-page-report-exporter.json');
             },
             nylonPageActive:function() {
               // console.log('55555');
               this.getExporters();
+              this.getFile();
             },
             _exporterIdChanged:function(val){
               // console.log(val);
@@ -361,10 +363,26 @@
               this.$$('panel-right').open();
               // this.layerContent = e.currentTarget.id;
               this.dataSelect = e.currentTarget.data;
+              this.getFile();
             },
             _closeToggle:function() {
               this.$$('panel-right').close();
-            }
+            },
+            getFile:function(){
+              if (typeof this.dataSelect != 'undefined' && this.dataSelect != '') {
+                var sellerId = this.dataSelect.seller_id;
+                if (sellerId != '' && sellerId != undefined) {
+                  axios.get('/external/upload/list/'+sellerId)
+                  .then( (response)=>{
+                    // console.log(response);
+                      this.listFiles = response.data;
+                  })
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+                }
+              }
+            },
         });
     </script>
 </dom-module>

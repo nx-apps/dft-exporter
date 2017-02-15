@@ -24,7 +24,7 @@
     }
   </style>
   <template>
-    <div class="title-head">แนบเอกสารหลักฐาน</div>
+    <div class="title-head">{{localize('doc_attach')}}</div>
     <template is="dom-repeat" items="[[docType]]">
       <div class="title">[[item.doc_name_th]]</div>
       <nylon-upload
@@ -41,7 +41,10 @@
   <script>
     Polymer({
       is: "register-fileup",
-      behaviors: [dataBehavior],
+      behaviors: [dataBehavior, nylonLocalizeBehavior, nylonBehavior],
+      created:function(){
+          this.nylonLocalizeImport('/i18n-page-report-exporter.json');
+      },
       observers: [
         '_dataInput(data)'
       ],
