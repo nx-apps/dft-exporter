@@ -97,7 +97,7 @@
             <gl-grid-row width="{{getWidth}}">
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]"></gl-grid-col>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-                <gl-combo-box id="exporter_id" label="{{localize('name_exporter')}}" item-label-path="seller_name_th"
+                <gl-combo-box id="exporter_id" label="{{localize('name_exporter')}}" item-label-path="seller_name"
                     item-value-path="exporter_id" value="{{dataSelected.exporter_id}}" name="exporter_id"></gl-combo-box>
               </gl-grid-col>
             </gl-grid-row>
@@ -284,9 +284,10 @@
               this.read('./external/exporter?exporter_status=true',(data)=>{
                 this.exporters = data;
                 var type = data.map((type)=>{
-                  return type.seller_name_th+" ("+type.type_lic_name+")";
+                  type.seller_name = type.seller_name_th+" ("+type.type_lic_name+")";
+                  // return type.seller_name_th+" ("+type.type_lic_name+")";
                 });
-                this.exporter_id.items = type;
+                this.exporter_id.items = data;
               });
             },
             // getIdExporters:function(){
