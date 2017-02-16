@@ -26,7 +26,7 @@ exports.db = function (req, res) {
     var valid = req._validator.validate('user', u);
     if (!valid) console.log(req._validator.errorsText());
 
-    req._r.table('session').coerceTo('array').run().then(function (result) {
+    req.r.table('session').coerceTo('array').run().then(function (result) {
         console.log(result);
         res.json(result);
     });
@@ -84,7 +84,7 @@ exports.report = function (req, res) {
     // var rp=new iReport();
     // rp.export(reportname,"pdf",JSON.stringify(data),JSON.stringify(parameter),
     //   function(err,buff){
-    //   res._responsePDF(buff);
+    //   res.responsePDF(buff);
     // var buffer= Buffer.from(buff, "hex");
     // var bufferStream = new stream.PassThrough();
     // bufferStream.end( buffer );
@@ -101,7 +101,7 @@ exports.report = function (req, res) {
 }
 
 exports.g2g = function (req, res, next) {
-    var r = req._r;
+    var r = req.r;
 
     var parameters = {
         department: "2559"

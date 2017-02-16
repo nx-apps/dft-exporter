@@ -1,5 +1,5 @@
 exports.document_type = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     r.db('external').table('document_type')
         .merge(function (row) {
             return { doc_type_id: row('id') }
@@ -14,7 +14,7 @@ exports.document_type = function (req, res) {
         })
 }
 exports.document_typeId = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     r.db('external').table('document_type')
         .get(req.params.doc_type_id)
         .merge(function (row) {

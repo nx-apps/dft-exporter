@@ -5,11 +5,11 @@ var d = dd.getDate();
 var tz = "T00:00:00.000Z";
 var d1y = (y - 1) + '-' + (m < 9 ? '0' : '') + (m + 1) + '-' + (d < 10 ? '0' : '') + d + tz;
 exports.report1 = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     //res.json(__dirname.replace('controller','report'));
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Project_Rice\\report-exporter\\app\\reports\\exporter\\",
+        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\",
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
@@ -136,11 +136,11 @@ exports.report1 = function (req, res) {
         })
 }
 exports.report2 = function (req, res, next) {
-    var r = req._r;
+    var r = req.r;
     //res.json(__dirname.replace('controller','report'));
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Project_Rice\\report-exporter\\app\\reports\\exporter\\",
+        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\",
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
@@ -215,11 +215,11 @@ exports.report2 = function (req, res, next) {
         });
 }
 exports.report3 = function (req, res, next) {
-    var r = req._r;
+    var r = req.r;
     //res.json(__dirname.replace('controller','report'));
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Project_Rice\\report-exporter\\app\\reports\\exporter\\",
+        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\",
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
@@ -340,7 +340,7 @@ exports.report3 = function (req, res, next) {
         });
 }
 exports.report4 = function (req, res) {
-    var r = req._r;
+    var r = req.r;
 
     r.db('external').table('seller')
         .outerJoin(r.db('external').table('exporter')
@@ -440,14 +440,14 @@ exports.report4 = function (req, res) {
         })
 }
 exports.report5 = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var date_start, date_end;
     var _nextDay = new Date();
     _nextDay.setDate(_nextDay.getDate() + 1);
     var nextDays = _nextDay.toISOString().slice(0, 10);
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Project_Rice\\report-exporter\\app\\reports\\exporter\\",
+        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\",
         date_start: new Date().toISOString().slice(0, 10),
         date_end: nextDays
     };
@@ -538,11 +538,11 @@ exports.report5 = function (req, res) {
         })
 }
 exports.report5_1 = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var date_start, date_end;
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Project_Rice\\report-exporter\\app\\reports\\exporter\\",
+        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\",
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
@@ -638,11 +638,11 @@ exports.report5_1 = function (req, res) {
         })
 }
 exports.report5_2 = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var date_start, date_end;
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Project_Rice\\report-exporter\\app\\reports\\exporter\\",
+        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\",
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
@@ -737,11 +737,11 @@ exports.report5_2 = function (req, res) {
         })
 }
 exports.exporter_detail = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var params = req.params;
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Project_Rice\\report-exporter\\app\\reports\\exporter\\"
+        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\"
         // __dirname.replace('controller', 'report') + '\\' + req.baseUrl.replace("/api/", "") + '\\'
     };
     r.db('external').table("seller").outerJoin(

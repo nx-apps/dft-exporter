@@ -1,5 +1,5 @@
 exports.type_license = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     r.db('external').table("type_license")
         .merge(function (row) {
             return { type_lic_id: row('id') }
@@ -14,7 +14,7 @@ exports.type_license = function (req, res) {
         })
 }
 exports.type_licenseId = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     r.db('external').table("type_license")
         .get(req.params.type_lic_id.toUpperCase())
         .merge({
@@ -30,7 +30,7 @@ exports.type_licenseId = function (req, res) {
         })
 }
 exports.insert = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var valid = req._validator.validate('exporter.type_license', req.body);
     if (valid) {
         if (req.body.id == null) {

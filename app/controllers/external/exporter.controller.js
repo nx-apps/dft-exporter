@@ -6,7 +6,7 @@ var tz = "T00:00:00.000Z";
 var d1y = (y - 1) + '-' + (m < 9 ? '0' : '') + (m + 1) + '-' + (d < 10 ? '0' : '') + d + tz;
 
 exports.exporter = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var q = {}, d = {};
     for (key in req.query) {
 
@@ -148,7 +148,7 @@ exports.exporter = function (req, res) {
         })
 }
 exports.exporterId = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     r.db('external').table("exporter")
         .get(req.params.exporter_id)
         .merge({
@@ -202,7 +202,7 @@ exports.exporterId = function (req, res) {
     // });
 }
 exports.insert = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var valid = req._validator.validate('exporter.exporter', req.body);
     var result = { result: false, message: null, id: null };
     if (valid) {
@@ -246,7 +246,7 @@ exports.insert = function (req, res) {
     }
 }
 exports.update = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var valid = req._validator.validate('exporter.exporter', req.body);
     var result = { result: false, message: null, id: null };
     if (valid) {
@@ -294,7 +294,7 @@ exports.update = function (req, res) {
     }
 }
 exports.delete = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var result = { result: false, message: null, id: null };
     if (req.params.id != '' || req.params.id != null) {
         // result.id = req.params.id;

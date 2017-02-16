@@ -1,5 +1,5 @@
 exports.confirm = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     r.db('external').table('confirm_exporter')
         .merge(function (m) {
             return {
@@ -39,7 +39,7 @@ exports.confirm = function (req, res) {
         })
 }
 exports.insert = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var valid = req._validator.validate('exporter.confirm_exporter', req.body);
     var result = { result: false, message: null, id: null };
     if (valid) {
@@ -73,7 +73,7 @@ exports.insert = function (req, res) {
     }
 }
 exports.update = function (req, res){
-    var r = req._r;
+    var r = req.r;
     var valid = req._validator.validate('exporter.confirm_exporter', req.body);
     var result = { result: false, message: null, id: null };
     if (valid) {

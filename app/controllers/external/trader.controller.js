@@ -1,5 +1,5 @@
 exports.trader = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var q = {};
     for (key in req.query) {
 
@@ -39,7 +39,7 @@ exports.trader = function (req, res) {
         })
 }
 exports.traderId = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     r.db('external_f3').table("trader")
         .get(req.params.trader_id)
         .merge({
@@ -64,7 +64,7 @@ exports.traderId = function (req, res) {
         })
 }
 exports.seller = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     r.db('external_f3').table("trader")
         .eqJoin("seller_id", r.db('external_f3').table("seller")).without({ right: ["id", "date_created", "date_updated"] }).zip()
         //.eqJoin("exporter_id", r.db('external_f3').table("exporter")).not()
@@ -87,7 +87,7 @@ exports.seller = function (req, res) {
         })
 }
 exports.insert = function (req, res, next) {
-    var r = req._r;
+    var r = req.r;
     var valid = req._validator.validate('exporter.trader', req.body);
     var result = { result: false, message: null, id: null };
     if (valid) {
@@ -124,7 +124,7 @@ exports.insert = function (req, res, next) {
     }
 }
 exports.update = function (req, res, next) {
-    var r = req._r;
+    var r = req.r;
     var valid = req._validator.validate('exporter.trader', req.body);
     var result = { result: false, message: null, id: null };
     if (valid) {
@@ -172,7 +172,7 @@ exports.update = function (req, res, next) {
     }
 }
 exports.delete = function (req, res, next) {
-    var r = req._r;
+    var r = req.r;
     var result = { result: false, message: null, id: null };
     if (req.params.id != '' || req.params.id != null) {
         // result.id = req.params.id;

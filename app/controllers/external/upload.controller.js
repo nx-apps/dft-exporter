@@ -4,7 +4,7 @@ var multiparty = require('multiparty');
 var stream = require('stream');
 
 exports.listFilePath = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var params = req.params;
     r.db('external').table('document_file')
         .eqJoin('file_id', r.db('files').table('files')).without({ right: ["id", "contents"] }).zip()
@@ -35,7 +35,7 @@ exports.listFilePath = function (req, res) {
         })
 }
 exports.downloadFile = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var params = req.params;
     // console.log(params)
 
@@ -58,7 +58,7 @@ exports.downloadFile = function (req, res) {
 
 }
 exports.deleteFile = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var params = req.params;
     r.db('external').table('document_file').getAll(params.id, { index: 'file_id' }).update({ file_status: false, date_update: new Date() })
 
@@ -76,7 +76,7 @@ exports.deleteFile = function (req, res) {
 
 }
 exports.uploadFileExporter = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var params = req.params;
 
     var form = new multiparty.Form();
@@ -118,7 +118,7 @@ exports.uploadFileExporter = function (req, res) {
 
 }
 exports.listFileDelete = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var params = req.params;
     r.db('external').table('document_file')
         .eqJoin('file_id', r.db('files').table('files')).without({ right: ["id", "contents"] }).zip()
@@ -150,7 +150,7 @@ exports.listFileDelete = function (req, res) {
         })
 }
 exports.recoveryFile = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     var params = req.params;
     console.log(params.file_id+'mmm');
     r.db('external').table('document_file').getAll(params.file_id, { index: 'file_id' }).update({ file_status: true, date_update: new Date() })
@@ -162,7 +162,7 @@ exports.recoveryFile = function (req, res) {
 }
 // exports.uploadFile = function (req, res) {
 
-//     var r = req._r;
+//     var r = req.r;
 //     var params = req.params;
 
 //     var form = new multiparty.Form();
@@ -193,7 +193,7 @@ exports.recoveryFile = function (req, res) {
 // }
 // exports.listFile = function (req, res) {
 
-//     var r = req._r;
+//     var r = req.r;
 //     r.db('files').table('files').without('contents')
 //         .orderBy(r.desc('timestamp'))
 //         .map(function (row) {

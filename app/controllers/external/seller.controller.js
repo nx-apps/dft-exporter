@@ -1,5 +1,5 @@
 exports.seller = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     r.db('external').table("seller")
         .merge(function (row) {
             return {
@@ -18,7 +18,7 @@ exports.seller = function (req, res) {
         })
 }
 exports.sellerId = function (req, res, next) {
-    var r = req._r;
+    var r = req.r;
     r.db('external').table("seller")
         .get(req.params.seller_id)
         .merge(
@@ -35,7 +35,7 @@ exports.sellerId = function (req, res, next) {
         })
 }
 exports.insert = function (req, res, next) {
-    var r = req._r;
+    var r = req.r;
     //console.log(req.body);
     var valid = req._validator.validate('exporter.seller', req.body);
     var result = { result: false, message: null, id: null };
@@ -72,7 +72,7 @@ exports.insert = function (req, res, next) {
     }
 }
 exports.update = function (req, res, next) {
-    var r = req._r;
+    var r = req.r;
     var result = { result: false, message: null, id: null };
     if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
         result.id = req.body.id;
@@ -114,7 +114,7 @@ exports.update = function (req, res, next) {
     }
 }
 exports.delete = function (req, res, next) {
-    var r = req._r;
+    var r = req.r;
     var result = { result: false, message: null, id: null };
     if (req.params.id != '' || req.params.id != null) {
         // result.id = req.params.id;

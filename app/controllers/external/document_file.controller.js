@@ -1,5 +1,5 @@
 exports.document_file = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     r.db('external').table('document_file')
         .innerJoin(r.db('external').table('document_type'),
         function (file, type) {
@@ -21,7 +21,7 @@ exports.document_file = function (req, res) {
         })
 }
 exports.document_fileId = function (req, res) {
-    var r = req._r;
+    var r = req.r;
     r.db('external').table('document_file')
         .get(req.params.id)
         .merge({
