@@ -203,7 +203,7 @@ exports.exporterId = function (req, res) {
 }
 exports.insert = function (req, res) {
     var r = req.r;
-    var valid = req._validator.validate('exporter.exporter', req.body);
+    var valid = req.ajv.validate('exporter.exporter', req.body);
     var result = { result: false, message: null, id: null };
     if (valid) {
         if (req.body.id == null) {
@@ -241,13 +241,13 @@ exports.insert = function (req, res) {
             res.json(result);
         }
     } else {
-        result.message = req._validator.errorsText()
+        result.message = req.ajv.errorsText()
         res.json(result);
     }
 }
 exports.update = function (req, res) {
     var r = req.r;
-    var valid = req._validator.validate('exporter.exporter', req.body);
+    var valid = req.ajv.validate('exporter.exporter', req.body);
     var result = { result: false, message: null, id: null };
     if (valid) {
         if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
@@ -289,7 +289,7 @@ exports.update = function (req, res) {
             res.json(result);
         }
     } else {
-        result.message = req._validator.errorsText()
+        result.message = req.ajv.errorsText()
         res.json(result);
     }
 }

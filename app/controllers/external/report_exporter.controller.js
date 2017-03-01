@@ -129,7 +129,7 @@ exports.report1 = function (req, res) {
         .run()
         .then(function (result) {
             // res.json(result);
-            res._ireport("exporter/report1.jasper", req.query.export || "pdf", result, parameters);
+            res.ireport("exporter/report1.jasper", req.query.export || "pdf", result, parameters);
         })
         .error(function (err) {
             res.json(err)
@@ -211,7 +211,7 @@ exports.report2 = function (req, res, next) {
         .run()
         .then(function (result) {
             // res.json(result);
-            res._ireport("exporter/report2.jasper", "pdf", result, parameters);
+            res.ireport("exporter/report2.jasper", "pdf", result, parameters);
         });
 }
 exports.report3 = function (req, res, next) {
@@ -336,7 +336,7 @@ exports.report3 = function (req, res, next) {
         .run()
         .then(function (result) {
             // res.json(result);
-            res._ireport("exporter/report3.jasper", "pdf", result, parameters);
+            res.ireport("exporter/report3.jasper", "pdf", result, parameters);
         });
 }
 exports.report4 = function (req, res) {
@@ -433,7 +433,7 @@ exports.report4 = function (req, res) {
         .then(function (result) {
             // res.json(result);
             parameters = {}
-            res._ireport("exporter/report4.jasper", req.query.export || "pdf", result, parameters);
+            res.ireport("exporter/report4.jasper", req.query.export || "pdf", result, parameters);
         })
         .error(function (err) {
             res.json(err)
@@ -531,7 +531,7 @@ exports.report5 = function (req, res) {
         .then(function (result) {
             //   res.json(result);
             //  parameters = {}
-            res._ireport("exporter/report5.jasper", req.query.export || "pdf", result, parameters);
+            res.ireport("exporter/report5.jasper", req.query.export || "pdf", result, parameters);
         })
         .error(function (err) {
             res.json(err)
@@ -631,7 +631,7 @@ exports.report5_1 = function (req, res) {
         .then(function (result) {
             //   res.json(result);
             //  parameters = {}
-            res._ireport("exporter/report5_1.jasper", req.query.export || "pdf", result, parameters);
+            res.ireport("exporter/report5_1.jasper", req.query.export || "pdf", result, parameters);
         })
         .error(function (err) {
             res.json(err)
@@ -730,7 +730,7 @@ exports.report5_2 = function (req, res) {
         .then(function (result) {
             //   res.json(result);
             //  parameters = {}
-            res._ireport("exporter/report5_2.jasper", req.query.export || "pdf", result, parameters);
+            res.ireport("exporter/report5_2.jasper", req.query.export || "pdf", result, parameters);
         })
         .error(function (err) {
             res.json(err)
@@ -854,11 +854,11 @@ exports.exporter_detail = function (req, res) {
         .eqJoin("type_lic_id", r.db('external').table("type_license")).without({ right: ["id", "date_created", "date_updated", "creater", "updater"] }).zip()
         // .eqJoin("country_id", r.db('common').table("country")).without({ right: ["id", "date_created", "date_updated", "creater", "updater"] }).zip()
         .filter({ seller_id: params.seller_id })
-        .orderBy('exporter_no')
+        .orderBy('exporter_no')(0)
         .run()
         .then(function (result) {
             // res.json(result);
-            res._ireport("exporter/exporter_detail.jasper", req.query.export || "pdf", result, parameters);
+            res.ireport("exporter/exporter_detail.jasper", "pdf", result, parameters);
         })
         .error(function (err) {
             res.json(err)

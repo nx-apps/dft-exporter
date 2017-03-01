@@ -228,14 +228,6 @@
 				<textFieldExpression><![CDATA[$F{exporter_no_name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="21" y="60" width="174" height="20" uuid="c3351855-d8ba-4238-8d3c-04d042935e49"/>
-				<box leftPadding="10"/>
-				<textElement verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{trader_no}]]></textFieldExpression>
-			</textField>
-			<textField>
 				<reportElement x="195" y="60" width="174" height="20" uuid="74ab9698-b2c5-4377-a096-3c5629117b4a"/>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">

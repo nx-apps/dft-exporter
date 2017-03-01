@@ -102,6 +102,7 @@
               </gl-grid-col>
             </gl-grid-row>
             <gl-grid-row>
+              <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,1]]"></gl-grid-col>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]"></gl-grid-col>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
                 <gl-form-dropdown-menu label="{{localize('type_license')}}" placeholder="{{localize('all')}}">
@@ -122,7 +123,7 @@
                   </paper-menu>
                 </gl-form-dropdown-menu>
               </gl-grid-col>
-              <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
+              <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
                 <gl-form-dropdown-menu label="{{localize('status_dit')}}" placeholder="{{localize('all')}}">
                   <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.trader_active}}" name="trader_active">
                     <paper-item>{{localize('all')}}</paper-item>
@@ -130,7 +131,7 @@
                     <paper-item value="false">{{localize('expire')}}</paper-item>
                   </paper-menu>
                 </gl-form-dropdown-menu>
-              </gl-grid-col>
+              </gl-grid-col>-->
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
                 <gl-form-dropdown-menu label="{{localize('status_exporter')}}" placeholder="{{localize('all')}}">
                   <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.export_status}}" name="exporter_active">
@@ -333,7 +334,7 @@
               else if (this.dataSelected.date_end != undefined && this.dataSelected.date_end != '' && (this.dataSelected.date_start == undefined || this.dataSelected.date_start == '')) {
                 this.fire('toast',{status:'connectError',text:'กรุณาใส่วันที่เริ่มต้นค้นหา'})
               }
-              this.read('./external/exporter?exporter_status=true'+str,(data)=>{
+              this.read('./external/exporter?'+str,(data)=>{
                 data.map((empty)=>{
                   if (empty.exporter_no_name == undefined || empty.export_status_name == null || empty.exporter_date_approve == null) {
                     empty.exporter_no_name = '-';

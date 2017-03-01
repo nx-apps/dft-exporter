@@ -31,7 +31,7 @@ exports.type_licenseId = function (req, res) {
 }
 exports.insert = function (req, res) {
     var r = req.r;
-    var valid = req._validator.validate('exporter.type_license', req.body);
+    var valid = req.ajv.validate('exporter.type_license', req.body);
     if (valid) {
         if (req.body.id == null) {
             req.body = Object.assign(req.body, {
@@ -60,7 +60,7 @@ exports.insert = function (req, res) {
             res.json(result);
         }
     } else {
-        result.message = req._validator.errorsText()
+        result.message = req.ajv.errorsText()
         res.json(result);
     }
 }

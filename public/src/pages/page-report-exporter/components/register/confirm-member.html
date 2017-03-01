@@ -68,7 +68,7 @@
             <thead class="table-head">
               <tr>
                 <th></th>
-                <th><div class="text-table">{{localize('no_exporter')}}</div></th>
+                <th><div class="text-table">{{localize('no_exporter_fullname')}}</div></th>
                 <th><div class="text-table">{{localize('name_company')}}</div></th>
                 <th><div class="text-table">{{localize('type_license')}}</div></th>
                 <th><div class="text-table">{{localize('date_register')}}</div></th>
@@ -112,17 +112,16 @@
         </gl-form-panel>
         <div class="horizontal layout justified">
           <div>
-            <paper-button id="btreject" class="gl-btn-warning" style="margin-right:15px" on-tap="_dialogRemark" raised>{{localize('bt_incom_doc')}}</paper-button>
+            <paper-button id="btreject" class="gl-btn-warning" style="margin-right:15px" on-tap="_dialogRemark" raised>{{localize('bt_no_pass')}}</paper-button>
           </div>
           <div>
             <paper-button class="gl-btn-danger" on-tap="_backPage" raised>{{localize('bt_cancel')}}</paper-button>
-            <paper-button id="btsave" class="gl-btn-success" style="margin-right:15px" on-tap="_save" raised>{{localize('bt_save')}}</paper-button>
+            <paper-button id="btsave" class="gl-btn-success" style="margin-right:15px" on-tap="_save" raised>{{localize('bt_pass')}}</paper-button>
             <paper-button id="btapprove" class="gl-btn-success" style="margin-right:15px" on-tap="approve" raised>{{localize('bt_approve')}}</paper-button>
           </div>
         </div>
       </div>
     </iron-pages>
-
     <paper-dialog id="dialog" style="width:60%;">
       <gl-grid-row width="{{getWidth}}">
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,12]]">
@@ -134,7 +133,6 @@
         <paper-button class="gl-btn-primary button-size" raised on-tap="_reject">{{localize('bt_save')}}</paper-button>
       </div>
     </paper-dialog>
-
   </template>
   <script>
     Polymer({
@@ -174,12 +172,15 @@
           this.$$('#btsave').setAttribute("hidden", "hidden");
           this.$$('#btapprove').removeAttribute("hidden");
         }
+        else if ( this.dataSelect.approve_status == 'reject') {
+          this.$$('#btreject').setAttribute("hidden", "hidden");
+          this.$$('#btsave').removeAttribute("hidden", "hidden");
+          this.$$('#btapprove').setAttribute("hidden", "hidden");
+        }
         else {
           this.$$('#btreject').removeAttribute("hidden");
           this.$$('#btsave').removeAttribute("hidden");
           this.$$('#btapprove').setAttribute("hidden", "hidden");
-
-
         }
       },
       _backPage:function (data) {
@@ -227,7 +228,7 @@
         if(result == true){
           // console.log(detail.datas);
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-          this.update('./external/confirm_exporter/insert', detail.datas, () => {
+          this.insert('./external/confirm_exporter/insert', detail.datas, () => {
             this.pageSelected='listExporter';
             this.fire('refresh-seller');
             this.fire('refresh-exporter');
@@ -241,7 +242,9 @@
         // console.log(val);
         if (typeof this.sellers != 'undefined') {
           this.sellers.map((item,index)=>{
-            this.set('sellers.'+index+'.check',val);
+            // if (item.approve_status == "process") {
+              this.set('sellers.'+index+'.check',val);
+            // }
           });
         }
       },
