@@ -9,7 +9,6 @@ exports.report1 = function (req, res) {
     //res.json(__dirname.replace('controller','report'));
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\",
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
@@ -40,12 +39,12 @@ exports.report1 = function (req, res) {
         parameters['date_start'] = parameters['date_start'].split('T')[0];
         parameters['date_end'] = parameters['date_end'].split('T')[0];
     }
-    // var date_start = parameters['date_start']
-    // var date_end = parameters['date_end']
+    var date_start = parameters['date_start']
+    var date_end = parameters['date_end']
     // console.log(parameters);
 
     r.db('external').table('exporter')
-        // .between(date_start, date_end, { index: 'exporter_date_approve' })
+        .between(date_start, date_end, { index: 'exporter_date_approve' })
         .pluck(['id', 'exporter_date_approve', 'exporter_no', 'seller_id'])
         .merge(function (m) {
             return {
@@ -97,10 +96,6 @@ exports.report1 = function (req, res) {
             }
         })
         .without('book')
-        // .eqJoin('trader_id', r.db('external').table('trader')).pluck({ right: ['seller_id', 'type_lic_id'] }, 'left').zip()
-        .eqJoin('seller_id', r.db('external').table('seller'))
-        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
-        .pluck({ right: ['seller_name_th', 'seller_name_en', 'seller_tax_id', 'type_lic_id'] }, 'left').zip()
         .merge(function (m) {
             return {
                 exporter_status_name: r.branch(m.hasFields('exporter_no'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
@@ -123,6 +118,10 @@ exports.report1 = function (req, res) {
                 )
             }
         })
+        // // .eqJoin('trader_id', r.db('external').table('trader')).pluck({ right: ['seller_id', 'type_lic_id'] }, 'left').zip()
+        .eqJoin('seller_id', r.db('external').table('seller')).without({ right: ['id', 'date_created'] }).zip()
+        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
+        // .pluck({ right: ['seller_name_th', 'seller_name_en', 'seller_tax_id', 'type_lic_id'] }, 'left').zip()
         .filter(q)
         .filter(d)
         .orderBy('exporter_no')
@@ -140,7 +139,6 @@ exports.report2 = function (req, res, next) {
     //res.json(__dirname.replace('controller','report'));
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\",
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
@@ -219,7 +217,6 @@ exports.report3 = function (req, res, next) {
     //res.json(__dirname.replace('controller','report'));
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\",
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
@@ -341,7 +338,6 @@ exports.report3 = function (req, res, next) {
 }
 exports.report4 = function (req, res) {
     var r = req.r;
-
     r.db('external').table('seller')
         .outerJoin(r.db('external').table('exporter')
             .merge(function (m) {
@@ -400,7 +396,7 @@ exports.report4 = function (req, res) {
             })
             .without('book'),
         function (seller, exporter) {
-            return seler('id').eq(exporter('seller_id'))
+            return seller('id').eq(exporter('seller_id'))
         }).zip()
         .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
         // .eqJoin('seller_id', r.db('external').table('seller'))
@@ -447,7 +443,6 @@ exports.report5 = function (req, res) {
     var nextDays = _nextDay.toISOString().slice(0, 10);
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\",
         date_start: new Date().toISOString().slice(0, 10),
         date_end: nextDays
     };
@@ -529,9 +524,9 @@ exports.report5 = function (req, res) {
         .orderBy('exporter_date_approve')
         .run()
         .then(function (result) {
-            //   res.json(result);
+            res.json(result);
             //  parameters = {}
-            res.ireport("exporter/report5.jasper", req.query.export || "pdf", result, parameters);
+            // res.ireport("exporter/report5.jasper", req.query.export || "pdf", result, parameters);
         })
         .error(function (err) {
             res.json(err)
@@ -542,7 +537,6 @@ exports.report5_1 = function (req, res) {
     var date_start, date_end;
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\",
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
@@ -589,7 +583,7 @@ exports.report5_1 = function (req, res) {
                     .sum('shm_det_quantity')
             }
         })
-        .eqJoin('seller_id', r.db('external').table("seller")).pluck("left", { right: ["seller_address_th"] }).zip()
+        .eqJoin('seller_id', r.db('external').table("seller")).pluck("left", { right: ["seller_name_th"] }).zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -642,7 +636,6 @@ exports.report5_2 = function (req, res) {
     var date_start, date_end;
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\",
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
@@ -688,7 +681,7 @@ exports.report5_2 = function (req, res) {
                     .sum('shm_det_quantity')
             }
         })
-        .eqJoin('seller_id', r.db('external').table("seller")).pluck("left", { right: ["seller_address_th"] }).zip()
+        .eqJoin('seller_id', r.db('external').table("seller")).pluck("left", { right: ["seller_name_th"] }).zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -740,9 +733,7 @@ exports.exporter_detail = function (req, res) {
     var r = req.r;
     var params = req.params;
     var parameters = {
-        CURRENT_DATE: new Date().toISOString().slice(0, 10),
-        SUBREPORT_DIR: "E:\\Polymer\\Projectrice\\report-exporter\\app\\reports\\exporter\\"
-        // __dirname.replace('controller', 'report') + '\\' + req.baseUrl.replace("/api/", "") + '\\'
+        CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
     r.db('external').table("seller").outerJoin(
         r.db('external').table("exporter")

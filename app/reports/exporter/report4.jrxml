@@ -3,6 +3,8 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="123"/>
+	<import value="nylon.report.*"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<field name="exporter_no_name" class="java.lang.String"/>
 	<field name="seller_name_th" class="java.lang.String"/>
 	<field name="type_lic_name" class="java.lang.String"/>

@@ -3,13 +3,15 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<import value="nylon.report.*"/>
 	<parameter name="date_start" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
 	<parameter name="date_end" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<field name="exporter_no_name" class="java.lang.String"/>
 	<field name="quantity" class="java.lang.String"/>
-	<field name="trader_name" class="java.lang.String"/>
+	<field name="seller_name_th" class="java.lang.String"/>
 	<field name="exporter_date_approve" class="java.lang.String"/>
 	<field name="count_exporter" class="java.lang.String"/>
 	<field name="sum" class="java.lang.String"/>
@@ -167,7 +169,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end}).split( " " )[1]]]></te
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{trader_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{seller_name_th}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="399" y="0" width="195" height="27" uuid="22bac9f3-361e-4108-8fed-50094d8fbf26"/>

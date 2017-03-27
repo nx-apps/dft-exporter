@@ -3,11 +3,13 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<import value="nylon.report.*"/>
 	<parameter name="date_start" class="java.lang.String" isForPrompting="false">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 		<defaultValueExpression><![CDATA[$P{date_start}]]></defaultValueExpression>
 	</parameter>
 	<parameter name="date_end" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<field name="exporter_no_name" class="java.lang.String"/>
 	<field name="seller_name_th" class="java.lang.String"/>
 	<field name="type_lic_name" class="java.lang.String"/>
