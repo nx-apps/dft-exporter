@@ -28,7 +28,7 @@ exports.confirm = function (req, res) {
         .merge({ date_created: r.row('date_created').split('T')(0) })
         .orderBy('exporter_no')
         .filter(function (c) {
-            return c('approve_status').ne('approve')
+            return c('approve_status').ne('approve').and(c('approve_status').ne('reject'))
         })
         .run()
         .then(function (result) {
