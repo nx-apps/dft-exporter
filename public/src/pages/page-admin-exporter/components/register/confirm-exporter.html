@@ -112,12 +112,12 @@
         </gl-form-panel>
         <div class="horizontal layout justified">
           <div>
-            <paper-button id="btreject" class="gl-btn-warning" style="margin-right:15px" on-tap="_dialogRemark" raised>{{localize('bt_no_pass')}}</paper-button>
+            <paper-button id="btn-reject" class="gl-btn-warning" style="margin-right:15px" on-tap="_dialogRemark" raised>{{localize('bt_no_pass')}}</paper-button>
           </div>
           <div>
             <paper-button class="gl-btn-danger" on-tap="_backPage" raised>{{localize('bt_cancel')}}</paper-button>
-            <paper-button id="btsave" class="gl-btn-success" style="margin-right:15px" on-tap="_save" raised>{{localize('bt_pass')}}</paper-button>
-            <paper-button id="btapprove" class="gl-btn-success" style="margin-right:15px" on-tap="approve" raised>{{localize('bt_approve')}}</paper-button>
+            <paper-button id="btn-save" class="gl-btn-success" style="margin-right:15px" on-tap="_save" raised>{{localize('bt_pass')}}</paper-button>
+            <paper-button id="btn-approve" class="gl-btn-success" style="margin-right:15px" on-tap="approve" raised>{{localize('bt_approve')}}</paper-button>
           </div>
         </div>
       </div>
@@ -168,19 +168,19 @@
         this.pageSelected = "detailExporter";
         this.dataSelect = e.currentTarget.data;
         if (this.dataSelect.approve_status == 'process') {
-          this.$$('#btreject').setAttribute("hidden", "hidden");
-          this.$$('#btsave').setAttribute("hidden", "hidden");
-          this.$$('#btapprove').removeAttribute("hidden");
+          this.$$('#btn-reject').setAttribute("hidden", "hidden");
+          this.$$('#btn-save').setAttribute("hidden", "hidden");
+          this.$$('#btn-approve').removeAttribute("hidden");
         }
         else if ( this.dataSelect.approve_status == 'reject') {
-          this.$$('#btreject').setAttribute("hidden", "hidden");
-          this.$$('#btsave').removeAttribute("hidden", "hidden");
-          this.$$('#btapprove').setAttribute("hidden", "hidden");
+          this.$$('#btn-reject').setAttribute("hidden", "hidden");
+          this.$$('#btn-save').removeAttribute("hidden", "hidden");
+          this.$$('#btn-approve').setAttribute("hidden", "hidden");
         }
         else {
-          this.$$('#btreject').removeAttribute("hidden");
-          this.$$('#btsave').removeAttribute("hidden");
-          this.$$('#btapprove').setAttribute("hidden", "hidden");
+          this.$$('#btn-reject').removeAttribute("hidden");
+          this.$$('#btn-save').removeAttribute("hidden");
+          this.$$('#btn-approve').setAttribute("hidden", "hidden");
         }
       },
       _backPage:function (data) {
@@ -204,10 +204,10 @@
           // console.log(detail.datas);
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
           this.update('./external/confirm_exporter/update', detail.datas, () => {
-            this.pageSelected='listExporter';
-            this.fire('refresh-company');
-            this.fire('refresh-exporter');
-            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
+              this.pageSelected='listExporter';
+              this.fire('refresh-company');
+              this.fire('refresh-exporter');
               console.log('success');
             }});
            });
@@ -229,10 +229,10 @@
           // console.log(detail.datas);
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
           this.insert('./external/confirm_exporter/insert', detail.datas, () => {
-            this.pageSelected='listExporter';
-            this.fire('refresh-company');
-            this.fire('refresh-exporter');
-            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
+              this.pageSelected='listExporter';
+              this.fire('refresh-company');
+              this.fire('refresh-exporter');
               console.log('success');
             }});
            });
@@ -278,10 +278,10 @@
           // console.log(datas);
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
           this.insert('./external/confirm_exporter/insert', datas, () => {
-            this.fire('refresh-company');
-            this.fire('refresh-exporter');
-            this.selectDataAll = false;
-            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:()=>{
+              this.fire('refresh-company');
+              this.fire('refresh-exporter');
+              this.selectDataAll = false;
               console.log('success');
             }});
            });
@@ -297,44 +297,32 @@
         this.company_remark = "";
       },
       _reject: function(){
-        // const check = (item)=>{
-        //     return item.check == true;
-        // }
-        this.companys.map((datas)=>{
-          datas.company_remark = this.company_remark;
-          // console.log(datas);
-          let {company_id, id, approve_status, company_remark} = datas;
-          let newData = {company_id, id, approve_status, company_remark};
-          // console.log(newData);
-          this.data.push(newData);
-        });
         this.fire('toast',{status:'dialog',
         text:'คุณต้องการจะให้ผู้ส่งออกส่งเอกสารเพิ่มเติมใช่หรือไม่ ?',
-        confirmed : this._confirmReject.bind(this)
+        confirmed : this._confirmReject.bind(this),
+        data : {
+          id : this.dataSelect.id,
+          company_id : this.dataSelect.company_id,
+          approve_status : 'reject',
+          company_remark : this.company_remark
+        }
         });
       },
       _confirmReject:function(result,detail){
-        this.data.map((datas)=>{
-          datas={
-            id : datas.id,
-            company_id : datas.company_id,
-            approve_status : 'reject',
-            company_remark : this.company_remark
-          }
         if(result == true){
-          // console.log(datas);
+          // console.log(detail.data);
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-          this.update('./external/confirm_exporter/update', datas, () => {
-            this.$.dialog.toggle()
-            this.company_remark = "";
-            this.fire('refresh-company');
-            this.fire('refresh-exporter');
-            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+          this.update('./external/confirm_exporter/update', detail.data, () => {
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
+              this.$.dialog.toggle()
+              this.company_remark = "";
+              this.fire('refresh-company');
+              this.fire('refresh-exporter');
+              this._backPage();
               console.log('success');
             }});
            });
           }
-        });
       },
       changeNo:function(e) {
         var company = e.currentTarget.data;
@@ -348,8 +336,8 @@
           if (response == 0) {
             this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
             this.update('./external/confirm_exporter/update', datas, () => {
-              this.fire('refresh-company');
-              this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+              this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
+                this.fire('refresh-company');
                 console.log('success');
               }});
              });
@@ -359,8 +347,8 @@
               if (response == 1) {
                 this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
                 this.update('./external/confirm_exporter/update', datas, () => {
-                  this.fire('refresh-company');
-                  this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+                  this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
+                    this.fire('refresh-company');
                     console.log('success');
                   }});
                  });
