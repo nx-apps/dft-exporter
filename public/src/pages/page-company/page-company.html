@@ -94,11 +94,13 @@
       },
       checkStatus: function (val) {
         if (typeof val != 'undefined' && val != undefined) {
-          if (val == 'request') {
-            // this.$$('#btn-reject').setAttribute("hidden", "hidden");
-          }
-          else if (val == 'reject') {
+          if (val == 'reject') {
             this.$$('#btn-reject').removeAttribute("hidden");
+            this.$$('#btn-register').setAttribute("hidden", "hidden");
+          }
+          else if(val == 'request'){
+            this.$$('#btn-register').setAttribute("hidden", "hidden");
+            this.$$('#btn-reject').setAttribute("hidden", "hidden");
           }
         }
       },
@@ -125,7 +127,9 @@
           this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
           this.insert('./external/confirm_exporter/register', detail.datas, () => {
             this.fire('toast', {
-              status: 'success', text: 'บันทึกสำเร็จ', callback: function () {
+              status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
+                this.getCompany();
+                this.$$('#btn-register').setAttribute("hidden", "hidden");
                 console.log('success');
               }
             });
@@ -135,7 +139,6 @@
       _reject: function () {
         var data = {
           approve_status: 'request',
-          company_id: this.data.company_id,
           id: this.data.id
         }
         this.fire('toast', {
@@ -153,6 +156,7 @@
             this.fire('toast', {
               status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
                 this.getCompany();
+                this.$$('#btn-reject').setAttribute("hidden", "hidden");
                 console.log('success');
               }
             });
