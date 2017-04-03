@@ -166,6 +166,12 @@
       getCompany: function () {
         this.read('./external/confirm_exporter/list/' + this.id, (data) => {
           if (data != []) {
+            for(var key in data){
+              // console.log(data[key]);
+              if(data[key] == ''){
+                data[key] = "-";
+              }
+            }
             this.data = data;
             // console.log(this.data);
           }

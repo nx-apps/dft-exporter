@@ -36,6 +36,12 @@
 
         <gl-grid-row width="{{getWidth}}">
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+            <gl-form-label-input label="{{localize('no_exporter_fullname')}} :" value="{{data.exporter_no_name}}"></gl-form-label-input>
+          </gl-grid-col>
+        </gl-grid-row>
+
+        <gl-grid-row>
+          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-label-input label="{{localize('tax_no')}} :" value="{{data.company_taxno}}"></gl-form-label-input>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
@@ -66,9 +72,9 @@
             <gl-form-label-textarea  label="{{localize('fax')}} :" value="{{data.company_fax}}"></gl-form-label-textarea>
           </gl-grid-col>
 
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+          <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-label-textarea  label="{{localize('e-mail')}} :" value="{{data.company_email}}"></gl-form-label-textarea>
-          </gl-grid-col>
+          </gl-grid-col>-->
           <!-- <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-label-input  label="เลขที่หนังสืออนุญาต ปกข. :" value="{{data.trader_no}}"></gl-form-label-input>
           </gl-grid-col> -->
@@ -76,12 +82,9 @@
             <gl-form-label-input  label="สถานะเป็นสมาชิกผู้ส่งออกข้าว :" value="{{data.exporter_status_name}}"></gl-form-label-input>
           </gl-grid-col> -->
 
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+          <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-label-input  label="{{localize('type_license')}} :" value="{{data.type_lic_name}}"></gl-form-label-input>
-          </gl-grid-col>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input label="{{localize('no_exporter_fullname')}} :" value="{{data.exporter_no_name}}"></gl-form-label-input>
-          </gl-grid-col>
+          </gl-grid-col>-->
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <vaadin-date-picker label="{{localize('date_approve')}} :" value="{{data.exporter_date_approve}}" disabled></vaadin-date-picker>
           </gl-grid-col>

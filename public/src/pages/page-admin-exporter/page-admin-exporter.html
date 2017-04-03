@@ -253,6 +253,7 @@
             nylonPageActive:function() {
               // console.log('55555');
               this.getExporters();
+              this.getCompany();
               this.getFile();
             },
             _exporterIdChanged:function(val){
@@ -271,7 +272,6 @@
             attached: function() {
               // this.getIdExporters();
               this.getDocType();
-              this.getCompany();
               // this._dateEnd();
             },
             ready: function() {
@@ -281,6 +281,13 @@
             getExporters: function() {
               this.exporter_id = this.exporter_id || this.$.exporter_id;
               this.read('./external/exporter?exporter_status=true',(data)=>{
+                data.map((item)=>{
+                  for(var key in item){
+                    if(item[key] == ''){
+                      item[key] = '-';
+                    }
+                  }
+                })
                 this.exporters = data;
                 var type = data.map((type)=>{
                   type.company_name = type.company_name_th;
@@ -297,6 +304,13 @@
             },
             getCompany: function(){
               this.read('./external/confirm_exporter/list',(data)=>{
+                data.map((item)=>{
+                  for(var key in item){
+                    if(item[key] == ''){
+                      item[key] = '-';
+                    }
+                  }
+                })
                 this.companys = data;
                 for (var i = 0; i < this.companys.length; i++) {
                   this.companys[i]['check'] = false;

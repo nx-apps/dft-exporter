@@ -31,6 +31,11 @@
         <gl-form-panel set-border="0">
           <gl-grid-row width="{{getWidth}}">
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+              <gl-form-input style="width:70%" label="{{localize('no_exporter_fullname')}} :" value="{{data.exporter_no}}"></gl-form-input>
+            </gl-grid-col>
+          </gl-grid-row>
+          <gl-grid-row>
+            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
               <gl-form-input label="{{localize('tax_no')}} :" value="{{data.company_taxno}}" disabled></gl-form-input>
             </gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
@@ -61,21 +66,18 @@
             <gl-form-input label="{{localize('fax')}} :" value="{{data.company_fax}}" disabled></gl-form-input>
           </gl-grid-col>
 
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+          <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-input label="{{localize('e-mail')}} :" value="{{data.company_email}}" disabled></gl-form-input>
-          </gl-grid-col>
+          </gl-grid-col>-->
           <!-- <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-input label="เลขที่หนังสืออนุญาต ปกข. :" value="{{data.trader_no}}" disabled></gl-form-input>
           </gl-grid-col> -->
           <!-- <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-label-input  label="สถานะเป็นสมาชิกผู้ส่งออกข้าว :" value="{{data.exporter_status_name}}"></gl-form-label-input>
           </gl-grid-col> -->
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+          <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-input label="{{localize('type_license')}} :" value="{{data.type_lic_name}}" disabled></gl-form-input>
-          </gl-grid-col>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-input style="width:70%" label="{{localize('no_exporter_fullname')}} :" value="{{data.exporter_no}}"></gl-form-input>
-          </gl-grid-col>
+          </gl-grid-col>-->
         </gl-grid-row>
         <div class="horizontal layout">
           <div class="text">{{localize('list_board')}}</div>
