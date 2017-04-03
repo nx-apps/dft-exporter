@@ -1,4 +1,4 @@
-<dom-module id="register-fileup">
+<dom-module id="member-fileup">
   <style include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
     .title{
       font-size: 17px;
@@ -28,29 +28,44 @@
     <template is="dom-repeat" items="[[docType]]">
       <div class="title">[[item.doc_name_th]]</div>
       <upload-file
-        target="/api/external/upload/exporter/file/[[sellerId]]"
+        target="/api/external/upload/exporter/file/{{companyId}}"
         accept="application/pdf"
         ref-path="exporter.document.[[item.doc_code]]"
         doc-type-id="[[item.doc_type_id]]"
-        seller-id="[[sellerId]]"
+        company-id="[[companyId]]"
         >
       </upload-file>
     </template>
+
+    <div class="horizontal end-justified layout" style="margin-top:20px;">
+      <paper-button class="gl-bg-danger" on-tap="pageFileDel" raised>{{localize('bt_del_file')}}</paper-button>
+    </div>
+
     <div style="margin-bottom:20px;"></div>
   </template>
   <script>
     Polymer({
-      is: "register-fileup",
+      is: "member-fileup",
       behaviors: [dataBehavior, nylonLocalizeBehavior, nylonBehavior],
       created:function(){
-          this.nylonLocalizeImport('/i18n-page-report-exporter.json');
+          this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
       },
       observers: [
         '_dataInput(data)'
       ],
       _dataInput:function(data) {
-        this.sellerId = data.seller_id;
-        // console.log(this.sellerId);
+        this.companyId = data.company_id;
+        // console.log(this.docType);
+      },
+      checkFunction:function(){
+        // this.$$('upload-file').getList();
+        Polymer.dom(this.root).querySelectorAll('upload-file').map((item)=>{
+          item.getList();
+        })
+      },
+      pageFileDel:function() {
+        this.fire('pageFileDelete');
+        this.fire('getFiles');
       }
     });
   </script>

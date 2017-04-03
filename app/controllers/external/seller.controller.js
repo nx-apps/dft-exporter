@@ -4,11 +4,11 @@ exports.seller = function (req, res) {
         .merge(function (row) {
             return {
                 seller_id: row('id'),
-                date_updated: row('date_updated').split('T')(0)
+                date_created: row('date_created').split('T')(0)
             }
         })
-        .without('id')
-        .eqJoin("country_id", r.db('common').table("country")).without({ right: ["id", "date_created", "date_updated"] }).zip()
+        // .without('id')
+        // .eqJoin("country_id", r.db('common').table("country")).without({ right: ["id", "date_created", "date_updated"] }).zip()
         .run()
         .then(function (result) {
             res.json(result);

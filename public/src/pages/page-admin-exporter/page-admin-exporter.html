@@ -4,7 +4,7 @@
 <link rel="import" href="../components/panel-right/panel-right.html">
 <link rel="import" href="../../nylon-behavior.html">
 
-<dom-module id="page-report-exporter">
+<dom-module id="page-admin-exporter">
     <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
     * {
         font-family: 'rsuregular', sans-serif;
@@ -75,7 +75,6 @@
         <div class="layout vertical registor">
           <div class="layout horizontal justified">
             <div class="horizontal layout">
-              <!-- <div class="flex"></div> -->
                 <div style="margin:30px 10px 0px 20px;"><iron-icon icon="print"></iron-icon></div>
                   <gl-form-dropdown-menu style="width:250px" placeholder="{{localize('select_report')}}" name="report">
                     <paper-menu class="dropdown-content" attr-for-selected="report" selected="{{report}}">
@@ -84,7 +83,6 @@
                       <paper-item on-tap="_report" report="report3">{{localize('report3')}}</paper-item>
                     </paper-menu>
                   </gl-form-dropdown-menu>
-                <!-- <paper-button class="gl-btn-info gl-small" on-tap="_print" raised><iron-icon icon="print"></iron-icon>พิมพ์</paper-button> -->
             </div>
             <paper-button raised class="gl-btn-primary"on-tap="_toggleDrawer" title="{{localize('add_exporter')}}" id="addRedRegExporter"><iron-icon icon="add"></iron-icon>{{localize('add_exporter')}}</paper-button>
           </div>
@@ -97,7 +95,7 @@
             <gl-grid-row width="{{getWidth}}">
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]"></gl-grid-col>
               <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-                <gl-combo-box id="exporter_id" label="{{localize('name_exporter')}}" item-label-path="seller_name"
+                <gl-combo-box id="exporter_id" label="{{localize('name_exporter')}}" item-label-path="company_name"
                     item-value-path="exporter_id" value="{{dataSelected.exporter_id}}" name="exporter_id"></gl-combo-box>
               </gl-grid-col>
             </gl-grid-row>
@@ -172,7 +170,7 @@
                     <th><div class="text-table">{{localize('no_exporter')}}</div></th>
                     <th><div class="text-table">{{localize('no_tax')}}</div></th>
                     <th><div class="text-table">{{localize('name_company')}}</div></th>
-                    <th><div class="text-table">{{localize('type_license')}}</div></th>
+                    <!--<th><div class="text-table">{{localize('type_license')}}</div></th>-->
                     <th><div class="text-table">{{localize('status_export')}}</div></th>
                     <!-- <th><div class="text-table">{{localize('status_dit')}}</div></th> -->
                     <th><div class="text-table">{{localize('status_exporter')}}</div></th>
@@ -185,9 +183,9 @@
                   <tbody>
                     <tr id="detailRegExporter" on-tap="_selectData" data="[[item]]" style="cursor:pointer;">
                       <td><div class="text-table">{{item.exporter_no_name}}</div></td>
-                      <td><div class="text-table">{{item.seller_tax_id}}</div></td>
-                      <td><div class="text-table">{{item.seller_name_th}}</div></td>
-                      <td><div class="text-table">{{item.type_lic_name}}</div></td>
+                      <td><div class="text-table">{{item.company_taxno}}</div></td>
+                      <td><div class="text-table">{{item.company_name_th}}</div></td>
+                      <!--<td><div class="text-table">{{item.type_lic_name}}</div></td>-->
                       <td><div class="text-table">{{item.exporter_status_name}}</div></td>
                       <!-- <td><div class="text-table">{{item.trader_active_name}}</div></td> -->
                       <td><div class="text-table">{{item.export_status_name}}</div></td>
@@ -212,7 +210,7 @@
         <panel-right title="{{titleName}}">
           <div class="left">
             <iron-pages selected="{{layerContent}}" attr-for-selected="name">
-              <div name="addRedRegExporter"><register-pageRegister sellers="[[sellers]]" trader-id="[[traderId]]" doc-type="[[docType]]"></register-pageRegister></div>
+              <div name="addRedRegExporter"><register-pageRegister companys="[[companys]]" trader-id="[[traderId]]" doc-type="[[docType]]"></register-pageRegister></div>
               <div name="detailRegExporter">
                 <member-page data="{{dataSelect}}" doc-type="[[docType]]" list-files="{{listFiles}}"></member-page>
               </div>
@@ -223,7 +221,7 @@
     </template>
     <script>
         Polymer({
-            is: "page-report-exporter",
+            is: "page-admin-exporter",
             properties: {
               layerContent: {
                   type: String,
@@ -246,11 +244,11 @@
             listeners:{
               'refresh-exporter':'getExporters',
               'close-toggle':'_closeToggle',
-              'refresh-seller':'getSeller',
+              'refresh-company':'getCompany',
               'getFiles' : 'getFile'
             },
             created:function(){
-                this.nylonLocalizeImport('/i18n-page-report-exporter.json');
+                this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
             },
             nylonPageActive:function() {
               // console.log('55555');
@@ -273,7 +271,7 @@
             attached: function() {
               // this.getIdExporters();
               this.getDocType();
-              this.getSeller();
+              this.getCompany();
               // this._dateEnd();
             },
             ready: function() {
@@ -285,40 +283,26 @@
               this.read('./external/exporter?exporter_status=true',(data)=>{
                 this.exporters = data;
                 var type = data.map((type)=>{
-                  type.seller_name = type.seller_name_th+" ("+type.type_lic_name+")";
-                  // return type.seller_name_th+" ("+type.type_lic_name+")";
+                  type.company_name = type.company_name_th;
+                  // type.company_name = type.company_name_th+" ("+type.type_lic_name+")";
+                  // return type.company_name_th+" ("+type.type_lic_name+")";
                 });
                 this.exporter_id.items = data;
               });
             },
-            // getIdExporters:function(){
-            //   this.exporter_id = this.exporter_id || this.$.exporter_id;
-            //   this.read('./external/exporter?exporter_status=true',(data)=>{
-            //     data.map((type)=>{
-            //       type.seller_name_th = type.seller_name_th+" ("+type.type_lic_name+")";
-            //     });
-            //     this.exporter_id.items = data;
-            //   });
-            // },
             getDocType: function(){
               this.read('./external/document_type',(data)=>{
                 this.docType = data;
               })
             },
-            getSeller: function(){
-              this.read('./external/confirm_exporter',(data)=>{
-                this.sellers = data;
-                for (var i = 0; i < this.sellers.length; i++) {
-                  this.sellers[i]['check'] = false;
+            getCompany: function(){
+              this.read('./external/confirm_exporter/list',(data)=>{
+                this.companys = data;
+                for (var i = 0; i < this.companys.length; i++) {
+                  this.companys[i]['check'] = false;
                 }
               })
             },
-            // _dateEnd:function() {
-            //   if (this.dataSelected.date_end == undefined || this.dataSelected.date_end == '') {
-            //     this.set('dataSelected.date_end',new Date().toISOString().split('T')[0]);
-            //     console.log(this.dataSelected.date_end);
-            //   }
-            // },
             _search: function(){
               // console.log(this.dataSelected);
               var str='';
@@ -372,9 +356,9 @@
             },
             getFile:function(){
               if (typeof this.dataSelect != 'undefined' && this.dataSelect != '') {
-                var sellerId = this.dataSelect.seller_id;
-                if (sellerId != '' && sellerId != undefined) {
-                  axios.get('/external/upload/list/'+sellerId)
+                var companyId = this.dataSelect.company_id;
+                if (companyId != '' && companyId != undefined) {
+                  axios.get('/external/upload/list/'+companyId)
                   .then( (response)=>{
                     // console.log(response);
                       this.listFiles = response.data;

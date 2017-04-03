@@ -7,11 +7,11 @@
         "exporter_no": {
             "type": "number"
         },
-        "seller_id": {
+        "company_id": {
             "type": "string"
         }
     },
     "required": [
-        "seller_id"
+        "company_id"
     ]
 }

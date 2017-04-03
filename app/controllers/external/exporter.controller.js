@@ -28,7 +28,7 @@ exports.exporter = function (req, res) {
         d = r.row('exporter_date_approve').gt(d.date_start).and(r.row('exporter_date_approve').lt(d.date_end));
     }
 
-    r.db('external').table("seller").outerJoin(
+    r.db('external').table("company").outerJoin(
         r.db('external').table("exporter")
             .merge(function (m) {
                 return {
@@ -83,13 +83,13 @@ exports.exporter = function (req, res) {
                 }
             })
             .without('book'),
-        function (seller, exporter) {
-            return exporter("seller_id").eq(seller("id"))
+        function (company, exporter) {
+            return exporter("company_id").eq(company("id"))
         })
         .merge(function (mm) {
             return {
                 left: {
-                    seller_id: mm('left')('id')
+                    company_id: mm('left')('id')
                 }
             }
         })
@@ -135,7 +135,7 @@ exports.exporter = function (req, res) {
         })
         .without('id')
         // .eqJoin("seller_id", r.db('external').table("seller")).without({ right: ["id", "date_create"] }).zip()
-        .eqJoin("type_lic_id", r.db('external').table("type_license")).without({ right: ["id", "date_created", "date_updated", "creater", "updater"] }).zip()
+        // .eqJoin("type_lic_id", r.db('external').table("type_license")).without({ right: ["id", "date_created", "date_updated", "creater", "updater"] }).zip()
         .filter(q)
         .filter(d)
         .orderBy('exporter_no')

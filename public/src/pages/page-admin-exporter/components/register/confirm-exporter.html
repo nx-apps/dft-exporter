@@ -1,6 +1,6 @@
 <link rel="import" href="detail-member.html">
 
-<dom-module id="confirm-member">
+<dom-module id="confirm-exporter">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
     * {
         font-family: 'rsuregular', sans-serif;
@@ -77,13 +77,13 @@
             </thead>
 
 
-            <template is="dom-repeat" items="{{sellers}}">
+            <template is="dom-repeat" items="{{companys}}">
               <tbody>
                 <tr style="cursor:pointer;">
                   <td><paper-checkbox checked="{{item.check}}" class="checkbox"></paper-checkbox></td>
                   <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]"></gl-form-input></td>
                   <!-- <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.exporter_no_name}}</div></td> -->
-                  <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.seller_name_th}}</div></td>
+                  <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.company_name_th}}</div></td>
                   <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.type_lic_name}}</div></td>
                   <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.date_created}}</div></td>
                   <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.approve_status_name}}</div></td>
@@ -125,7 +125,7 @@
     <paper-dialog id="dialog" style="width:60%;">
       <gl-grid-row width="{{getWidth}}">
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,12]]">
-          <gl-form-textarea label="{{localize('note')}} : " always-float-label value="{{seller_remark}}"></gl-form-textarea>
+          <gl-form-textarea label="{{localize('note')}} : " always-float-label value="{{company_remark}}"></gl-form-textarea>
         </gl-grid-col>
       </gl-grid-row>
       <div>
@@ -136,7 +136,7 @@
   </template>
   <script>
     Polymer({
-      is: "confirm-member",
+      is: "confirm-exporter",
       properties: {
         pages:{
           type: String,
@@ -162,7 +162,7 @@
       },
       behaviors: [dataBehavior, nylonLocalizeBehavior, nylonBehavior],
       created:function(){
-          this.nylonLocalizeImport('/i18n-page-report-exporter.json');
+          this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
       },
       _selectData:function(e){
         this.pageSelected = "detailExporter";
@@ -193,7 +193,7 @@
         confirmed : this._confirmProcess.bind(this),
         datas : {
           id : this.dataSelect.id,
-          seller_id : this.dataSelect.seller_id,
+          company_id : this.dataSelect.company_id,
           exporter_no : this.dataSelect.exporter_no,
           approve_status : 'process'
         }
@@ -205,7 +205,7 @@
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
           this.update('./external/confirm_exporter/update', detail.datas, () => {
             this.pageSelected='listExporter';
-            this.fire('refresh-seller');
+            this.fire('refresh-company');
             this.fire('refresh-exporter');
             this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
               console.log('success');
@@ -219,7 +219,7 @@
         confirmed : this._confirmApprove.bind(this),
         datas : {
           confirm_id : this.dataSelect.id,
-          seller_id : this.dataSelect.seller_id,
+          company_id : this.dataSelect.company_id,
           exporter_no : this.dataSelect.exporter_no
         }
         });
@@ -230,7 +230,7 @@
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
           this.insert('./external/confirm_exporter/insert', detail.datas, () => {
             this.pageSelected='listExporter';
-            this.fire('refresh-seller');
+            this.fire('refresh-company');
             this.fire('refresh-exporter');
             this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
               console.log('success');
@@ -240,10 +240,10 @@
       },
       _changeselectDataAll:function (val) {
         // console.log(val);
-        if (typeof this.sellers != 'undefined') {
-          this.sellers.map((item,index)=>{
+        if (typeof this.companys != 'undefined') {
+          this.companys.map((item,index)=>{
             // if (item.approve_status == "process") {
-              this.set('sellers.'+index+'.check',val);
+              this.set('companys.'+index+'.check',val);
             // }
           });
         }
@@ -255,10 +255,10 @@
         const check = (item)=>{
             return item.check == true;
         }
-        this.sellers.filter(check).map((datas)=>{
+        this.companys.filter(check).map((datas)=>{
           // console.log(datas);
-          let {exporter_no, seller_id, id} = datas;
-          let newData = {exporter_no, seller_id, id};
+          let {exporter_no, company_id, id} = datas;
+          let newData = {exporter_no, company_id, id};
           // console.log(newData);
           this.data.push(newData);
         });
@@ -271,14 +271,14 @@
         this.data.map((datas)=>{
           datas={
             confirm_id : datas.id,
-            seller_id : datas.seller_id,
+            company_id : datas.company_id,
             exporter_no : datas.exporter_no
           }
         if(result == true){
           // console.log(datas);
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
           this.insert('./external/confirm_exporter/insert', datas, () => {
-            this.fire('refresh-seller');
+            this.fire('refresh-company');
             this.fire('refresh-exporter');
             this.selectDataAll = false;
             this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
@@ -290,20 +290,21 @@
       },
       _dialogRemark: function(){
         this.$.dialog.toggle();
-        console.log(this.dataSelect);
+        // console.log(this.dataSelect);
       },
       _dialogcancle:function() {
         this.$.dialog.toggle();
-        this.seller_remark = "";
+        this.company_remark = "";
       },
       _reject: function(){
-        const check = (item)=>{
-            return item.check == true;
-        }
-        this.sellers.filter(check).map((datas)=>{
+        // const check = (item)=>{
+        //     return item.check == true;
+        // }
+        this.companys.map((datas)=>{
+          datas.company_remark = this.company_remark;
           // console.log(datas);
-          let {seller_id, id, approve_status, seller_remark} = datas;
-          let newData = {seller_id, id, approve_status, seller_remark};
+          let {company_id, id, approve_status, company_remark} = datas;
+          let newData = {company_id, id, approve_status, company_remark};
           // console.log(newData);
           this.data.push(newData);
         });
@@ -316,19 +317,18 @@
         this.data.map((datas)=>{
           datas={
             id : datas.id,
-            seller_id : datas.seller_id,
+            company_id : datas.company_id,
             approve_status : 'reject',
-            seller_remark : this.seller_remark
+            company_remark : this.company_remark
           }
         if(result == true){
           // console.log(datas);
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
           this.update('./external/confirm_exporter/update', datas, () => {
             this.$.dialog.toggle()
-            this.seller_remark = "";
-            this.fire('refresh-seller');
+            this.company_remark = "";
+            this.fire('refresh-company');
             this.fire('refresh-exporter');
-            this.selectDataAll = false;
             this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
               console.log('success');
             }});
@@ -337,18 +337,18 @@
         });
       },
       changeNo:function(e) {
-        var seller = e.currentTarget.data;
+        var company = e.currentTarget.data;
         var datas = {
-          id : seller.id,
-          exporter_no : parseInt(seller.exporter_no),
-          seller_id : seller.seller_id
+          id : company.id,
+          exporter_no : parseInt(company.exporter_no),
+          company_id : company.company_id
         }
         // console.log(datas);
         this.read('./external/check/duplicate?table=confirm_exporter&field=exporter_no&value='+datas.exporter_no, (response) => {
           if (response == 0) {
             this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
             this.update('./external/confirm_exporter/update', datas, () => {
-              this.fire('refresh-seller');
+              this.fire('refresh-company');
               this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
                 console.log('success');
               }});
@@ -359,7 +359,7 @@
               if (response == 1) {
                 this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
                 this.update('./external/confirm_exporter/update', datas, () => {
-                  this.fire('refresh-seller');
+                  this.fire('refresh-company');
                   this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
                     console.log('success');
                   }});
@@ -378,10 +378,10 @@
         const check = (item)=>{
             return item.check == true;
         }
-        this.sellers.filter(check).map((datas)=>{
+        this.companys.filter(check).map((datas)=>{
           // console.log(datas);
-          let {seller_id, id, exporter_no} = datas;
-          let newData = {seller_id, id, exporter_no};
+          let {company_id, id, exporter_no} = datas;
+          let newData = {company_id, id, exporter_no};
           console.log(newData);
           // this.data.push(newData);
         });

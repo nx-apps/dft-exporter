@@ -735,7 +735,7 @@ exports.exporter_detail = function (req, res) {
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
-    r.db('external').table("seller").outerJoin(
+    r.db('external').table("company").outerJoin(
         r.db('external').table("exporter")
             .merge(function (m) {
                 return {
@@ -790,13 +790,13 @@ exports.exporter_detail = function (req, res) {
                 }
             })
             .without('book'),
-        function (seller, exporter) {
-            return exporter("seller_id").eq(seller("id"))
+        function (company, exporter) {
+            return exporter("company_id").eq(company("id"))
         })
         .merge(function (mm) {
             return {
                 left: {
-                    seller_id: mm('left')('id')
+                    company_id: mm('left')('id')
                 }
             }
         })
@@ -842,9 +842,9 @@ exports.exporter_detail = function (req, res) {
         })
         .without('id')
         // .eqJoin("seller_id", r.db('external').table("seller")).without({ right: ["id", "date_created", "date_updated", "creater", "updater"] }).zip()
-        .eqJoin("type_lic_id", r.db('external').table("type_license")).without({ right: ["id", "date_created", "date_updated", "creater", "updater"] }).zip()
+        // .eqJoin("type_lic_id", r.db('external').table("type_license")).without({ right: ["id", "date_created", "date_updated", "creater", "updater"] }).zip()
         // .eqJoin("country_id", r.db('common').table("country")).without({ right: ["id", "date_created", "date_updated", "creater", "updater"] }).zip()
-        .filter({ seller_id: params.seller_id })
+        .filter({ company_id: params.company_id })
         .orderBy('exporter_no')(0)
         .run()
         .then(function (result) {

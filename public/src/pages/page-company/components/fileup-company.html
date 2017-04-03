@@ -1,4 +1,4 @@
-<dom-module id="register-fileup">
+<dom-module id="fileup-company">
   <style include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
     .title{
       font-size: 17px;
@@ -7,7 +7,7 @@
       /*text-decoration:underline;*/
       margin: 10px 0px 10px 5px;
     }
-    nylon-upload{
+    upload-file{
       --divider-color: white;
       --primary-color: #339933;
       --vaadin-upload-drag-ripple: {
@@ -27,27 +27,27 @@
     <div class="title-head">แนบเอกสารหลักฐาน</div>
     <template is="dom-repeat" items="[[docType]]">
       <div class="title">[[item.doc_name_th]]</div>
-      <nylon-upload
-        target="/api/external/upload/exporter/file/[[sellerId]]"
+      <upload-file
+        target="/api/external/upload/exporter/file/[[companyId]]"
         accept="application/pdf"
         ref-path="exporter.document.[[item.doc_code]]"
         doc-type-id="[[item.doc_type_id]]"
-        seller-id="[[sellerId]]"
+        company-id="[[companyId]]"
         >
-      </nylon-upload>
+      </upload-file>
     </template>
     <div style="margin-bottom:20px;"></div>
   </template>
   <script>
     Polymer({
-      is: "register-fileup",
+      is: "fileup-company",
       behaviors: [dataBehavior],
       observers: [
         '_dataInput(data)'
       ],
       _dataInput:function(data) {
-        this.sellerId = data;
-        // console.log(this.exporterId);
+        this.companyId = data.id;
+        // console.log(this.companyId);
       }
     });
   </script>

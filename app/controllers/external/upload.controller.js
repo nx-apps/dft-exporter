@@ -24,7 +24,7 @@ exports.listFilePath = function (req, res) {
                 progress: 100, complete: true
             }
         })
-        .filter({ seller_id: params.seller_id, ref_path: params.refPath, file_status: true })
+        .filter({ company_id: params.company_id, ref_path: params.refPath, file_status: true })
         .orderBy(r.desc('date_upload'))
         .run()
         .then(function (result) {
@@ -101,7 +101,7 @@ exports.uploadFileExporter = function (req, res) {
                         file_id: file_id,
                         file_status: true,
                         doc_type_id: doc_type_id,
-                        seller_id: params.seller_id,
+                        company_id: params.company_id,
                         date_upload: new Date(),
                         date_update: new Date()
                     })
@@ -138,7 +138,7 @@ exports.listFileDelete = function (req, res) {
                 progress: 100, complete: true
             }
         })
-        .filter({ seller_id: params.seller_id, file_status: false })
+        .filter({ company_id: params.company_id, file_status: false })
         .orderBy(r.desc('date_update'))
         .limit(5)
         .run()
