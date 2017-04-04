@@ -102,6 +102,10 @@
             this.$$('#btn-register').setAttribute("hidden", "hidden");
             this.$$('#btn-reject').setAttribute("hidden", "hidden");
           }
+          else if(val == 'register'){
+            this.$$('#btn-register').removeAttribute("hidden");
+            this.$$('#btn-reject').setAttribute("hidden", "hidden");
+          }
         }
       },
       getDocType: function () {
@@ -173,12 +177,20 @@
               }
             }
             this.data = data;
-            // console.log(this.data);
+            // console.log('id',this.data);
           }
           else {
             this.read('./external/company/' + this.id, (data) => {
+              data.approve_status = 'register';
+              data.approve_status_name = 'ยังไม่ลงทะเบียนผู้ส่งออก';
+              for(var key in data){
+                // console.log(data[key]);
+                if(data[key] == ''){
+                  data[key] = "-";
+                }
+              }
               this.data = data;
-              console.log(data);
+              // console.log(data);
             })
           }
 
