@@ -8,13 +8,11 @@
 	<parameter name="date_end" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<field name="exporter_no_name" class="java.lang.String"/>
-	<field name="seller_name_th" class="java.lang.String"/>
-	<field name="seller_tax_id" class="java.lang.String"/>
+	<field name="company_name_th" class="java.lang.String"/>
+	<field name="company_taxno" class="java.lang.String"/>
 	<field name="type_lic_name" class="java.lang.String"/>
 	<field name="exporter_status_name" class="java.lang.String"/>
-	<field name="trader_date_approve" class="java.lang.String"/>
-	<field name="trader_no" class="java.lang.String"/>
-	<field name="seller_agent" class="java.lang.Object">
+	<field name="company_agent" class="java.lang.Object">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="count_exporter" class="java.lang.String"/>
@@ -140,7 +138,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{seller_name_th}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{company_name_th}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="52" y="0" width="70" height="25" uuid="bbcaba11-1e2c-47ff-8910-d169d7df7de9"/>
@@ -196,7 +194,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 			</textField>
 			<subreport>
 				<reportElement stretchType="RelativeToBandHeight" x="22" y="0" width="749" height="25" isPrintWhenDetailOverflows="true" uuid="88c02011-06a8-4cfb-9305-e3788948ce32"/>
-				<dataSourceExpression><![CDATA[new iJsonDS($F{seller_agent})]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[new iJsonDS($F{company_agent})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"/exporter/report2_subreport1.jasper"]]></subreportExpression>
 			</subreport>
 		</band>

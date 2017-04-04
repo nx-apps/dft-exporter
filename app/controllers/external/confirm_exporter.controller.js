@@ -44,14 +44,14 @@ exports.insert = function (req, res) {
     var result = { result: false, message: null, id: null };
     if (valid) {
         r.db('external').table('confirm_exporter').get(req.body.confirm_id).update({ approve_status: 'approve' })
-            .run()
-        req.body = Object.assign(req.body, {
-            creater: 'admin',
-            updater: 'admin',
-            seller_id: req.body.seller_id,
-            exporter_no: req.body.exporter_no,
-            exporter_date_approve: new Date().toISOString()
-        }),
+        .run()
+            req.body = Object.assign(req.body, {
+                creater: 'admin',
+                updater: 'admin',
+                company_id: req.body.company_id,
+                exporter_no: req.body.exporter_no,
+                exporter_date_approve: new Date().toISOString()
+            }),
             r.db('external').table('exporter')
                 .insert(req.body)
                 .run()
@@ -155,7 +155,7 @@ exports.reject = function (req, res) {
     var result = { result: false, message: null, id: null };
     if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
         result.id = req.body.id;
-        req.body = Object.assign(req.body, { date_updated: new Date().toISOString()});
+        req.body = Object.assign(req.body, { date_updated: new Date().toISOString() });
         console.log(req.body);
         r.db('external').table('confirm_exporter')
             .get(req.body.id)

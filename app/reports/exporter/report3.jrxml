@@ -8,13 +8,13 @@
 	<parameter name="date_end" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<field name="exporter_no_name" class="java.lang.String"/>
-	<field name="seller_name_th" class="java.lang.String"/>
-	<field name="seller_tax_id" class="java.lang.String"/>
+	<field name="company_name_th" class="java.lang.String"/>
+	<field name="company_taxno" class="java.lang.String"/>
 	<field name="type_lic_name" class="java.lang.String"/>
 	<field name="exporter_status_name" class="java.lang.String"/>
-	<field name="seller_address_th" class="java.lang.String"/>
-	<field name="seller_phone" class="java.lang.String"/>
-	<field name="seller_fax" class="java.lang.String"/>
+	<field name="company_address_th" class="java.lang.String"/>
+	<field name="company_phone" class="java.lang.String"/>
+	<field name="company_fax" class="java.lang.String"/>
 	<field name="count_exporter" class="java.lang.String"/>
 	<variable name="ROW" class="java.lang.Integer" calculation="Count">
 		<variableExpression><![CDATA[($F{exporter_no_name}?true:false)]]></variableExpression>
@@ -138,7 +138,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{seller_name_th}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{company_name_th}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="50" y="0" width="80" height="30" isPrintWhenDetailOverflows="true" uuid="bbcaba11-1e2c-47ff-8910-d169d7df7de9"/>
@@ -164,7 +164,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{seller_address_th}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{company_address_th}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="602" y="0" width="100" height="30" isPrintWhenDetailOverflows="true" uuid="0b8f7ed5-765d-415d-874e-932fbfe297e9"/>
@@ -177,7 +177,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{seller_phone}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{company_phone}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="702" y="0" width="100" height="30" isPrintWhenDetailOverflows="true" uuid="aa115351-2cff-461f-a71f-cc3f7d06578d"/>
@@ -190,7 +190,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{seller_fax}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{company_fax}.equals("")? "-" : $F{company_fax}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="30" isPrintWhenDetailOverflows="true" uuid="adf88bd0-dae3-4def-a4df-505f3dfb892f"/>

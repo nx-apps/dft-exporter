@@ -45,7 +45,7 @@ exports.report1 = function (req, res) {
 
     r.db('external').table('exporter')
         .between(date_start, date_end, { index: 'exporter_date_approve' })
-        .pluck(['id', 'exporter_date_approve', 'exporter_no', 'seller_id'])
+        .pluck(['id', 'exporter_date_approve', 'exporter_no', 'company_id'])
         .merge(function (m) {
             return {
                 // count_exporter: r.db('external').table('exporter').between(date_start, date_end, { index: 'exporter_date_approve' }).count(),
@@ -119,8 +119,8 @@ exports.report1 = function (req, res) {
             }
         })
         // // .eqJoin('trader_id', r.db('external').table('trader')).pluck({ right: ['seller_id', 'type_lic_id'] }, 'left').zip()
-        .eqJoin('seller_id', r.db('external').table('seller')).without({ right: ['id', 'date_created'] }).zip()
-        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
+        .eqJoin('company_id', r.db('external').table('company')).without({ right: ['id', 'date_created'] }).zip()
+        // .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
         // .pluck({ right: ['seller_name_th', 'seller_name_en', 'seller_tax_id', 'type_lic_id'] }, 'left').zip()
         .filter(q)
         .filter(d)
@@ -175,11 +175,11 @@ exports.report2 = function (req, res, next) {
 
     r.db('external').table('exporter')
         // .between(date_start, date_end, { index: 'exporter_date_approve' })
-        .pluck(['id', 'exporter_date_approve', 'exporter_no', 'seller_id', 'export_status_name'])
+        .pluck(['id', 'exporter_date_approve', 'exporter_no', 'company_id', 'export_status_name'])
         // .eqJoin('trader_id', r.db('external').table('trader')).pluck({ right: ['seller_id', 'type_lic_id', 'trader_no', 'trader_date_approve'] }, 'left').zip()
-        .eqJoin('seller_id', r.db('external').table('seller'))
-        .pluck({ right: ['seller_name_th', 'seller_name_en', 'seller_address_en', 'seller_address_th', 'seller_phone', 'seller_fax', 'seller_agent', 'type_lic_id'] }, 'left').zip()
-        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
+        .eqJoin('company_id', r.db('external').table('company'))
+        .pluck({ right: ['company_name_th', 'company_name_en', 'company_address_en', 'company_address_th', 'company_phone', 'company_fax', 'company_agent'] }, 'left').zip()
+        // .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
         .merge(function (m) {
             return {
                 // count_exporter: r.db('external').table('exporter').between(date_start, date_end, { index: 'exporter_date_approve' }).count(),
@@ -251,7 +251,7 @@ exports.report3 = function (req, res, next) {
 
     r.db('external').table('exporter')
         // .between(date_start, date_end, { index: 'exporter_date_approve' })
-        .pluck(['id', 'exporter_date_approve', 'exporter_no', 'seller_id'])
+        .pluck(['id', 'exporter_date_approve', 'exporter_no', 'company_id'])
         .merge(function (m) {
             return {
                 // count_exporter: r.db('external').table('exporter').between(date_start, date_end, { index: 'exporter_date_approve' }).count(),
@@ -303,8 +303,8 @@ exports.report3 = function (req, res, next) {
         })
         .without('book')
         // .eqJoin('trader_id', r.db('external').table('trader')).pluck({ right: 'seller_id' }, 'left').zip()
-        .eqJoin('seller_id', r.db('external').table('seller'))
-        .pluck({ right: ['seller_name_th', 'seller_name_en', 'seller_address_en', 'seller_address_th', 'seller_phone', 'seller_fax'] }, 'left').zip()
+        .eqJoin('company_id', r.db('external').table('company'))
+        .pluck({ right: ['company_name_th', 'company_name_en', 'company_address_en', 'company_address_th', 'company_phone', 'company_fax'] }, 'left').zip()
         .merge(function (m) {
             return {
                 exporter_status_name: r.branch(m.hasFields('exporter_no'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
@@ -338,7 +338,7 @@ exports.report3 = function (req, res, next) {
 }
 exports.report4 = function (req, res) {
     var r = req.r;
-    r.db('external').table('seller')
+    r.db('external').table('company')
         .outerJoin(r.db('external').table('exporter')
             .merge(function (m) {
                 return {
@@ -395,10 +395,10 @@ exports.report4 = function (req, res) {
                 }
             })
             .without('book'),
-        function (seller, exporter) {
-            return seller('id').eq(exporter('seller_id'))
+        function (company, exporter) {
+            return company('id').eq(exporter('company_id'))
         }).zip()
-        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
+        // .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
         // .eqJoin('seller_id', r.db('external').table('seller'))
         // .pluck({ right: ['seller_name_th', 'seller_name_en', 'seller_address_th', 'seller_address_en'] }, 'left').zip()
         .merge(function (m) {
@@ -524,9 +524,9 @@ exports.report5 = function (req, res) {
         .orderBy('exporter_date_approve')
         .run()
         .then(function (result) {
-            res.json(result);
+            // res.json(result);
             //  parameters = {}
-            // res.ireport("exporter/report5.jasper", req.query.export || "pdf", result, parameters);
+            res.ireport("exporter/report5.jasper", req.query.export || "pdf", result, parameters);
         })
         .error(function (err) {
             res.json(err)

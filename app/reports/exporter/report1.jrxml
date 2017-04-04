@@ -11,9 +11,9 @@
 	<parameter name="date_end" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<field name="exporter_no_name" class="java.lang.String"/>
-	<field name="seller_name_th" class="java.lang.String"/>
+	<field name="company_name_th" class="java.lang.String"/>
 	<field name="type_lic_name" class="java.lang.String"/>
-	<field name="seller_tax_id" class="java.lang.String"/>
+	<field name="company_taxno" class="java.lang.String"/>
 	<field name="exporter_date_approve" class="java.lang.String"/>
 	<field name="export_date_expire" class="java.lang.String"/>
 	<field name="type_lic_id" class="java.lang.String"/>
@@ -205,7 +205,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{seller_tax_id}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{company_taxno}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="609" y="0" width="95" height="30" uuid="3e567ff0-e2d0-40ab-928c-d1044d25ae6a"/>
@@ -232,7 +232,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{seller_name_th}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{company_name_th}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="704" y="0" width="98" height="30" uuid="0b8f7ed5-765d-415d-874e-932fbfe297e9"/>
