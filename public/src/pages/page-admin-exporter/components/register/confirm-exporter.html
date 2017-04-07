@@ -80,7 +80,11 @@
             <template is="dom-repeat" items="{{companys}}">
               <tbody>
                 <tr style="cursor:pointer;">
-                  <td><paper-checkbox checked="{{item.check}}" class="checkbox"></paper-checkbox></td>
+                  <td>
+                    <template is="dom-if" if={{checkStatus(item.approve_status)}}>
+                      <paper-checkbox checked="{{item.check}}" class="checkbox"></paper-checkbox>
+                    </template>
+                  </td>
                   <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]"></gl-form-input></td>
                   <!-- <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.exporter_no_name}}</div></td> -->
                   <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.company_name_th}}</div></td>
@@ -374,6 +378,14 @@
           console.log(newData);
           // this.data.push(newData);
         });
+      },
+      checkStatus:function(val){
+        if(val != 'process'){
+          return false
+        }
+        else{
+          return true
+        }
       }
     });
   </script>
