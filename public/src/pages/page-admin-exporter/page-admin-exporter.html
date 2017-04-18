@@ -7,14 +7,18 @@
 <dom-module id="page-admin-exporter">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
     * {
-      font-family: 'CSChatThaiUI', sans-serif;
+      font-family: 'CSChatThaiUI', sans-serif !important;
       -webkit-font-smoothing: antialiased;
     }
-    .buttonSearch {
-      margin: 30px 0px 10px 50px;
-    }
-    .registor {
-      margin: 20px;
+    :host{
+      --paper-input-container-label:{
+        font-family: 'CSChatThaiUI', sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+      }
+      --paper-input-container-label-floating:{
+        font-family: 'CSChatThaiUI', sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+      }
     }
     .title {
       text-align: center;
@@ -54,7 +58,7 @@
   <template>
     <paper-material elevation="1" class="elevation">
 
-      <div class="layout vertical registor">
+      <div class="layout vertical" style="margin: 20px;">
         <div class="layout horizontal justified">
           <div class="horizontal layout">
             <div style="margin:30px 10px 0px 20px;">
@@ -142,7 +146,7 @@
           <gl-grid-row>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,5]]"></gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
-              <paper-button class="gl-btn-info buttonSearch" on-tap="_search" title="{{localize('search')}}" raised>{{localize('bt_search')}}</paper-button>
+              <paper-button class="gl-btn-info" style="margin: 30px 0px 10px 50px;" on-tap="_search" title="{{localize('search')}}" raised>{{localize('bt_search')}}</paper-button>
             </gl-grid-col>
           </gl-grid-row>
         </div>
@@ -186,7 +190,7 @@
                       <div class="text-table">{{item.company_taxno}}</div>
                     </td>
                     <td>
-                      <div class="text-table">{{item.company_name_th}}</div>
+                      <div>{{item.company_name_th}}</div>
                     </td>
                     <!--<td><div class="text-table">{{item.type_lic_name}}</div></td>-->
                     <td>
@@ -327,6 +331,7 @@
         })
       },
       _search: function () {
+        this.fire('toast', { status: 'load'})
         // console.log(this.dataSelected);
         var str = '';
         for (key in this.dataSelected) {
@@ -342,6 +347,7 @@
           this.fire('toast', { status: 'connectError', text: 'กรุณาใส่วันที่เริ่มต้นค้นหา' })
         }
         this.read('./external/exporter' + str, (data) => {
+          this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ' })
           data.map((empty) => {
             if (empty.exporter_no_name == undefined || empty.export_status_name == null || empty.exporter_date_approve == null) {
               empty.exporter_no_name = '-';

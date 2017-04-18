@@ -5,6 +5,17 @@
       font-family: 'CSChatThaiUI', sans-serif;
       -webkit-font-smoothing: antialiased;
     }
+    gl-form-input,gl-form-textarea{
+      --paper-input-container-label:{
+        font-family: 'CSChatThaiUI', sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+      }
+      --paper-input-container-label-floating:{
+        font-family: 'CSChatThaiUI', sans-serif !important;
+        -webkit-font-smoothing: antialiased;
+        font-size: var(--font-size-h4) !important;
+      }
+    }
     .title {
         text-align: center;
         font-size: var(--font-size-h4);
@@ -13,7 +24,7 @@
     vaadin-date-picker{
       width: 70%;
     }
-    gl-form-label-textarea{
+    gl-form-textarea{
       word-break: keep-all;
     }
     paper-radio-button{
@@ -27,54 +38,54 @@
 
         <gl-grid-row width="{{getWidth}}">
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input label="{{localize('no_exporter_fullname')}} :" value="{{data.exporter_no_name}}"></gl-form-label-input>
+            <gl-form-input label="{{localize('no_exporter_fullname')}} :" value="{{data.exporter_no_name}}" disabled></gl-form-input>
           </gl-grid-col>
         </gl-grid-row>
 
         <gl-grid-row>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input label="{{localize('tax_no')}} :" value="{{data.company_taxno}}"></gl-form-label-input>
+            <gl-form-input label="{{localize('tax_no')}} :" value="{{data.company_taxno}}" disabled></gl-form-input>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-textarea label="{{localize('name_company')}} :" value="{{data.company_name_th}}"></gl-form-label-textarea>
+            <gl-form-textarea label="{{localize('name_company')}} :" value="{{data.company_name_th}}" disabled></gl-form-textarea>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-textarea  label="{{localize('name_company')}} ({{localize('eng')}}) :" value="{{data.company_name_en}}"></gl-form-label-textarea>
+            <gl-form-textarea  label="{{localize('name_company')}} ({{localize('eng')}}) :" value="{{data.company_name_en}}" disabled></gl-form-textarea>
           </gl-grid-col>
         </gl-grid-row>
 
         <gl-grid-row>
           <gl-grid-col width="[[getWidth]]" grid="[[500,12],[700,8]]">
-            <gl-form-label-textarea label="{{localize('address')}} :" value="{{data.company_address_th}}"></gl-form-label-textarea>
+            <gl-form-textarea label="{{localize('address')}} :" value="{{data.company_address_th}}" disabled></gl-form-textarea>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[500,12],[700,8]]">
-            <gl-form-label-textarea label="{{localize('address')}} ({{localize('eng')}}) :" value="{{data.company_address_en}}"></gl-form-label-textarea>
+            <gl-form-textarea label="{{localize('address')}} ({{localize('eng')}}) :" value="{{data.company_address_en}}" disabled></gl-form-textarea>
           </gl-grid-col>
         </gl-grid-row>
 
         <gl-grid-row>
           <!-- <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input  label="รหัสไปรษณีย์ :" value=""></gl-form-label-input>
+            <gl-form-input  label="รหัสไปรษณีย์ :" value="" disabled></gl-form-input>
           </gl-grid-col> -->
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-textarea  label="{{localize('tel')}} :" value="{{data.company_phone}}"></gl-form-label-textarea>
+            <gl-form-textarea  label="{{localize('tel')}} :" value="{{data.company_phone}}" disabled></gl-form-textarea>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-textarea  label="{{localize('fax')}} :" value="{{data.company_fax}}"></gl-form-label-textarea>
+            <gl-form-textarea  label="{{localize('fax')}} :" value="{{data.company_fax}}" disabled></gl-form-textarea>
           </gl-grid-col>
 
           <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-textarea  label="{{localize('e-mail')}} :" value="{{data.company_email}}"></gl-form-label-textarea>
+            <gl-form-textarea  label="{{localize('e-mail')}} :" value="{{data.company_email}}" disabled></gl-form-textarea>
           </gl-grid-col>-->
           <!-- <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input  label="เลขที่หนังสืออนุญาต ปกข. :" value="{{data.trader_no}}"></gl-form-label-input>
+            <gl-form-input  label="เลขที่หนังสืออนุญาต ปกข. :" value="{{data.trader_no}}" disabled></gl-form-input>
           </gl-grid-col> -->
           <!-- <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input  label="สถานะเป็นสมาชิกผู้ส่งออกข้าว :" value="{{data.exporter_status_name}}"></gl-form-label-input>
+            <gl-form-input  label="สถานะเป็นสมาชิกผู้ส่งออกข้าว :" value="{{data.exporter_status_name}}" disabled></gl-form-input>
           </gl-grid-col> -->
 
           <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-label-input  label="{{localize('type_license')}} :" value="{{data.type_lic_name}}"></gl-form-label-input>
+            <gl-form-input  label="{{localize('type_license')}} :" value="{{data.type_lic_name}}" disabled></gl-form-input>
           </gl-grid-col>-->
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <vaadin-date-picker label="{{localize('date_approve')}} :" value="{{data.exporter_date_approve}}" disabled></vaadin-date-picker>
@@ -89,7 +100,7 @@
         <gl-grid-row>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <template is="dom-repeat" items="{{data.company_agent}}">
-              <gl-form-label-input  label="{{localize('name_committee')}} :" value="{{item.agent_name}}"></gl-form-label-input>
+              <gl-form-input  label="{{localize('name_committee')}} :" value="{{item.agent_name}}" disabled></gl-form-input>
             </template>
           </gl-grid-col>
         </gl-grid-row>
