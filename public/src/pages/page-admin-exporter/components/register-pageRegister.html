@@ -1,51 +1,17 @@
-<!--<link rel="import" href="register/register-member.html">-->
 <link rel="import" href="register/confirm-exporter.html">
 <link rel="import" href="../../components/panel-right/panel-right.html">
 
 <dom-module id="register-pageRegister">
-<style include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
-    .title {
-        text-align: center;
-        font-size: var(--font-size-h4);
-        font-family: 'rsubold', sans-serif;
-        -webkit-font-smoothing: antialiased;
-        margin: 20px 0px 20px 0px;
-    }
-    .searchBox{
-      padding: 5px;
-      background-color: var(--gl-gray-lighter-color);
-    }
-    .searchBorder{
-      border: 1px solid var(--gl-gray-light-color);
-      margin: 15px;
-      border-radius: 3px
-    }
-</style>
   <template>
 
     <gl-form-panel set-border="0px">
-      <!-- <paper-tabs selected="{{pages}}" align-bottom no-slide>
-        <paper-tab>ลงทะเบียน</paper-tab>
-        <paper-tab>รออนุมัติ</paper-tab>
-      </paper-tabs>
-      <iron-pages selected="{{pages}}">
-        <register-member trader-id="[[traderId]]" doc-type="[[docType]]"></register-member> -->
         <confirm-exporter companys="[[companys]]" doc-type="[[docType]]"></confirm-exporter>
-      <!-- </iron-pages> -->
-
     </gl-form-panel>
   </template>
   <script>
     Polymer({
       is: "register-pageRegister",
-      behaviors: [dataBehavior],
-      properties: {
-        pages:{
-            type:Number,
-            notify:true,
-            value: 0
-        }
-      }
+      behaviors: [dataBehavior]
     });
   </script>
 </dom-module>

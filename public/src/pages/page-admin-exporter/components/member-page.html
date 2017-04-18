@@ -7,15 +7,14 @@
 <link rel="import" href="../../components/panel-right/panel-right.html">
 <dom-module id="member-page">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-toast">
+    * {
+      font-family: 'CSChatThaiUI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
     .title {
       text-align: center;
        font-size: var(--font-size-h3);
-       font-family: 'rsubold', sans-serif;
-       -webkit-font-smoothing: antialiased;
         color: white;
-    }
-    .marTitle{
-      margin-left: 5em;
     }
     .boxNortify{
       border: 2px solid red;
@@ -39,8 +38,6 @@
     paper-tab:not(:last-of-type) {
       border-right: 3px solid var(--gl-gray-light-color);
       font-size: var(--font-size-h4);
-      font-family: 'rsubold', sans-serif;
-      -webkit-font-smoothing: antialiased;
     }
     paper-tabs paper-tab.iron-selected {
       font-size: var(--font-size-h4);
@@ -49,8 +46,6 @@
     }
     .title-paper{
       font-size: var(--font-size-h4);
-      font-family: 'rsubold', sans-serif;
-      -webkit-font-smoothing: antialiased;
     }
   </style>
   <template>

@@ -3,7 +3,7 @@
 <dom-module id="confirm-exporter">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
     * {
-        font-family: 'rsuregular', sans-serif;
+        font-family: 'CSChatThaiUI', sans-serif;
         -webkit-font-smoothing: antialiased;
     }
     .marginCheckbox{
@@ -16,7 +16,7 @@
     }
     .text-table{
       text-align: center;
-       font-size: var(--font-size-h4);
+       font-size: var(--font-size-h5);
     }
     .gl-table-default{
          border-collapse: collapse;
@@ -40,8 +40,6 @@
      paper-tab:not(:last-of-type) {
        border-right: 3px solid var(--gl-gray-light-color);
        font-size: var(--font-size-h5);
-       /*font-family: 'rsubold', sans-serif;
-       -webkit-font-smoothing: antialiased;*/
      }
      paper-tabs paper-tab.iron-selected {
        font-size: var(--font-size-h5);
@@ -70,7 +68,7 @@
                 <th></th>
                 <th><div class="text-table">{{localize('no_exporter_fullname')}}</div></th>
                 <th><div class="text-table">{{localize('name_company')}}</div></th>
-                <th><div class="text-table">{{localize('type_license')}}</div></th>
+                <!--<th><div class="text-table">{{localize('type_license')}}</div></th>-->
                 <th><div class="text-table">{{localize('date_register')}}</div></th>
                 <th><div class="text-table">{{localize('status')}}</div></th>
               </tr>
@@ -80,15 +78,15 @@
             <template is="dom-repeat" items="{{companys}}">
               <tbody>
                 <tr style="cursor:pointer;">
-                  <td>
+                  <td style="text-align:center">
                     <template is="dom-if" if={{checkStatus(item.approve_status)}}>
                       <paper-checkbox checked="{{item.check}}" class="checkbox"></paper-checkbox>
                     </template>
                   </td>
                   <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]"></gl-form-input></td>
                   <!-- <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.exporter_no_name}}</div></td> -->
-                  <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.company_name_th}}</div></td>
-                  <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.type_lic_name}}</div></td>
+                  <td on-tap="_selectData" data="[[item]]"><div>{{item.company_name_th}}</div></td>
+                  <!--<td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.type_lic_name}}</div></td>-->
                   <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.date_created}}</div></td>
                   <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.approve_status_name}}</div></td>
                 </tr>
