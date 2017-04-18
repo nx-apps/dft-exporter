@@ -36,7 +36,7 @@
     "gl-grid": "glon-gl-grid#^0.1.2",
     "gl-form": "glon-gl-form#^0.4.1",
     "axios": "^0.15.2",
-    "vaadin-date-picker": "glon-gl-date-picker#^0.0.4",
+    "vaadin-date-picker": "glon-gl-date-picker#^0.0.5",
     "byutv-jsonp": "^1.2.0",
     "gl-search-input": "9lon-gl-search-input#^0.0.12",
     "paper-scroll-header-panel": "PolymerElements/paper-scroll-header-panel#^1.0.16",
