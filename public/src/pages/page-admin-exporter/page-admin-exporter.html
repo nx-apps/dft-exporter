@@ -146,70 +146,66 @@
           </gl-grid-row>
         </div>
 
-        <div id="found" hidden>
-          <div class="searchBorder" style="overflow-x:auto;">
-            <table class="gl-table-default">
-              <thead class="table-head">
-                <tr>
-                  <th>
-                    <div class="text-table">{{localize('no_exporter')}}</div>
-                  </th>
-                  <th>
-                    <div class="text-table">{{localize('no_tax')}}</div>
-                  </th>
-                  <th>
-                    <div class="text-table">{{localize('name_company')}}</div>
-                  </th>
-                  <!--<th><div class="text-table">{{localize('type_license')}}</div></th>-->
-                  <th>
-                    <div class="text-table">{{localize('status_export')}}</div>
-                  </th>
-                  <!-- <th><div class="text-table">{{localize('status_dit')}}</div></th> -->
-                  <th>
-                    <div class="text-table">{{localize('status_exporter')}}</div>
-                  </th>
-                  <th>
-                    <div class="text-table">{{localize('date_register')}}</div>
-                  </th>
+        <div class="searchBorder" style="overflow-x:auto;">
+          <table class="gl-table-default">
+            <thead class="table-head">
+              <tr>
+                <th>
+                  <div class="text-table">{{localize('no_exporter')}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize('no_tax')}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize('name_company')}}</div>
+                </th>
+                <!--<th><div class="text-table">{{localize('type_license')}}</div></th>-->
+                <th>
+                  <div class="text-table">{{localize('status_export')}}</div>
+                </th>
+                <!-- <th><div class="text-table">{{localize('status_dit')}}</div></th> -->
+                <th>
+                  <div class="text-table">{{localize('status_exporter')}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize('date_register')}}</div>
+                </th>
+              </tr>
+            </thead>
+            
+            <template is="dom-repeat" items="{{exporters}}">
+              <tbody>
+                <tr id="detailRegExporter" on-tap="_selectData" data="[[item]]" style="cursor:pointer;">
+                  <td>
+                    <div class="text-table">{{item.exporter_no_name}}</div>
+                  </td>
+                  <td>
+                    <div class="text-table">{{item.company_taxno}}</div>
+                  </td>
+                  <td>
+                    <div>{{item.company_name_th}}</div>
+                  </td>
+                  <!--<td><div class="text-table">{{item.type_lic_name}}</div></td>-->
+                  <td>
+                    <div class="text-table">{{item.exporter_status_name}}</div>
+                  </td>
+                  <!-- <td><div class="text-table">{{item.trader_active_name}}</div></td> -->
+                  <td>
+                    <div class="text-table">{{item.export_status_name}}</div>
+                  </td>
+                  <td>
+                    <div class="text-table">{{item.exporter_date_approve}}</div>
+                  </td>
                 </tr>
-              </thead>
-
-
-              <template is="dom-repeat" items="{{exporters}}">
-                <tbody>
-                  <tr id="detailRegExporter" on-tap="_selectData" data="[[item]]" style="cursor:pointer;">
-                    <td>
-                      <div class="text-table">{{item.exporter_no_name}}</div>
-                    </td>
-                    <td>
-                      <div class="text-table">{{item.company_taxno}}</div>
-                    </td>
-                    <td>
-                      <div>{{item.company_name_th}}</div>
-                    </td>
-                    <!--<td><div class="text-table">{{item.type_lic_name}}</div></td>-->
-                    <td>
-                      <div class="text-table">{{item.exporter_status_name}}</div>
-                    </td>
-                    <!-- <td><div class="text-table">{{item.trader_active_name}}</div></td> -->
-                    <td>
-                      <div class="text-table">{{item.export_status_name}}</div>
-                    </td>
-                    <td>
-                      <div class="text-table">{{item.exporter_date_approve}}</div>
-                    </td>
-                  </tr>
-                </tbody>
               </template>
-            </table>
 
-          </div>
-        </div>
-      </div>
-
-      <div id="notfound" hidden>
-        <div class="horizontal center-justified layout searchBorder">
-          <div class="title" style="margin:20px">{{localize('not_found')}}</div>
+              <template is="dom-if" if={{_checkData(exporters)}}>
+                <tr>
+                    <td colspan="6"><div class="text-table" style="margin:20px">{{localize('not_found')}}</div></td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
         </div>
       </div>
 
@@ -261,7 +257,6 @@
         this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
       },
       nylonPageActive: function () {
-        // console.log('55555');
         this.getExporters();
         this.getCompany();
         this.getFile();
@@ -278,13 +273,10 @@
         this.titleName = 'ลงทะเบียนผู้ส่งออก';
         this.$$('panel-right').toggle();
         this.$$('panel-right').open();
+        this.$$('register-pageRegister').backPage();
       },
       attached: function () {
         this.getDocType();
-      },
-      ready: function () {
-        this.$$('#found').removeAttribute("hidden");
-        this.$$('#notfound').setAttribute("hidden", "hidden");
       },
       getExporters: function () {
         this.exporter_id = this.exporter_id || this.$.exporter_id;
@@ -342,7 +334,6 @@
           this.fire('toast', { status: 'connectError', text: 'กรุณาใส่วันที่เริ่มต้นค้นหา' })
         }
         this.read('./external/exporter' + str, (data) => {
-          this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ' })
           data.map((empty) => {
             if (empty.exporter_no_name == undefined || empty.export_status_name == null || empty.exporter_date_approve == null) {
               empty.exporter_no_name = '-';
@@ -350,15 +341,8 @@
               empty.exporter_date_approve = '-';
             }
           });
-          if (data == '') {
-            this.$$('#notfound').removeAttribute("hidden");
-            this.$$('#found').setAttribute("hidden", "hidden");
-          }
-          else if (data != '') {
-            this.exporters = data;
-            this.$$('#found').removeAttribute("hidden");
-            this.$$('#notfound').setAttribute("hidden", "hidden");
-          }
+          this.exporters = data;
+          this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback:function(){} })
         })
         return str;
       },
@@ -393,6 +377,14 @@
           }
         }
       },
+      _checkData:function(val){
+        if(typeof val == 'object' && val != '' && val != null){
+          return false
+        }
+        else{
+          return true
+        }
+      }
     });
   </script>
 </dom-module>

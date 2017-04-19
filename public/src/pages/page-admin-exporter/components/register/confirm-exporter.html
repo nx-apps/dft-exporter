@@ -211,7 +211,7 @@
               this.pageSelected='listExporter';
               this.fire('refresh-company');
               this.fire('refresh-exporter');
-              console.log('success');
+              // console.log('success');
             }});
            });
           }
@@ -236,7 +236,7 @@
               this.pageSelected='listExporter';
               this.fire('refresh-company');
               this.fire('refresh-exporter');
-              console.log('success');
+              // console.log('success');
             }});
            });
           }
@@ -285,7 +285,7 @@
               this.fire('refresh-company');
               this.fire('refresh-exporter');
               this.selectDataAll = false;
-              console.log('success');
+              // console.log('success');
             }});
            });
           }
@@ -322,7 +322,7 @@
               this.fire('refresh-company');
               this.fire('refresh-exporter');
               this._backPage();
-              console.log('success');
+              // console.log('success');
             }});
            });
           }
@@ -341,7 +341,7 @@
             this.update('./external/confirm_exporter/update', datas, () => {
               this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
                 this.fire('refresh-company');
-                console.log('success');
+                // console.log('success');
               }});
              });
           }
@@ -352,7 +352,7 @@
                 this.update('./external/confirm_exporter/update', datas, () => {
                   this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
                     this.fire('refresh-company');
-                    console.log('success');
+                    // console.log('success');
                   }});
                  });
           }
@@ -373,7 +373,7 @@
           // console.log(datas);
           let {company_id, id, exporter_no} = datas;
           let newData = {company_id, id, exporter_no};
-          console.log(newData);
+          // console.log(newData);
           // this.data.push(newData);
         });
       },
