@@ -12,7 +12,7 @@
         axios.post(url, data)
                   .then((response)=> {
                     console.log("success");
-                    console.log(response);
+                    // console.log(response);
                     if (response.data.result == true) {
                       actionInpage(response.data);
                     }
@@ -67,7 +67,7 @@
         axios.put(url, data)
                   .then((response) => {
                     console.log("success");
-                    console.log(response);
+                    // console.log(response);
                     if (response.data.result == true) {
                       actionInpage();
                     }
@@ -98,7 +98,7 @@
         axios.delete(url+data)
                   .then((response)=> {
                     console.log("success");
-                    console.log(response);
+                    // console.log(response);
                     if (response.data.result == true) {
                       actionInpage();
                     }

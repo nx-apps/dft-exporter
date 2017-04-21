@@ -215,7 +215,7 @@
       <div class="left">
         <iron-pages selected="{{layerContent}}" attr-for-selected="name">
           <div name="addRedRegExporter">
-            <register-pageRegister companys="[[companys]]" trader-id="[[traderId]]" doc-type="[[docType]]"></register-pageRegister>
+            <register-pageRegister companys="[[companys]]" doc-type="[[docType]]" list-company="[[listCompany]]"></register-pageRegister>
           </div>
           <div name="detailRegExporter">
             <member-page data="{{dataSelect}}" doc-type="[[docType]]" list-files="{{listFiles}}"></member-page>
@@ -240,10 +240,6 @@
         exporterId: {
           type: String,
           observer: '_exporterIdChanged'
-        },
-        traderId: {
-          type: String,
-          observer: '_search'
         }
       },
       behaviors: [dataBehavior, nylonBehavior, nylonLocalizeBehavior],
@@ -251,7 +247,8 @@
         'refresh-exporter': 'getExporters',
         'close-toggle': '_closeToggle',
         'refresh-company': 'getCompany',
-        'getFiles': 'getFile'
+        'getFiles': 'getFile',
+        'refresh-listcompany': 'getlistCompany'
       },
       created: function () {
         this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
@@ -260,6 +257,7 @@
         this.getExporters();
         this.getCompany();
         this.getFile();
+        this.getlistCompany();
       },
       _exporterIdChanged: function (val) {
         // console.log(val);
@@ -274,6 +272,7 @@
         this.$$('panel-right').toggle();
         this.$$('panel-right').open();
         this.$$('register-pageRegister').backPage();
+        this.$$('register-pageRegister').clearData();
       },
       attached: function () {
         this.getDocType();
@@ -384,6 +383,14 @@
         else{
           return true
         }
+      },
+      getlistCompany:function(){
+        this.read('./external/exporter?exporter_status=false', (data) => {
+          data.map((type)=>{
+            type.company_name_th = type.company_taxno+" ("+type.company_name_th+")";
+          });
+          this.listCompany = data;
+          });
       }
     });
   </script>

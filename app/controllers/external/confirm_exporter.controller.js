@@ -131,7 +131,7 @@ exports.register = function (req, res) {
                 req.body = Object.assign(req.body, {
                     date_created: new Date().toISOString()
                 })
-                console.log(req.body);
+                // console.log(req.body);
                 r.db('external').table('confirm_exporter').insert(req.body)
                     .run()
                     .then(function (response) {
@@ -156,7 +156,7 @@ exports.reject = function (req, res) {
     if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
         result.id = req.body.id;
         req.body = Object.assign(req.body, { date_updated: new Date().toISOString() });
-        console.log(req.body);
+        // console.log(req.body);
         r.db('external').table('confirm_exporter')
             .get(req.body.id)
             .update(req.body, { returnChanges: true })
