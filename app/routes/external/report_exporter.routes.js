@@ -9,4 +9,5 @@ module.exports = function (app) {
     app.route('/report5_1').get(report_exporter.report5_1);
     app.route('/report5_2').get(report_exporter.report5_2);
     app.route('/exporter_detail/:company_id').get(report_exporter.exporter_detail);
+    app.route('/exporter_approved').get(report_exporter.exporter_approved);
 }
