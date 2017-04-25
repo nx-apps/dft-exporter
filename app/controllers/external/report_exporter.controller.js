@@ -861,7 +861,7 @@ exports.exporter_approved = function (req, res) {
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
-   r.db('external').table('confirm_exporter')
+  r.db('external').table('confirm_exporter')
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -884,14 +884,12 @@ exports.exporter_approved = function (req, res) {
                 approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่')
             }
         })
-        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
-        .eqJoin("seller_id", r.db('external').table("seller")).without({ right: 'id' }).zip()
+        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         .merge({ date_created: r.row('date_created').split('T')(0) })
         .orderBy('exporter_no')
         .filter(function (c) {
             return c('approve_status').ne('approve').and(c('approve_status').ne('reject'))
         })
-
         .run()
         .then(function (result) {
             res.json(result);
