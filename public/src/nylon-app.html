@@ -1,12 +1,7 @@
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/app-route/app-location.html">
 <link rel="import" href="../bower_components/app-route/app-route.html">
-<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
-
-<script src="../bower_components/rxjs/dist/rx.lite.js"></script>
-
-<link rel="import" href="nylon-behavior.html">
-<link rel="import" href="nylon-init.html">
+<link rel="import" href="./nylon-init.html">
 
 <dom-module id="nylon-app">
     <template>
@@ -23,7 +18,11 @@
     <script>
         Polymer({
             is:'nylon-app',
+            behaviors:[ReduxBehavior],
             properties:{
+                user:{
+                    statePath:'auth.user'
+                },
                 page: {
                     type: String,
                     reflectToAttribute: true,
@@ -38,38 +37,29 @@
                 }
             },
             created:function(){
-                if(localStorage.getItem("nylonLocalize")==null){
-                    localStorage.setItem("nylonLocalize", "th");
-                }
-                nylonLocalize = new Rx.BehaviorSubject(localStorage.getItem("nylonLocalize"));
-                nylonLocalize.subscribe(function(x){
-                    if(localStorage.getItem("nylonLocalize")!=x){
-                        localStorage.setItem("nylonLocalize", x);
-                    }
-                });
+
             },
             observers: [
                 '_routePageChanged(routeData.page)'
             ],
             _routePageChanged: function(page) {
-                this.page = page || window._start_page ;
+                this.page = page || 'main';
             },
             _pageChanged: function(page, oldPage) {
-                //console.log(page);
-                if (page != null) {
+                if (page != null && page != "") {
                     this.importHref(
                         this.resolveUrl('/src/pages/page-' + page + '/page-' + page + '.html'),
-                        ()=>{
+                        function(){
                             if(this.elementLayoutMainDrawer){
                                 this.elementLayoutMainDrawer._loaded();
                             }
                         },
-                        ()=>{
-                            //console.log('ok');
+                        function(){
                             this._routePageChanged('404');
                         }
                         , true
                     );
+
                 }
             },
             _changePage:function(e){
@@ -82,7 +72,7 @@
             _onSendElementLayoutMainDrawer:function(e){
                 this.elementLayoutMainDrawer = e.detail;
             }
-
+            
         });
     </script>
 </dom-module>

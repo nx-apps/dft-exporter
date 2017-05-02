@@ -2,9 +2,10 @@ var config = {
   
   development: {
     server: {
-      port: 8080,
+      port: 3000,
       cluster:1
     },
+    
     database: {
       max: 10,
       servers: [
@@ -42,10 +43,11 @@ var config = {
         {
          name:"mssql",
          driver:"com.microsoft.sqlserver.jdbc.SQLServerDriver",
-         url:"jdbc:sqlserver://127.0.0.1:1433;databaseName=RiceDB",
-         user:"riceuser",
-         password:"l2ice2015"
-       },
+         url:"jdbc:sqlserver://192.168.10.117:1433;databaseName=external",
+         user:"external",
+         password:"external@2017"
+       }
+       ,
         {
          name:"oracle",
          driver:"oracle.jdbc.OracleDriver",
