@@ -1,14 +1,7 @@
-
-
-
 <script>
     FormatNumberBehavior = {
         properties:{
             _defaultFormat:{
-                type: String,
-                value: '0,0.00'
-            },
-            editFormat:{
                 type: String,
                 value: '0,0.00'
             }
@@ -19,37 +12,20 @@
                 return "";
             }
             else {
-                if(Number.isInteger(number)== true){
-                    this._defaultFormat = '0,0'
-                    var num = numeral(number).format(this._defaultFormat);
-                    return num
-                }
-                else if(Number.isInteger(number)==false){
-                    // this._defaultFormat = '0,0.00'
-                    var num = numeral(number).format(this.editFormat);
-                    return num
-                }
+                var num = numeral(number).format(this._defaultFormat);
+                return num
             }
            
         },
-        newFormat:function(number){
-            if(number == null){
-                return "";
-            }
-            else {
-                return numeral(number).format(this.editFormat);
-            }
-        },
         setFormat:function(format){
-            this.editFormat = format;
-            // if(format == "" || format == "undefined"){
-            //     format = '0,0';
-            //     this._defaultFormat = format;
-            // }
-            // else{
-            //     this._defaultFormat = format;
-            // } 
-            // return this._defaultFormat;
+            if(format == "" || format == "undefined"){
+                format = '0,0';
+                this._defaultFormat = format;
+            }
+            else{
+                this._defaultFormat = format;
+            } 
+            return this._defaultFormat;
         },
         unFormat:function(number){
             var num = numeral().unformat(number);

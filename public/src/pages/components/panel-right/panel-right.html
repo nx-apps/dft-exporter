@@ -1,14 +1,15 @@
-<link rel="import" href="../../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../../bower_components/app-layout/app-layout.html">
-<link rel="import" href="../../../bower_components/gl-font/gl-rsu-font.html">
-
-<dom-module id="nylon-panel-right">
+<dom-module id="panel-right">
     <template>
-        <style>
+        <style is="custom-style">
             app-drawer{
                 /*--app-drawer-width: 80%;*/
                 z-index: 1;
             }
+            * {
+				text-align: left;
+                font-family: 'CSChatThaiUI', sans-serif !important;
+                -webkit-font-smoothing: antialiased;
+			}
             paper-icon-button{
                 width: 40px;
                 height: 40px;
@@ -37,63 +38,64 @@
                 opacity: 0.5;
                 z-index: 1;
             }
-            .font{
-                font-family: 'rsuregular', sans-serif;
-                -webkit-font-smoothing: antialiased;
-            }
-
-            .content{
-                height:90%; 
-                overflow: auto;
-                background-color: #EFEFEF;
-                text-align: left;
-                padding:0.5rem;
-            }
         </style>
         <div id="bgPanel" hidden$="[[!opened]]" on-tap="close"></div>
-        <app-drawer align="end" persistent opened="{{opened}}" on-tap="closeBgAppDrawer">
+        <app-drawer align="right" persistent opened="{{opened}}" on-tap="closeBgAppDrawer">
+            <div>
             <app-toolbar>
-                <div main-title style="text-align:left">[[title]]</div>
-                <paper-icon-button icon="close" on-tap="close"></paper-icon-button>
-            </app-toolbar>
-            <div class="content">
-                <slot></slot>
+                <div>
+                    {{title}}
+                </div>
+                <div class="iconLeft">
+                    <paper-icon-button icon="close" on-tap="close"></paper-icon-button>
+                </div>
+		    </app-toolbar>
+            </div>
+            <div style="height:90%; overflow: auto;">
+                <content></content>
             </div>
         </app-drawer>
     </template>
     <script>
         Polymer({
-            is: 'nylon-panel-right',
+            is: 'panel-right',
             properties:{
                 title:{
                     type: String,
                     value: 'title'
                 },
-                width:{
+                setWidth:{
                     type: String,
-                    value: '80%'
+                    value: '85%'
+                },
+                stat:{
+                    type: String,
+                    value: 'show'
                 }
             },
             attached:function(){
-                this.setWidth();
-                window.addEventListener('resize', this.setWidth.bind(this), true);
-                //this.$$('app-drawer').toggle();
-            },
-            setWidth:function(){
-                if(window.innerWidth<=768){
-                    this.customStyle['--app-drawer-width'] = '100%';
-                    this.updateStyles();
-                }else{
-                    this.customStyle['--app-drawer-width'] = this.width;
-                    this.updateStyles();
-                }
+                this.customStyle['--app-drawer-width'] = this.setWidth;
+                this.updateStyles();
             },
             toggle:function(){
+                if(this.stat == 'hidden'){
+                    this.stat = 'scroll'
+                }
+                else if (this.stat == 'scroll'){
+                    this.stat = 'hidden'
+                }
+                // console.log(this.stat);
+                document.documentElement.style.overflow = this.stat;
                 this.$$('app-drawer').toggle();
             },
+            _setWidth:function(width){
+                this.setWidth = width;
+                this.customStyle['--app-drawer-width'] = this.setWidth;
+                this.updateStyles();
+            },
             open:function(){
-                document.documentElement.style.overflow = 'hidden';
-                this.$$('app-drawer').open();
+                 document.documentElement.style.overflow = 'hidden';
+                 this.$$('app-drawer').open();
             },
             close:function(e){
                 document.documentElement.style.overflow = 'auto';
