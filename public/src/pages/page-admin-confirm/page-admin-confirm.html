@@ -67,7 +67,7 @@
       <paper-button class="gl-btn-info btn" raised on-tap="_search">ค้นหา</paper-button>
     </div>
     <iron-pages selected="{{pageSelected}}" attr-for-selected="name">
-      <div name="listExporter">
+      <div name="listCompany">
         <div class="horizontal layout left-justified">
           <paper-checkbox class="marginCheckbox" checked={{selectDataAll}}>{{localize('ck_select_all')}}</paper-checkbox>
         </div>
@@ -123,7 +123,7 @@
         </div>
       </div>
 
-      <div name="detailExporter">
+      <div name="detailCompany">
         <!-- <detail-member data={{dataSelect}}></detail-member> -->
         <paper-tabs selected="{{pages}}" align-bottom no-slide>
           <paper-tab>{{localize('detail')}}</paper-tab>
@@ -173,7 +173,7 @@
         },
         pageSelected: {
           type: String,
-          value: 'listExporter'
+          value: 'listCompany'
         },
         data: {
           type: Array,
@@ -218,7 +218,7 @@
         })
       },
       _selectData: function (e) {
-        this.pageSelected = "detailExporter";
+        this.pageSelected = "detailCompany";
         this.dataSelect = e.currentTarget.data;
         if (this.dataSelect.approve_status == 'process') {
           this.$$('#btn-reject').setAttribute("hidden", "hidden");
@@ -236,10 +236,10 @@
           this.$$('#btn-approve').setAttribute("hidden", "hidden");
         }
       },
-      // _backPage: function (data) {
-      //   this.pageSelected = 'listExporter';
-      //   this.pages = 0;
-      // },
+      _backPage: function (data) {
+        this.pageSelected = 'listCompany';
+        this.pages = 0;
+      },
       // _save: function () {
       //   this.fire('toast', {
       //     status: 'dialog',
@@ -260,7 +260,7 @@
       //     this.update('./external/confirm_exporter/update', detail.datas, () => {
       //       this.fire('toast', {
       //         status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-      //           this.pageSelected = 'listExporter';
+      //           this.pageSelected = 'listCompany';
       //           this.fire('refresh-company');
       //           this.fire('refresh-exporter');
       //           // console.log('success');
@@ -288,7 +288,7 @@
       //     this.insert('./external/confirm_exporter/insert', detail.datas, () => {
       //       this.fire('toast', {
       //         status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-      //           this.pageSelected = 'listExporter';
+      //           this.pageSelected = 'listCompany';
       //           this.fire('refresh-company');
       //           this.fire('refresh-exporter');
       //           this.fire('refresh-listcompany');
