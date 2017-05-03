@@ -1,6 +1,7 @@
 {
     "th":{
         "Meg":"TH",
+        "No":"ลำดับ",
         "test":"ทดสอบ",
         "title_exporter":"ข้อมูลผู้ส่งออกข้าวไปต่างประเทศ",
         "name_exporter":"ชื่อผู้ส่งออก",
@@ -49,6 +50,7 @@
 
         "bt_save":"บันทึก",
         "bt_cancel":"ยกเลิก",
+        "bt_close":"ปิดหน้าต่างนี้",
         "bt_search":"ค้นหา",
         "bt_approve":"อนุมัติ",
         "bt_no_pass":"ไม่ผ่าน",
@@ -66,6 +68,7 @@
     },
     "en":{
         "Meg":"EN",
+        "No":"No",
         "test":"test",
         "title_exporter":"Data exporter",
         "name_exporter":"Name exporter",
@@ -115,6 +118,7 @@
 
         "bt_save":"Save",
         "bt_cancel":"Cancel",
+        "bt_close":"Close",
         "bt_search":"Search",
         "bt_approve":"Approve",
         "bt_no_pass":"Not pass",

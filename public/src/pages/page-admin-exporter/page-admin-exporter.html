@@ -54,21 +54,9 @@
     <paper-material elevation="1" class="elevation">
 
       <div class="layout vertical" style="margin: 20px;">
-        <div class="layout horizontal justified">
-          <div class="horizontal layout">
-            <div style="margin:30px 10px 0px 20px;">
-              <iron-icon icon="print"></iron-icon>
-            </div>
-            <gl-form-dropdown-menu style="width:250px" placeholder="{{localize('select_report')}}" name="report">
-              <paper-menu class="dropdown-content" attr-for-selected="report" selected="{{report}}">
-                <paper-item on-tap="_report" report="report1">{{localize('report1')}}</paper-item>
-                <paper-item on-tap="_report" report="report2">{{localize('report2')}}</paper-item>
-                <paper-item on-tap="_report" report="report3">{{localize('report3')}}</paper-item>
-              </paper-menu>
-            </gl-form-dropdown-menu>
-          </div>
+        <div class="layout horizontal end-justified">
           <paper-button raised class="gl-btn-primary" on-tap="_toggleDrawer" title="{{localize('add_exporter')}}" id="addRedRegExporter">
-            <iron-icon icon="add"></iron-icon>{{localize('add_exporter')}}</paper-button>
+          <iron-icon icon="add"></iron-icon>{{localize('add_exporter')}}</paper-button>
         </div>
 
         <div class="flex title">
@@ -146,56 +134,45 @@
           </gl-grid-row>
         </div>
 
+        <div class="horizontal layout end-justified">
+            <div style="margin:30px 10px 0px 20px;"><iron-icon icon="print"></iron-icon></div>
+            <gl-form-dropdown-menu style="width:250px; margin-right:20px;" placeholder="{{localize('select_report')}}" name="report">
+              <paper-menu class="dropdown-content" attr-for-selected="report" selected="{{report}}">
+                <paper-item on-tap="_report" report="report1">{{localize('report1')}}</paper-item>
+                <paper-item on-tap="_report" report="report2">{{localize('report2')}}</paper-item>
+                <paper-item on-tap="_report" report="report3">{{localize('report3')}}</paper-item>
+              </paper-menu>
+            </gl-form-dropdown-menu>
+          </div>
+
         <div class="searchBorder" style="overflow-x:auto;">
           <table class="gl-table-default">
             <thead class="table-head">
               <tr>
-                <th>
-                  <div class="text-table">{{localize('no_exporter')}}</div>
-                </th>
-                <th>
-                  <div class="text-table">{{localize('no_tax')}}</div>
-                </th>
-                <th>
-                  <div class="text-table">{{localize('name_company')}}</div>
-                </th>
-                <!--<th><div class="text-table">{{localize('type_license')}}</div></th>-->
-                <th>
-                  <div class="text-table">{{localize('status_export')}}</div>
-                </th>
+                <th><div class="text-table">{{localize('No')}}</div></th>
+                <th><div class="text-table">{{localize('no_exporter')}}</div></th>
+                <th><div class="text-table">{{localize('no_tax')}}</div></th>
+                <th><div class="text-table">{{localize('name_company')}}</div></th>
+                <th><div class="text-table">{{localize('type_license')}}</div></th>
+                <th><div class="text-table">{{localize('status_export')}}</div></th>
                 <!-- <th><div class="text-table">{{localize('status_dit')}}</div></th> -->
-                <th>
-                  <div class="text-table">{{localize('status_exporter')}}</div>
-                </th>
-                <th>
-                  <div class="text-table">{{localize('date_register')}}</div>
-                </th>
+                <th><div class="text-table">{{localize('status_exporter')}}</div></th>
+                <th><div class="text-table">{{localize('date_register')}}</div></th>
               </tr>
             </thead>
             
             <template is="dom-repeat" items="{{exporters}}">
               <tbody>
                 <tr id="detailRegExporter" on-tap="_selectData" data="[[item]]" style="cursor:pointer;">
-                  <td>
-                    <div class="text-table">{{item.exporter_no_name}}</div>
-                  </td>
-                  <td>
-                    <div class="text-table">{{item.company_taxno}}</div>
-                  </td>
-                  <td>
-                    <div>{{item.company_name_th}}</div>
-                  </td>
-                  <!--<td><div class="text-table">{{item.type_lic_name}}</div></td>-->
-                  <td>
-                    <div class="text-table">{{item.exporter_status_name}}</div>
-                  </td>
+                  <td><div class="text-table">[[toIndex(index)]]</div></td>
+                  <td><div class="text-table">{{item.exporter_no_name}}</div></td>
+                  <td><div class="text-table">{{item.company_taxno}}</div></td>
+                  <td><div>{{item.company_name_th}}</div></td>
+                  <td><div class="text-table">{{item.type_lic_name}}</div></td>
+                  <td><div class="text-table">{{item.exporter_status_name}}</div></td>
                   <!-- <td><div class="text-table">{{item.trader_active_name}}</div></td> -->
-                  <td>
-                    <div class="text-table">{{item.export_status_name}}</div>
-                  </td>
-                  <td>
-                    <div class="text-table">{{item.exporter_date_approve}}</div>
-                  </td>
+                  <td><div class="text-table">{{item.export_status_name}}</div></td>
+                  <td><div class="text-table">{{item.exporter_date_approve}}</div></td>
                 </tr>
               </template>
 
@@ -393,6 +370,9 @@
           });
           this.listCompany = data;
           });
+      },
+      toIndex:function(index){
+        return index+1;
       }
     });
   </script>
