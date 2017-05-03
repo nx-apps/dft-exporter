@@ -267,12 +267,14 @@
       },
       _toggleDrawer: function (e) {
         // this.layerContent = e.target.id;
-        this.layerContent = "addRedRegExporter";
-        this.titleName = 'ลงทะเบียนผู้ส่งออก';
-        this.$$('panel-right').toggle();
-        this.$$('panel-right').open();
-        this.$$('register-pageRegister').backPage();
-        this.$$('register-pageRegister').clearData();
+        // this.layerContent = "addRedRegExporter";
+        // this.titleName = 'ลงทะเบียนผู้ส่งออก';
+        // this.$$('panel-right').toggle();
+        // this.$$('panel-right').open();
+        // this.$$('register-pageRegister').backPage();
+        // this.$$('register-pageRegister').clearData();
+        // this.fire('nylon-change-page',{path:'admin-confirm'})
+        window.open('./admin-confirm');
       },
       attached: function () {
         this.getDocType();
