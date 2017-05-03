@@ -855,7 +855,7 @@ exports.exporter_detail = function (req, res) {
             res.json(err)
         })
 }
-exports.exporter_approved = function (req, res) {
+exports.approve_general_1 = function (req, res) {
     var r = req.r;
     var params = req.params;
     var parameters = {
@@ -890,10 +890,56 @@ exports.exporter_approved = function (req, res) {
         .filter(function (c) {
             return c('approve_status').ne('approve').and(c('approve_status').ne('reject'))
         })
+        .filter({approve_status_name:'รออนุมัติ'})
         .run()
         .then(function (result) {
-            res.json(result);
-            res.ireport("exporter/exporter_approved.jasper", "pdf", result, parameters);
+            // res.json(result);
+            res.ireport("exporter/approve_general_1.jasper", "pdf", result, parameters);
+        })
+        .error(function (err) {
+            res.json(err)
+        })
+}
+exports.approve_general_2 = function (req, res) {
+    var r = req.r;
+    var params = req.params;
+    var parameters = {
+        CURRENT_DATE: new Date().toISOString().slice(0, 10)
+    };
+  r.db('external').table('confirm_exporter')
+        .merge(function (m) {
+            return {
+                exporter_no_name: r.branch(
+                    m.hasFields('exporter_no'),
+                    r.branch(
+                        m('exporter_no').lt(10)
+                        , r.expr('ข.000')
+                        , r.branch(
+                            m('exporter_no').lt(100)
+                            , r.expr('ข.00')
+                            , r.branch(
+                                m('exporter_no').lt(1000)
+                                , r.expr('ข.0')
+                                , r.expr('ข.')
+                            )
+                        )
+                    ).add(m('exporter_no').coerceTo('string'))
+                    , null
+                ),
+                approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่')
+            }
+        })
+        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
+        .merge({ date_created: r.row('date_created').split('T')(0) })
+        .orderBy('exporter_no')
+        .filter(function (c) {
+            return c('approve_status').ne('approve').and(c('approve_status').ne('reject'))
+        })
+        .filter({approve_status_name:'รออนุมัติ'})
+        .run()
+        .then(function (result) {
+            // res.json(result);
+            res.ireport("exporter/approve_general_2.jasper", "pdf", result, parameters);
         })
         .error(function (err) {
             res.json(err)
