@@ -42,9 +42,9 @@ var config = {
         {
          name:"mssql",
          driver:"com.microsoft.sqlserver.jdbc.SQLServerDriver",
-         url:"jdbc:sqlserver://127.0.0.1:1433;databaseName=RiceDB",
-         user:"riceuser",
-         password:"l2ice2015"
+         url:"jdbc:sqlserver://desktop-qh77uq3:1433;databaseName=external",
+         user:"external",
+         password:"external@2017"
        },
         {
          name:"oracle",
