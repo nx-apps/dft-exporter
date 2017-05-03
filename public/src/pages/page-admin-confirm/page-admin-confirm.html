@@ -3,7 +3,7 @@
 <link rel="import" href="../components/panel-right/panel-right.html">
 <link rel="import" href="components/detail-company.html">
 <link rel="import" href="components/fileup-company.html">
-
+<link rel="import" href="components/company-page.html">
 
 <dom-module id="page-admin-confirm">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
@@ -62,12 +62,12 @@
     }
   </style>
   <template>
-    <div class="horizontal layout center-justified">
-      <gl-form-input style="width:300px;" label="เลขประจำตัวผู้เสียภาษี :" value="{{companyId}}" always-float-label allowed-pattern="[0-9]" maxlength="13">
+    <div class="horizontal layout center-justified" style="margin-top:10px;">
+      <gl-form-input hidden="{{isHidden}}" style="width:300px;" label="เลขประจำตัวผู้เสียภาษี :" value="{{companyId}}" always-float-label allowed-pattern="[0-9]" maxlength="13">
         <iron-icon icon="search" prefix style="width:20px;height:30px;"></iron-icon>
         <paper-icon-button suffix on-tap="clearData" icon="clear" title="clear" style="height:30px;">
       </gl-form-input>
-      <paper-button class="gl-btn-info btn" raised on-tap="_search">ค้นหา</paper-button>
+      <paper-button hidden="{{isHidden}}" class="gl-btn-info btn" raised on-tap="_search">ค้นหา</paper-button>
     </div>
     <iron-pages selected="{{pageSelected}}" attr-for-selected="name">
       <div name="listCompany">
@@ -186,6 +186,10 @@
           type: Boolean,
           value: false,
           observer: '_changeselectDataAll'
+        },
+        isHidden:{
+          type: Boolean,
+          value: false
         }
       },
       behaviors: [dataBehavior, nylonLocalizeBehavior, nylonBehavior],
@@ -221,6 +225,7 @@
         })
       },
       _selectData: function (e) {
+        this.isHidden = true;
         this.pageSelected = "detailCompany";
         this.dataSelect = e.currentTarget.data;
         if (this.dataSelect.approve_status == 'process') {
@@ -242,6 +247,7 @@
       _backPage: function (data) {
         this.pageSelected = 'listCompany';
         this.pages = 0;
+        this.isHidden = false;
       },
       _save: function () {
         this.fire('toast', {
@@ -458,47 +464,53 @@
           return true
         }
       },
-      // _search: function (val) {
-      //   console.log(this.companyId);
-      //   // if (val != '' && typeof val != 'undefined') {
-      //   //   // console.log(val);
-      //   //   this.read('./external/confirm_exporter/list/' + val, (data) => {
-      //   //     if (data != []) {
-      //   //       for (var key in data) {
-      //   //         // console.log(data[key]);
-      //   //         if (data[key] == '') {
-      //   //           data[key] = "-";
-      //   //         }
-      //   //       }
-      //   //       this.pageSelected = "register";
-      //   //       this.data = data;
-      //   //       // console.log(data);
-      //   //     }
-      //   //     else {
-      //   //       this.read('./external/company/' + val, (data) => {
-      //   //         data.approve_status = 'register';
-      //   //         data.approve_status_name = 'ยังไม่ลงทะเบียนผู้ส่งออก';
-      //   //         for (var key in data) {
-      //   //           // console.log(data[key]);
-      //   //           if (data[key] == '') {
-      //   //             data[key] = "-";
-      //   //           }
-      //   //         }
-      //   //         this.pageSelected = "register";
-      //   //         this.data = data;
-      //   //         // console.log(data);
-      //   //       })
-      //   //     }
-      //   //   })
-      //   // }
-      //   // else{
-      //   //   return this._backPage()
-      //   // }
-      // },
-      // clearData: function(){
-      //   this.idCompany = {};
-      //   this.companyId = '';
-      // }
+      _search: function () {
+        if(this.companyId != ''){
+          this.read('./external/company/' + this.companyId, (data) => {
+            if(data != [] && data != ''){
+              this.read('./external/confirm_exporter/list/' + data[0].id, (data) => {
+                if (data != []) {
+                  for (var key in data) {
+                    // console.log(data[key]);
+                    if (data[key] == '') {
+                      data[key] = "-";
+                    }
+                  }
+                  this.pageSelected = "register";
+                  this.data = data;
+                  // console.log('มี',data);
+                }
+                else {
+                    this.read('./external/company/' + this.companyId, (data) => {
+                      data[0].approve_status = 'register';
+                      data[0].approve_status_name = 'ยังไม่ลงทะเบียนผู้ส่งออก';
+                      for (var key in data[0]) {
+                        // console.log(data[key]);
+                        if (data[0][key] == '') {
+                          data[0][key] = "-";
+                        }
+                      }
+                      this.pageSelected = "register";
+                      this.data = data[0];
+                      // console.log('ไม่มี',data);
+                    })
+                  }
+              })
+            }
+            else{
+              this.fire('toast', { status: 'connectError', text: 'ไม่มีเลขประจำตัวผู้ส่งออกในระบบ' })
+            }
+          })
+        }
+        else{
+          this.fire('toast', { status: 'connectError', text: 'กรุณากรอกเลขประจำตัวผู้ส่งออก' })
+        }
+      },
+      clearData: function(){
+        this.idCompany = {};
+        this.companyId = '';
+        this._backPage();
+      }
     });
   </script>
 </dom-module>

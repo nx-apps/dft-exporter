@@ -72,9 +72,9 @@
             </gl-grid-col>
           </gl-grid-row>
           <gl-grid-row>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,1]]"></gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
-            <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
+            <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>-->
+            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
                 <gl-form-dropdown-menu label="{{localize('type_license')}}" placeholder="{{localize('all')}}">
                   <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.type_lic_id}}" name="type_lic_id">
                     <paper-item>{{localize('all')}}</paper-item>
@@ -83,7 +83,7 @@
                     <paper-item value="KK8">{{localize('frontier')}}</paper-item>
                   </paper-menu>
                 </gl-form-dropdown-menu>
-              </gl-grid-col>-->
+              </gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
               <gl-form-dropdown-menu label="{{localize('status_export')}}" placeholder="{{localize('all')}}">
                 <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.exporter_status}}" name="exporter_status">
@@ -168,7 +168,7 @@
                   <td><div class="text-table">{{item.exporter_no_name}}</div></td>
                   <td><div class="text-table">{{item.company_taxno}}</div></td>
                   <td><div>{{item.company_name_th}}</div></td>
-                  <td><div class="text-table">{{item.type_lic_name}}</div></td>
+                  <td><div>{{item.type_lic_name}}</div></td>
                   <td><div class="text-table">{{item.exporter_status_name}}</div></td>
                   <!-- <td><div class="text-table">{{item.trader_active_name}}</div></td> -->
                   <td><div class="text-table">{{item.export_status_name}}</div></td>
@@ -224,17 +224,14 @@
         'refresh-exporter': 'getExporters',
         'close-toggle': '_closeToggle',
         'refresh-company': 'getCompany',
-        'getFiles': 'getFile',
-        'refresh-listcompany': 'getlistCompany'
+        'getFiles': 'getFile'
       },
       created: function () {
         this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
       },
       nylonPageActive: function () {
         this.getExporters();
-        this.getCompany();
         this.getFile();
-        this.getlistCompany();
       },
       _exporterIdChanged: function (val) {
         // console.log(val);
@@ -258,7 +255,7 @@
       },
       getExporters: function () {
         this.exporter_id = this.exporter_id || this.$.exporter_id;
-        this.read('./external/exporter?exporter_status=true', (data) => {
+        this.read('./external/exporter', (data) => {
           data.map((item) => {
             for (var key in item) {
               if (item[key] == '') {
@@ -278,21 +275,6 @@
       getDocType: function () {
         this.read('./external/document_type', (data) => {
           this.docType = data;
-        })
-      },
-      getCompany: function () {
-        this.read('./external/confirm_exporter/list', (data) => {
-          data.map((item) => {
-            for (var key in item) {
-              if (item[key] == '') {
-                item[key] = '-';
-              }
-            }
-          })
-          this.companys = data;
-          for (var i = 0; i < this.companys.length; i++) {
-            this.companys[i]['check'] = false;
-          }
         })
       },
       _search: function () {
@@ -362,14 +344,6 @@
         else{
           return true
         }
-      },
-      getlistCompany:function(){
-        this.read('./external/exporter?exporter_status=false', (data) => {
-          data.map((type)=>{
-            type.company_name_th = type.company_taxno+" ("+type.company_name_th+")";
-          });
-          this.listCompany = data;
-          });
       },
       toIndex:function(index){
         return index+1;
