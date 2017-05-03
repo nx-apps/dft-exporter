@@ -11,7 +11,7 @@ exports.list = function (req, res) {
 }
 exports.listId = function (req, res) {
     var r = req.r;
-    r.db('external').table('company').get(req.params.id)
+    r.db('external').table('company').getAll(req.params.id, {index:'company_taxno'})
         .run()
         .then(function (result) {
             res.json(result);

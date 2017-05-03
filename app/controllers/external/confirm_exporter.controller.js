@@ -129,7 +129,8 @@ exports.register = function (req, res) {
             if (response > 0) {
                 req.body.exporter_no = response;
                 req.body = Object.assign(req.body, {
-                    date_created: new Date().toISOString()
+                    date_created: new Date().toISOString(),
+                    creater: 'admin'
                 })
                 // console.log(req.body);
                 r.db('external').table('confirm_exporter').insert(req.body)

@@ -28,7 +28,7 @@ exports.exporter = function (req, res) {
         d = r.row('exporter_date_approve').gt(d.date_start).and(r.row('exporter_date_approve').lt(d.date_end));
     }
 
-    r.db('external').table("company").outerJoin(
+    // r.db('external').table("company").outerJoin(
         r.db('external').table("exporter")
             .merge(function (m) {
                 return {
@@ -82,19 +82,19 @@ exports.exporter = function (req, res) {
                     exporter_date_expire: mmm('exporter_date_expire').toISO8601()
                 }
             })
-            .without('book'),
-        function (company, exporter) {
-            return exporter("company_id").eq(company("id"))
-        })
-        .merge(function (mm) {
-            return {
-                left: {
-                    company_id: mm('left')('id')
-                }
-            }
-        })
-        .without({ left: 'id' })
-        .zip()
+            .without('book')
+        // function (company, exporter) {
+        //     return exporter("company_id").eq(company("id"))
+        // })
+        // .merge(function (mm) {
+        //     return {
+        //         left: {
+        //             company_id: mm('left')('id')
+        //         }
+        //     }
+        // })
+        // .without({ left: 'id' })
+        // .zip()
         .merge(function (m) {
             return {
                 export_date_expire: r.branch(m.hasFields('export_date_expire'), m('export_date_expire').split('T')(0), null),
@@ -134,8 +134,8 @@ exports.exporter = function (req, res) {
             }
         })
         .without('id')
-        // .eqJoin("seller_id", r.db('external').table("seller")).without({ right: ["id", "date_create"] }).zip()
-        // .eqJoin("type_lic_id", r.db('external').table("type_license")).without({ right: ["id", "date_created", "date_updated", "creater", "updater"] }).zip()
+        .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create"] }).zip()
+        .eqJoin("type_lic_id", r.db('external').table("type_license")).without({ right: ["id", "date_created", "date_updated", "creater", "updater"] }).zip()
         .filter(q)
         .filter(d)
         .orderBy('exporter_no')
