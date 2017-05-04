@@ -860,7 +860,9 @@ exports.approve_general_1 = function (req, res) {
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
-  r.db('external').table('confirm_exporter')
+    r.db('external').table('confirm_exporter').getAll(req.params.id, {index: 'id'})
+        .eqJoin('type_lic_id',r.db('external').table('type_license')).pluck("left",{right:"type_lic_name"}).zip()
+        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -880,25 +882,24 @@ exports.approve_general_1 = function (req, res) {
                     ).add(m('exporter_no').coerceTo('string'))
                     , null
                 ),
-                approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่')
+                approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่'),
+                date_created: m('date_created').split('T')(0)
             }
         })
-        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
-        .merge({ date_created: r.row('date_created').split('T')(0) })
-        .orderBy('exporter_no')
-        .filter(function (c) {
-            return c('approve_status').ne('approve').and(c('approve_status').ne('reject'))
-        })
-        .filter({approve_status_name:'รออนุมัติ'})
-        .eqJoin('type_lic_id',r.db('external').table('type_license')).pluck("left",{right:"type_lic_name"}).zip()
-        .filter(function (row) {
-            return row("type_lic_id").eq(req.query.type_lic_id)
-        })   
-  
+        // .merge({ date_created: r.row('date_created').split('T')(0) })
+        // .orderBy('exporter_no')
+        // .filter(function (c) {
+        //     return c('approve_status').ne('approve').and(c('approve_status').ne('reject'))
+        // })
+        // .filter({approve_status_name:'รออนุมัติ'})
+        // .filter(function (row) {
+        //     return row("type_lic_id").eq(req.query.type_lic_id)
+        // })   
+
         .run()
         .then(function (result) {
             // res.json(result);
-            res.ireport("exporter/approve_general_1.jasper",req.query.export || "pdf", result, parameters);
+            res.ireport("exporter/approve_general_1.jasper", req.query.export || "pdf", result, parameters);
         })
         .error(function (err) {
             res.json(err)
@@ -909,7 +910,9 @@ exports.approve_general_2 = function (req, res) {
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
-  r.db('external').table('confirm_exporter')
+    r.db('external').table('confirm_exporter').getAll(req.params.id, {index: 'id'})
+    .eqJoin('type_lic_id',r.db('external').table('type_license')).pluck("left",{right:"type_lic_name"}).zip()
+    .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -929,20 +932,21 @@ exports.approve_general_2 = function (req, res) {
                     ).add(m('exporter_no').coerceTo('string'))
                     , null
                 ),
-                approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่')
-            }
+                approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่'),
+                date_created: m('date_created').split('T')(0)
+        }
         })
-        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
-        .merge({ date_created: r.row('date_created').split('T')(0) })
-        .orderBy('exporter_no')
-        .filter(function (c) {
-            return c('approve_status').ne('approve').and(c('approve_status').ne('reject'))
-        })
-        .filter({approve_status_name:'รออนุมัติ'})
-        .eqJoin('type_lic_id',r.db('external').table('type_license')).pluck("left",{right:"type_lic_name"}).zip()
-        .filter(function (row) {
-            return row("type_lic_id").eq(req.query.type_lic_id)
-        }) 
+        // .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
+        // .merge({ date_created: r.row('date_created').split('T')(0) })
+        // .orderBy('exporter_no')
+        // .filter(function (c) {
+        //     return c('approve_status').ne('approve').and(c('approve_status').ne('reject'))
+        // })
+        // .filter({ approve_status_name: 'รออนุมัติ' })
+        // .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
+        // .filter(function (row) {
+        //     return row("type_lic_id").eq(req.query.type_lic_id)
+        // })
         .run()
         .then(function (result) {
             // res.json(result);
