@@ -181,7 +181,7 @@ exports.sql = function (req, res) {
             var companys = JSON.parse(str_companys);
 
             async.each(companys, function (company, next) {
-               var cmd= re.db('external').table('company_bak').getAll(company.company_taxno, { index: 'company_taxno' })
+               var cmd= re.db('external').table('company').getAll(company.company_taxno, { index: 'company_taxno' })
                     .update({
                         date_exported: r.epochTime(company.approve_date / 1000).inTimezone('+07:00')
                     });

@@ -294,18 +294,23 @@
           status: 'dialog',
           text: 'คุณต้องการจะอนุมัติใช่หรือไม่ ?',
           confirmed: this._confirmApprove.bind(this),
-          datas: {
-            confirm_id: this.dataSelect.id,
-            company_id: this.dataSelect.company_id,
-            exporter_no: this.dataSelect.exporter_no
-          }
+          // datas: {
+            // confirm_id: this.dataSelect.id,
+            // company_id: this.dataSelect.company_id,
+            // exporter_no: this.dataSelect.exporter_no,
+            // exporter_status: this.dataSelect.exporter_status,
+            // type_lic_id : this.dataSelect.type_lic_id
+          // }
         });
       },
       _confirmApprove: function (result, detail) {
         if (result == true) {
-          // console.log(detail.datas);
+          let { exporter_no, company_id, id, exporter_status, type_lic_id} = this.dataSelect;
+          let newData = { exporter_no, company_id, exporter_status, type_lic_id};
+          newData.confirm_id = this.dataSelect.id
+          // console.log(newData);
           this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-          this.insert('./external/confirm_exporter/insert', detail.datas, () => {
+          this.insert('./external/confirm_exporter/insert', newData, () => {
             this.fire('toast', {
               status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
                 this.pageSelected = 'listCompany';
@@ -337,8 +342,9 @@
         }
         this.companys.filter(check).map((datas) => {
           // console.log(datas);
-          let { exporter_no, company_id, id } = datas;
-          let newData = { exporter_no, company_id, id };
+          let { exporter_no, company_id, id, exporter_status, type_lic_id} = datas;
+          let newData = { exporter_no, company_id, exporter_status, type_lic_id};
+          newData.confirm_id = datas.id
           // console.log(newData);
           this.data.push(newData);
         });
