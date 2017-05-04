@@ -52,7 +52,7 @@
                 '_routePageChanged(routeData.page)'
             ],
             _routePageChanged: function(page) {
-                this.page = page || window._start_page ;
+                this.page = page || window._start_page || 'admin-exporter' ;
             },
             _pageChanged: function(page, oldPage) {
                 //console.log(page);
