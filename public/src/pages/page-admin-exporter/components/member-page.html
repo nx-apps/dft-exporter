@@ -67,7 +67,7 @@
                       <paper-tab id="tabFile" class="title-paper" on-tap="refreshFile">{{localize('doc_ev')}}</paper-tab>
                     </paper-tabs>
                     <iron-pages selected="{{pages}}">
-                      <member-show data="{{data}}"></member-show>
+                      <member-show data="{{data}}" type-lic="{{typeLic}}"></member-show>
                       <member-fileup data="{{data}}" doc-type="[[docType]]"></member-fileup>
                        <!-- <member-edit data="{{data}}"></member-edit> -->
                        <member-fileDelete data="{{listFiles}}"></member-fileDelete>
@@ -76,11 +76,13 @@
                   </gl-form-panel>
               </div>
               <!-- {{_checkStatus(data.export_status,data.exporter_status,data.trader_active)}} -->
-        <gl-form-panel-footer>
-          {{localize('bt_print_data')}}<paper-icon-button icon="print" on-tap="print" title="{{localize('bt_print_data')}}"></paper-icon-button>
+        <!--<gl-form-panel-footer>-->
+          <div style="margin-left:20px;">
+            {{localize('bt_print_data')}}<paper-icon-button icon="print" on-tap="print" title="{{localize('bt_print_data')}}"></paper-icon-button>
+          </div>
           <!-- <paper-button id="removeButtomC" class="gl-btn-danger" on-tap="_cancel" raised title="ยกเลิกการแก้ไข" hidden>ยกเลิก</paper-button>
           <paper-button id="removeButtom" class="gl-btn-success" on-tap="save" raised title="บันทึกข้อมูล" hidden>บันทึก</paper-button> -->
-        </gl-form-panel-footer>
+        <!--</gl-form-panel-footer>-->
     </gl-form-panel>
 
     <paper-dialog id="dialog" style="width:60%;">

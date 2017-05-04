@@ -100,8 +100,8 @@ exports.exporter = function (req, res) {
                 export_date_expire: r.branch(m.hasFields('export_date_expire'), m('export_date_expire').split('T')(0), null),
                 export_status: r.branch(m.hasFields('export_status'), m('export_status'), null),
                 exporter_id: r.branch(m.hasFields('exporter_id'), m('exporter_id'), null),
-                exporter_status: m.hasFields('exporter_no'),
-                exporter_status_name: r.branch(m.hasFields('exporter_no'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
+                // exporter_status: m.hasFields('exporter_no'),
+                exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                 exporter_date_approve: r.branch(m.hasFields('exporter_date_approve'), m('exporter_date_approve').split('T')(0), null),
                 exporter_date_expire: r.branch(m.hasFields('exporter_date_expire'), m('exporter_date_expire').split('T')(0), null),
                 exporter_no_name: r.branch(
