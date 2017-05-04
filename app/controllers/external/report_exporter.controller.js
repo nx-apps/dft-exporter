@@ -857,7 +857,6 @@ exports.exporter_detail = function (req, res) {
 }
 exports.approve_general_1 = function (req, res) {
     var r = req.r;
-    var params = req.params;
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
@@ -891,10 +890,15 @@ exports.approve_general_1 = function (req, res) {
             return c('approve_status').ne('approve').and(c('approve_status').ne('reject'))
         })
         .filter({approve_status_name:'รออนุมัติ'})
+        .eqJoin('type_lic_id',r.db('external').table('type_license')).pluck("left",{right:"type_lic_name"}).zip()
+        .filter(function (row) {
+            return row("type_lic_id").eq(req.query.type_lic_id)
+        })   
+  
         .run()
         .then(function (result) {
             // res.json(result);
-            res.ireport("exporter/approve_general_1.jasper", "pdf", result, parameters);
+            res.ireport("exporter/approve_general_1.jasper",req.query.export || "pdf", result, parameters);
         })
         .error(function (err) {
             res.json(err)
@@ -902,7 +906,6 @@ exports.approve_general_1 = function (req, res) {
 }
 exports.approve_general_2 = function (req, res) {
     var r = req.r;
-    var params = req.params;
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
@@ -936,6 +939,10 @@ exports.approve_general_2 = function (req, res) {
             return c('approve_status').ne('approve').and(c('approve_status').ne('reject'))
         })
         .filter({approve_status_name:'รออนุมัติ'})
+        .eqJoin('type_lic_id',r.db('external').table('type_license')).pluck("left",{right:"type_lic_name"}).zip()
+        .filter(function (row) {
+            return row("type_lic_id").eq(req.query.type_lic_id)
+        }) 
         .run()
         .then(function (result) {
             // res.json(result);
