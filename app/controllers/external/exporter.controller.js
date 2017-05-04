@@ -179,7 +179,7 @@ exports.exporterId = function (req, res) {
         //             trader_active: r.now().toISO8601().lt(m('trader_date_approve').split('T')(0).split('-')(0).add("-12-31T00:00:00.000Z"))
         //         }
         //     }),
-        r.db('external').table("seller").get(r.row("seller_id")),
+        // r.db('external').table("seller").get(r.row("seller_id")),
         r.db('external').table("type_license").get(r.row("type_lic_id"))
         // r.db('common').table("country").get(r.row("country_id"))
         )
