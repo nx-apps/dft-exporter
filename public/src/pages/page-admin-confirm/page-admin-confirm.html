@@ -63,11 +63,11 @@
   </style>
   <template>
     <div class="horizontal layout center-justified" style="margin-top:10px;">
-      <gl-form-input hidden="{{isHidden}}" style="width:300px;" label="เลขประจำตัวผู้เสียภาษี :" value="{{companyId}}" always-float-label allowed-pattern="[0-9]" maxlength="13">
+      <gl-form-input hidden="{{isHidden}}" style="width:300px;" label="{{localize('tax_no')}} :" value="{{companyId}}" always-float-label allowed-pattern="[0-9]" maxlength="13">
         <iron-icon icon="search" prefix style="width:20px;height:30px;"></iron-icon>
         <paper-icon-button suffix on-tap="clearData" icon="clear" title="clear" style="height:30px;">
       </gl-form-input>
-      <paper-button hidden="{{isHidden}}" class="gl-btn-info btn" raised on-tap="_search">ค้นหา</paper-button>
+      <paper-button hidden="{{isHidden}}" class="gl-btn-info btn" raised on-tap="_search">{{localize('bt_search')}}</paper-button>
     </div>
     <iron-pages selected="{{pageSelected}}" attr-for-selected="name">
       <div name="listCompany">
@@ -134,8 +134,8 @@
         </paper-tabs>
         <gl-form-panel>
           <iron-pages selected="{{pages}}">
-            <detail-company data="[[dataSelect]]"></detail-company>
-            <fileup-company doc-type="[[docType]]" data="[[dataSelect]]"></fileup-company>
+            <detail-company data="[[dataSelect]]" type-lic="[[typeLic]]"></detail-company>
+            <fileup-company data="[[dataSelect]]" doc-type="[[docType]]"></fileup-company>
           </iron-pages>
         </gl-form-panel>
 
@@ -151,7 +151,7 @@
         </div>
       </div>
       <div name="register">
-        <company-page doc-type="[[docType]]" data="[[data]]"></company-page>
+        <company-page doc-type="[[docType]]" data="[[data]]" type-lic="[[typeLic]]"></company-page>
       </div>
     </iron-pages>
     <paper-dialog id="dialog" style="width:60%;">
@@ -195,7 +195,8 @@
       behaviors: [dataBehavior, nylonLocalizeBehavior, nylonBehavior],
       listeners: {
         'back_page' : '_backPage',
-        'clearData' : 'clearData'
+        'clearData' : 'clearData',
+        'refresh-company' : 'getCompany'
       },
       created: function () {
         this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
@@ -222,6 +223,9 @@
       getDocType: function () {
         this.read('./external/document_type', (data) => {
           this.docType = data;
+        })
+        this.read('./external/type_license', (data) => {
+          this.typeLic = data;
         })
       },
       _selectData: function (e) {
@@ -510,6 +514,21 @@
         this.idCompany = {};
         this.companyId = '';
         this._backPage();
+      },
+      getFile: function () {
+        if (typeof this.dataSelect != 'undefined' && this.dataSelect != '') {
+          var companyId = this.dataSelect.company_id;
+          if (companyId != '' && companyId != undefined) {
+            axios.get('/external/upload/list/' + companyId)
+              .then((response) => {
+                // console.log(response);
+                this.listFiles = response.data;
+              })
+              .catch(function (error) {
+                console.log(error);
+              });
+          }
+        }
       }
     });
   </script>

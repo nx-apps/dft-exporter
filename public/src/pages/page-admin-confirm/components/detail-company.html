@@ -69,15 +69,18 @@
           <gl-form-input label="FAX :" value="{{data.company_fax}}" disabled></gl-form-input>
         </gl-grid-col>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-dropdown-menu label="{{localize('type_license')}}" placeholder="กรุณาเลือกทั้งหมด" disabled="[[obItem(data.creater)]]" required>
+          <gl-form-dropdown-menu style="width:60%;" class="checkValidate" label="{{localize('type_license')}}" placeholder="กรุณาเลือกทั้งหมด" disabled="[[obItem(data.creater)]]" required>
             <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.type_lic_id}}" name="type_lic_id">
-              <paper-item value="KK6">{{localize('general')}}</paper-item>
-              <paper-item value="KK7">{{localize('not_than12')}}</paper-item>
+              <template is="dom-repeat" items={{typeLic}}>
+                <paper-item value="[[item.type_lic_id]]">{{item.type_lic_name}}</paper-item>
+              </template>
+              <!--<paper-item value="KK6">{{localize('general')}}</paper-item>-->
+              <!--<paper-item value="KK7">{{localize('rice_pack')}}</paper-item>-->
             </paper-menu>
           </gl-form-dropdown-menu>
         </gl-grid-col>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-dropdown-menu label="{{localize('status_export')}}" placeholder="กรุณาเลือกทั้งหมด" disabled="[[obItem(data.creater)]]" required>
+          <gl-form-dropdown-menu style="width:60%;" class="checkValidate" label="สถานะสมาชิกสมาคมผู้ส่งออก" placeholder="กรุณาเลือกทั้งหมด" disabled="[[obItem(data.creater)]]" required>
             <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.exporter_status}}" name="exporter_status">
               <paper-item value="true">{{localize('member')}}</paper-item>
               <paper-item value="false">{{localize('no_member')}}</paper-item>
@@ -147,6 +150,10 @@
             console.log('ไม่มี');
           }
         }
+      },
+      validate:function(){
+        var check = this.validateForm('.checkValidate')
+        return check
       }
     });
   </script>
