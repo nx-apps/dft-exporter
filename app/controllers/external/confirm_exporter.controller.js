@@ -47,7 +47,6 @@ exports.insert = function (req, res) {
         .run()
             req.body = Object.assign(req.body, {
                 creater: 'admin',
-                updater: 'admin',
                 company_id: req.body.company_id,
                 exporter_no: req.body.exporter_no,
                 exporter_date_approve: new Date().toISOString()

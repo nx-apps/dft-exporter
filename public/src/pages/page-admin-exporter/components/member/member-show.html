@@ -87,6 +87,25 @@
           </gl-grid-col>-->
         </gl-grid-row>
         <gl-grid-row>
+        <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+          <gl-form-dropdown-menu style="width:100%;" class="checkValidate" label="{{localize('type_license')}}" placeholder="กรุณาเลือกทั้งหมด" disabled required>
+            <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.type_lic_id}}" name="type_lic_id">
+              <template is="dom-repeat" items={{typeLic}}>
+                <paper-item value="[[item.type_lic_id]]">{{item.type_lic_name}}</paper-item>
+              </template>
+            </paper-menu>
+          </gl-form-dropdown-menu>
+        </gl-grid-col>
+        <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+          <gl-form-dropdown-menu class="checkValidate" label="สถานะสมาชิกสมาคมผู้ส่งออก" placeholder="กรุณาเลือกทั้งหมด" disabled required>
+            <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.exporter_status}}" name="exporter_status">
+              <paper-item value="yes">{{localize('member')}}</paper-item>
+              <paper-item value="no">{{localize('no_member')}}</paper-item>
+            </paper-menu>
+          </gl-form-dropdown-menu>
+        </gl-grid-col>
+      </gl-grid-row>
+        <gl-grid-row>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <template is="dom-repeat" items="{{data.company_agent}}">
               <gl-form-input  label="{{localize('name_committee')}} :" value="{{item.agent_name}}" disabled></gl-form-input>

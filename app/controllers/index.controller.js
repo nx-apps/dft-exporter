@@ -142,42 +142,107 @@ function toArrayBuffer(buf) {
     return ab;
 }
 exports.sql = function (req, res) {
+    var async = require('async');
     var mssql = req.jdbc;
     var re = req.r;
+    var commands = [];
+    var parameters = "";
+    //_callback(1,2,3,4,5,)
+    var _callback = function (...args) {
+        var p1 = args[0];
+        var out = {
+            "deleted": p1('deleted'),
+            "errors": p1('errors'),
+            "inserted": p1('inserted'),
+            "replaced": p1('replaced'),
+            "skipped": p1('skipped'),
+            "unchanged": p1('unchanged')
+        };
+        for (var i = 1; i < args.length; i++) {
+            out.deleted = out.deleted.add(args[i]('deleted'));
+            out.errors = out.errors.add(args[i]('errors'));
+            out.inserted = out.inserted.add(args[i]('inserted'));
+            out.replaced = out.replaced.add(args[i]('replaced'));
+            out.skipped = out.skipped.add(args[i]('skipped'));
+            out.unchanged = out.unchanged.add(args[i]('unchanged'));
+        }
+        return out;
+    }
+
+
     mssql.query("mssql", `
         select
             company_taxno,max(approve_date) as approve_date
         from f3
         where tran_type='E'
         group by company_taxno
-    `, [], function (eee, ddd) {
-            var ddd = JSON.parse(ddd);
-            var a = [];
-            var count = 0;
-            for (var i = 0; i < ddd.length; i++) {
-                re.db('external').table('company_bak').getAll(ddd[i]['company_taxno'], { index: 'company_taxno' })
-                    .run()
-                    .then(function (data_com) {
-                        if (data_com.length > 0) {
-                            var index = ddd.map(function (e) { return e.company_taxno; }).indexOf(data_com[0].company_taxno);
+    `, [], function (e, str_companys) {
 
-                            a.push(
-                                re.db('external').table('company_bak').get(data_com[0].id).update({
-                                    date_exported: r.epochTime(ddd[index]['approve_date'] / 1000).inTimezone('+07:00')
-                                })
-                            );
-                        }
+            var companys = JSON.parse(str_companys);
 
-                    })
-            }
-            setTimeout(function () {
-                // res.json(a);
-                re.do.apply(this, a)
+            async.each(companys, function (company, next) {
+               var cmd= re.db('external').table('company').getAll(company.company_taxno, { index: 'company_taxno' })
+                    .update({
+                        date_exported: r.epochTime(company.approve_date / 1000).inTimezone('+07:00')
+                    });
+
+                   // .run()
+                   // .then(function (data_com) {
+                        // var index = ddd.map(function (e) { return e.company_taxno; }).indexOf(data_com[0].company_taxno);
+                    //    if (data_com.length > 0) {
+                         //   var cmd = re.db('external').table('company_bak').get(data_com[0].id).update({
+                            //    date_exported: r.epochTime(company.approve_date / 1000).inTimezone('+07:00')
+                          //  })
+                            commands.push(cmd);
+                            if (parameters == "") {
+                                parameters = "p" + company.company_taxno;
+                            } else {
+                                parameters = parameters + ",p" + company.company_taxno;
+                            }
+                      //      }
+                        next();
+
+                   // })
+            }, function (err) {
+
+                global.callback = 0;
+                eval("callback=function(" + parameters + "){return _callback.apply(this,arguments);};");
+                commands.push(callback);
+                re.do.apply(this, commands)
                     .run()
                     .then(function (data) {
                         res.json(data);
                     })
-            }, 3000);
+            })
+
+
+            /* var ddd = JSON.parse(ddd);
+             var a = [];
+             var count = 0;
+             for (var i = 0; i < ddd.length; i++) {
+                 re.db('external').table('company_bak').getAll(ddd[i]['company_taxno'], { index: 'company_taxno' })
+                     .run()
+                     .then(function (data_com) {
+                         if (data_com.length > 0) {
+                             var index = ddd.map(function (e) { return e.company_taxno; }).indexOf(data_com[0].company_taxno);
+ 
+                             a.push(
+                                 re.db('external').table('company_bak').get(data_com[0].id).update({
+                                     date_exported: r.epochTime(ddd[index]['approve_date'] / 1000).inTimezone('+07:00')
+                                 })
+                             );
+                         }
+ 
+                     })
+             }
+             setTimeout(function () {
+                 // res.json(a);
+                 re.do.apply(this, a)
+                     .run()
+                     .then(function (data) {
+                         res.json(data);
+                     })
+             }, 3000);*/
             // res.send("update company success!");
         })
 
