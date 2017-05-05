@@ -883,7 +883,7 @@ exports.approve_general_1 = function (req, res) {
                     , null
                 ),
                 approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่'),
-                date_created: m('date_created').split('T')(0)
+                date_created: m('date_created').toISO8601().split('T')(0)
             }
         })
         // .merge({ date_created: r.row('date_created').split('T')(0) })
@@ -933,7 +933,7 @@ exports.approve_general_2 = function (req, res) {
                     , null
                 ),
                 approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่'),
-                date_created: m('date_created').split('T')(0)
+                date_created: m('date_created').toISO8601().split('T')(0)
         }
         })
         // .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
@@ -950,7 +950,7 @@ exports.approve_general_2 = function (req, res) {
         .run()
         .then(function (result) {
             // res.json(result);
-            res.ireport("exporter/approve_general_2.jasper", "pdf", result, parameters);
+            res.ireport("exporter/approve_general_2.jasper", req.query.export || "pdf", result, parameters);
         })
         .error(function (err) {
             res.json(err)
