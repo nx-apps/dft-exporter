@@ -1,8 +1,7 @@
 <link rel="import" href="../../../../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../components/dataBehavior.html">
-<link rel="import" href="member/member-show.html">
+<link rel="import" href="member/member-manage.html">
 <link rel="import" href="member/member-fileup.html">
- <!-- <link rel="import" href="member/member-edit.html"> -->
 <link rel="import" href="member/member-fileDelete.html">
 <link rel="import" href="../../components/panel-right/panel-right.html">
 <dom-module id="member-page">
@@ -52,37 +51,33 @@
     <gl-form-panel set-border="0px">
       <div id="titleBg" class="boxNortify" hidden="[[data.export_status]]">
         <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize('exporter_expire')}}</div>
-        <!-- <div id="titleTrader" class="title"><iron-icon icon="icons:info"></iron-icon>  คน. หมดอายุ</div>
-        <div id="titleSeller" class="title"><iron-icon icon="icons:info"></iron-icon>  ยังไม่ลงทะเบียนเป็นผู้ส่งออก</div> -->
       </div>
       <div class="horizontal end-justified layout">
         <paper-button id="buttomActive" raised class="gl-btn-success button" on-tap="_dialogRemark" title="{{localize('bt_exporter_extend')}}" hidden="[[data.export_status]]">{{localize('exporter_extend')}}</paper-button>
-        <!-- <paper-button id="buttomTrader" raised class="gl-btn-danger button" on-tap="_dialogRemark" title="ต่ออายุ คน." hidden>ต่ออายุ คน.</paper-button> -->
-         <!--<paper-icon-button icon="create" on-tap="editChange" title="แก้ไขข้อมูล"></paper-icon-button> -->
+        <div hidden="[[isEnabled]]"><paper-icon-button icon="create" on-tap="editChange" title="แก้ไขข้อมูล"></paper-icon-button></div>
       </div>
-              <div class="bd">
-                  <gl-form-panel>
-                    <paper-tabs selected="{{pages}}" align-bottom no-slide>
-                      <paper-tab>{{localize('detail')}}</paper-tab>
-                      <paper-tab id="tabFile" class="title-paper" on-tap="refreshFile">{{localize('doc_ev')}}</paper-tab>
-                    </paper-tabs>
-                    <iron-pages selected="{{pages}}">
-                      <member-show data="{{data}}" type-lic="{{typeLic}}"></member-show>
-                      <member-fileup data="{{data}}" doc-type="[[docType]]"></member-fileup>
-                       <!-- <member-edit data="{{data}}"></member-edit> -->
-                       <member-fileDelete data="{{listFiles}}"></member-fileDelete>
-
-                    </iron-pages>
-                  </gl-form-panel>
-              </div>
-              <!-- {{_checkStatus(data.export_status,data.exporter_status,data.trader_active)}} -->
-        <!--<gl-form-panel-footer>-->
-          <div style="margin-left:20px;">
-            {{localize('bt_print_data')}}<paper-icon-button icon="print" on-tap="print" title="{{localize('bt_print_data')}}"></paper-icon-button>
+          <div class="bd">
+              <gl-form-panel>
+                <paper-tabs selected="{{pages}}" align-bottom no-slide>
+                  <paper-tab>{{localize('detail')}}</paper-tab>
+                  <paper-tab id="tabFile" class="title-paper" on-tap="refreshFile">{{localize('doc_ev')}}</paper-tab>
+                </paper-tabs>
+                <iron-pages selected="{{pages}}">
+                  <member-manage data="{{data}}" type-lic="{{typeLic}}" is-enabled="[[!isEnabled]]"></member-manage>
+                  <member-fileup data="{{data}}" doc-type="[[docType]]"></member-fileup>
+                  <member-fileDelete data="{{listFiles}}"></member-fileDelete>
+                </iron-pages>
+              </gl-form-panel>
           </div>
-          <!-- <paper-button id="removeButtomC" class="gl-btn-danger" on-tap="_cancel" raised title="ยกเลิกการแก้ไข" hidden>ยกเลิก</paper-button>
-          <paper-button id="removeButtom" class="gl-btn-success" on-tap="save" raised title="บันทึกข้อมูล" hidden>บันทึก</paper-button> -->
-        <!--</gl-form-panel-footer>-->
+      <div class="horizontal layout justified">
+        <div style="margin-left:20px;">
+          {{localize('bt_print_data')}}<paper-icon-button icon="print" on-tap="print" title="{{localize('bt_print_data')}}"></paper-icon-button>
+        </div>
+        <div hidden="[[!isEnabled]]">
+          <paper-button on-tap="_cancel" raised title="ยกเลิกการแก้ไข">{{localize('bt_back')}}</paper-button>
+          <paper-button class="gl-btn-success" on-tap="save" raised title="บันทึกข้อมูล">{{localize('bt_save')}}</paper-button> 
+        </div>
+      </div>
     </gl-form-panel>
 
     <paper-dialog id="dialog" style="width:60%;">
@@ -94,7 +89,6 @@
       <div>
         <paper-button class="gl-btn-danger button-size" raised on-tap="_dialogcancle">{{localize('bt_cancel')}}</paper-button>
         <paper-button id="active" class="gl-btn-primary button-size" raised on-tap="_active">{{localize('bt_save')}}</paper-button>
-        <!-- <paper-button id="retrader" class="gl-btn-primary button-size" raised on-tap="_retrader" hidden>บันทึก</paper-button> -->
       </div>
     </paper-dialog>
 
@@ -110,14 +104,10 @@
             notify:true,
             value: 0
         },
-        // data:{
-        //   type:String,
-        //   observer:'getFile'
-        // }
-        // exporterId:{
-        //   type:String,
-        //   observer:'_exporterIdChanged'
-        // }
+        isEnabled:{
+          type:Boolean,
+          value:false
+        }
       },
       created:function(){
           this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
@@ -125,19 +115,6 @@
       listeners:{
         'pageFileDelete' : 'fileDelete'
       },
-      // _exporterIdChanged:function(val){
-      //   // console.log(val);
-      //   if(val!=""){
-      //     axios.get('./external/exporter/id/'+val)
-      //     .then( (response)=>{
-      //       this.data = response.data;
-      //       // this.glQuery('contentPanel').changDrawer();
-      //     })
-      //     .catch(function (error) {
-      //       console.log(error);
-      //     });
-      //   }
-      // },
       print:function() {
         // console.log(this.data.trader_id);
         window.open('./api/external/report_exporter/exporter_detail/'+this.data.company_id,'_blank');
@@ -148,117 +125,29 @@
       fileDelete: function(){
         this.pages = 2;
       },
-      // editChange:function(e){
-      //   // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
-      //   this.pages = 2;
-      //   this.$$('#removeButtom').removeAttribute("hidden");
-      //   this.$$('#removeButtomC').removeAttribute("hidden");
-      // },
+      editChange:function(e){
+        this.isEnabled = true;
+        this.pages = 0;
+      },
       save:function(e) {
         var datas = {
           id:this.data.exporter_id,
           exporter_no:this.data.exporter_no,
           exporter_date_approve:new Date (this.data.exporter_date_approve),
-          // seller_agent:this.data.seller_agent,
-          trader_id:this.data.trader_id
         }
         this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-        // console.log(datas);
-        // console.log(this.exporterId);
         this.update('./external/exporter/update', datas, () => {
-          this.fire('refresh-exporter');
-          this.pages = 0;
           this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
-            // console.log('success');
+            this.fire('refresh-exporter');
+            this.pages = 0;
+            this.isEnabled = false;
           }});
          });
-        this.$$('#removeButtom').setAttribute("hidden", "hidden");
-        this.$$('#removeButtomC').setAttribute("hidden", "hidden");
-        // this.$$('#buttomEdit').removeAttribute("hidden");
       },
       _cancel:function() {
-        this.$$('#removeButtom').setAttribute("hidden", "hidden");
-        this.$$('#removeButtomC').setAttribute("hidden", "hidden");
-        // this.$$('#buttomEdit').removeAttribute("hidden");
+        this.isEnabled = false;
         this.pages = 0;
       },
-      // _checkStatus:function(ac,st,ta){
-      //   if (ac == true && st == true && ta == true) {
-      //     // this.$$('#buttomEdit').removeAttribute("hidden");
-      //     this.$$('#removeButtom').setAttribute("hidden", "hidden");
-      //     this.$$('#removeButtomC').setAttribute("hidden", "hidden");
-      //     this.$$('#buttomActive').setAttribute("hidden", "hidden");
-      //     this.$$('#active').setAttribute("hidden", "hidden");
-      //     this.$$('#buttomTrader').setAttribute("hidden", "hidden");
-      //     this.$$('#retrader').setAttribute("hidden", "hidden");
-      //     this.$$('#titleExporter').setAttribute("hidden", "hidden");
-      //     this.$$('#titleTrader').setAttribute("hidden", "hidden");
-      //     this.$$('#titleSeller').setAttribute("hidden", "hidden");
-      //     this.$$('#titleBg').setAttribute("hidden", "hidden");
-      //     this.pages = 0;
-      //     this.$$('#tabFile').removeAttribute("disabled");
-      //   }
-      //   else if (ac == true && st == true && ta == false) {
-      //     // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
-      //     this.$$('#removeButtom').setAttribute("hidden", "hidden");
-      //     this.$$('#removeButtomC').setAttribute("hidden", "hidden");
-      //     this.$$('#buttomActive').setAttribute("hidden", "hidden");
-      //     this.$$('#active').setAttribute("hidden", "hidden");
-      //     this.$$('#buttomTrader').removeAttribute("hidden");
-      //     this.$$('#retrader').removeAttribute("hidden");
-      //     this.$$('#titleExporter').setAttribute("hidden", "hidden");
-      //     this.$$('#titleTrader').removeAttribute("hidden");
-      //     this.$$('#titleSeller').setAttribute("hidden", "hidden");
-      //     this.$$('#titleBg').removeAttribute("hidden");
-      //     this.pages = 0;
-      //     this.$$('#tabFile').removeAttribute("disabled");
-      //   }
-      //   else if (ac == false && st == true && ta == false) {
-      //     // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
-      //     this.$$('#removeButtom').setAttribute("hidden", "hidden");
-      //     this.$$('#removeButtomC').setAttribute("hidden", "hidden");
-      //     this.$$('#buttomActive').setAttribute("hidden", "hidden");
-      //     this.$$('#active').setAttribute("hidden", "hidden");
-      //     this.$$('#buttomTrader').removeAttribute("hidden");
-      //     this.$$('#retrader').removeAttribute("hidden");
-      //     this.$$('#titleExporter').setAttribute("hidden", "hidden");
-      //     this.$$('#titleTrader').removeAttribute("hidden");
-      //     this.$$('#titleSeller').setAttribute("hidden", "hidden");
-      //     this.$$('#titleBg').removeAttribute("hidden");
-      //     this.pages = 0;
-      //     this.$$('#tabFile').removeAttribute("disabled");
-      //   }
-      //   else if (ac == false && st == true && ta == true) {
-      //     // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
-      //     this.$$('#removeButtom').setAttribute("hidden", "hidden");
-      //     this.$$('#removeButtomC').setAttribute("hidden", "hidden");
-      //     this.$$('#buttomActive').removeAttribute("hidden");
-      //     this.$$('#active').removeAttribute("hidden");
-      //     this.$$('#buttomTrader').setAttribute("hidden", "hidden");
-      //     this.$$('#retrader').setAttribute("hidden", "hidden");
-      //     this.$$('#titleExporter').removeAttribute("hidden");
-      //     this.$$('#titleTrader').setAttribute("hidden", "hidden");
-      //     this.$$('#titleSeller').setAttribute("hidden", "hidden");
-      //     this.$$('#titleBg').removeAttribute("hidden");
-      //     this.pages = 0;
-      //     this.$$('#tabFile').removeAttribute("disabled");
-      //   }
-      //   else if(st == false){
-      //     // this.$$('#buttomEdit').setAttribute("hidden", "hidden");
-      //     this.$$('#removeButtom').setAttribute("hidden", "hidden");
-      //     this.$$('#removeButtomC').setAttribute("hidden", "hidden");
-      //     this.$$('#buttomActive').setAttribute("hidden", "hidden");
-      //     this.$$('#active').setAttribute("hidden", "hidden");
-      //     this.$$('#buttomTrader').setAttribute("hidden", "hidden");
-      //     this.$$('#retrader').setAttribute("hidden", "hidden");
-      //     this.$$('#titleSeller').removeAttribute("hidden");
-      //     this.$$('#titleExporter').setAttribute("hidden", "hidden");
-      //     this.$$('#titleTrader').setAttribute("hidden", "hidden");
-      //     this.$$('#titleBg').removeAttribute("hidden");
-      //     this.pages = 0;
-      //     this.$$('#tabFile').setAttribute("disabled", "disabled");
-      //   }
-      // },
       _dialogRemark: function(){
         this.$.dialog.toggle();
       },
@@ -278,29 +167,6 @@
         if(result == true){
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
           this.update('./external/exporter/update', detail.datas, () => {
-            this.$.dialog.toggle();
-            this.fire('refresh-exporter');
-            this.fire('close-toggle');
-            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
-              // console.log('success');
-            }});
-           });
-        }
-      },
-      _retrader:function(){
-        this.fire('toast',{status:'dialog',
-        text:'คุณต้องการจะต่ออายุกรมการค้าภายในใช่หรือไม่ ?',
-        confirmed : this._confirmTrader.bind(this),
-        datas: {
-          id: this.data.trader_id,
-          trader_date_approve: new Date
-          }
-        });
-      },
-      _confirmTrader:function(result,detail){
-        if(result == true){
-          this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-          this.update('./external/trader/update', detail.datas, () => {
             this.$.dialog.toggle();
             this.fire('refresh-exporter');
             this.fire('close-toggle');

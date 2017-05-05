@@ -55,7 +55,7 @@
 
       <div class="layout vertical" style="margin: 20px;">
         <div class="layout horizontal end-justified">
-          <paper-button raised class="gl-btn-primary" on-tap="_toggleDrawer" title="{{localize('add_exporter')}}" id="addRedRegExporter">
+          <paper-button raised class="gl-btn-primary" on-tap="_register" title="{{localize('add_exporter')}}" id="addRedRegExporter">
           <iron-icon icon="add"></iron-icon>{{localize('add_exporter')}}</paper-button>
         </div>
 
@@ -242,7 +242,7 @@
           this.layerContent = "detailRegExporter";
         }
       },
-      _toggleDrawer: function (e) {
+      _register: function (e) {
         // this.layerContent = e.target.id;
         // this.layerContent = "addRedRegExporter";
         // this.titleName = 'ลงทะเบียนผู้ส่งออก';
@@ -252,9 +252,6 @@
         // this.$$('register-pageRegister').clearData();
         // this.fire('nylon-change-page',{path:'admin-confirm'})
         window.open('./admin-confirm');
-      },
-      attached: function () {
-        this.getDocType();
       },
       getExporters: function () {
         this.exporter_id = this.exporter_id || this.$.exporter_id;
@@ -274,14 +271,6 @@
           });
           this.exporter_id.items = data;
         });
-      },
-      getDocType: function () {
-        this.read('./external/document_type', (data) => {
-          this.docType = data;
-        })
-        this.read('./external/type_license', (data) => {
-          this.typeLic = data;
-        })
       },
       _search: function () {
         this.fire('toast', { status: 'load' })
@@ -340,6 +329,12 @@
               .catch(function (error) {
                 console.log(error);
               });
+              this.read('./external/document_type', (data) => {
+                this.docType = data;
+              })
+              this.read('./external/type_license', (data) => {
+                this.typeLic = data;
+              })
           }
         }
       },
