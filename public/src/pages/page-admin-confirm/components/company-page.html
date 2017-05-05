@@ -119,6 +119,7 @@
           type_lic_id: this.data.type_lic_id,
           exporter_status: this.data.exporter_status
         }
+        // console.log(data);
         this.fire('toast', {
           status: 'dialog',
           text: 'คุณต้องการจะสมัครผู้ส่งออกใช่หรือไม่ ?',
@@ -130,7 +131,7 @@
         if (result == true) {
           var check = this.$$('detail-company').validate();
           if (check == true) {
-            // console.log(detail.datas);
+            console.log(detail.datas);
             this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
             this.insert('./external/confirm_exporter/register', detail.datas, () => {
               this.fire('toast', {

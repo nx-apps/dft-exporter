@@ -81,6 +81,7 @@
                 <th></th>
                 <th><div class="text-table">{{localize('no_exporter_fullname')}}</div></th>
                 <th><div class="text-table">{{localize('name_company')}}</div></th>
+                <th><div class="text-table">{{localize('type_license')}}</div></th>
                 <!--<th><div class="text-table">{{localize('type_license')}}</div></th>-->
                 <th><div class="text-table">{{localize('date_register')}}</div></th>
                 <th><div class="text-table">{{localize('status')}}</div></th>
@@ -95,20 +96,12 @@
                       <paper-checkbox checked="{{item.check}}" class="checkbox"></paper-checkbox>
                     </template>
                   </td>
-                  <td style="text-align:center">
-                    <gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]"></gl-form-input>
-                  </td>
+                  <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]"></gl-form-input></td>
                   <!-- <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.exporter_no_name}}</div></td> -->
-                  <td on-tap="_selectData" data="[[item]]">
-                    <div>{{item.company_name_th}}</div>
-                  </td>
-                  <!--<td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.type_lic_name}}</div></td>-->
-                  <td on-tap="_selectData" data="[[item]]">
-                    <div class="text-table">{{item.date_created}}</div>
-                  </td>
-                  <td on-tap="_selectData" data="[[item]]">
-                    <div>{{item.approve_status_name}}</div>
-                  </td>
+                  <td on-tap="_selectData" data="[[item]]"><div>{{item.company_name_th}}</div></td>
+                  <td on-tap="_selectData" data="[[item]]"><div>{{item.type_lic_name}}</div></td>
+                  <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.date_created}}</div></td>
+                  <td on-tap="_selectData" data="[[item]]"><div>{{item.approve_status_name}}</div></td>
                 </tr>
               </tbody>
             </template>
@@ -463,6 +456,7 @@
       },
       _print: function () {
         console.log(this.dataSelect.id);
+        window.open('./api/external/report_exporter/approve_general_1/'+this.dataSelect.id);
         // const check = (item) => {
         //   return item.check == true;
         // }

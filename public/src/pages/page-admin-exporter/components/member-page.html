@@ -48,6 +48,7 @@
     }
   </style>
   <template>
+    [[checkData(data)]]
     <gl-form-panel set-border="0px">
       <div id="titleBg" class="boxNortify" hidden="[[data.export_status]]">
         <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize('exporter_expire')}}</div>
@@ -92,7 +93,7 @@
       </div>
     </paper-dialog>
 
-<panel-right></panel-right>
+<!--<panel-right></panel-right>-->
   </template>
   <script>
     Polymer({
@@ -115,6 +116,9 @@
       listeners:{
         'pageFileDelete' : 'fileDelete'
       },
+      checkData:function(val){
+        this.cloneData = JSON.parse(JSON.stringify(val));
+      },
       print:function() {
         // console.log(this.data.trader_id);
         window.open('./api/external/report_exporter/exporter_detail/'+this.data.company_id,'_blank');
@@ -129,20 +133,34 @@
         this.isEnabled = true;
         this.pages = 0;
       },
+      _backpage:function(e){
+        this.isEnabled = false;
+        this.pages = 0;
+      },
       save:function(e) {
-        var datas = {
-          id:this.data.exporter_id,
-          exporter_no:this.data.exporter_no,
-          exporter_date_approve:new Date (this.data.exporter_date_approve),
+        this.fire('toast',{status:'dialog',
+        text:'คุณต้องการแก้ไขข้อมูลใช่หรือไม่ ?',
+        confirmed : this._confirmSave.bind(this),
+        datas : this.data
+        });
+      },
+      _confirmSave:function(result,detail){
+        if(result == true){
+          if(detail.datas.type_lic_id == this.cloneData.type_lic_id){
+            console.log('ตัวเดิม');
+          }
+          else{
+            console.log('เปลี่ยนแล้ว');
+          }
+          // this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+          // this.update('./external/exporter/update', datas, () => {
+          //   this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
+          //     this.fire('refresh-exporter');
+          //     this.pages = 0;
+          //     this.isEnabled = false;
+          //   }});
+          // });
         }
-        this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-        this.update('./external/exporter/update', datas, () => {
-          this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
-            this.fire('refresh-exporter');
-            this.pages = 0;
-            this.isEnabled = false;
-          }});
-         });
       },
       _cancel:function() {
         this.isEnabled = false;

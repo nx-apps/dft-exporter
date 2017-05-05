@@ -1,5 +1,5 @@
 <link rel="import" href="components/member-page.html">
-<link rel="import" href="components/register-pageRegister.html">
+<!--<link rel="import" href="components/register-pageRegister.html">-->
 <link rel="import" href="../components/dataBehavior.html">
 <link rel="import" href="../components/panel-right/panel-right.html">
 <link rel="import" href="../../nylon-behavior.html">
@@ -160,7 +160,7 @@
                 <th><div class="text-table">{{localize('status_export')}}</div></th>
                 <!-- <th><div class="text-table">{{localize('status_dit')}}</div></th> -->
                 <th><div class="text-table">{{localize('status_exporter')}}</div></th>
-                <th><div class="text-table">{{localize('date_register')}}</div></th>
+                <th><div class="text-table">{{localize('date_expire')}}</div></th>
               </tr>
             </thead>
             
@@ -175,7 +175,7 @@
                   <td><div class="text-table">{{item.exporter_status_name}}</div></td>
                   <!-- <td><div class="text-table">{{item.trader_active_name}}</div></td> -->
                   <td><div class="text-table">{{item.export_status_name}}</div></td>
-                  <td><div class="text-table">{{item.exporter_date_approve}}</div></td>
+                  <td><div class="text-table">{{item.export_date_expire}}</div></td>
                 </tr>
               </template>
 
@@ -225,7 +225,6 @@
       behaviors: [dataBehavior, nylonBehavior, nylonLocalizeBehavior],
       listeners: {
         'refresh-exporter': 'getExporters',
-        'close-toggle': '_closeToggle',
         'refresh-company': 'getCompany',
         'getFiles': 'getFile'
       },
@@ -312,10 +311,8 @@
         this.$$('panel-right').open();
         // this.layerContent = e.currentTarget.id;
         this.dataSelect = e.currentTarget.data;
+        this.$$('member-page')._backpage();
         this.getFile();
-      },
-      _closeToggle: function () {
-        this.$$('panel-right').close();
       },
       getFile: function () {
         if (typeof this.dataSelect != 'undefined' && this.dataSelect != '') {
