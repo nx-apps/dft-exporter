@@ -159,15 +159,17 @@ exports.exporter = function (req, res) {
                     , null
                 ),
                 exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                exporter_date_expire: r.ISO8601(m('exporter_date_approve')).add(31449600),
-                date_export_expire: m('date_exported').add(31449600)
+                exporter_date_expire: m('exporter_date_approve').add(31449600).toISO8601(),
+                date_export_expire: m('date_exported').add(31449600).toISO8601(),
+                exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
+                date_exported: m('date_exported').toISO8601()
             }
         })
         .merge(function (mm) {
             return {
                 export_date_expire: r.branch(mm('date_export_expire').gt(mm('exporter_date_expire')),
-                    mm('date_export_expire'),
-                    mm('exporter_date_expire'))
+                    mm('date_export_expire').split('T')(0),
+                    mm('exporter_date_expire').split('T')(0))
             }
         }).without('date_export_expire', 'exporter_date_expire')
         .merge(function (mmm) {
@@ -258,9 +260,9 @@ exports.insert = function (req, res) {
                         req.body.exporter_date_approve = req.body.exporter_date_approve;
                         req.body = Object.assign(req.body, {
                             creater: 'admin',
-                            updater: 'admin',
-                            date_created: new Date().toISOString(),
-                            date_updated: new Date().toISOString()
+                            date_created: new Date().inTimezone('+07')
+                            // updater: 'admin',
+                            // date_updated: new Date().toISOString()
                         });
                         r.db('external').table('exporter')
                             .insert(req.body)
@@ -310,7 +312,7 @@ exports.update = function (req, res) {
                             id_value: req.body.id,
                             old_value: null,
                             new_value: req.body,
-                            date_created: new Date(),
+                            date_created: r.now().inTimezone('+07'),
                             actor: 'admin'
                         };
                         if (response.changes != [] && response.unchanged != 1 || response.replaced == 1) {
@@ -355,7 +357,7 @@ exports.delete = function (req, res) {
                         id_value: req.params.id,
                         old_value: response.changes[0].old_val,
                         new_value: null,
-                        date_created: new Date(),
+                        date_created: r.now().inTimezone('+07'),
                         actor: 'admin'
                     }
                     r.db('external').table('history').insert(history).run().then()

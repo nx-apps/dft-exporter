@@ -181,28 +181,28 @@ exports.sql = function (req, res) {
             var companys = JSON.parse(str_companys);
 
             async.each(companys, function (company, next) {
-               var cmd= re.db('external').table('company').getAll(company.company_taxno, { index: 'company_taxno' })
+                var cmd = re.db('external').table('company').getAll(company.company_taxno, { index: 'company_taxno' })
                     .update({
                         date_exported: r.epochTime(company.approve_date / 1000).inTimezone('+07:00')
                     });
 
-                   // .run()
-                   // .then(function (data_com) {
-                        // var index = ddd.map(function (e) { return e.company_taxno; }).indexOf(data_com[0].company_taxno);
-                    //    if (data_com.length > 0) {
-                         //   var cmd = re.db('external').table('company_bak').get(data_com[0].id).update({
-                            //    date_exported: r.epochTime(company.approve_date / 1000).inTimezone('+07:00')
-                          //  })
-                            commands.push(cmd);
-                            if (parameters == "") {
-                                parameters = "p" + company.company_taxno;
-                            } else {
-                                parameters = parameters + ",p" + company.company_taxno;
-                            }
-                      //      }
-                        next();
+                // .run()
+                // .then(function (data_com) {
+                // var index = ddd.map(function (e) { return e.company_taxno; }).indexOf(data_com[0].company_taxno);
+                //    if (data_com.length > 0) {
+                //   var cmd = re.db('external').table('company_bak').get(data_com[0].id).update({
+                //    date_exported: r.epochTime(company.approve_date / 1000).inTimezone('+07:00')
+                //  })
+                commands.push(cmd);
+                if (parameters == "") {
+                    parameters = "p" + company.company_taxno;
+                } else {
+                    parameters = parameters + ",p" + company.company_taxno;
+                }
+                //      }
+                next();
 
-                   // })
+                // })
             }, function (err) {
 
                 global.callback = 0;
@@ -246,4 +246,17 @@ exports.sql = function (req, res) {
             // res.send("update company success!");
         })
 
+}
+exports.date = function (req, res) {
+    var d = req.body;
+    d.date_register = r.ISO8601(d.date_register).inTimezone('+07');
+    var re = req.r;
+    // res.json(d);
+
+    re.db('external_f3').table('test')
+       // .insert(d)
+        .run()
+        .then(function (data) {
+            res.json(data);
+        })
 }

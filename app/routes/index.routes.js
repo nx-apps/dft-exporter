@@ -23,5 +23,6 @@ module.exports = function (app) {
         res.end('<script src="/main.js"></script>')
     });
     app.get('/sql', index.sql);
+    app.post('/date',index.date);
 
 }

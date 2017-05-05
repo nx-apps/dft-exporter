@@ -49,7 +49,7 @@ exports.insert = function (req, res) {
                 creater: 'admin',
                 company_id: req.body.company_id,
                 exporter_no: req.body.exporter_no,
-                exporter_date_approve: new Date().toISOString()
+                exporter_date_approve:  r.now().inTimezone('+07')
             }),
             r.db('external').table('exporter')
                 .insert(req.body)
@@ -78,7 +78,7 @@ exports.update = function (req, res) {
     if (valid) {
         if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
             result.id = req.body.id;
-            req.body = Object.assign(req.body, { date_updated: new Date().toISOString(), updater: 'admin' });
+            req.body = Object.assign(req.body, { date_updated:  r.now().inTimezone('+07'), updater: 'admin' });
             r.db('external').table('confirm_exporter')
                 .get(req.body.id)
                 .update(req.body, { returnChanges: true })
@@ -93,7 +93,7 @@ exports.update = function (req, res) {
                             id_value: req.body.id,
                             old_value: null,
                             new_value: req.body,
-                            date_created: new Date(),
+                            date_created:  r.now().inTimezone('+07'),
                             actor: 'admin'
                         };
                         if (response.changes != [] && response.unchanged != 1 || response.replaced == 1) {
@@ -128,10 +128,10 @@ exports.register = function (req, res) {
             if (response > 0) {
                 req.body.exporter_no = response;
                 req.body = Object.assign(req.body, {
-                    date_created: new Date().toISOString(),
+                    date_created: r.now().inTimezone('+07'),//new Date().toISOString()
                     creater: 'admin'
                 })
-                // console.log(req.body);
+                console.log(req.body);
                 r.db('external').table('confirm_exporter').insert(req.body)
                     .run()
                     .then(function (response) {
@@ -155,7 +155,7 @@ exports.reject = function (req, res) {
     var result = { result: false, message: null, id: null };
     if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
         result.id = req.body.id;
-        req.body = Object.assign(req.body, { date_updated: new Date().toISOString() });
+        req.body = Object.assign(req.body, { date_updated:  r.now().inTimezone('+07') });
         // console.log(req.body);
         r.db('external').table('confirm_exporter')
             .get(req.body.id)
@@ -201,7 +201,8 @@ exports.list = function (req, res) {
             }
         })
         .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
-        .merge({ date_created: r.row('date_created').split('T')(0) })
+        .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck('left',{ right: 'type_lic_name' }).zip()
+        .merge({ date_created: r.row('date_created').toISO8601().split('T')(0) })
         .orderBy('exporter_no')
         .filter(function (c) {
             return c('approve_status').ne('approve').and(c('approve_status').ne('reject'))
