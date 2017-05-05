@@ -108,8 +108,8 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="16" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\tกรมการค้าต่างประเทศได้ขึ้นทะเบียนให้ "+$F{company_name_th}+" เป็นผู้ส่งข้าวออก ไปนอกราชอาณาจักร เลขที่  "
-+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no_name})+"  จึงขอให้ปฏิบัติตามระเบียบกระทรวงพาณิชย์และประกาศกรม การค้าต่างประเทศอย่างเคร่งครัด รายละเอียดตามสิ่งที่ส่งมาด้วย"
+				<textFieldExpression><![CDATA["\t\tกรมการค้าต่างประเทศได้ขึ้นทะเบียนให้ "+$F{company_name_th}+" เป็นผู้ส่งข้าวออกไปนอกราชอาณาจักร เลขที่  "
++new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no_name})+"  จึงขอให้ปฏิบัติตามระเบียบกระทรวงพาณิชย์ และประกาศกรมการค้าต่างประเทศอย่างเคร่งครัด รายละเอียดตามสิ่งที่ส่งมาด้วย"
 +"\n\n\t\tจึงเรียนมาเพื่อทราบ"]]></textFieldExpression>
 			</textField>
 		</band>
