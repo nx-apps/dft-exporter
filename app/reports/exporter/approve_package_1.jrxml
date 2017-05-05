@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="approve_package_1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f591e4a0-38f4-44dd-b603-74498effb1d9">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="589"/>
+	<property name="ireport.y" value="663"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["E:\\lookpad\\กองคลัง\\"]]></defaultValueExpression>
 	</parameter>
@@ -110,9 +110,9 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="579" splitType="Stretch">
+		<band height="628" splitType="Stretch">
 			<line>
-				<reportElement stretchType="RelativeToBandHeight" x="426" y="-1" width="1" height="578" uuid="c55ffb0b-a77b-4445-b7ae-e33bcd1facb2"/>
+				<reportElement stretchType="RelativeToBandHeight" x="426" y="-1" width="1" height="629" uuid="c55ffb0b-a77b-4445-b7ae-e33bcd1facb2"/>
 			</line>
 			<staticText>
 				<reportElement x="62" y="25" width="214" height="20" uuid="e6f35d42-e5c7-420e-b8e7-64dfabbdf0c1"/>
