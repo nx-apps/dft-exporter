@@ -175,9 +175,10 @@ exports.exporter = function (req, res) {
         }).without('date_export_expire', 'exporter_date_expire')
         .merge(function (mmm) {
             return {
-                export_status: r.branch(mmm('export_date_expire').gt(r.now()), true, false)
+                export_status: r.branch(mmm('export_date_expire').gt(r.now().toISO8601().split('T')(0)), true, false)
             }
-        }).merge(function (m) {
+        })
+        .merge(function (m) {
             return {
                 export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
@@ -374,4 +375,56 @@ exports.delete = function (req, res) {
         result.message = 'require field id';
         res.json(result);
     }
+}
+exports.updateDate = function (req, res) {
+    var r = req.r;
+    // var valid = req.ajv.validate('exporter.exporter', req.body);
+    var result = { result: false, message: null, id: null };
+    // if (valid) {
+    if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
+        result.id = req.body.id;
+        req.body = Object.assign(req.body,
+            {
+                exporter_date_approve: r.now().inTimezone('+07'),
+                date_updated: r.now().inTimezone('+07'),
+                updater: 'admin'
+            });
+        r.db('external').table('exporter').get(req.body.id)
+            .update(req.body, { returnChanges: true })
+            .run()
+            .then(function (response) {
+                result.message = response;
+                if (response.errors == 0) {
+                    result.result = true;
+                    var history = {
+                        tb_name: 'exporter',
+                        action: "update",
+                        id_value: req.body.id,
+                        old_value: null,
+                        new_value: req.body,
+                        date_created: r.now().inTimezone('+07'),
+                        actor: 'admin'
+                    };
+                    if (response.changes != [] && response.unchanged != 1 || response.replaced == 1) {
+                        // console.log(history.old_value);
+                        history.old_value = response.changes[0].old_val;
+                        //console.log(history.old_value);
+                    }
+
+                    r.db('external').table('history').insert(history).run().then()
+                }
+                res.json(result);
+            })
+            .error(function (err) {
+                result.message = err;
+                res.json(result);
+            })
+    } else {
+        result.message = 'require field id';
+        res.json(result);
+    }
+    // } else {
+    //     result.message = req.ajv.errorsText()
+    //     res.json(result);
+    // }
 }

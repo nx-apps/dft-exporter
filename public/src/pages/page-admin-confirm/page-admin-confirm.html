@@ -71,14 +71,14 @@
     </div>
     <iron-pages selected="{{pageSelected}}" attr-for-selected="name">
       <div name="listCompany">
-        <div class="horizontal layout left-justified">
+        <!--<div class="horizontal layout left-justified">
           <paper-checkbox class="marginCheckbox" checked={{selectDataAll}}>{{localize('ck_select_all')}}</paper-checkbox>
-        </div>
+        </div>-->
         <div class="searchBorder" style="overflow-x:auto;">
           <table class="gl-table-default">
             <thead class="table-head">
               <tr>
-                <th></th>
+                <th><div class="text-table">{{localize('No')}}</div></th>
                 <th><div class="text-table">{{localize('no_exporter_fullname')}}</div></th>
                 <th><div class="text-table">{{localize('name_company')}}</div></th>
                 <th><div class="text-table">{{localize('type_license')}}</div></th>
@@ -91,11 +91,12 @@
             <template is="dom-repeat" items="{{companys}}">
               <tbody>
                 <tr style="cursor:pointer;">
-                  <td style="text-align:center">
+                  <td><div class="text-table">[[indexNo(index)]]</div></td>
+                  <!--<td style="text-align:center">
                     <template is="dom-if" if={{checkStatus(item.approve_status)}}>
                       <paper-checkbox checked="{{item.check}}" class="checkbox"></paper-checkbox>
                     </template>
-                  </td>
+                  </td>-->
                   <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]"></gl-form-input></td>
                   <!-- <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.exporter_no_name}}</div></td> -->
                   <td on-tap="_selectData" data="[[item]]"><div>{{item.company_name_th}}</div></td>
@@ -107,16 +108,16 @@
             </template>
           </table>
         </div>
-        <div class="horizontal layout end-justified">
+        <!--<div class="horizontal layout end-justified">-->
           <!--<div style="margin-left:20px;">
             {{localize('bt_print_book')}}
             <paper-icon-button icon="print" on-tap="_print" title="{{localize('bt_print_book')}}"></paper-icon-button>
           </div>-->
           <!--<div>-->
             <!--<paper-button class="gl-btn-danger" on-tap="_close" raised>{{localize('bt_cancel')}}</paper-button>-->
-            <paper-button class="gl-btn-success" style="margin-right:15px" on-tap="_approveAll" raised>{{localize('bt_approve')}}</paper-button>
+            <!--<paper-button class="gl-btn-success" style="margin-right:15px" on-tap="_approveAll" raised>{{localize('bt_approve')}}</paper-button>-->
           <!--</div>-->
-        </div>
+        <!--</div>-->
       </div>
 
       <div name="detailCompany">
@@ -294,17 +295,35 @@
       _confirmApprove: function (result, detail) {
         if (result == true) {
           if(this.dataSelect.change_status === true){
-            let {id, exporter_id, type_lic_id} = this.exporter_data;
-            let newData = {id, exporter_id, type_lic_id};
-            this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-            this.update('./external/confirm_exporter/changetype', newData, () => {
-              this.fire('toast', {
-                status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
+            if(this.exporter_data.export_status === false){
+              // console.log('หมดอายุ');
+              let newData = {};
+              newData.id = this.exporter_data.exporter_id;
+              // console.log(newData);
+              this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+              this.update('./external/exporter/update/date', newData, () => {
+                this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
                   this.pageSelected = 'listCompany';
                   this.getCompany();
-                }
+                  // this.fire('refresh-exporter');
+                  // this.fire('refresh-edit',detail.datas.id);
+                }});
               });
-            })
+            }
+            else{
+              // console.log('ไม่หมดอายุ');
+              let {id, exporter_id, type_lic_id} = this.exporter_data;
+              let newData = {id, exporter_id, type_lic_id};
+              this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
+              this.update('./external/confirm_exporter/changetype', newData, () => {
+                this.fire('toast', {
+                  status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
+                    this.pageSelected = 'listCompany';
+                    this.getCompany();
+                  }
+                });
+              })
+            }
           }else{
             let { exporter_no, company_id, id, type_lic_id} = detail.datas;
             let newData = { exporter_no, company_id, type_lic_id};
@@ -461,8 +480,13 @@
         });
       },
       _print: function () {
-        console.log(this.dataSelect.id);
-        window.open('./api/external/report_exporter/approve_general_1/'+this.dataSelect.id);
+        if(this.dataSelect.change_status === true){
+          console.log('มี',this.dataSelect.id);
+          window.open('./api/external/report_exporter/approve_changetype/'+this.dataSelect.id);
+        }else{
+          console.log('ไม่มี',this.dataSelect.id);
+          window.open('./api/external/report_exporter/approve_general_1/'+this.dataSelect.id);
+        }
         // const check = (item) => {
         //   return item.check == true;
         // }
@@ -546,8 +570,11 @@
       },
       obData: function(val){
         this.read('./external/confirm_exporter/get/'+val.id, (data) =>{
-          this.exporter_data = data;
+          this.exporter_data = data[0];
         })
+      },
+      indexNo:function(val){
+        return val+1
       }
     });
   </script>

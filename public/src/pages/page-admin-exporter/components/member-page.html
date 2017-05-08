@@ -55,18 +55,24 @@
   <template>
     [[cloneDatas(data)]]
     <gl-form-panel set-border="0px">
-      <template is="dom-if" if={{data.change_status}}>
-        <div id="titleBg" class="boxChange_status">
-          <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize('change_status')}}</div>
+      <template is="dom-if" if={{!data.export_status}}>
+        <div id="titleBg" class="boxNortify">
+          <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize('exporter_expire')}}</div>
+        </div>
+        <div class="horizontal end-justified layout">
+          <paper-button id="buttomActive" raised class="gl-btn-success button" on-tap="_dialogRemark" title="{{localize('bt_exporter_extend')}}">{{localize('bt_exporter_extend')}}</paper-button>
         </div>
       </template>
-      <div id="titleBg" class="boxNortify" hidden="[[data.export_status]]">
-        <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize('exporter_expire')}}</div>
-      </div>
-      <div class="horizontal end-justified layout">
-        <paper-button id="buttomActive" raised class="gl-btn-success button" on-tap="_dialogRemark" title="{{localize('bt_exporter_extend')}}" hidden="[[data.export_status]]">{{localize('exporter_extend')}}</paper-button>
-        <div hidden="[[isEnabled]]"><paper-icon-button icon="create" on-tap="editChange" title="แก้ไขข้อมูล"></paper-icon-button></div>
-      </div>
+      <template is="dom-if" if={{data.export_status}}>
+        <template is="dom-if" if={{data.change_status}}>
+          <div id="titleBg" class="boxChange_status">
+            <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize('change_status')}}</div>
+          </div>
+        </template>
+        <div class="horizontal end-justified layout">
+          <div hidden="[[isEnabled]]"><paper-icon-button icon="create" on-tap="editChange" title="แก้ไขข้อมูล"></paper-icon-button></div>
+        </div>
+      </template>
           <div class="bd">
               <gl-form-panel>
                 <paper-tabs selected="{{pages}}" align-bottom no-slide>
@@ -205,24 +211,33 @@
         this.fire('toast',{status:'dialog',
         text:'คุณต้องการจะยกเลิกการระงับใช่หรือไม่ ?',
         confirmed : this._confirmToast.bind(this),
-        datas: {
-           exporter_date_approve:new Date,
-           exporter_no:this.data.exporter_no,
-           trader_id:this.data.trader_id,
-           id : this.data.exporter_id
-          }
+        datas : this.data
         });
       },
       _confirmToast:function(result,detail){
         if(result == true){
+          console.log(detail.datas);
+          let newData = {};
+          newData.id = detail.datas.confirm_id,
+          newData.approve_status = 'process'
+          
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-          this.update('./external/exporter/update', detail.datas, () => {
-            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
-              this.$.dialog.toggle();
+          this.update('./external/confirm_exporter/update', newData, () => {
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
               this.fire('refresh-exporter');
-              this.fire('close-toggle');
+              this.pages = 0;
+              this.isEnabled = false;
+              this.fire('refresh-edit',detail.datas.id);
             }});
-           });
+          });
+          // this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+          // this.update('./external/exporter/update/date', detail.datas, () => {
+          //   this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
+          //     this.$.dialog.toggle();
+          //     this.fire('refresh-exporter');
+          //     this.fire('refresh-edit',detail.datas.id);
+          //   }});
+          //  });
         }
       },
       _dialogcancle:function() {

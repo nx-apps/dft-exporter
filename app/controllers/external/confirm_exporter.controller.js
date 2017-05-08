@@ -254,10 +254,31 @@ exports.listId = function (req, res) {
 }
 exports.getId = function (req, res) {
     var r = req.r;
-    r.db('external').table('confirm_exporter').get(req.params.id)
+    r.db('external').table('exporter').getAll(req.params.id, { index: 'confirm_id' })
         .merge(function (m) {
             return {
-                exporter_id: r.db('external').table('exporter').getAll(m('id'), { index: 'confirm_id' }).coerceTo('array').getField('id')(0)
+                exporter_id: m('id')
+            }
+        })
+        .eqJoin('confirm_id', r.db('external').table('confirm_exporter'))
+        .pluck('right', { left: ['exporter_date_approve', 'exporter_id', 'company_id'] }).zip()
+        .eqJoin('company_id', r.db('external').table('company')).pluck('left', { right: 'date_exported' }).zip()
+        .merge(function (m) {
+            return {
+                exporter_date_expire: m('exporter_date_approve').add(31449600),
+                date_export_expire: m('date_exported').add(31449600)
+            }
+        })
+        .merge(function (mm) {
+            return {
+                export_date_expire: r.branch(mm('date_export_expire').gt(mm('exporter_date_expire')),
+                    mm('date_export_expire'),
+                    mm('exporter_date_expire'))
+            }
+        }).without('date_export_expire', 'exporter_date_expire')
+        .merge(function (mmm) {
+            return {
+                export_status: r.branch(mmm('export_date_expire').gt(r.now()), true, false)
             }
         })
         .run()
