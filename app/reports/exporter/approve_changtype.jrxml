@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="approve_changtype" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f591e4a0-38f4-44dd-b603-74498effb1d9">
 	<property name="ireport.zoom" value="1.5"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="651"/>
+	<property name="ireport.y" value="547"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["E:\\lookpad\\กองคลัง\\"]]></defaultValueExpression>
 	</parameter>
@@ -11,6 +11,10 @@
 	</parameter>
 	<field name="company_name_th" class="java.lang.String"/>
 	<field name="exporter_no_name" class="java.lang.String"/>
+	<field name="type_lice_name_new" class="java.lang.String"/>
+	<field name="type_lice_name_old" class="java.lang.String"/>
+	<field name="date_updated" class="java.lang.String"/>
+	<field name="exporter_date_approve" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -110,9 +114,9 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="628" splitType="Stretch">
+		<band height="85" splitType="Stretch">
 			<line>
-				<reportElement stretchType="RelativeToBandHeight" x="426" y="-1" width="1" height="629" uuid="c55ffb0b-a77b-4445-b7ae-e33bcd1facb2"/>
+				<reportElement stretchType="RelativeToBandHeight" x="426" y="-1" width="1" height="75" uuid="c55ffb0b-a77b-4445-b7ae-e33bcd1facb2"/>
 			</line>
 			<staticText>
 				<reportElement x="62" y="25" width="214" height="20" uuid="e6f35d42-e5c7-420e-b8e7-64dfabbdf0c1"/>
@@ -126,7 +130,7 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="16" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\tชุมนุม"+$F{company_name_th}+" ได้ยื่นความจำนงขอเปลี่ยนแปลงประเภทการขึ้นทะเบียนผู้ส่งออกข้าวจากผู้ส่งออกข้าวสารบรรจุกล่องหรือหีบห่อเป็นผู้ส่งออกทั่วไป ตามหนังสือลงวันที่ "+" (เอกสาร ๑)"+"(เอกสาร๑)"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\t\tชุมนุม"+$F{company_name_th}+" ได้ยื่นความจำนงขอเปลี่ยนแปลง ประเภทการขึ้นทะเบียนผู้ส่งออกข้าวจากผู้ส่งออก"+$F{type_lice_name_old}+"เป็นผู้ส่งออก"+$F{type_lice_name_new}+" ตามหนังสือลงวันที่ "+new nylon.utility.NumberFormat().toThaiDate ($F{date_updated})+" (เอกสาร ๑)"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="62" y="0" width="361" height="20" uuid="fbce3d7c-b0ee-4d35-af95-34c0ece602dd"/>
@@ -135,43 +139,58 @@
 				</textElement>
 				<text><![CDATA[เพื่อโปรดพิจารณา]]></text>
 			</staticText>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="61" y="105" width="362" height="239" uuid="01047aa1-c263-47ac-8c8b-2add85a0736b"/>
-				<textElement>
-					<font fontName="TH SarabunPSK" size="16" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["\t\t๒.๑ ประกาศคณะกรรมการปฏิบัติการตามพระราชบัญญัติการค้าข้าว พุทธศักราช ๒๔๘๙ ฉบับที่ ๑๔๖ พ.ศ. ๒๕๕๘ หมวด ๑ ข้อ ๓ (๑) กำหนดให้ผู้ประกอบการค้าข้าว และเมื่อได้รบัหนังสืออนุญาตแล้วจึงประกอบการค้าข้าวได้ โดยต้องปฏิบัติตามเงื่อนไขในหมวด ๓ ข้อ ๑๘ และ ๑๙ (เอกสาร ๒)"
-+
-"\n\t\t๒.๒ "+$F{company_name_th}+" ได้รับอนุญาตให้เป็นผู้ประกอบการค้าข้าวประเภทค้าข้าทวส่งไปจำหน่ายต่างประเทศ ที่เป็นผู้ส่งออกทั่วไปจากกรมการค้าภายในแล้ว ซึ่งบริษัทฯ ได้ปฏิบัติถูกต้องตามเงื่อนไขข้อ ๒.๑"
-+"\n\t\t๒.๓ กรมฯ ได้อนุมัติให้"+$F{company_name_th}+" ขึ้นทะเบียนเป็นผู้ส่งออกข้าวประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออกข้าวสารบรรจุกล่องหรือหีบห่อ เลขที่"+$F{exporter_no_name}+" เมื่อวันที่ " +" (เอกสาร ๓)"]]></textFieldExpression>
-			</textField>
+		</band>
+		<band height="93">
 			<staticText>
-				<reportElement x="62" y="85" width="214" height="20" uuid="cff44879-2496-453a-a071-1819b18d6c55"/>
+				<reportElement x="62" y="0" width="214" height="20" uuid="cff44879-2496-453a-a071-1819b18d6c55"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[                ๒.    ข้อเท็จจริง]]></text>
 			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="62" y="20" width="362" height="73" uuid="367967a9-1954-4054-af85-64a8009e9f87"/>
+				<textElement>
+					<font fontName="TH SarabunPSK" size="16" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\t\t๒.๑ ประกาศคณะกรรมการปฏิบัติการตามพระราชบัญญัติ การค้าข้าว พุทธศักราช ๒๔๘๙ ฉบับที่ ๑๔๖ พ.ศ. ๒๕๕๘ หมวด ๑ ข้อ ๓ (๑) กำหนด ให้ผู้ประกอบการค้าข้าวประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออก "+$F{type_lice_name_new}+" ต้องขออนุญาตประกอบการค้าข้าวและเมื่อได้รับหนังสืออนุญาตแล้วจึงประกอบการค้าข้าวได้ โดยต้องปฏิบัติตามเงื่อนไขในหมวด ๓ ข้อ ๑๘ และ ๑๙ (เอกสาร ๒)"
+]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="80">
+			<textField>
+				<reportElement x="62" y="0" width="362" height="80" uuid="51adc455-e463-4593-8fb3-ec465dd1ea67"/>
+				<textElement>
+					<font fontName="TH SarabunPSK" size="16" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\t\t๒.๒ "+$F{company_name_th}+" ได้รับอนุญาตให้เป็นผู้ประกอบการค้าข้าวประเภทค้าข้าทวส่งไปจำหน่ายต่างประเทศ ที่เป็นผู้ส่งออกทั่วไปจากกรมการค้าภายในแล้ว ซึ่งบริษัทฯ ได้ปฏิบัติถูกต้องตามเงื่อนไขข้อ ๒.๑"
+]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="100">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="62" y="0" width="362" height="100" uuid="5c4f739a-9fe5-49e9-9aa0-6b97a41c3c07"/>
+				<textElement>
+					<font fontName="TH SarabunPSK" size="16" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\t\t๒.๓ กรมฯ ได้อนุมัติให้"+$F{company_name_th}+" ขึ้นทะเบียนเป็นผู้ส่งออกข้าวประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออกก"+$F{type_lice_name_old} +" เลขที่"+$F{exporter_no_name}+" เมื่อวันที่ " +new nylon.utility.NumberFormat().toThaiDate ($F{exporter_date_approve})+" (เอกสาร ๓)"]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="191">
 			<staticText>
-				<reportElement x="61" y="344" width="214" height="20" uuid="efd33931-460f-4768-a25f-970d89ef15b5"/>
+				<reportElement x="62" y="0" width="214" height="20" uuid="efd33931-460f-4768-a25f-970d89ef15b5"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
 				<text><![CDATA[                ๓.    การดำเนินการ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="62" y="364" width="361" height="40" uuid="736c15ff-bc39-492b-815d-81585777188e"/>
+				<reportElement x="62" y="20" width="361" height="170" uuid="736c15ff-bc39-492b-815d-81585777188e"/>
 				<textElement>
 					<font fontName="TH SarabunPSK" size="16" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\tคข. พิจารณาแล้วเห็นว่า "+$F{company_name_th}+" ได้รับอนุญาตให้เป็นผู้ประกอบการค้าข้าวประเภทค้าข้าว ส่งไปจำหน่ายต่างประเทศที่เป็น(ุ้ส่งออกทั่วไปจากกรมการค้าภายในตามเงื่อนไขในข้อ ๒.๑-๒.๒ แล้ว จึงเห็นควรเปลี่ยนแปลงประเภทการเป็นผู้ส่งออกข้าวของบริษัทฯ จากประเภทบรรจุกล่องหรือหีบห่อเป็นประเภทผู้ส่งออกทั่วไป โดยใช้เลขที่ "+$F{exporter_no_name}+" ตามเดิม ทั้งนี้ เพื่อให้การจัดเก็บข้อมูลมีความต่อเนื่องกับฐานข้อมูลเดิม"]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="62" y="413" width="362" height="20" uuid="9e99c78b-f104-4f84-9d6f-31b61274efe5"/>
-				<textElement>
-					<font fontName="TH SarabunPSK" size="16" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["\t\tจึงเรียนมาเพื่อโปรดพิจารณาอนุมัติตามข้อ ๓"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\t\tคข. พิจารณาแล้วเห็นว่า "+$F{company_name_th}+" ได้รับอนุญาตให้เป็นผู้ประกอบการค้าข้าวประเภทค้าข้าว ส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออก"+$F{type_lice_name_new}+"จากกรมการค้าภายในตามเงื่อนไขในข้อ ๒.๑-๒.๒ แล้ว จึงเห็นควรเปลี่ยนแปลงประเภทการเป็นผู้ส่งออกข้าวของบริษัทฯ จากประเภท"+$F{type_lice_name_old}+"เป็นประเภทผู้ส่งออก"+$F{type_lice_name_new}+" โดยใช้เลขที่ "+$F{exporter_no_name}+" ตามเดิม ทั้งนี้ เพื่อให้การจัดเก็บข้อมูลมีความต่อเนื่องกับฐานข้อมูลเดิม"
++"\n\n\n\t\tจึงเรียนมาเพื่อโปรดพิจารณาอนุมัติตามข้อ ๓"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

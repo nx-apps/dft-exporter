@@ -956,3 +956,62 @@ exports.approve_general_2 = function (req, res) {
             res.json(err)
         })
 }
+exports.approve_changtype = function (req, res) {
+    var r = req.r;
+    var parameters = {
+        CURRENT_DATE: new Date().toISOString().slice(0, 10)
+    };
+    r.db('external').table('exporter')
+  .eqJoin('type_lic_id',r.db('external').table('type_license')).without({ right: 'id' }).zip()
+    .merge(function(m){
+    return{
+      type_lice_name_old : m('type_lic_name'),
+      type_lice_id_old : m('type_lic_id')
+    }
+  })
+  .eqJoin('confirm_id',r.db('external').table('confirm_exporter'))//.getAll(req.params.id, {index: 'id'})
+  .without([{left: ['type_lic_name', 'type_lic_id']}]).zip()
+  .eqJoin('type_lic_id',r.db('external').table('type_license')).without({ right: 'id' }).zip()
+   .merge(function(m){
+    return{
+      type_lice_name_new : m('type_lic_name'),
+      type_lice_id_new : m('type_lic_id')
+    }
+  }).without('type_lic_name','type_lic_fullname')
+  .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
+  .merge(function (m) {
+            return {
+                exporter_no_name: r.branch(
+                    m.hasFields('exporter_no'),
+                    r.branch(
+                        m('exporter_no').lt(10)
+                        , r.expr('ข.000')
+                        , r.branch(
+                            m('exporter_no').lt(100)
+                            , r.expr('ข.00')
+                            , r.branch(
+                                m('exporter_no').lt(1000)
+                                , r.expr('ข.0')
+                                , r.expr('ข.')
+                            )
+                        )
+                    ).add(m('exporter_no').coerceTo('string'))
+                    , null
+                ),
+                approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่'),
+                date_created: m('date_created').toISO8601().split('T')(0)
+        }
+    })
+    .filter(function (row) {
+      return row("id").eq(req.params.id)
+    })
+        .run()
+        .then(function (result) {
+            // res.json(result);
+            res.ireport("exporter/approve_changtype.jasper", req.query.export || "pdf", result, parameters);
+        })
+        .error(function (err) {
+            res.json(err)
+        })
+}
+
