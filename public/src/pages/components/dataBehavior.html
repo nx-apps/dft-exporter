@@ -68,14 +68,15 @@
                   .then((response) => {
                     console.log("success");
                     // console.log(response);
-                    if (response.data.result == true) {
+                    // if (response.data.result == true) {
                       actionInpage();
-                    }
-                    else {
-                      this.fire('toast',{status:'connectError',text:response.data.message, //คำสั่งสำหรับเปิด toast error
-                      callback:function(){
-                      }})
-                    }
+                    // }
+                    // else {
+                    //   console.log(response);
+                    //   this.fire('toast',{status:'connectError',text:response.data.message, //คำสั่งสำหรับเปิด toast error
+                    //   callback:function(){
+                    //   }})
+                    // }
 
                   })
                   .catch((error)=> {

@@ -225,8 +225,9 @@
       behaviors: [dataBehavior, nylonBehavior, nylonLocalizeBehavior],
       listeners: {
         'refresh-exporter': 'getExporters',
-        'refresh-company': 'getCompany',
-        'getFiles': 'getFile'
+        // 'refresh-company': 'getCompany',
+        'getFiles': 'getFile',
+        'refresh-edit': 'refreshEdit'
       },
       created: function () {
         this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
@@ -257,7 +258,7 @@
         this.read('./external/exporter', (data) => {
           data.map((item) => {
             for (var key in item) {
-              if (item[key] == '') {
+              if(item[key] === ""){
                 item[key] = '-';
               }
             }
@@ -290,7 +291,7 @@
         this.read('./external/exporter' + str, (data) => {
           data.map((item) => {
             for (var key in item) {
-              if (item[key] == '') {
+              if (item[key] === '') {
                 item[key] = '-';
               }
             }
@@ -345,6 +346,18 @@
       },
       toIndex:function(index){
         return index+1;
+      },
+      refreshEdit: function(val){
+        this.read('./external/exporter/id/'+val.detail, (data) => {
+          data.map((item) => {
+            for (var key in item) {
+              if(item[key] === ""){
+                item[key] = '-';
+              }
+            }
+          })
+          this.dataSelect = data[0];
+        })
       }
     });
   </script>

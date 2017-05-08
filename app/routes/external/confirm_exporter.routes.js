@@ -7,4 +7,6 @@ module.exports = function (app) {
     app.route('/reject').put(controller.reject);
     app.route('/list').get(controller.list);
     app.route('/list/:id').get(controller.listId);
+    app.route('/get/:id').get(controller.getId);
+    app.route('/changetype').put(controller.changetype);
 }

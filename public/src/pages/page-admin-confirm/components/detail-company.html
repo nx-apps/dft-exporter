@@ -77,14 +77,14 @@
             </paper-menu>
           </gl-form-dropdown-menu>
         </gl-grid-col>
-        <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+        <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
           <gl-form-dropdown-menu style="width:60%;" class="checkValidate" label="สถานะสมาชิกสมาคมผู้ส่งออก" placeholder="กรุณาเลือกทั้งหมด" disabled="[[obItem(data.creater)]]" required>
             <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.exporter_status}}" name="exporter_status">
               <paper-item value="yes">{{localize('member')}}</paper-item>
               <paper-item value="no">{{localize('no_member')}}</paper-item>
             </paper-menu>
           </gl-form-dropdown-menu>
-        </gl-grid-col>
+        </gl-grid-col>-->
       </gl-grid-row>
       <div class="horizontal layout">
         <div class="text">รายชื่อคณะกรรมการ</div>
@@ -145,7 +145,7 @@
             return true;
           }
           else{
-            console.log('ไม่มี');
+            return false;
           }
         }
       },

@@ -20,6 +20,11 @@
       background-color: red;
       padding: 5px;
     }
+    .boxChange_status{
+      border: 2px solid yellow;
+      background-color: yellow;
+      padding: 5px;
+    }
     paper-tabs{
       background-color: #f7941e;
       margin : 0px 15px 0px 15px;
@@ -48,8 +53,13 @@
     }
   </style>
   <template>
-    [[checkData(data)]]
+    [[cloneDatas(data)]]
     <gl-form-panel set-border="0px">
+      <template is="dom-if" if={{data.change_status}}>
+        <div id="titleBg" class="boxChange_status">
+          <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize('change_status')}}</div>
+        </div>
+      </template>
       <div id="titleBg" class="boxNortify" hidden="[[data.export_status]]">
         <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize('exporter_expire')}}</div>
       </div>
@@ -108,6 +118,10 @@
         isEnabled:{
           type:Boolean,
           value:false
+        },
+        test:{
+          type:Boolean,
+          value:true
         }
       },
       created:function(){
@@ -116,7 +130,7 @@
       listeners:{
         'pageFileDelete' : 'fileDelete'
       },
-      checkData:function(val){
+      cloneDatas:function(val){
         this.cloneData = JSON.parse(JSON.stringify(val));
       },
       print:function() {
@@ -147,19 +161,37 @@
       _confirmSave:function(result,detail){
         if(result == true){
           if(detail.datas.type_lic_id == this.cloneData.type_lic_id){
-            console.log('ตัวเดิม');
+            // console.log('ตัวเดิม');
+            let{id, exporter_status} = detail.datas;
+            let newData = {id,exporter_status};
+            this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+            this.update('./external/exporter/update', newData, () => {
+              this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
+                this.fire('refresh-exporter');
+                this.pages = 0;
+                this.isEnabled = false;
+                this.fire('refresh-edit',newData.id);
+              }});
+            });
           }
           else{
-            console.log('เปลี่ยนแล้ว');
+            // console.log('เปลี่ยนแล้ว');
+            let{confirm_id, type_lic_id} = detail.datas;
+            let newData = {type_lic_id};
+            newData.id = detail.datas.confirm_id,
+            newData.change_status = true,
+            newData.approve_status = 'process'
+            // console.log(newData);
+            this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+            this.update('./external/confirm_exporter/update', newData, () => {
+              this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
+                this.fire('refresh-exporter');
+                this.pages = 0;
+                this.isEnabled = false;
+                this.fire('refresh-edit',detail.datas.id);
+              }});
+            });
           }
-          // this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-          // this.update('./external/exporter/update', datas, () => {
-          //   this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
-          //     this.fire('refresh-exporter');
-          //     this.pages = 0;
-          //     this.isEnabled = false;
-          //   }});
-          // });
         }
       },
       _cancel:function() {
@@ -185,11 +217,10 @@
         if(result == true){
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
           this.update('./external/exporter/update', detail.datas, () => {
-            this.$.dialog.toggle();
-            this.fire('refresh-exporter');
-            this.fire('close-toggle');
-            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:function(){
-              // console.log('success');
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
+              this.$.dialog.toggle();
+              this.fire('refresh-exporter');
+              this.fire('close-toggle');
             }});
            });
         }
@@ -201,3 +232,4 @@
     });
   </script>
 </dom-module>
+

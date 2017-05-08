@@ -48,6 +48,7 @@
         "date_register":"วันที่ลงทะเบียน",
         "date_approve":"วันที่อนุมัติ",
         "date_expire":"วันที่หมดอายุ",
+        "change_status":"รออนุมัติเปลี่ยนประเภทใบอนุญาต",
 
         "bt_save":"บันทึก",
         "bt_cancel":"ยกเลิก",
@@ -117,6 +118,7 @@
         "date_approve":"Date Approve",
         "detail_exporter":"Detail exporter",
         "date_expire":"Date Expire",
+        "change_status":"Pending approval of license type change",
 
         "bt_save":"Save",
         "bt_cancel":"Cancel",

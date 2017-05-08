@@ -44,13 +44,13 @@ exports.insert = function (req, res) {
     var result = { result: false, message: null, id: null };
     if (valid) {
         r.db('external').table('confirm_exporter').get(req.body.confirm_id).update({ approve_status: 'approve' })
-        .run()
-            req.body = Object.assign(req.body, {
-                creater: 'admin',
-                company_id: req.body.company_id,
-                exporter_no: req.body.exporter_no,
-                exporter_date_approve:  r.now().inTimezone('+07')
-            }),
+            .run()
+        req.body = Object.assign(req.body, {
+            creater: 'admin',
+            company_id: req.body.company_id,
+            exporter_no: req.body.exporter_no,
+            exporter_date_approve: r.now().inTimezone('+07')
+        }),
             r.db('external').table('exporter')
                 .insert(req.body)
                 .run()
@@ -73,51 +73,51 @@ exports.insert = function (req, res) {
 }
 exports.update = function (req, res) {
     var r = req.r;
-    var valid = req.ajv.validate('exporter.confirm_exporter', req.body);
+    // var valid = req.ajv.validate('exporter.confirm_exporter', req.body);
     var result = { result: false, message: null, id: null };
-    if (valid) {
-        if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
-            result.id = req.body.id;
-            req.body = Object.assign(req.body, { date_updated:  r.now().inTimezone('+07'), updater: 'admin' });
-            r.db('external').table('confirm_exporter')
-                .get(req.body.id)
-                .update(req.body, { returnChanges: true })
-                .run()
-                .then(function (response) {
-                    result.message = response;
-                    if (response.errors == 0) {
-                        result.result = true;
-                        var history = {
-                            tb_name: 'confirm_exporter',
-                            action: "update",
-                            id_value: req.body.id,
-                            old_value: null,
-                            new_value: req.body,
-                            date_created:  r.now().inTimezone('+07'),
-                            actor: 'admin'
-                        };
-                        if (response.changes != [] && response.unchanged != 1 || response.replaced == 1) {
-                            // console.log(history.old_value);
-                            history.old_value = response.changes[0].old_val;
-                            //console.log(history.old_value);
-                        }
-
-                        r.db('external').table('history').insert(history).run().then()
+    // if (valid) {
+    if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
+        result.id = req.body.id;
+        req.body = Object.assign(req.body, { date_updated: r.now().inTimezone('+07'), updater: 'admin' });
+        r.db('external').table('confirm_exporter')
+            .get(req.body.id)
+            .update(req.body, { returnChanges: true })
+            .run()
+            .then(function (response) {
+                result.message = response;
+                if (response.errors == 0) {
+                    result.result = true;
+                    var history = {
+                        tb_name: 'confirm_exporter',
+                        action: "update",
+                        id_value: req.body.id,
+                        old_value: null,
+                        new_value: req.body,
+                        date_created: r.now().inTimezone('+07'),
+                        actor: 'admin'
+                    };
+                    if (response.changes != [] && response.unchanged != 1 || response.replaced == 1) {
+                        // console.log(history.old_value);
+                        history.old_value = response.changes[0].old_val;
+                        //console.log(history.old_value);
                     }
-                    res.json(result);
-                })
-                .error(function (err) {
-                    result.message = err;
-                    res.json(result);
-                })
-        } else {
-            result.message = 'require field id';
-            res.json(result);
-        }
+
+                    r.db('external').table('history').insert(history).run().then()
+                }
+                res.json(result);
+            })
+            .error(function (err) {
+                result.message = err;
+                res.json(result);
+            })
     } else {
-        result.message = req.ajv.errorsText()
+        result.message = 'require field id';
         res.json(result);
     }
+    // } else {
+    // result.message = req.ajv.errorsText()
+    // res.json(result);
+    // }
 }
 exports.register = function (req, res) {
     var r = req.r
@@ -155,7 +155,7 @@ exports.reject = function (req, res) {
     var result = { result: false, message: null, id: null };
     if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
         result.id = req.body.id;
-        req.body = Object.assign(req.body, { date_updated:  r.now().inTimezone('+07') });
+        req.body = Object.assign(req.body, { date_updated: r.now().inTimezone('+07') });
         // console.log(req.body);
         r.db('external').table('confirm_exporter')
             .get(req.body.id)
@@ -201,7 +201,7 @@ exports.list = function (req, res) {
             }
         })
         .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
-        .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck('left',{ right: 'type_lic_name' }).zip()
+        .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck('left', { right: 'type_lic_name' }).zip()
         .merge({ date_created: r.row('date_created').toISO8601().split('T')(0) })
         .orderBy('exporter_no')
         .filter(function (c) {
@@ -242,11 +242,52 @@ exports.listId = function (req, res) {
             }
         })
         .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
-        .merge({ date_created: r.row('date_created').split('T')(0) })
+        // .merge({ date_created: r.row('date_created').split('T')(0) })
         .orderBy('exporter_no')
         .run()
         .then(function (result) {
             res.json(result[0])
+        })
+        .error(function (err) {
+            res.json(err)
+        })
+}
+exports.getId = function (req, res) {
+    var r = req.r;
+    r.db('external').table('confirm_exporter').get(req.params.id)
+        .merge(function (m) {
+            return {
+                exporter_id: r.db('external').table('exporter').getAll(m('id'), { index: 'confirm_id' }).coerceTo('array').getField('id')(0)
+            }
+        })
+        .run()
+        .then(function (result) {
+            res.json(result)
+        })
+        .error(function (err) {
+            res.json(err)
+        })
+}
+exports.changetype = function (req, res) {
+    var r = req.r;
+    r.db('external').table('confirm_exporter').get(req.body.id)
+        .update({
+            change_status: false,
+            approve_status: 'approve',
+            date_updated: r.now().inTimezone('+07'),
+            updater: 'admin'
+        }, { returnChanges: true })
+        .do(function (d) {
+            return r.db('external').table('exporter').get(req.body.exporter_id)
+                .update({
+                    type_lic_id: req.body.type_lic_id,
+                    date_updated: r.now().inTimezone('+07'),
+                    updater: 'admin'
+                }, { returnChanges: true })
+        })
+        .run()
+        .then(function (result) {
+            res.json(result);
         })
         .error(function (err) {
             res.json(err)

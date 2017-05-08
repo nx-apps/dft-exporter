@@ -162,6 +162,7 @@
         <paper-button class="gl-btn-primary button-size" raised on-tap="_reject">{{localize('bt_save')}}</paper-button>
       </div>
     </paper-dialog>
+    [[obData(dataSelect)]]
   </template>
   <script>
     Polymer({
@@ -206,7 +207,7 @@
         this.read('./external/confirm_exporter/list', (data) => {
           data.map((item) => {
             for (var key in item) {
-              if (item[key] == '') {
+              if (item[key] === '') {
                 item[key] = '-';
               }
             }
@@ -287,33 +288,38 @@
           status: 'dialog',
           text: 'คุณต้องการจะอนุมัติใช่หรือไม่ ?',
           confirmed: this._confirmApprove.bind(this),
-          // datas: {
-            // confirm_id: this.dataSelect.id,
-            // company_id: this.dataSelect.company_id,
-            // exporter_no: this.dataSelect.exporter_no,
-            // exporter_status: this.dataSelect.exporter_status,
-            // type_lic_id : this.dataSelect.type_lic_id
-          // }
+          datas: this.dataSelect
         });
       },
       _confirmApprove: function (result, detail) {
         if (result == true) {
-          let { exporter_no, company_id, id, exporter_status, type_lic_id} = this.dataSelect;
-          let newData = { exporter_no, company_id, exporter_status, type_lic_id};
-          newData.confirm_id = this.dataSelect.id
-          // console.log(newData);
-          this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-          this.insert('./external/confirm_exporter/insert', newData, () => {
-            this.fire('toast', {
-              status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                this.pageSelected = 'listCompany';
-                this.fire('refresh-company');
-                this.fire('refresh-exporter');
-                this.fire('refresh-listcompany');
-                // console.log('success');
-              }
+          if(this.dataSelect.change_status === true){
+            let {id, exporter_id, type_lic_id} = this.exporter_data;
+            let newData = {id, exporter_id, type_lic_id};
+            this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
+            this.update('./external/confirm_exporter/changetype', newData, () => {
+              this.fire('toast', {
+                status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
+                  this.pageSelected = 'listCompany';
+                  this.getCompany();
+                }
+              });
+            })
+          }else{
+            let { exporter_no, company_id, id, type_lic_id} = detail.datas;
+            let newData = { exporter_no, company_id, type_lic_id};
+            newData.confirm_id = this.dataSelect.id;
+            newData.exporter_status = 'no';
+            this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
+            this.insert('./external/confirm_exporter/insert', newData, () => {
+              this.fire('toast', {
+                status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
+                  this.pageSelected = 'listCompany';
+                  this.getCompany();
+                }
+              });
             });
-          });
+          }
         }
       },
       _changeselectDataAll: function (val) {
@@ -537,6 +543,11 @@
               });
           }
         }
+      },
+      obData: function(val){
+        this.read('./external/confirm_exporter/get/'+val.id, (data) =>{
+          this.exporter_data = data;
+        })
       }
     });
   </script>
