@@ -67,10 +67,19 @@
           <gl-grid-row width="{{getWidth}}">
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]"></gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-              <gl-combo-box id="exporter_id" label="{{localize('name_exporter')}}" item-label-path="company_name" item-value-path="exporter_id"
-                value="{{dataSelected.exporter_id}}" name="exporter_id"></gl-combo-box>
+              <gl-combo-box label="{{localize('name_exporter')}}" items="{{exporter_id}}" item-label-path="company_name" item-value-path="id"
+                value="{{dataSelected.id}}"></gl-combo-box>
             </gl-grid-col>
           </gl-grid-row>
+
+          <!--<gl-grid-row>
+            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]"></gl-grid-col>
+            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+              <gl-combo-box label="test" items="{{exporter_id}}" item-label-path="company_name" item-value-path="id"
+                value="{{test}}"></gl-combo-box>
+            </gl-grid-col>
+          </gl-grid-row>-->
+
           <gl-grid-row>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
             <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>-->
@@ -217,8 +226,12 @@
           type: Object,
           value: {}
         },
-        exporterId: {
-          type: String,
+        // exporterId: {
+        //   type: String,
+        //   observer: '_exporterIdChanged'
+        // }
+        test:{
+          type:String,
           observer: '_exporterIdChanged'
         }
       },
@@ -237,7 +250,7 @@
         this.getFile();
       },
       _exporterIdChanged: function (val) {
-        // console.log(val);
+        console.log(val);
         if (val != "") {
           this.layerContent = "detailRegExporter";
         }
@@ -269,8 +282,12 @@
             // type.company_name = type.company_name_th+" ("+type.type_lic_name+")";
             // return type.company_name_th+" ("+type.type_lic_name+")";
           });
-          this.exporter_id.items = data;
+          this.exporter_id = data;
         });
+
+        this.read('./external/type_license', (data) => {
+          this.typeLic = data;
+        })
       },
       _search: function () {
         this.fire('toast', { status: 'load' })
@@ -288,6 +305,7 @@
         else if (this.dataSelected.date_end != undefined && this.dataSelected.date_end != '' && (this.dataSelected.date_start == undefined || this.dataSelected.date_start == '')) {
           this.fire('toast', { status: 'connectError', text: 'กรุณาใส่วันที่เริ่มต้นค้นหา' })
         }
+        console.log(str);
         this.read('./external/exporter' + str, (data) => {
           data.map((item) => {
             for (var key in item) {
@@ -329,9 +347,6 @@
               });
               this.read('./external/document_type', (data) => {
                 this.docType = data;
-              })
-              this.read('./external/type_license', (data) => {
-                this.typeLic = data;
               })
           }
         }
