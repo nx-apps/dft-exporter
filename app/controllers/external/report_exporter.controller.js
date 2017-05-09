@@ -166,6 +166,7 @@ exports.report1 = function (req, res) {
         // .eqJoin('company_id', r.db('external').table('company')).without({ right: ['id', 'date_created'] }).zip()
         // .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
 
+
         .filter(q)
         // .filter(d)
         .orderBy('exporter_no')
@@ -830,7 +831,6 @@ exports.exporter_detail = function (req, res) {
         // .filter(q)
         .filter(d)
         .orderBy('exporter_no')
-
         // r.db('external').table("company")
         // .outerJoin(
         //     r.db('external').table("exporter")
