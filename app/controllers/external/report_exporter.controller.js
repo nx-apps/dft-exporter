@@ -172,7 +172,7 @@ exports.report1 = function (req, res) {
         .orderBy('exporter_no')
         .run()
         .then(function (result) {
-            res.json(result);
+            // res.json(result);
             res.ireport("exporter/report1.jasper", req.query.export || "pdf", result, parameters);
         })
         .error(function (err) {
@@ -183,7 +183,7 @@ exports.report2 = function (req, res, next) {
     var r = req.r;
     //res.json(__dirname.replace('controller','report'));
     var parameters = {
-        CURRENT_DATE: new Date().toISOString().slice(0, 10),
+        // CURRENT_DATE: new Date().toISOString().slice(0, 10),
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
@@ -206,13 +206,13 @@ exports.report2 = function (req, res, next) {
     }
     // console.log(parameters, d);
     if (Object.getOwnPropertyNames(d).length !== 0) {
-        parameters['date_start'] = d['date_start'].split('T')[0];
-        parameters['date_end'] = d['date_end'].split('T')[0];
+        parameters['date_start'] = d['date_start'];
+        parameters['date_end'] = d['date_end'];
         d = r.row('exporter_date_approve').gt(d.date_start).and(r.row('exporter_date_approve').lt(d.date_end));
     } else {
         d = r.row('exporter_date_approve').gt(parameters['date_start']).and(r.row('exporter_date_approve').lt(parameters['date_end']));
-        parameters['date_start'] = parameters['date_start'].split('T')[0];
-        parameters['date_end'] = parameters['date_end'].split('T')[0];
+        parameters['date_start'] = parameters['date_start'];
+        parameters['date_end'] = parameters['date_end'];
     }
     // var date_start = parameters['date_start']
     // var date_end = parameters['date_end']
@@ -220,15 +220,15 @@ exports.report2 = function (req, res, next) {
 
     r.db('external').table('exporter')
         // .between(date_start, date_end, { index: 'exporter_date_approve' })
-        .pluck(['id', 'exporter_date_approve', 'exporter_no', 'company_id', 'export_status_name'])
+        .pluck(['id', 'exporter_date_approve', 'exporter_no', 'company_id', 'exporter_status', 'type_lic_id'])
         // .eqJoin('trader_id', r.db('external').table('trader')).pluck({ right: ['seller_id', 'type_lic_id', 'trader_no', 'trader_date_approve'] }, 'left').zip()
         .eqJoin('company_id', r.db('external').table('company'))
         .pluck({ right: ['company_name_th', 'company_name_en', 'company_address_en', 'company_address_th', 'company_phone', 'company_fax', 'company_agent'] }, 'left').zip()
-        // .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
+        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
         .merge(function (m) {
             return {
                 // count_exporter: r.db('external').table('exporter').between(date_start, date_end, { index: 'exporter_date_approve' }).count(),
-                exporter_status_name: r.branch(m.hasFields('exporter_no'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
+                exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                 exporter_no_name: r.branch(
                     m.hasFields('exporter_no'),
                     r.branch(
@@ -249,7 +249,7 @@ exports.report2 = function (req, res, next) {
             }
         })
         .filter(q)
-        .filter(d)
+        // .filter(d)
         .orderBy('exporter_no')
         .run()
         .then(function (result) {
