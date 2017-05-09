@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="approve_general_1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f591e4a0-38f4-44dd-b603-74498effb1d9">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="18"/>
+	<property name="ireport.x" value="16"/>
 	<property name="ireport.y" value="229"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["E:\\lookpad\\กองคลัง\\"]]></defaultValueExpression>
@@ -210,13 +210,13 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\tคข. พิจารณาแล้วเห็นควรขึ้นทะเบียน"+$F{company_name_th}+"เป็นผู้ส่งออกข้าวเลขที่ "+$F{exporter_no_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\t\tคข. พิจารณาแล้วเห็นควรขึ้นทะเบียน"+$F{company_name_th}+"เป็นผู้ส่งออกข้าวเลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no_name})]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement stretchType="RelativeToBandHeight" x="437" y="0" width="1" height="20" isPrintWhenDetailOverflows="true" uuid="5c7335f6-31d0-4437-a72b-040c2d2156a8"/>
 			</line>
 		</band>
-		<band height="30" splitType="Stretch">
+		<band height="130" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="62" y="10" width="374" height="20" isPrintWhenDetailOverflows="true" uuid="98988a50-38e0-40ae-bfa9-03e73ad811f9"/>
 				<textElement>
@@ -225,7 +225,7 @@
 				<textFieldExpression><![CDATA["\t\tจึงเรียนมาเพื่อโปรดพิจารณาอนุมัติตามข้อ ๓"]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement stretchType="RelativeToBandHeight" x="437" y="0" width="1" height="30" isPrintWhenDetailOverflows="true" uuid="bcb7c0a0-469b-4357-8806-1aaeb52728ce"/>
+				<reportElement stretchType="RelativeToBandHeight" x="437" y="0" width="1" height="130" isPrintWhenDetailOverflows="true" uuid="bcb7c0a0-469b-4357-8806-1aaeb52728ce"/>
 			</line>
 		</band>
 	</detail>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="approve_changtype" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f591e4a0-38f4-44dd-b603-74498effb1d9">
-	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="18"/>
-	<property name="ireport.y" value="245"/>
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="175"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["E:\\lookpad\\กองคลัง\\"]]></defaultValueExpression>
 	</parameter>
@@ -205,14 +205,14 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\t๒.๓ กรมฯ ได้อนุมัติให้"+$F{company_name_th}+" ขึ้นทะเบียนเป็นผู้ส่งออกข้าวประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออกก"+$F{type_lice_name_old} +" เลขที่"+$F{exporter_no_name}+" เมื่อวันที่ " +new nylon.utility.NumberFormat().toThaiDate ($F{exporter_date_approve})+" (เอกสาร ๓)"
+				<textFieldExpression><![CDATA["\t\t๒.๓ กรมฯ ได้อนุมัติให้"+$F{company_name_th}+" ขึ้นทะเบียนเป็นผู้ส่งออกข้าวประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออกก"+$F{type_lice_name_old} +" เลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no_name})+" เมื่อวันที่ " +new nylon.utility.NumberFormat().toThaiDate ($F{exporter_date_approve})+" (เอกสาร ๓)"
 +"\n"]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement stretchType="RelativeToBandHeight" x="426" y="0" width="1" height="20" isPrintWhenDetailOverflows="true" uuid="658d1c67-9611-414e-a7ff-68ffa0b96bbc"/>
 			</line>
 		</band>
-		<band height="40" splitType="Stretch">
+		<band height="140" splitType="Stretch">
 			<staticText>
 				<reportElement x="62" y="0" width="214" height="20" uuid="efd33931-460f-4768-a25f-970d89ef15b5"/>
 				<textElement verticalAlignment="Middle">
@@ -225,12 +225,12 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\tคข. พิจารณาแล้วเห็นว่า "+$F{company_name_th}+" ได้รับอนุญาตให้เป็นผู้ประกอบการค้าข้าวประเภทค้าข้าว ส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออก"+$F{type_lice_name_new}+"จากกรมการค้าภายในตามเงื่อนไขในข้อ ๒.๑-๒.๒ แล้ว จึงเห็นควรเปลี่ยนแปลงประเภทการเป็นผู้ส่งออกข้าวของบริษัทฯ จากประเภท"+$F{type_lice_name_old}+"เป็นประเภทผู้ส่งออก"+$F{type_lice_name_new}+" โดยใช้เลขที่ "+$F{exporter_no_name}+" ตามเดิม ทั้งนี้ เพื่อให้การจัดเก็บข้อมูลมีความต่อเนื่องกับฐานข้อมูลเดิม"
+				<textFieldExpression><![CDATA["\t\tคข. พิจารณาแล้วเห็นว่า "+$F{company_name_th}+" ได้รับอนุญาตให้เป็นผู้ประกอบการค้าข้าวประเภทค้าข้าว ส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออก"+$F{type_lice_name_new}+"จากกรมการค้าภายในตามเงื่อนไขในข้อ ๒.๑-๒.๒ แล้ว จึงเห็นควรเปลี่ยนแปลงประเภทการเป็นผู้ส่งออกข้าวของบริษัทฯ จากประเภท"+$F{type_lice_name_old}+"เป็นประเภทผู้ส่งออก"+$F{type_lice_name_new}+" โดยใช้เลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no_name})+" ตามเดิม ทั้งนี้ เพื่อให้การจัดเก็บข้อมูลมีความต่อเนื่องกับฐานข้อมูลเดิม"
 +"\n\t\tจึงเรียนมาเพื่อโปรดพิจารณาอนุมัติตามข้อ ๓"
 +"\n"]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement stretchType="RelativeToBandHeight" x="426" y="0" width="1" height="40" isPrintWhenDetailOverflows="true" uuid="23d3f760-549c-45fd-a940-31b2d58c90a8"/>
+				<reportElement stretchType="RelativeToBandHeight" x="426" y="0" width="1" height="140" isPrintWhenDetailOverflows="true" uuid="23d3f760-549c-45fd-a940-31b2d58c90a8"/>
 			</line>
 		</band>
 	</detail>
