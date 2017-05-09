@@ -214,12 +214,12 @@ exports.report2 = function (req, res, next) {
         parameters['date_start'] = parameters['date_start'];
         parameters['date_end'] = parameters['date_end'];
     }
-    // var date_start = parameters['date_start']
-    // var date_end = parameters['date_end']
+    var date_start = parameters['date_start']
+    var date_end = parameters['date_end']
     // console.log(parameters);
 
     r.db('external').table('exporter')
-        // .between(date_start, date_end, { index: 'exporter_date_approve' })
+        .between(r.ISO8601(date_start), r.ISO8601(date_end), { index: 'exporter_date_approve' })
         .pluck(['id', 'exporter_date_approve', 'exporter_no', 'company_id', 'exporter_status', 'type_lic_id'])
         // .eqJoin('trader_id', r.db('external').table('trader')).pluck({ right: ['seller_id', 'type_lic_id', 'trader_no', 'trader_date_approve'] }, 'left').zip()
         .eqJoin('company_id', r.db('external').table('company'))
@@ -261,7 +261,7 @@ exports.report3 = function (req, res, next) {
     var r = req.r;
     //res.json(__dirname.replace('controller','report'));
     var parameters = {
-        CURRENT_DATE: new Date().toISOString().slice(0, 10),
+        // CURRENT_DATE: new Date().toISOString().slice(0, 10),
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
@@ -284,75 +284,77 @@ exports.report3 = function (req, res, next) {
     }
     // console.log(parameters, d);
     if (Object.getOwnPropertyNames(d).length !== 0) {
-        parameters['date_start'] = d['date_start'].split('T')[0];
-        parameters['date_end'] = d['date_end'].split('T')[0];
+        parameters['date_start'] = d['date_start'];
+        parameters['date_end'] = d['date_end'];
         d = r.row('exporter_date_approve').gt(d.date_start).and(r.row('exporter_date_approve').lt(d.date_end));
     } else {
         d = r.row('exporter_date_approve').gt(parameters['date_start']).and(r.row('exporter_date_approve').lt(parameters['date_end']));
-        parameters['date_start'] = parameters['date_start'].split('T')[0];
-        parameters['date_end'] = parameters['date_end'].split('T')[0];
+        parameters['date_start'] = parameters['date_start'];
+        parameters['date_end'] = parameters['date_end'];
     }
+    var date_start = parameters['date_start']
+    var date_end = parameters['date_end']
     //console.log(parameters);
 
     r.db('external').table('exporter')
-        // .between(date_start, date_end, { index: 'exporter_date_approve' })
+        .between(r.ISO8601(date_start), r.ISO8601(date_end), { index: 'exporter_date_approve' })
         .pluck(['id', 'exporter_date_approve', 'exporter_no', 'company_id'])
-        .merge(function (m) {
-            return {
-                // count_exporter: r.db('external').table('exporter').between(date_start, date_end, { index: 'exporter_date_approve' }).count(),
-                exporter_id: m('id'),
-                book: r.db('g2g').table('shipment_detail')
-                    .getAll(m('id'), { index: 'exporter_id' })
-                    // .filter({ exporter_id: m('id') })
-                    .pluck('book_id')
-                    .distinct()
-                    .coerceTo('array')
-                    .eqJoin('book_id', r.db('g2g').table('book')).pluck({ right: 'etd_date' }, "left").zip()
-                    .orderBy(r.desc('etd_date'))
-                    .limit(1)
-                    .getField('etd_date')
-            }
-        })
-        .merge(function (m) {
-            return {
-                export_date: r.branch(
-                    m('book').eq([]),
-                    null,
-                    m('book')(0).split('T')(0)
-                ),
-                export_date_expire: r.branch(
-                    m('book').eq([]),
-                    null,
-                    r.ISO8601(m('book')(0)).add(31449600)
-                    // r.ISO8601(m('book')(0)).year().add(1)
-                    //  r.ISO8601(m('book')(0)).month()
-                    //r.ISO8601(m('book')(0)).day().sub(1)
-                    //.add(31536000)
-                ),
-                exporter_date_expire: r.ISO8601(m('exporter_date_approve')).add(31449600)
-            }
-        })
-        .merge(function (mm) {
-            return {
-                export_date_expire: r.branch(mm('export_date_expire').gt(mm('exporter_date_expire')),
-                    mm('export_date_expire'),
-                    mm('exporter_date_expire'))
-            }
-        })
-        .merge(function (mmm) {
-            return {
-                export_status: r.branch(mmm('export_date_expire').gt(r.now()), true, false),
-                export_date_expire: mmm('export_date_expire').toISO8601(),
-                exporter_date_expire: mmm('exporter_date_expire').toISO8601()
-            }
-        })
-        .without('book')
-        // .eqJoin('trader_id', r.db('external').table('trader')).pluck({ right: 'seller_id' }, 'left').zip()
+        // .merge(function (m) {
+        //     return {
+        //         // count_exporter: r.db('external').table('exporter').between(date_start, date_end, { index: 'exporter_date_approve' }).count(),
+        //         exporter_id: m('id'),
+        //         book: r.db('g2g').table('shipment_detail')
+        //             .getAll(m('id'), { index: 'exporter_id' })
+        //             // .filter({ exporter_id: m('id') })
+        //             .pluck('book_id')
+        //             .distinct()
+        //             .coerceTo('array')
+        //             .eqJoin('book_id', r.db('g2g').table('book')).pluck({ right: 'etd_date' }, "left").zip()
+        //             .orderBy(r.desc('etd_date'))
+        //             .limit(1)
+        //             .getField('etd_date')
+        //     }
+        // })
+        // .merge(function (m) {
+        //     return {
+        //         export_date: r.branch(
+        //             m('book').eq([]),
+        //             null,
+        //             m('book')(0).split('T')(0)
+        //         ),
+        //         export_date_expire: r.branch(
+        //             m('book').eq([]),
+        //             null,
+        //             r.ISO8601(m('book')(0)).add(31449600)
+        //             // r.ISO8601(m('book')(0)).year().add(1)
+        //             //  r.ISO8601(m('book')(0)).month()
+        //             //r.ISO8601(m('book')(0)).day().sub(1)
+        //             //.add(31536000)
+        //         ),
+        //         exporter_date_expire: r.ISO8601(m('exporter_date_approve')).add(31449600)
+        //     }
+        // })
+        // .merge(function (mm) {
+        //     return {
+        //         export_date_expire: r.branch(mm('export_date_expire').gt(mm('exporter_date_expire')),
+        //             mm('export_date_expire'),
+        //             mm('exporter_date_expire'))
+        //     }
+        // })
+        // .merge(function (mmm) {
+        //     return {
+        //         export_status: r.branch(mmm('export_date_expire').gt(r.now()), true, false),
+        //         export_date_expire: mmm('export_date_expire').toISO8601(),
+        //         exporter_date_expire: mmm('exporter_date_expire').toISO8601()
+        //     }
+        // })
+        // .without('book')
+        // // .eqJoin('trader_id', r.db('external').table('trader')).pluck({ right: 'seller_id' }, 'left').zip()
         .eqJoin('company_id', r.db('external').table('company'))
         .pluck({ right: ['company_name_th', 'company_name_en', 'company_address_en', 'company_address_th', 'company_phone', 'company_fax'] }, 'left').zip()
         .merge(function (m) {
             return {
-                exporter_status_name: r.branch(m.hasFields('exporter_no'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
+                // exporter_status_name: r.branch(m.hasFields('exporter_no'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                 exporter_no_name: r.branch(
                     m.hasFields('exporter_no'),
                     r.branch(
@@ -373,7 +375,7 @@ exports.report3 = function (req, res, next) {
             }
         })
         .filter(q)
-        .filter(d)
+        // .filter(d)
         .orderBy('exporter_no')
         .run()
         .then(function (result) {
