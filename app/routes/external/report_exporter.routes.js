@@ -12,4 +12,6 @@ module.exports = function (app) {
     app.route('/approve_general_1/:id').get(report_exporter.approve_general_1);
     app.route('/approve_general_2/:id').get(report_exporter.approve_general_2);
     app.route('/approve_changtype/:id').get(report_exporter.approve_changtype);
+    app.route('/approve_renew_1/:id').get(report_exporter.approve_renew_1);
+    app.route('/approve_renew_2/:id').get(report_exporter.approve_renew_2);
 }

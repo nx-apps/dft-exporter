@@ -1014,4 +1014,34 @@ exports.approve_changtype = function (req, res) {
             res.json(err)
         })
 }
+exports.approve_renew_1 = function (req, res) {
+    var r = req.r;
+    var parameters = {
+        CURRENT_DATE: new Date().toISOString().slice(0, 10)
+    };
+    r.db('external').table('exporter')
+        .run()
+        .then(function (result) {
+            // res.json(result);
+            res.ireport("exporter/approve_renew_1.jasper", req.query.export || "pdf", result, parameters);
+        })
+        .error(function (err) {
+            res.json(err)
+        })
+}
+exports.approve_renew_2 = function (req, res) {
+    var r = req.r;
+    var parameters = {
+        CURRENT_DATE: new Date().toISOString().slice(0, 10)
+    };
+    r.db('external').table('exporter')
+        .run()
+        .then(function (result) {
+            // res.json(result);
+            res.ireport("exporter/approve_renew_2.jasper", req.query.export || "pdf", result, parameters);
+        })
+        .error(function (err) {
+            res.json(err)
+        })
+}
 
