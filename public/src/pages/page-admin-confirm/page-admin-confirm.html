@@ -135,16 +135,22 @@
 
         <div class="horizontal layout justified">
           <div>
-            <paper-button id="btn-reject" class="gl-btn-warning" style="margin-left:15px;" on-tap="_dialogRemark" raised>{{localize('bt_no_pass')}}</paper-button>
-            <div id="btn-print" style="margin-left:20px;">
+            <paper-button hidden="[[_hidBtnPass(dataSelect.approve_status)]]" class="gl-btn-warning" style="margin-left:15px;" on-tap="_dialogRemark" raised>{{localize('bt_no_pass')}}</paper-button>
+            <div hidden="[[_hidBtnApp(dataSelect.approve_status)]]" style="margin-left:20px;">
               {{localize('bt_print_book')}}
               <paper-icon-button icon="print" on-tap="_print" title="{{localize('bt_print_book')}}"></paper-icon-button>
             </div>
           </div>
           <div>
             <paper-button on-tap="_backPage" raised>{{localize('bt_back')}}</paper-button>
-            <paper-button id="btn-save" class="gl-btn-success btn-bottom" on-tap="_save" raised>{{localize('bt_pass')}}</paper-button>
-            <paper-button id="btn-approve" class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize('bt_approve')}}</paper-button>
+            <paper-button hidden="[[_hidBtnPass(dataSelect.approve_status)]]" class="gl-btn-success btn-bottom" on-tap="_save" raised>{{localize('bt_pass')}}</paper-button>
+            <template is="dom-if" if={{!obExporter(exporter_data.export_status)}}>
+              <paper-button class="gl-btn-warning btn-bottom" on-tap="_extend" raised>{{localize('bt_exporter_extend')}}</paper-button>
+            </template>
+            <template is="dom-if" if={{obExporter(exporter_data.export_status)}}>
+              <paper-button hidden="[[_hidBtnApp(dataSelect.approve_status)]]" class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize('bt_approve')}}</paper-button>
+            </template>
+            <!--<paper-button id="btn-approve" class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize('bt_approve')}}</paper-button>-->
           </div>
         </div>
       </div>
@@ -231,24 +237,6 @@
         this.isHidden = true;
         this.pageSelected = "detailCompany";
         this.dataSelect = e.currentTarget.data;
-        if (this.dataSelect.approve_status == 'process') {
-          this.$$('#btn-reject').setAttribute("hidden", "hidden");
-          this.$$('#btn-save').setAttribute("hidden", "hidden");
-          this.$$('#btn-approve').removeAttribute("hidden");
-          this.$$('#btn-print').removeAttribute("hidden");
-        }
-        else if (this.dataSelect.approve_status == 'reject') {
-          this.$$('#btn-reject').setAttribute("hidden", "hidden");
-          this.$$('#btn-save').removeAttribute("hidden", "hidden");
-          this.$$('#btn-approve').setAttribute("hidden", "hidden");
-          this.$$('#btn-print').setAttribute("hidden", "hidden");
-        }
-        else {
-          this.$$('#btn-reject').removeAttribute("hidden");
-          this.$$('#btn-save').removeAttribute("hidden");
-          this.$$('#btn-approve').setAttribute("hidden", "hidden");
-          this.$$('#btn-print').setAttribute("hidden", "hidden");
-        }
       },
       _backPage: function (data) {
         this.pageSelected = 'listCompany';
@@ -276,8 +264,9 @@
             this.fire('toast', {
               status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
                 this.pageSelected = 'listCompany';
-                this.fire('refresh-company');
-                this.fire('refresh-exporter');
+                this.getCompany();
+                // this.fire('refresh-company');
+                // this.fire('refresh-exporter');
                 // console.log('success');
               }
             });
@@ -295,35 +284,17 @@
       _confirmApprove: function (result, detail) {
         if (result == true) {
           if(this.dataSelect.change_status === true){
-            if(this.exporter_data.export_status === false){
-              // console.log('หมดอายุ');
-              let newData = {};
-              newData.id = this.exporter_data.exporter_id;
-              // console.log(newData);
-              this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-              this.update('./external/exporter/update/date', newData, () => {
-                this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
+            let {id, exporter_id, type_lic_id} = this.exporter_data;
+            let newData = {id, exporter_id, type_lic_id};
+            this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
+            this.update('./external/confirm_exporter/changetype', newData, () => {
+              this.fire('toast', {
+                status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
                   this.pageSelected = 'listCompany';
                   this.getCompany();
-                  // this.fire('refresh-exporter');
-                  // this.fire('refresh-edit',detail.datas.id);
-                }});
+                }
               });
-            }
-            else{
-              // console.log('ไม่หมดอายุ');
-              let {id, exporter_id, type_lic_id} = this.exporter_data;
-              let newData = {id, exporter_id, type_lic_id};
-              this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-              this.update('./external/confirm_exporter/changetype', newData, () => {
-                this.fire('toast', {
-                  status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                    this.pageSelected = 'listCompany';
-                    this.getCompany();
-                  }
-                });
-              })
-            }
+            })
           }else{
             let { exporter_no, company_id, id, type_lic_id} = detail.datas;
             let newData = { exporter_no, company_id, type_lic_id};
@@ -338,7 +309,7 @@
                 }
               });
             });
-          }
+        }
         }
       },
       _changeselectDataAll: function (val) {
@@ -432,6 +403,30 @@
                 // console.log('success');
               }
             });
+          });
+        }
+      },
+      _extend:function(){
+        this.fire('toast', {
+          status: 'dialog',
+          text: 'คุณต้องการจะต่ออายุผู้ส่งออกใช่หรือไม่ ?',
+          confirmed: this._confirmExtend.bind(this),
+          datas: {
+            id: this.exporter_data.exporter_id
+          }
+        });
+      },
+      _confirmExtend: function (result, detail) {
+        if (result == true) {
+          // console.log(detail.datas);
+          this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+          this.update('./external/exporter/update/date', detail.datas, () => {
+            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
+              this.pageSelected = 'listCompany';
+              this.getCompany();
+              // this.fire('refresh-exporter');
+              // this.fire('refresh-edit',detail.datas.id);
+            }});
           });
         }
       },
@@ -575,6 +570,29 @@
       },
       indexNo:function(val){
         return val+1
+      },
+      obExporter:function(val){
+        if(typeof val === 'undefined' && val == undefined){
+          return true
+        }else if(val === true){
+          return true
+        }else{
+          return false
+        }
+      },
+      _hidBtnApp:function(val){
+        if(val == 'process'){
+          return false
+        }else{
+          return true
+        }
+      },
+      _hidBtnPass:function(val){
+        if(val == 'request'){
+          return false
+        }else{
+          return true
+        }
       }
     });
   </script>

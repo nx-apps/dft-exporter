@@ -60,7 +60,7 @@
           <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize('exporter_expire')}}</div>
         </div>
         <div class="horizontal end-justified layout">
-          <paper-button id="buttomActive" raised class="gl-btn-success button" on-tap="_dialogRemark" title="{{localize('bt_exporter_extend')}}">{{localize('bt_exporter_extend')}}</paper-button>
+          <paper-button id="buttomActive" raised class="gl-btn-warning button" on-tap="_dialogRemark" title="{{localize('bt_exporter_extend')}}">{{localize('bt_exporter_extend')}}</paper-button>
         </div>
       </template>
       <template is="dom-if" if={{data.export_status}}>
