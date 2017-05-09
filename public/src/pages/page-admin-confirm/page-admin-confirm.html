@@ -144,12 +144,18 @@
           <div>
             <paper-button on-tap="_backPage" raised>{{localize('bt_back')}}</paper-button>
             <paper-button hidden="[[_hidBtnPass(dataSelect.approve_status)]]" class="gl-btn-success btn-bottom" on-tap="_save" raised>{{localize('bt_pass')}}</paper-button>
-            <paper-button hidden="[[_hidBtnApp(dataSelect.approve_status)]]" class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize('bt_approve')}}</paper-button>
-            <template is="dom-if" if={{!obExporter(exporter_data.export_status)}}>
-              <paper-button class="gl-btn-warning btn-bottom" on-tap="_extend" raised>{{localize('bt_exporter_extend')}}</paper-button>
-            </template>
-            <template is="dom-if" if={{obExporter(exporter_data.export_status)}}>
+            
+            <template is="dom-if" if={{isEnabled}}>
               <paper-button hidden="[[_hidBtnApp(dataSelect.approve_status)]]" class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize('bt_approve')}}</paper-button>
+            </template>
+            
+            <template is="dom-if" if={{!isEnabled}}>
+              <template is="dom-if" if={{!obExporter(exporter_data.export_status)}}>
+                <paper-button class="gl-btn-warning btn-bottom" on-tap="_extend" raised>{{localize('bt_exporter_extend')}}</paper-button>
+              </template>
+              <template is="dom-if" if={{obExporter(exporter_data.export_status)}}>
+                <paper-button hidden="[[_hidBtnApp(dataSelect.approve_status)]]" class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize('bt_approve')}}</paper-button>
+              </template>
             </template>
             <!--<paper-button id="btn-approve" class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize('bt_approve')}}</paper-button>-->
           </div>
@@ -580,14 +586,18 @@
       },
       obData: function(val){
         this.read('./external/confirm_exporter/get/'+val.id, (data) =>{
-          this.exporter_data = data[0];
+            this.exporter_data = data[0];
+            if(typeof this.exporter_data === 'undefined'){
+              this.isEnabled = true;
+            }else{
+              this.isEnabled = false;
+            }
         })
       },
       indexNo:function(val){
         return val+1
       },
       obExporter:function(val){
-        console.log(val);
         if(typeof val === 'undefined' && val == undefined){
           return true
         }else if(val === true){

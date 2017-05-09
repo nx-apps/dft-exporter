@@ -78,9 +78,13 @@
             <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize('change_status')}}</div>
           </div>
         </template>
-        <div class="horizontal end-justified layout">
-          <div hidden="[[isEnabled]]"><paper-icon-button icon="create" on-tap="editChange" title="แก้ไขข้อมูล"></paper-icon-button></div>
-        </div>
+      </template>
+      <template is="dom-if" if={{data.expire_status}}>
+        <template is="dom-if" if={{data.export_status}}>
+          <div class="horizontal end-justified layout">
+            <div hidden="[[isEnabled]]"><paper-icon-button icon="create" on-tap="editChange" title="แก้ไขข้อมูล"></paper-icon-button></div>
+          </div>
+        </template>
       </template>
           <div class="bd">
               <gl-form-panel>
@@ -239,6 +243,7 @@
               this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
                 this.$.dialog.toggle();
                 this.fire('refresh-edit',detail.datas.id);
+                this.fire('refresh-exporter');
               }});
             });
           });
