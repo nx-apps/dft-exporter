@@ -2,6 +2,15 @@
 
 <dom-module id="detail-company">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
+    * {
+      font-family: 'CSChatThaiUI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    .title-head {
+      text-align: center;
+       font-size: var(--font-size-h3);
+        color: white;
+    }
     .title {
       text-align: center;
       font-size: var(--font-size-h4);
@@ -19,8 +28,30 @@
       margin-top: 25px;
       font-size: var(--font-size-h5);
     }
+    .boxNortify{
+      border: 2px solid red;
+      background-color: red;
+      padding: 5px;
+    }
+    .boxChange_status{
+      border: 2px solid #6699FF;
+      background-color: #6699FF;
+      padding: 5px;
+    }
   </style>
   <template>
+    <template is="dom-if" if={{!obExporter(exporterData.export_status)}}>
+      <div id="titleBg" class="boxNortify">
+        <div id="titleExporter" class="title-head"><iron-icon icon="icons:info"></iron-icon>  {{localize('exporter_expire')}}</div>
+      </div>
+    </template>
+    <template is="dom-if" if={{obExporter(exporterData.export_status)}}>
+      <template is="dom-if" if={{data.change_status}}>
+        <div id="titleBg" class="boxChange_status">
+          <div id="titleExporter" class="title-head"><iron-icon icon="icons:info"></iron-icon>  {{localize('change_status')}}</div>
+        </div>
+      </template>
+    </template>
     <gl-grid-row width="{{getWidth}}">
       <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,9]]"></gl-grid-col>
       <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
@@ -110,7 +141,7 @@
   <script>
     Polymer({
       is: "detail-company",
-      behaviors: [nylonLocalizeBehavior, ValidateFormBehavior],
+      behaviors: [nylonBehavior, nylonLocalizeBehavior, ValidateFormBehavior],
       properties: {
         data: {
           type: Object,
@@ -152,6 +183,15 @@
       validate:function(){
         var check = this.validateForm('.checkValidate')
         return check
+      },
+      obExporter:function(val){
+        if(typeof val === 'undefined' && val == undefined){
+          return true
+        }else if(val === true){
+          return true
+        }else{
+          return false
+        }
       }
     });
   </script>

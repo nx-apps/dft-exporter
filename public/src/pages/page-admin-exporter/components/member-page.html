@@ -21,8 +21,8 @@
       padding: 5px;
     }
     .boxChange_status{
-      border: 2px solid yellow;
-      background-color: yellow;
+      border: 2px solid #6699FF;
+      background-color: #6699FF;
       padding: 5px;
     }
     paper-tabs{
@@ -55,14 +55,23 @@
   <template>
     [[cloneDatas(data)]]
     <gl-form-panel set-border="0px">
-      <template is="dom-if" if={{!data.export_status}}>
+      <template is="dom-if" if={{!data.expire_status}}>
         <div id="titleBg" class="boxNortify">
-          <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize('exporter_expire')}}</div>
-        </div>
-        <div class="horizontal end-justified layout">
-          <paper-button id="buttomActive" raised class="gl-btn-warning button" on-tap="_dialogRemark" title="{{localize('bt_exporter_extend')}}">{{localize('bt_exporter_extend')}}</paper-button>
+          <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize('change_expire')}}</div>
         </div>
       </template>
+
+      <template is="dom-if" if={{data.expire_status}}>
+        <template is="dom-if" if={{!data.export_status}}>
+          <div id="titleBg" class="boxNortify">
+            <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize('exporter_expire')}}</div>
+          </div>
+          <div class="horizontal end-justified layout">
+            <paper-button id="buttomActive" raised class="gl-btn-warning button" on-tap="_dialogRemark" title="{{localize('bt_exporter_extend')}}">{{localize('bt_exporter_extend')}}</paper-button>
+          </div>
+        </template>
+      </template>
+      
       <template is="dom-if" if={{data.export_status}}>
         <template is="dom-if" if={{data.change_status}}>
           <div id="titleBg" class="boxChange_status">
@@ -209,35 +218,30 @@
       },
       _active: function(){
         this.fire('toast',{status:'dialog',
-        text:'คุณต้องการจะยกเลิกการระงับใช่หรือไม่ ?',
+        text:'คุณต้องการจะต่ออายุผู้ส่งออกใช่หรือไม่ ?',
         confirmed : this._confirmToast.bind(this),
         datas : this.data
         });
       },
       _confirmToast:function(result,detail){
         if(result == true){
-          console.log(detail.datas);
           let newData = {};
-          newData.id = detail.datas.confirm_id,
-          newData.approve_status = 'process'
+          newData.id = detail.datas.confirm_id;
+          newData.approve_status = 'process';
+          let dataDate = {};
+          dataDate.id = detail.datas.id;
+          dataDate.expire_status = false;
+          // console.log(dataDate);
           
           this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
           this.update('./external/confirm_exporter/update', newData, () => {
-            this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
-              this.fire('refresh-exporter');
-              this.pages = 0;
-              this.isEnabled = false;
-              this.fire('refresh-edit',detail.datas.id);
-            }});
+            this.update('./external/exporter/update', dataDate, () => {
+              this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
+                this.$.dialog.toggle();
+                this.fire('refresh-edit',detail.datas.id);
+              }});
+            });
           });
-          // this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-          // this.update('./external/exporter/update/date', detail.datas, () => {
-          //   this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
-          //     this.$.dialog.toggle();
-          //     this.fire('refresh-exporter');
-          //     this.fire('refresh-edit',detail.datas.id);
-          //   }});
-          //  });
         }
       },
       _dialogcancle:function() {

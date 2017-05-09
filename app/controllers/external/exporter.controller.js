@@ -387,10 +387,19 @@ exports.updateDate = function (req, res) {
             {
                 exporter_date_approve: r.now().inTimezone('+07'),
                 date_updated: r.now().inTimezone('+07'),
-                updater: 'admin'
+                updater: 'admin',
+                expire_status: true
             });
         r.db('external').table('exporter').get(req.body.id)
             .update(req.body, { returnChanges: true })
+            .do(function () {
+                return r.db('external').table('confirm_exporter').get(req.body.confirm_id)
+                    .update({
+                        approve_status: 'approve',
+                        date_updated: r.now().inTimezone('+07'),
+                        updater: 'admin'
+                    }, { returnChanges: true })
+            })
             .run()
             .then(function (response) {
                 result.message = response;
