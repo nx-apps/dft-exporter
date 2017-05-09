@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="approve_renew_1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f591e4a0-38f4-44dd-b603-74498effb1d9">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="465"/>
+	<property name="ireport.y" value="177"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["E:\\lookpad\\กองคลัง\\"]]></defaultValueExpression>
 	</parameter>
@@ -61,7 +61,7 @@
 					<font fontName="TH SarabunPSK" size="16" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new nylon.utility.NumberFormat().toThaiDate ($P{CURRENT_DATE})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($P{CURRENT_DATE}))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="96" y="116" width="451" height="20" uuid="2c49df61-cbb5-4bf4-88f8-ba80e679f11d"/>
@@ -154,7 +154,7 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\tชุมนุม"+$F{company_name_th}+" ได้ยื่นความจำนง ขอขึ้นทะเบียนเป็ยผู้ส่งออกข้าวตามหนังสือลงวันที่ "+new nylon.utility.NumberFormat().toThaiDate ($F{date_updated})+" (เอกสาร๑)"
+				<textFieldExpression><![CDATA["\t\tชุมนุม"+$F{company_name_th}+" ได้ยื่นความจำนง ขอขึ้นทะเบียนเป็นผู้ส่งออกข้าวตามหนังสือลงวันที่ "+new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{date_updated}))+" (เอกสาร๑)"
 +"\n"]]></textFieldExpression>
 			</textField>
 			<staticText>
@@ -191,7 +191,7 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\t๒.๒ กรมฯ ได้เคยอนุมัติให้ "+$F{company_name_th}+" ขึ้นทะเบียนเป็นผู้ส่งออกข้าวเลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no_name})+" เมื่อวันที่ "+new nylon.utility.NumberFormat().toThaiDate ($F{exporter_date_approve})+" ทั้งนี้ จากการตรวจสอบข้อมูลการส่งออกข้าวของบริษัท ปรากฏว่าบริษัทฯ มิได้มีการส่งออกข้าวไปต่างประเทศ ตั้งแต่วันที่ "+new nylon.utility.NumberFormat().toThaiDate ($F{exporter_date_approve})+" จนถึงปัจจุบัน (เอกสาร ๓-๔)"
+				<textFieldExpression><![CDATA["\t\t๒.๒ กรมฯ ได้เคยอนุมัติให้ "+$F{company_name_th}+" ขึ้นทะเบียนเป็นผู้ส่งออกข้าวเลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no_name})+" เมื่อวันที่ "+new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{exporter_date_approve}))+" ทั้งนี้ จากการตรวจสอบข้อมูลการส่งออกข้าวของบริษัท ปรากฏว่าบริษัทฯ มิได้มีการส่งออกข้าวไปต่างประเทศ ตั้งแต่วันที่ "+new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{exporter_date_approve}))+" จนถึงปัจจุบัน (เอกสาร ๓-๔)"
 +"\n"]]></textFieldExpression>
 			</textField>
 			<line>

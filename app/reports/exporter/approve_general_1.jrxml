@@ -103,7 +103,7 @@
 					<font fontName="TH SarabunPSK" size="16" isUnderline="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
-				<textFieldExpression><![CDATA[new nylon.utility.NumberFormat().toThaiDate ($P{CURRENT_DATE})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($P{CURRENT_DATE}))]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="">
 				<reportElement x="235" y="71" width="312" height="20" uuid="c4b43e84-f59b-43ee-a8cc-76b3ce24d773"/>
@@ -151,7 +151,7 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\tชุมนุม"+$F{company_name_th}+" ได้ยื่นความจำนงขอขึ้นทะเบียน เป็นผู้ส่งออกข้าวตามหนังสือลงวันที่ "+new nylon.utility.NumberFormat().toThaiDate ($F{date_created})+" (เอกสาร๑)"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\t\tชุมนุม"+$F{company_name_th}+" ได้ยื่นความจำนงขอขึ้นทะเบียน เป็นผู้ส่งออกข้าวตามหนังสือลงวันที่ "+new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{date_created}))+" (เอกสาร๑)"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="62" y="0" width="361" height="20" uuid="fbce3d7c-b0ee-4d35-af95-34c0ece602dd"/>

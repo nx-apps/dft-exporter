@@ -899,7 +899,7 @@ exports.approve_general_1 = function (req, res) {
         .run()
         .then(function (result) {
             // res.json(result);
-            res.ireport("exporter/approve_general_1.jasper", req.query.export || "pdf", result, parameters);
+            res.ireport("exporter/approve_general_1.jasper", req.query.export || "word", result, parameters);
         })
         .error(function (err) {
             res.json(err)
@@ -950,7 +950,7 @@ exports.approve_general_2 = function (req, res) {
         .run()
         .then(function (result) {
             // res.json(result);
-            res.ireport("exporter/approve_general_2.jasper", req.query.export || "pdf", result, parameters);
+            res.ireport("exporter/approve_general_2.jasper", req.query.export || "word", result, parameters);
         })
         .error(function (err) {
             res.json(err)
@@ -1008,7 +1008,7 @@ exports.approve_changtype = function (req, res) {
         .run()
         .then(function (result) {
             // res.json(result);
-            res.ireport("exporter/approve_changtype.jasper", req.query.export || "pdf", result, parameters);
+            res.ireport("exporter/approve_changtype.jasper", req.query.export || "word", result, parameters);
         })
         .error(function (err) {
             res.json(err)
@@ -1051,7 +1051,7 @@ exports.approve_renew_1 = function (req, res) {
         .run()
         .then(function (result) {
             // res.json(result);
-            res.ireport("exporter/approve_renew_1.jasper", req.query.export || "pdf", result, parameters);
+            res.ireport("exporter/approve_renew_1.jasper", req.query.export || "word", result, parameters);
         })
         .error(function (err) {
             res.json(err)
@@ -1094,7 +1094,7 @@ exports.approve_renew_2 = function (req, res) {
         .run()
         .then(function (result) {
             // res.json(result);
-            res.ireport("exporter/approve_renew_2.jasper", req.query.export || "pdf", result, parameters);
+            res.ireport("exporter/approve_renew_2.jasper", req.query.export || "word", result, parameters);
         })
         .error(function (err) {
             res.json(err)
