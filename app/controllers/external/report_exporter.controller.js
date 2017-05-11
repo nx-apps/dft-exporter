@@ -30,7 +30,6 @@ exports.report1 = function (req, res) {
         }
     }
     // console.log(parameters, d);
-    console.log(d);
     if (Object.getOwnPropertyNames(d).length !== 0) {
         parameters['date_start'] = d['date_start'];
         parameters['date_end'] = d['date_end'];
@@ -43,7 +42,11 @@ exports.report1 = function (req, res) {
     var date_start = parameters['date_start']
     var date_end = parameters['date_end']
     // console.log(parameters);
-    r.db('external').table('exporter').between(r.ISO8601(date_start), r.ISO8601(date_end), { index: 'exporter_date_approve' })
+    r.db('external').table('exporter')
+        .filter(function (f) {
+            return f('exporter_date_approve').during(r.ISO8601(date_start), r.ISO8601(date_end).add(86399), { rightBound: 'closed' })
+        })
+        //.between(r.ISO8601(date_start).inTimezone('+07'), r.ISO8601(date_end).inTimezone('+07'), { index: 'exporter_date_approve' })
         .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
         .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("left", { right: ["change_status"] }).zip()
         .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck("left", { right: ["type_lic_name"] }).zip()
@@ -90,83 +93,6 @@ exports.report1 = function (req, res) {
                 export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
         })
-        // .pluck(['id', 'exporter_date_approve', 'exporter_no', 'company_id'])
-        // .merge(function (m) {
-        //     return {
-        //         // count_exporter: r.db('external').table('exporter').between(date_start, date_end, { index: 'exporter_date_approve' }).count(),
-        //         exporter_id: m('id'),
-        //         book: r.db('g2g').table('shipment_detail')
-        //             .getAll(m('id'), { index: 'exporter_id' })
-        //             // .filter({ exporter_id: m('id') })
-        //             .pluck('book_id')
-        //             .distinct()
-        //             .coerceTo('array')
-        //             .eqJoin('book_id', r.db('g2g').table('book')).pluck({ right: 'etd_date' }, "left").zip()
-        //             .orderBy(r.desc('etd_date'))
-        //             .limit(1)
-        //             .getField('etd_date')
-        //     }
-        // })
-        // .merge(function (m) {
-        //     return {
-        //         export_date: r.branch(
-        //             m('book').eq([]),
-        //             null,
-        //             m('book')(0).split('T')(0)
-        //         ),
-        //         export_date_expire: r.branch(
-        //             m('book').eq([]),
-        //             null,
-        //             r.ISO8601(m('book')(0)).add(31449600)
-        //             // r.ISO8601(m('book')(0)).year().add(1)
-        //             //  r.ISO8601(m('book')(0)).month()
-        //             //r.ISO8601(m('book')(0)).day().sub(1)
-        //             //.add(31536000)
-        //         ),
-        //         exporter_date_expire: r.ISO8601(m('exporter_date_approve')).add(31449600)
-        //     }
-        // })
-        // .merge(function (mm) {
-        //     return {
-        //         export_date_expire: r.branch(mm('export_date_expire').gt(mm('exporter_date_expire')),
-        //             mm('export_date_expire'),
-        //             mm('exporter_date_expire'))
-        //     }
-        // })
-        // .merge(function (mmm) {
-        //     return {
-        //         export_status: r.branch(mmm('export_date_expire').gt(r.now()), true, false),
-        //         export_date_expire: mmm('export_date_expire').toISO8601(),
-        //         exporter_date_expire: mmm('exporter_date_expire').toISO8601()
-        //     }
-        // })
-        // .without('book')
-        // .merge(function (m) {
-        //     return {
-        //         exporter_status_name: r.branch(m.hasFields('exporter_no'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-        //         exporter_no_name: r.branch(
-        //             m.hasFields('exporter_no'),
-        //             r.branch(
-        //                 m('exporter_no').lt(10)
-        //                 , r.expr('ข.000')
-        //                 , r.branch(
-        //                     m('exporter_no').lt(100)
-        //                     , r.expr('ข.00')
-        //                     , r.branch(
-        //                         m('exporter_no').lt(1000)
-        //                         , r.expr('ข.0')
-        //                         , r.expr('ข.')
-        //                     )
-        //                 )
-        //             ).add(m('exporter_no').coerceTo('string'))
-        //             , null
-        //         )
-        //     }
-        // })
-        // .eqJoin('company_id', r.db('external').table('company')).without({ right: ['id', 'date_created'] }).zip()
-        // .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
-
-
         .filter(q)
         // .filter(d)
         .orderBy('exporter_no')
@@ -219,16 +145,15 @@ exports.report2 = function (req, res, next) {
     // console.log(parameters);
 
     r.db('external').table('exporter')
-        .between(r.ISO8601(date_start), r.ISO8601(date_end), { index: 'exporter_date_approve' })
-        .pluck(['id', 'exporter_date_approve', 'exporter_no', 'company_id', 'exporter_status', 'type_lic_id'])
-        // .eqJoin('trader_id', r.db('external').table('trader')).pluck({ right: ['seller_id', 'type_lic_id', 'trader_no', 'trader_date_approve'] }, 'left').zip()
-        .eqJoin('company_id', r.db('external').table('company'))
-        .pluck({ right: ['company_name_th', 'company_name_en', 'company_address_en', 'company_address_th', 'company_phone', 'company_fax', 'company_agent'] }, 'left').zip()
+        .filter(function (f) {
+            return f('exporter_date_approve').during(r.ISO8601(date_start), r.ISO8601(date_end).add(86399), { rightBound: 'closed' })
+        })
+        // .between(r.ISO8601(date_start), r.ISO8601(date_end), { index: 'exporter_date_approve' })
+        // .pluck(['id', 'exporter_date_approve', 'exporter_no', 'company_id', 'exporter_status', 'type_lic_id'])
+        .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
         .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
         .merge(function (m) {
             return {
-                // count_exporter: r.db('external').table('exporter').between(date_start, date_end, { index: 'exporter_date_approve' }).count(),
-                exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                 exporter_no_name: r.branch(
                     m.hasFields('exporter_no'),
                     r.branch(
@@ -245,7 +170,29 @@ exports.report2 = function (req, res, next) {
                         )
                     ).add(m('exporter_no').coerceTo('string'))
                     , null
-                )
+                ),
+                exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
+                exporter_date_expire: m('exporter_date_approve').add(31449600).toISO8601(),
+                date_export_expire: m('date_exported').add(31449600).toISO8601(),
+                exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
+                date_exported: m('date_exported').toISO8601()
+            }
+        })
+        .merge(function (mm) {
+            return {
+                export_date_expire: r.branch(mm('date_export_expire').gt(mm('exporter_date_expire')),
+                    mm('date_export_expire').split('T')(0),
+                    mm('exporter_date_expire').split('T')(0))
+            }
+        }).without('date_export_expire', 'exporter_date_expire')
+        .merge(function (mmm) {
+            return {
+                export_status: r.branch(mmm('export_date_expire').gt(r.now().toISO8601().split('T')(0)), true, false)
+            }
+        })
+        .merge(function (m) {
+            return {
+                export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
         })
         .filter(q)
@@ -297,64 +244,13 @@ exports.report3 = function (req, res, next) {
     //console.log(parameters);
 
     r.db('external').table('exporter')
-        .between(r.ISO8601(date_start), r.ISO8601(date_end), { index: 'exporter_date_approve' })
-        .pluck(['id', 'exporter_date_approve', 'exporter_no', 'company_id'])
-        // .merge(function (m) {
-        //     return {
-        //         // count_exporter: r.db('external').table('exporter').between(date_start, date_end, { index: 'exporter_date_approve' }).count(),
-        //         exporter_id: m('id'),
-        //         book: r.db('g2g').table('shipment_detail')
-        //             .getAll(m('id'), { index: 'exporter_id' })
-        //             // .filter({ exporter_id: m('id') })
-        //             .pluck('book_id')
-        //             .distinct()
-        //             .coerceTo('array')
-        //             .eqJoin('book_id', r.db('g2g').table('book')).pluck({ right: 'etd_date' }, "left").zip()
-        //             .orderBy(r.desc('etd_date'))
-        //             .limit(1)
-        //             .getField('etd_date')
-        //     }
-        // })
-        // .merge(function (m) {
-        //     return {
-        //         export_date: r.branch(
-        //             m('book').eq([]),
-        //             null,
-        //             m('book')(0).split('T')(0)
-        //         ),
-        //         export_date_expire: r.branch(
-        //             m('book').eq([]),
-        //             null,
-        //             r.ISO8601(m('book')(0)).add(31449600)
-        //             // r.ISO8601(m('book')(0)).year().add(1)
-        //             //  r.ISO8601(m('book')(0)).month()
-        //             //r.ISO8601(m('book')(0)).day().sub(1)
-        //             //.add(31536000)
-        //         ),
-        //         exporter_date_expire: r.ISO8601(m('exporter_date_approve')).add(31449600)
-        //     }
-        // })
-        // .merge(function (mm) {
-        //     return {
-        //         export_date_expire: r.branch(mm('export_date_expire').gt(mm('exporter_date_expire')),
-        //             mm('export_date_expire'),
-        //             mm('exporter_date_expire'))
-        //     }
-        // })
-        // .merge(function (mmm) {
-        //     return {
-        //         export_status: r.branch(mmm('export_date_expire').gt(r.now()), true, false),
-        //         export_date_expire: mmm('export_date_expire').toISO8601(),
-        //         exporter_date_expire: mmm('exporter_date_expire').toISO8601()
-        //     }
-        // })
-        // .without('book')
-        // // .eqJoin('trader_id', r.db('external').table('trader')).pluck({ right: 'seller_id' }, 'left').zip()
-        .eqJoin('company_id', r.db('external').table('company'))
-        .pluck({ right: ['company_name_th', 'company_name_en', 'company_address_en', 'company_address_th', 'company_phone', 'company_fax'] }, 'left').zip()
+        .filter(function (f) {
+            return f('exporter_date_approve').during(r.ISO8601(date_start), r.ISO8601(date_end).add(86399), { rightBound: 'closed' })
+        })
+        // .between(r.ISO8601(date_start), r.ISO8601(date_end), { index: 'exporter_date_approve' })
+        .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
         .merge(function (m) {
             return {
-                // exporter_status_name: r.branch(m.hasFields('exporter_no'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                 exporter_no_name: r.branch(
                     m.hasFields('exporter_no'),
                     r.branch(
@@ -371,7 +267,29 @@ exports.report3 = function (req, res, next) {
                         )
                     ).add(m('exporter_no').coerceTo('string'))
                     , null
-                )
+                ),
+                exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
+                exporter_date_expire: m('exporter_date_approve').add(31449600).toISO8601(),
+                date_export_expire: m('date_exported').add(31449600).toISO8601(),
+                exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
+                date_exported: m('date_exported').toISO8601()
+            }
+        })
+        .merge(function (mm) {
+            return {
+                export_date_expire: r.branch(mm('date_export_expire').gt(mm('exporter_date_expire')),
+                    mm('date_export_expire').split('T')(0),
+                    mm('exporter_date_expire').split('T')(0))
+            }
+        }).without('date_export_expire', 'exporter_date_expire')
+        .merge(function (mmm) {
+            return {
+                export_status: r.branch(mmm('export_date_expire').gt(r.now().toISO8601().split('T')(0)), true, false)
+            }
+        })
+        .merge(function (m) {
+            return {
+                export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
         })
         .filter(q)
