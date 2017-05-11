@@ -29,7 +29,7 @@
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[รายชื่อผู้ส่งออกข้าวออกต่างประเทศ และ คณะกรรมการบริษัท
-ประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศ (ทั่วไป,ชายแดน,ไม่เกิน 12 ก.ก)]]></text>
+ประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศ (ทั่วไป,ชายแดน,ข้าวสารบรรจุกล่องหรือหีบห่อ)]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="0" y="64" width="802" height="25" uuid="90005564-606c-4042-94ce-d47612543e17"/>
@@ -309,7 +309,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[รายชื่อผู้ส่งออกข้าวออกต่างประเทศ และ คณะกรรมการบริษัท
-ประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศ (ทั่วไป,ชายแดน,ไม่เกิน 12 ก.ก)]]></text>
+ประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศ (ทั่วไป,ชายแดน,ข้าวสารบรรจุกล่องหรือหีบห่อ)]]></text>
 			</staticText>
 		</band>
 	</noData>
