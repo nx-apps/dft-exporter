@@ -28,7 +28,7 @@
       width: 100%;
       white-space: nowrap;
     }
-    paper-tabs {
+    .tabs {
       background-color: #f7941e;
       margin: 0px 15px 0px 15px;
       color: #F2F2F2;
@@ -37,16 +37,16 @@
         background-color: var(--gl-info-color);
       }
     }
-    paper-tab:focus>div.tab-content {
+    .tab:focus>div.tab-content {
       background-color: yellow;
       opacity: 1;
       font-weight: 0;
     }
-    paper-tab:not(:last-of-type) {
+    .tab:not(:last-of-type) {
       border-right: 3px solid var(--gl-gray-light-color);
       font-size: var(--font-size-h5);
     }
-    paper-tabs paper-tab.iron-selected {
+    .tabs .tab.iron-selected {
       font-size: var(--font-size-h5);
       color: var(--gl-white-color);
       background-color: var(--gl-info-color);
@@ -122,9 +122,9 @@
 
       <div name="detailCompany">
         <!-- <detail-member data={{dataSelect}}></detail-member> -->
-        <paper-tabs selected="{{pages}}" align-bottom no-slide>
-          <paper-tab>{{localize('detail')}}</paper-tab>
-          <paper-tab id="tabFile">{{localize('doc_ev')}}</paper-tab>
+        <paper-tabs selected="{{pages}}" align-bottom no-slide class="tabs">
+          <paper-tab class="tab">{{localize('detail')}}</paper-tab>
+          <paper-tab id="tabFile" class="tab">{{localize('doc_ev')}}</paper-tab>
         </paper-tabs>
         <gl-form-panel>
           <iron-pages selected="{{pages}}">
@@ -137,8 +137,17 @@
           <div>
             <paper-button hidden="[[_hidBtnPass(dataSelect.approve_status)]]" class="gl-btn-warning" style="margin-left:15px;" on-tap="_dialogRemark" raised>{{localize('bt_no_pass')}}</paper-button>
             <div hidden="[[_hidBtnApp(dataSelect.approve_status)]]" style="margin-left:20px;">
-              {{localize('bt_print_book')}}
-              <paper-icon-button icon="print" on-tap="_print" title="{{localize('bt_print_book')}}"></paper-icon-button>
+              <!--{{localize('bt_print_book')}}
+              <paper-icon-button icon="print" on-tap="_print" title="{{localize('bt_print_book')}}"></paper-icon-button>-->
+              <div class="btn-bottom">
+                <iron-icon icon="print"></iron-icon>
+                <paper-dropdown-menu style="width:300px" placeholder="{{localize('select_report')}}" no-label-float name="report">
+                  <paper-tabs class="dropdown-content" attr-for-selected="report" selected="{{report}}">
+                    <paper-tab on-tap="_print" report="report1">บันทึกข้อความ</paper-tab>
+                    <paper-tab on-tap="_print" report="report2">ใบยืนยันอนุมัติ</paper-tab>
+                  </paper-tabs>
+                </paper-dropdown-menu>
+              </div>
             </div>
           </div>
           <div>
@@ -495,24 +504,28 @@
           }
         });
       },
-      _print: function () {
-        if(typeof this.exporter_data !== 'undefined'){
-          if(this.exporter_data.export_status === false){
-            // console.log('หมดอายุ');
-            window.open('./api/external/report_exporter/approve_renew_1/'+this.dataSelect.id);
+      _print: function (e) {
+        // console.log(e.target.getAttribute('report'));
+        if(e.target.getAttribute('report') == 'report1'){
+          if(typeof this.exporter_data !== 'undefined'){
+            if(this.exporter_data.export_status === false){
+              // console.log('หมดอายุ');
+              window.open('./api/external/report_exporter/approve_renew_1/'+this.dataSelect.id);
+            }else{
+              // console.log('ไม่หมดอายุ');
+              window.open('./api/external/report_exporter/approve_changtype/'+this.dataSelect.id);
+            }
           }else{
-            // console.log('ไม่หมดอายุ');
-            window.open('./api/external/report_exporter/approve_changtype/'+this.dataSelect.id);
+              window.open('./api/external/report_exporter/approve_general_1/'+this.dataSelect.id);
           }
         }else{
-          // if(this.dataSelect.change_status === true){
-          //   console.log('มี',this.dataSelect.id);
-          //   window.open('./api/external/report_exporter/approve_changetype/'+this.dataSelect.id);
-          // }else{
-          //   console.log('ไม่มี',this.dataSelect.id);
-            window.open('./api/external/report_exporter/approve_general_1/'+this.dataSelect.id);
-          // }
+          if(typeof this.exporter_data !== 'undefined'){
+            window.open('./api/external/report_exporter/approve_renew_2/'+this.dataSelect.id);
+          }else{
+            window.open('./api/external/report_exporter/approve_general_2/'+this.dataSelect.id);
+          }
         }
+        
       },
       checkStatus: function (val) {
         if (val != 'process') {

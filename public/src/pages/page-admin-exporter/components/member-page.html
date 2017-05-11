@@ -25,7 +25,7 @@
       background-color: #6699FF;
       padding: 5px;
     }
-    paper-tabs{
+    .tabs{
       background-color: #f7941e;
       margin : 0px 15px 0px 15px;
       color: #F2F2F2;
@@ -34,22 +34,19 @@
         background-color: var(--gl-info-color);
       }
     }
-    paper-tab:focus > div.tab-content{
+    .tab:focus > div.tab-content{
       background-color: yellow;
       opacity: 1;
       font-weight: 0;
     }
-    paper-tab:not(:last-of-type) {
+    .tab:not(:last-of-type) {
       border-right: 3px solid var(--gl-gray-light-color);
-      font-size: var(--font-size-h4);
+      font-size: var(--font-size-h5);
     }
-    paper-tabs paper-tab.iron-selected {
-      font-size: var(--font-size-h4);
+    .tabs .tab.iron-selected {
+      font-size: var(--font-size-h5);
       color: var(--gl-white-color);
       background-color: var(--gl-info-color);
-    }
-    .title-paper{
-      font-size: var(--font-size-h4);
     }
   </style>
   <template>
@@ -88,9 +85,9 @@
       </template>
           <div class="bd">
               <gl-form-panel>
-                <paper-tabs selected="{{pages}}" align-bottom no-slide>
-                  <paper-tab>{{localize('detail')}}</paper-tab>
-                  <paper-tab id="tabFile" class="title-paper" on-tap="refreshFile">{{localize('doc_ev')}}</paper-tab>
+                <paper-tabs selected="{{pages}}" align-bottom no-slide class="tabs">
+                  <paper-tab class="tab">{{localize('detail')}}</paper-tab>
+                  <paper-tab id="tabFile" class="tab" on-tap="refreshFile">{{localize('doc_ev')}}</paper-tab>
                 </paper-tabs>
                 <iron-pages selected="{{pages}}">
                   <member-manage data="{{data}}" type-lic="{{typeLic}}" is-enabled="[[!isEnabled]]"></member-manage>
@@ -101,7 +98,14 @@
           </div>
       <div class="horizontal layout justified">
         <div style="margin-left:20px;">
-          {{localize('bt_print_data')}}<paper-icon-button icon="print" on-tap="print" title="{{localize('bt_print_data')}}"></paper-icon-button>
+          <!--{{localize('bt_print_data')}}<paper-icon-button icon="print" on-tap="_print" title="{{localize('bt_print_data')}}"></paper-icon-button>-->
+          <iron-icon icon="print"></iron-icon>
+          <paper-dropdown-menu style="width:300px" placeholder="{{localize('select_report')}}" no-label-float name="report">
+            <paper-tabs class="dropdown-content" attr-for-selected="report" selected="{{report}}">
+              <paper-tab on-tap="_print" report="report1">{{localize('bt_print_data')}}</paper-tab>
+              <paper-tab on-tap="_print" report="report2">ใบยืนยันอนุมัติ</paper-tab>
+            </paper-tabs>
+          </paper-dropdown-menu>
         </div>
         <div hidden="[[!isEnabled]]">
           <paper-button on-tap="_cancel" raised title="ยกเลิกการแก้ไข">{{localize('bt_back')}}</paper-button>
@@ -152,9 +156,13 @@
       cloneDatas:function(val){
         this.cloneData = JSON.parse(JSON.stringify(val));
       },
-      print:function() {
-        // console.log(this.data.trader_id);
-        window.open('./api/external/report_exporter/exporter_detail/'+this.data.company_id,'_blank');
+      _print:function(e) {
+        // console.log(this.data);
+        if(e.target.getAttribute('report') == 'report1'){
+          window.open('./api/external/report_exporter/exporter_detail/'+this.data.id,'_blank');
+        }else{
+          window.open('./api/external/report_exporter/approve_general_2/'+this.data.confirm_id,'_blank');
+        }
       },
       refreshFile:function(){
         this.$$('member-fileup').checkFunction();
