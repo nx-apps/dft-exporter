@@ -79,7 +79,7 @@
       <template is="dom-if" if={{data.expire_status}}>
         <template is="dom-if" if={{data.export_status}}>
           <div class="horizontal end-justified layout">
-            <div hidden="[[isEnabled]]"><paper-icon-button icon="create" on-tap="editChange" title="แก้ไขข้อมูล"></paper-icon-button></div>
+            <div hidden="[[isEnabled]]"><paper-icon-button icon="create" on-tap="editChange" title="{{localize('edit_data')}}"></paper-icon-button></div>
           </div>
         </template>
       </template>
@@ -103,13 +103,13 @@
           <paper-dropdown-menu style="width:300px" placeholder="{{localize('select_report')}}" no-label-float name="report">
             <paper-tabs class="dropdown-content" attr-for-selected="report" selected="{{report}}">
               <paper-tab on-tap="_print" report="report1">{{localize('bt_print_data')}}</paper-tab>
-              <paper-tab on-tap="_print" report="report2">ใบยืนยันอนุมัติ</paper-tab>
+              <paper-tab on-tap="_print" report="report2">{{localize('confirmation')}}</paper-tab>
             </paper-tabs>
           </paper-dropdown-menu>
         </div>
         <div hidden="[[!isEnabled]]">
-          <paper-button on-tap="_cancel" raised title="ยกเลิกการแก้ไข">{{localize('bt_back')}}</paper-button>
-          <paper-button class="gl-btn-success" on-tap="save" raised title="บันทึกข้อมูล">{{localize('bt_save')}}</paper-button> 
+          <paper-button on-tap="_cancel" raised title="{{localize('cancle_edit')}}">{{localize('bt_back')}}</paper-button>
+          <paper-button class="gl-btn-success" on-tap="save" raised title="{{localize('save_data')}}">{{localize('bt_save')}}</paper-button> 
         </div>
       </div>
     </gl-form-panel>

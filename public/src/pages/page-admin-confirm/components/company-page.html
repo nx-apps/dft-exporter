@@ -55,8 +55,8 @@
 
     <div>
       <paper-tabs selected="{{pages}}" align-bottom no-slide>
-        <paper-tab>รายละเอียด</paper-tab>
-        <paper-tab id="tabFile">เอกสารหลักฐาน</paper-tab>
+        <paper-tab>{{localize('detail')}}</paper-tab>
+        <paper-tab id="tabFile">{{localize('doc_ev')}}</paper-tab>
       </paper-tabs>
       <gl-form-panel>
         <iron-pages selected="{{pages}}">
@@ -68,15 +68,15 @@
 
     <div class="horizontal end-justified layout" style="margin:10px">
       <paper-button id="btn-register" raised class="gl-btn-primary" on-tap="_register" hidden>
-        <iron-icon icon="add"></iron-icon>สมัครผู้ส่งออก</paper-button>
+        <iron-icon icon="add"></iron-icon>{{localize('bt_register')}}</paper-button>
       <paper-button id="btn-reject" raised class="gl-btn-primary" on-tap="_reject" hidden>
-        <iron-icon icon="add"></iron-icon>ส่งเอกสารใหม่</paper-button>
+        <iron-icon icon="add"></iron-icon>{{localize('bt_sent_new')}}</paper-button>
     </div>
   </template>
   <script>
     Polymer({
       is: "company-page",
-      behaviors: [dataBehavior, nylonBehavior, ValidateFormBehavior],
+      behaviors: [dataBehavior, nylonBehavior, ValidateFormBehavior, nylonLocalizeBehavior],
       properties: {
         pages: {
           type: Number,
@@ -87,6 +87,9 @@
           type: Object,
           value: {}
         }
+      },
+      created: function () {
+        this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
       },
       listeners: {
         'refresh-exporterTrader': 'getExporterTrader'

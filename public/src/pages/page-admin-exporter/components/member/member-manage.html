@@ -65,7 +65,7 @@
 
         <gl-grid-row>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-dropdown-menu style="width:100%;" class="checkValidate" label="{{localize('type_license')}}" placeholder="กรุณาเลือกทั้งหมด"
+            <gl-form-dropdown-menu style="width:100%;" class="checkValidate" label="{{localize('type_license')}}" placeholder="{{localize('select_type')}}"
               disabled="[[isEnabled]]" required>
               <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.type_lic_id}}" name="type_lic_id">
                 <template is="dom-repeat" items={{typeLic}}>
@@ -75,10 +75,10 @@
             </gl-form-dropdown-menu>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-dropdown-menu style="width:100%;" class="checkValidate" label="สถานะสมาชิกสมาคมผู้ส่งออก" placeholder="กรุณาเลือกทั้งหมด" disabled="[[isEnabled]]" required>
+            <gl-form-dropdown-menu style="width:100%;" class="checkValidate" label="{{localize('status_export')}}" placeholder="{{localize('select_plz')}}" disabled="[[isEnabled]]" required>
               <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.exporter_status}}" name="exporter_status">
-                <paper-item value="yes">{{localize('member')}}</paper-item>
-                <paper-item value="no">{{localize('no_member')}}</paper-item>
+                <paper-item value="yes">เป็นสมาชิก</paper-item>
+                <paper-item value="no">ไม่เป็นสมาชิก</paper-item>
               </paper-menu>
             </gl-form-dropdown-menu>
           </gl-grid-col>
