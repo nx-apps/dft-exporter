@@ -89,25 +89,19 @@ exports.exporterId = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                exporter_date_expire: m('exporter_date_approve').add(31449600).toISO8601(),
-                date_export_expire: m('date_exported').add(31449600).toISO8601(),
+                exporter_date_expire: r.time(m('exporter_date_approve').year().add(1),
+                    m('exporter_date_approve').month(),
+                    m('exporter_date_approve').day(),
+                    "+07:00"
+                ).toISO8601(),
+                date_export_expire: r.time(m('date_exported').year().add(1),
+                    m('date_exported').month(),
+                    m('date_exported').day(),
+                    "+07:00"
+                ).toISO8601(),
                 exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
                 date_exported: m('date_exported').toISO8601()
             }
