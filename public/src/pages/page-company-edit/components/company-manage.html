@@ -59,16 +59,22 @@
       </gl-grid-row>
       <div class="horizontal layout">
         <div class="text">รายชื่อคณะกรรมการ</div>
-        <div hidden="[[enabled]]"><paper-icon-button icon="icons:add-circle" on-tap="_addAgent"></paper-icon-button></div> 
+        <div hidden="[[enabled]]"><paper-icon-button icon="icons:add-circle" on-tap="_addAgent" title="เพิ่มชื่อคณะกรรมการ"></paper-icon-button></div> 
       </div>
-      <gl-grid-row>
-        <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <template is="dom-repeat" items="{{data.company_agent}}">
-            <gl-form-input label="ชื่อกรรมการ" auto-validate error-message="กรุณาใส่ชื่อคณะกรรมการ" required value="{{item.agent_name}}"
-              no-label-float disabled="{{enabled}}"></gl-form-input>
-          </template>
-        </gl-grid-col>
-      </gl-grid-row>
+      <!--<gl-grid-row>-->
+        <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">-->
+      <template is="dom-repeat" items="{{data.company_agent}}">
+        <div class="vertical layout">
+          <div class="horizontal layout">
+            <gl-form-input style="width:400px;" label="ชื่อกรรมการ" auto-validate error-message="กรุณาใส่ชื่อคณะกรรมการ" required value="{{item.agent_name}}"
+              no-label-float disabled="{{enabled}}">
+              </gl-form-input>
+              <div hidden="[[enabled]]"><paper-icon-button id="[[index]]" style="margin:0px;" icon="icons:remove-circle" on-tap="_deleteAgent" title="ลบชื่อคณะกรรมการ"></paper-icon-button></div>
+          </div>
+        </div>
+      </template>
+        <!--</gl-grid-col>-->
+      <!--</gl-grid-row>-->
 
     </gl-form-panel>
 
@@ -140,6 +146,11 @@
         this.isEnabled = false;
         this.enabled = true;
         this.fire('get-company', val);
+      },
+      _deleteAgent:function(e){
+        // console.log(e.currentTarget.id);
+        var index = e.currentTarget.id;
+        this.splice('data.company_agent', index, 1);
       }
     });
   </script>
