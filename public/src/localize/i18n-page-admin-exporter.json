@@ -63,6 +63,10 @@
         "edit_data":"แก้ไขข้อมูล",
         "file_name":"ชื่อไฟล์",
         "select_plz":"กรุณาเลือก",
+        "country":"ประเทศ",
+        "insert_taxno":"กรอกเลขประจำตัวผู้เสียภาษี",
+        "add_board":"เพิ่มชื่อกรรมการ",
+        "del_board":"ลบชื่อกรรมการ",
 
         "bt_save":"บันทึก",
         "bt_cancel":"ยกเลิก",
@@ -150,6 +154,10 @@
         "edit_data":"Edit data",
         "file_name":"File name",
         "select_plz":"Please select",
+        "country":"Country",
+        "insert_taxno":"Insert No.tax_id",
+        "add_board":"Add board",
+        "del_board":"Delete board",
 
         "bt_recovery":"Recovery file",
         "bt_save":"Save",

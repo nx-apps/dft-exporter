@@ -21,55 +21,55 @@
   <template>
     <div class="horizontal end-justified layout">
       <div hidden="{{isEnabled}}">
-        <paper-icon-button icon="create" on-tap="editChange" title="แก้ไขข้อมูล"></paper-icon-button>
+        <paper-icon-button icon="create" on-tap="editChange" title="{{localize('edit_data')}}"></paper-icon-button>
       </div>
     </div>
 
     <gl-form-panel set-border="1px" set-padding="10px 10px 10px 10px">
-      <div class="title">ข้อมูลรายละเอียด</div>
+      <div class="title">{{localize('detail_data')}}</div>
 
       <gl-grid-row width="{{getWidth}}">
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-input label="เลขประจำตัวผู้เสียภาษี :" value="{{data.company_taxno}}" disabled></gl-form-input>
+          <gl-form-input label="{{localize('tax_no')}} :" value="{{data.company_taxno}}" disabled></gl-form-input>
         </gl-grid-col>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-textarea label="ชื่อบริษัท :" value="{{data.company_name_th}}" disabled="{{enabled}}"></gl-form-textarea>
+          <gl-form-textarea label="{{localize('name_company')}} :" value="{{data.company_name_th}}" disabled="{{enabled}}"></gl-form-textarea>
         </gl-grid-col>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-textarea label="ชื่อบริษัท (อังกฤษ) :" value="{{data.company_name_en}}" disabled="{{enabled}}"></gl-form-textarea>
+          <gl-form-textarea label="{{localize('name_company')}} ({{localize('eng')}}) :" value="{{data.company_name_en}}" disabled="{{enabled}}"></gl-form-textarea>
         </gl-grid-col>
       </gl-grid-row>
 
       <gl-grid-row>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,10]]">
-          <gl-form-textarea label="ที่อยู่ :" value="{{data.company_address_th}}" disabled="{{enabled}}"></gl-form-textarea>
+          <gl-form-textarea label="{{localize('address')}} :" value="{{data.company_address_th}}" disabled="{{enabled}}"></gl-form-textarea>
         </gl-grid-col>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,10]]">
-          <gl-form-textarea label="ที่อยู่ (อังกฤษ) :" value="{{data.company_address_en}}" disabled="{{enabled}}"></gl-form-textarea>
+          <gl-form-textarea label="{{localize('address')}} ({{localize('eng')}}) :" value="{{data.company_address_en}}" disabled="{{enabled}}"></gl-form-textarea>
         </gl-grid-col>
       </gl-grid-row>
 
       <gl-grid-row>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-textarea label="หมายเลขโทรศัพท์ :" value="{{data.company_phone}}" disabled="{{enabled}}"></gl-form-textarea>
+          <gl-form-textarea label="{{localize('tel')}} :" value="{{data.company_phone}}" disabled="{{enabled}}"></gl-form-textarea>
         </gl-grid-col>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-input label="FAX :" value="{{data.company_fax}}" disabled="{{enabled}}"></gl-form-input>
+          <gl-form-input label="{{localize('fax')}} :" value="{{data.company_fax}}" disabled="{{enabled}}"></gl-form-input>
         </gl-grid-col>
       </gl-grid-row>
       <div class="horizontal layout">
-        <div class="text">รายชื่อคณะกรรมการ</div>
-        <div hidden="[[enabled]]"><paper-icon-button icon="icons:add-circle" on-tap="_addAgent" title="เพิ่มชื่อคณะกรรมการ"></paper-icon-button></div> 
+        <div class="text">{{localize('list_board')}}</div>
+        <div hidden="[[enabled]]"><paper-icon-button icon="icons:add-circle" on-tap="_addAgent" title="{{localize('add_board')}}"></paper-icon-button></div> 
       </div>
       <!--<gl-grid-row>-->
         <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">-->
       <template is="dom-repeat" items="{{data.company_agent}}">
         <div class="vertical layout">
           <div class="horizontal layout">
-            <gl-form-input style="width:400px;" label="ชื่อกรรมการ" auto-validate error-message="กรุณาใส่ชื่อคณะกรรมการ" required value="{{item.agent_name}}"
+            <gl-form-input style="width:400px;" label="{{localize('name_committee')}}" auto-validate error-message="{{localize('insert_board')}}" required value="{{item.agent_name}}"
               no-label-float disabled="{{enabled}}">
               </gl-form-input>
-              <div hidden="[[enabled]]"><paper-icon-button id="[[index]]" style="margin:0px;" icon="icons:remove-circle" on-tap="_deleteAgent" title="ลบชื่อคณะกรรมการ"></paper-icon-button></div>
+              <div hidden="[[enabled]]"><paper-icon-button id="[[index]]" style="margin:0px;" icon="icons:remove-circle" on-tap="_deleteAgent" title="{{localize('del_board')}}"></paper-icon-button></div>
           </div>
         </div>
       </template>
@@ -80,8 +80,8 @@
 
     <div class="horizontal end-justified layout">
       <div hidden="[[enabled]]">
-        <paper-button on-tap="_cancel" raised title="ย้อนกลับ">ย้อนกลับ</paper-button>
-        <paper-button class="gl-btn-success" on-tap="_save" raised title="บันทึก">บันทึก</paper-button> 
+        <paper-button on-tap="_cancel" raised title="{{localize('bt_back')}}">{{localize('bt_back')}}</paper-button>
+        <paper-button class="gl-btn-success" on-tap="_save" raised title="{{localize('bt_save')}}">{{localize('bt_save')}}</paper-button> 
       </div>
     </div>
 
@@ -89,7 +89,7 @@
   <script>
     Polymer({
       is: "company-manage",
-      behaviors: [nylonBehavior, dataBehavior],
+      behaviors: [nylonBehavior, dataBehavior, nylonLocalizeBehavior],
       properties: {
         data: {
           type: Object,
@@ -103,6 +103,9 @@
           type: Boolean,
           value: true
         }
+      },
+      created: function () {
+        this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
       },
       editChange:function(){
         this.isEnabled = true;

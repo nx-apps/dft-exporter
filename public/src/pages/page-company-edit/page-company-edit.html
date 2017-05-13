@@ -50,7 +50,7 @@
 
     <paper-material elevation="1" class="elevation">
       <div class="horizontal center-justified layout">
-        <gl-combo-box label="เลขประจำตัวผู้เสียภาษี" placeholder="กรอกเลขประจำตัวผู้เสียภาษี" items="{{company}}" 
+        <gl-combo-box label="{{localize('tax_no')}}" placeholder="{{localize('insert_taxno')}}" items="{{company}}" 
         item-label-path="company_name" item-value-path="company_taxno"
         on-value-changed="_checkID" style="width:600px; margin-top:10px;"></gl-combo-box>
       </div>
@@ -60,9 +60,9 @@
             <thead class="table-head">
               <tr>
                 <th><div class="text-table">{{localize('No')}}</div></th>
-                <th><div class="text-table">เลขประจำตัวผู้เสียภาษี</div></th>
-                <th><div class="text-table">ชื่อบริษัท</div></th>
-                <th><div class="text-table">ประเทศ</div></th>
+                <th><div class="text-table">{{localize('tax_no')}}</div></th>
+                <th><div class="text-table">{{localize('name_company')}}</div></th>
+                <th><div class="text-table">{{localize('country')}}</div></th>
               </tr>
             </thead>
             
@@ -164,6 +164,7 @@
           this.getCompany(id.detail.value);
           this.isEnabled = false;
           this.$$('company-manage').clearData(id);
+          this.titleName = 'แก้ไขข้อมูล';
         }
       },
       toIndex:function(index){
@@ -175,6 +176,7 @@
         this.isEnabled = false;
         var company_tax = e.currentTarget.data.company_taxno;
         this.$$('company-manage').clearData(company_tax);
+        this.titleName = 'แก้ไขข้อมูล';
       }
     });
   </script>
