@@ -107,7 +107,8 @@
         }
       },
       listeners: {
-        'get-company': 'getCompany'
+        'get-company': 'getCompany',
+        'refresh-company': 'listCompany'
       },
       created: function () {
         this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
@@ -145,14 +146,13 @@
       listCompany:function(){
         this.read('./external/company', (data) => {
           data.map((val) => {
+            for(var key in val){
+              if(val[key] === ''){
+                val[key] = "-";
+              }
+            }
             return val.company_name = '('+val.company_taxno+ ') ' + val.company_name_th;
           })
-          for(var key in data[0]){
-            // console.log(data[key]);
-            if(data[0][key] === ''){
-              data[0][key] = "-";
-            }
-          }
           // console.log(data);
           this.company = data;
         })
@@ -163,6 +163,7 @@
           this.$$('panel-right').open();
           this.getCompany(id.detail.value);
           this.isEnabled = false;
+          this.$$('company-manage').clearData(id);
         }
       },
       toIndex:function(index){
@@ -172,6 +173,8 @@
         this.$$('panel-right').open();
         this.data = e.currentTarget.data;
         this.isEnabled = false;
+        var company_tax = e.currentTarget.data.company_taxno;
+        this.$$('company-manage').clearData(company_tax);
       }
     });
   </script>

@@ -108,8 +108,7 @@
         });
       },
       _cancel:function(){
-        this.isEnabled = false;
-        this.enabled = true;
+        this.clearData(this.data.company_taxno);
         this.fire('get-company', this.data.company_taxno);
       },
       _save:function(){
@@ -118,6 +117,8 @@
             this.data[key] = "";
           }
         }
+        delete this.data['date_exported']
+        delete this.data['company_name']
         this.fire('toast',{status:'dialog',
         text:'คุณต้องการแก้ไขข้อมูลใช่หรือไม่ ?',
         confirmed : this._confirmSave.bind(this),
@@ -129,12 +130,16 @@
           // console.log(detail.datas);
           this.update('./external/company/update', detail.datas, () => {
             this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
-              this.isEnabled = false;
-              this.enabled = true;
-              this.fire('get-company', detail.datas.company_taxno);
+              this.clearData(detail.datas.company_taxno);
+              this.fire('refresh-company');
             }});
           });
         }
+      },
+      clearData:function(val){
+        this.isEnabled = false;
+        this.enabled = true;
+        this.fire('get-company', val);
       }
     });
   </script>
