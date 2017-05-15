@@ -44,7 +44,8 @@ exports.report1 = function (req, res) {
     // console.log(parameters);
     r.db('external').table('exporter')
         .filter(function (f) {
-            return f('exporter_date_approve').during(r.ISO8601(date_start), r.ISO8601(date_end).add(86399), { rightBound: 'closed' })
+            return f('exporter_date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(), 
+            r.ISO8601(date_end).inTimezone('+07').date(), { rightBound: 'closed' })
         })
         //.between(r.ISO8601(date_start).inTimezone('+07'), r.ISO8601(date_end).inTimezone('+07'), { index: 'exporter_date_approve' })
         .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
@@ -53,25 +54,19 @@ exports.report1 = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                exporter_date_expire: m('exporter_date_approve').add(31449600).toISO8601(),
-                date_export_expire: m('date_exported').add(31449600).toISO8601(),
+                exporter_date_expire: r.time(m('exporter_date_approve').year().add(1),
+                    m('exporter_date_approve').month(),
+                    m('exporter_date_approve').day(),
+                    "+07:00"
+                ).toISO8601(),
+                date_export_expire: r.time(m('date_exported').year().add(1),
+                    m('date_exported').month(),
+                    m('date_exported').day(),
+                    "+07:00"
+                ).toISO8601(),
                 exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
                 date_exported: m('date_exported').toISO8601()
             }
@@ -146,7 +141,8 @@ exports.report2 = function (req, res, next) {
 
     r.db('external').table('exporter')
         .filter(function (f) {
-            return f('exporter_date_approve').during(r.ISO8601(date_start), r.ISO8601(date_end).add(86399), { rightBound: 'closed' })
+            return f('exporter_date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(), 
+            r.ISO8601(date_end).inTimezone('+07').date(), { rightBound: 'closed' })
         })
         // .between(r.ISO8601(date_start), r.ISO8601(date_end), { index: 'exporter_date_approve' })
         // .pluck(['id', 'exporter_date_approve', 'exporter_no', 'company_id', 'exporter_status', 'type_lic_id'])
@@ -155,25 +151,19 @@ exports.report2 = function (req, res, next) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                exporter_date_expire: m('exporter_date_approve').add(31449600).toISO8601(),
-                date_export_expire: m('date_exported').add(31449600).toISO8601(),
+                exporter_date_expire: r.time(m('exporter_date_approve').year().add(1),
+                    m('exporter_date_approve').month(),
+                    m('exporter_date_approve').day(),
+                    "+07:00"
+                ).toISO8601(),
+                date_export_expire: r.time(m('date_exported').year().add(1),
+                    m('date_exported').month(),
+                    m('date_exported').day(),
+                    "+07:00"
+                ).toISO8601(),
                 exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
                 date_exported: m('date_exported').toISO8601()
             }
@@ -245,32 +235,27 @@ exports.report3 = function (req, res, next) {
 
     r.db('external').table('exporter')
         .filter(function (f) {
-            return f('exporter_date_approve').during(r.ISO8601(date_start), r.ISO8601(date_end).add(86399), { rightBound: 'closed' })
+            return f('exporter_date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(), 
+            r.ISO8601(date_end).inTimezone('+07').date(), { rightBound: 'closed' })
         })
         // .between(r.ISO8601(date_start), r.ISO8601(date_end), { index: 'exporter_date_approve' })
         .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                exporter_date_expire: m('exporter_date_approve').add(31449600).toISO8601(),
-                date_export_expire: m('date_exported').add(31449600).toISO8601(),
+                exporter_date_expire: r.time(m('exporter_date_approve').year().add(1),
+                    m('exporter_date_approve').month(),
+                    m('exporter_date_approve').day(),
+                    "+07:00"
+                ).toISO8601(),
+                date_export_expire: r.time(m('date_exported').year().add(1),
+                    m('date_exported').month(),
+                    m('date_exported').day(),
+                    "+07:00"
+                ).toISO8601(),
                 exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
                 date_exported: m('date_exported').toISO8601()
             }
@@ -370,22 +355,8 @@ exports.report4 = function (req, res) {
             return {
                 exporter_status_name: r.branch(m.hasFields('exporter_no'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                )
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null)
             }
         })
         .filter({ export_status: false })
@@ -453,22 +424,8 @@ exports.report5 = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 exporter_date_approve: m('exporter_date_approve').split('T')(0),
                 count_exporter: r.db('external').table("exporter").between(date_start, date_end
                     , { index: 'exporter_date_approve' }).count(),
@@ -552,22 +509,8 @@ exports.report5_1 = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 exporter_date_approve: m('exporter_date_approve').split('T')(0),
                 count_exporter: r.db('external').table("exporter").between(date_start, date_end
                     , { index: 'exporter_date_approve' }).count(),
@@ -650,22 +593,8 @@ exports.report5_2 = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 exporter_date_approve: m('exporter_date_approve').split('T')(0),
                 count_exporter: r.db('external').table("exporter").between(date_start, date_end
                     , { index: 'exporter_date_approve' }).count(),
@@ -707,25 +636,19 @@ exports.exporter_detail = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                exporter_date_expire: m('exporter_date_approve').add(31449600).toISO8601(),
-                date_export_expire: m('date_exported').add(31449600).toISO8601(),
+                exporter_date_expire: r.time(m('exporter_date_approve').year().add(1),
+                    m('exporter_date_approve').month(),
+                    m('exporter_date_approve').day(),
+                    "+07:00"
+                ).toISO8601(),
+                date_export_expire: r.time(m('date_exported').year().add(1),
+                    m('date_exported').month(),
+                    m('date_exported').day(),
+                    "+07:00"
+                ).toISO8601(),
                 exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
                 date_exported: m('date_exported').toISO8601()
             }
@@ -884,22 +807,8 @@ exports.approve_general_1 = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่'),
                 date_created: m('date_created').toISO8601().split('T')(0)
             }
@@ -934,22 +843,8 @@ exports.approve_general_2 = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่'),
                 date_created: m('date_created').toISO8601().split('T')(0)
             }
@@ -1000,22 +895,8 @@ exports.approve_changtype = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่'),
                 date_created: m('date_created').toISO8601().split('T')(0)
             }
@@ -1044,22 +925,8 @@ exports.approve_renew_1 = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่')
             }
         })
@@ -1087,22 +954,8 @@ exports.approve_renew_2 = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่')
             }
         })
