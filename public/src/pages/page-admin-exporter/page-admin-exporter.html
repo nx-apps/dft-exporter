@@ -237,12 +237,12 @@
         this.getExporters();
         this.getFile();
       },
-      _exporterIdChanged: function (val) {
-        console.log(val);
-        if (val != "") {
-          this.layerContent = "detailRegExporter";
-        }
-      },
+      // _exporterIdChanged: function (val) {
+      //   console.log(val);
+      //   if (val != "") {
+      //     this.layerContent = "detailRegExporter";
+      //   }
+      // },
       _register: function (e) {
         // this.layerContent = e.target.id;
         // this.layerContent = "addRedRegExporter";
@@ -263,13 +263,14 @@
                 item[key] = '-';
               }
             }
+            return item.company_name = '('+item.company_taxno+ ') ' + item.company_name_th +' '+ item.company_name_en;
           })
           this.exporters = data;
-          var type = data.map((type) => {
-            type.company_name = "("+type.company_taxno+") " + type.company_name_th + " "+ type.company_name_en;
-            // type.company_name = type.company_name_th+" ("+type.type_lic_name+")";
-            // return type.company_name_th+" ("+type.type_lic_name+")";
-          });
+          // var type = data.map((type) => {
+          //   type.company_name = "("+type.company_taxno+") " + type.company_name_th + " "+ type.company_name_en;
+          //   // type.company_name = type.company_name_th+" ("+type.type_lic_name+")";
+          //   // return type.company_name_th+" ("+type.type_lic_name+")";
+          // });
           this.exporter_id = data;
         });
 

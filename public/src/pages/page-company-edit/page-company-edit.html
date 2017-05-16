@@ -52,7 +52,9 @@
       <div class="horizontal center-justified layout">
         <gl-combo-box label="{{localize('tax_no')}}" placeholder="{{localize('insert_taxno')}}" items="{{company}}" 
         item-label-path="company_name" item-value-path="company_taxno"
-        on-value-changed="_checkID" style="width:600px; margin-top:10px;"></gl-combo-box>
+        on-value-changed="_checkID" style="width:600px; margin-top:10px;">
+        <template>[[item.company_name]]</template>
+        </gl-combo-box>
       </div>
 
       <div class="searchBorder" style="overflow-x:auto;">
@@ -151,7 +153,7 @@
                 val[key] = "-";
               }
             }
-            return val.company_name = '('+val.company_taxno+ ') ' + val.company_name_th;
+            return val.company_name = '('+val.company_taxno+ ') ' + val.company_name_th +' '+ val.company_name_en;
           })
           // console.log(data);
           this.company = data;
