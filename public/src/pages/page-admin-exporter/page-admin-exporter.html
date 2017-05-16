@@ -10,7 +10,7 @@
       font-family: 'CSChatThaiUI', sans-serif !important;
       -webkit-font-smoothing: antialiased;
     }
-    .test{
+    .bg-title{
       --vaadin-date-picker-overlay:{
         color: red;
       }
@@ -65,20 +65,14 @@
 
         <div class="searchBox searchBorder">
           <gl-grid-row width="{{getWidth}}">
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]"></gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
+            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,6]]">
               <gl-combo-box label="{{localize('name_exporter')}}" items="{{exporter_id}}" item-label-path="company_name" item-value-path="id"
-                value="{{dataSelected.id}}"></gl-combo-box>
+                value="{{dataSelected.id}}">
+                <template>[[item.company_name]]</template>
+                </gl-combo-box>
             </gl-grid-col>
           </gl-grid-row>
-
-          <!--<gl-grid-row>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]"></gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-              <gl-combo-box label="test" items="{{exporter_id}}" item-label-path="company_name" item-value-path="id"
-                value="{{test}}"></gl-combo-box>
-            </gl-grid-col>
-          </gl-grid-row>-->
 
           <gl-grid-row>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
@@ -131,7 +125,7 @@
               <div style="margin-top:30px; text-align:right;">{{localize('register')}}</div>
             </gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <vaadin-date-picker class="test" label="{{localize('date')}}" value="{{dataSelected.date_start}}" name="date_start"></vaadin-date-picker>
+              <vaadin-date-picker class="bg-title" label="{{localize('date')}}" value="{{dataSelected.date_start}}" name="date_start"></vaadin-date-picker>
             </gl-grid-col>
             <div style="margin-top:30px;"> {{localize('to')}} </div>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
@@ -167,7 +161,6 @@
                 <th><div class="text-table">{{localize('name_company')}}</div></th>
                 <th><div class="text-table">{{localize('type_license')}}</div></th>
                 <th><div class="text-table">{{localize('status_export')}}</div></th>
-                <!-- <th><div class="text-table">{{localize('status_dit')}}</div></th> -->
                 <th><div class="text-table">{{localize('status_exporter')}}</div></th>
                 <th><div class="text-table">{{localize('date_expire')}}</div></th>
               </tr>
@@ -182,7 +175,6 @@
                   <td><div>{{item.company_name_th}}</div></td>
                   <td><div>{{item.type_lic_name}}</div></td>
                   <td><div class="text-table">{{item.exporter_status_name}}</div></td>
-                  <!-- <td><div class="text-table">{{item.trader_active_name}}</div></td> -->
                   <td><div class="text-table">{{item.export_status_name}}</div></td>
                   <td><div class="text-table">{{item.export_date_expire}}</div></td>
                 </tr>
@@ -230,10 +222,6 @@
         //   type: String,
         //   observer: '_exporterIdChanged'
         // }
-        test:{
-          type:String,
-          observer: '_exporterIdChanged'
-        }
       },
       behaviors: [dataBehavior, nylonBehavior, nylonLocalizeBehavior],
       listeners: {
@@ -278,7 +266,7 @@
           })
           this.exporters = data;
           var type = data.map((type) => {
-            type.company_name = type.company_name_th;
+            type.company_name = "("+type.company_taxno+") " + type.company_name_th + " "+ type.company_name_en;
             // type.company_name = type.company_name_th+" ("+type.type_lic_name+")";
             // return type.company_name_th+" ("+type.type_lic_name+")";
           });
@@ -305,7 +293,7 @@
         else if (this.dataSelected.date_end != undefined && this.dataSelected.date_end != '' && (this.dataSelected.date_start == undefined || this.dataSelected.date_start == '')) {
           this.fire('toast', { status: 'connectError', text: 'กรุณาใส่วันที่เริ่มต้นค้นหา' })
         }
-        console.log(str);
+        // console.log(str);
         this.read('./external/exporter' + str, (data) => {
           data.map((item) => {
             for (var key in item) {
@@ -343,7 +331,7 @@
                 this.listFiles = response.data;
               })
               .catch(function (error) {
-                console.log(error);
+                // console.log(error);
               });
               this.read('./external/document_type', (data) => {
                 this.docType = data;
@@ -352,7 +340,7 @@
         }
       },
       _checkData:function(val){
-        if(typeof val == 'object' && val != '' && val != null){
+        if(val.length > 0){
           return false
         }
         else{

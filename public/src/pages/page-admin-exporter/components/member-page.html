@@ -224,6 +224,7 @@
       _cancel:function() {
         this.isEnabled = false;
         this.pages = 0;
+        this.fire('refresh-edit',this.data.id);
       },
       _dialogRemark: function(){
         this.$.dialog.toggle();
