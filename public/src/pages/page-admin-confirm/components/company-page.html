@@ -134,7 +134,7 @@
         if (result == true) {
           var check = this.$$('detail-company').validate();
           if (check == true) {
-            console.log(detail.datas);
+            // console.log(detail.datas);
             this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
             this.insert('./external/confirm_exporter/register', detail.datas, () => {
               this.fire('toast', {
@@ -143,7 +143,7 @@
                   this.fire('back_page');
                   this.fire('clearData');
                   this.$$('#btn-register').setAttribute("hidden", "hidden");
-                  console.log('success');
+                  // console.log('success');
                 }
               });
             })
@@ -175,7 +175,7 @@
                 this.fire('back_page');
                 this.fire('clearData');
                 this.$$('#btn-reject').setAttribute("hidden", "hidden");
-                console.log('success');
+                // console.log('success');
               }
             });
           })

@@ -49,6 +49,12 @@
   <template>
 
     <paper-material elevation="1" class="elevation">
+
+      <div class="layout horizontal end-justified">
+        <paper-button raised class="gl-btn-primary" style="margin-right:15px;" on-tap="_add" title="{{localize('bt_add_company')}}">
+        <iron-icon icon="add"></iron-icon>{{localize('bt_add_company')}}</paper-button>
+      </div>
+
       <div class="horizontal center-justified layout">
         <gl-combo-box label="{{localize('tax_no')}}" placeholder="{{localize('insert_taxno')}}" items="{{company}}" 
         item-label-path="company_name" item-value-path="company_taxno"
@@ -77,9 +83,9 @@
                   <td><div>{{item.company_country_th}}</div></td>
                 </tr>
               </template>
-              <template is="dom-if" if={{_checkData(exporters)}}>
+              <template is="dom-if" if={{_checkData(company)}}>
                 <tr>
-                    <td colspan="8"><div class="text-table" style="margin:20px">{{localize('not_found')}}</div></td>
+                    <td colspan="4"><div class="text-table" style="margin:20px">{{localize('not_found')}}</div></td>
                 </tr>
               </template>
             </tbody>
@@ -89,7 +95,7 @@
     </paper-material>
 
     <panel-right title="{{titleName}}">
-      <company-manage data="[[data]]" is-enabled="{{isEnabled}}"></company-manage>
+      <company-manage data="[[data]]" is-enabled="{{isEnabled}}" enabled="{{enabled}}" status-action="[[statusAction]]"></company-manage>
     </panel-right>
 
   </template>
@@ -110,7 +116,8 @@
       },
       listeners: {
         'get-company': 'getCompany',
-        'refresh-company': 'listCompany'
+        'refresh-company': 'listCompany',
+        'back-page': '_backPage'
       },
       created: function () {
         this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
@@ -162,9 +169,11 @@
       _checkID:function(id){
         if(id.detail.value !== ''){
           // console.log(id.detail.value);
+          this.statusAction = 'edit';
           this.$$('panel-right').open();
           this.getCompany(id.detail.value);
           this.isEnabled = false;
+          this.enabled = true;
           this.$$('company-manage').clearData(id.detail.value);
           this.titleName = 'แก้ไขข้อมูล';
         }
@@ -173,12 +182,32 @@
         return index+1;
       },
       _selectData:function(e){
+        this.statusAction = 'edit';
         this.$$('panel-right').open();
         this.data = e.currentTarget.data;
         this.isEnabled = false;
+        this.enabled = true;
         var company_tax = e.currentTarget.data.company_taxno;
         this.$$('company-manage').clearData(company_tax);
         this.titleName = 'แก้ไขข้อมูล';
+      },
+      _add:function(){
+        this.statusAction = 'add';
+        this.isEnabled = true;
+        this.enabled = false;
+        this.$$('panel-right').open();
+        this.titleName = 'เพิ่มข้อมูล';
+        this.data = {company_agent:[]};
+      },
+      _backPage:function(){
+        this.$$('panel-right').close();
+      },
+      _checkData:function(val){
+        if(val.length > 0){
+          return false
+        }else{
+          return true
+        }
       }
     });
   </script>

@@ -67,6 +67,8 @@
         "insert_taxno":"กรอกเลขประจำตัวผู้เสียภาษี",
         "add_board":"เพิ่มชื่อกรรมการ",
         "del_board":"ลบชื่อกรรมการ",
+        "request_form":"กรุณากรอกข้อมูลให้ครบถ้วน",
+        "insert_form":"กรุณากรอกข้อมูลและรายละเอียด",
 
         "bt_save":"บันทึก",
         "bt_cancel":"ยกเลิก",
@@ -82,6 +84,8 @@
         "bt_register":"สมัครผู้ส่งออก",
         "bt_sent_new":"ส่งเอกสารใหม่",
         "bt_recovery":"กู้ไฟล์คืน",
+        "bt_add_company":"เพิ่มบริษัท",
+        "bt_delete":"ลบข้อมูล",
 
         "ck_select_all":"เลือกทั้งหมด",
 
@@ -158,6 +162,8 @@
         "insert_taxno":"Insert No.tax_id",
         "add_board":"Add board",
         "del_board":"Delete board",
+        "request_form":"Please complete the form",
+        "insert_form":"Please fill out the information and details",
 
         "bt_recovery":"Recovery file",
         "bt_save":"Save",
@@ -171,6 +177,8 @@
         "bt_print_data":"Print data exporter",
         "bt_print_book":"Print book No. exporter",
         "bt_del_file":"Delete File",
+        "bt_add_company":"Add Company",
+        "bt_delete":"Delete Data",
 
         "ck_select_all":"Select all",
 
