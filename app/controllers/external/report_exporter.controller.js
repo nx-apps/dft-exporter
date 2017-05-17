@@ -47,10 +47,6 @@ exports.report1 = function (req, res) {
             return f('exporter_date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(), 
             r.ISO8601(date_end).inTimezone('+07').date(), { rightBound: 'closed' })
         })
-        //.between(r.ISO8601(date_start).inTimezone('+07'), r.ISO8601(date_end).inTimezone('+07'), { index: 'exporter_date_approve' })
-        .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
-        .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("left", { right: ["change_status"] }).zip()
-        .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck("left", { right: ["type_lic_name"] }).zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -62,19 +58,20 @@ exports.report1 = function (req, res) {
                     m('exporter_date_approve').day(),
                     "+07:00"
                 ).toISO8601(),
-                date_export_expire: r.time(m('date_exported').year().add(1),
+                date_export_expire: r.branch(m.hasFields('date_exported'), r.time(m('date_exported').year().add(1),
                     m('date_exported').month(),
                     m('date_exported').day(),
                     "+07:00"
                 ).toISO8601(),
+                    null),
                 exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
-                date_exported: m('date_exported').toISO8601()
+                date_exported: r.branch(m.hasFields('date_exported'),m('date_exported').toISO8601(),null)
             }
         })
         .merge(function (mm) {
             return {
                 export_date_expire: r.branch(mm('date_export_expire').gt(mm('exporter_date_expire')),
-                    mm('date_export_expire').split('T')(0),
+                    r.branch(mm('date_export_expire').ne(null),mm('date_export_expire').split('T')(0),null),
                     mm('exporter_date_expire').split('T')(0))
             }
         }).without('date_export_expire', 'exporter_date_expire')
@@ -88,6 +85,9 @@ exports.report1 = function (req, res) {
                 export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
         })
+        .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
+        .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("left", { right: ["change_status"] }).zip()
+        .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck("left", { right: ["type_lic_name"] }).zip()
         .filter(q)
         // .filter(d)
         .orderBy('exporter_no')
@@ -144,10 +144,6 @@ exports.report2 = function (req, res, next) {
             return f('exporter_date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(), 
             r.ISO8601(date_end).inTimezone('+07').date(), { rightBound: 'closed' })
         })
-        // .between(r.ISO8601(date_start), r.ISO8601(date_end), { index: 'exporter_date_approve' })
-        // .pluck(['id', 'exporter_date_approve', 'exporter_no', 'company_id', 'exporter_status', 'type_lic_id'])
-        .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
-        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -159,19 +155,20 @@ exports.report2 = function (req, res, next) {
                     m('exporter_date_approve').day(),
                     "+07:00"
                 ).toISO8601(),
-                date_export_expire: r.time(m('date_exported').year().add(1),
+                date_export_expire: r.branch(m.hasFields('date_exported'), r.time(m('date_exported').year().add(1),
                     m('date_exported').month(),
                     m('date_exported').day(),
                     "+07:00"
                 ).toISO8601(),
+                    null),
                 exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
-                date_exported: m('date_exported').toISO8601()
+                date_exported: r.branch(m.hasFields('date_exported'),m('date_exported').toISO8601(),null)
             }
         })
         .merge(function (mm) {
             return {
                 export_date_expire: r.branch(mm('date_export_expire').gt(mm('exporter_date_expire')),
-                    mm('date_export_expire').split('T')(0),
+                    r.branch(mm('date_export_expire').ne(null),mm('date_export_expire').split('T')(0),null),
                     mm('exporter_date_expire').split('T')(0))
             }
         }).without('date_export_expire', 'exporter_date_expire')
@@ -185,6 +182,8 @@ exports.report2 = function (req, res, next) {
                 export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
         })
+        .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
+        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
         .filter(q)
         // .filter(d)
         .orderBy('exporter_no')
@@ -238,8 +237,6 @@ exports.report3 = function (req, res, next) {
             return f('exporter_date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(), 
             r.ISO8601(date_end).inTimezone('+07').date(), { rightBound: 'closed' })
         })
-        // .between(r.ISO8601(date_start), r.ISO8601(date_end), { index: 'exporter_date_approve' })
-        .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -251,19 +248,20 @@ exports.report3 = function (req, res, next) {
                     m('exporter_date_approve').day(),
                     "+07:00"
                 ).toISO8601(),
-                date_export_expire: r.time(m('date_exported').year().add(1),
+                date_export_expire: r.branch(m.hasFields('date_exported'), r.time(m('date_exported').year().add(1),
                     m('date_exported').month(),
                     m('date_exported').day(),
                     "+07:00"
                 ).toISO8601(),
+                    null),
                 exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
-                date_exported: m('date_exported').toISO8601()
+                date_exported: r.branch(m.hasFields('date_exported'),m('date_exported').toISO8601(),null)
             }
         })
         .merge(function (mm) {
             return {
                 export_date_expire: r.branch(mm('date_export_expire').gt(mm('exporter_date_expire')),
-                    mm('date_export_expire').split('T')(0),
+                    r.branch(mm('date_export_expire').ne(null),mm('date_export_expire').split('T')(0),null),
                     mm('exporter_date_expire').split('T')(0))
             }
         }).without('date_export_expire', 'exporter_date_expire')
@@ -277,6 +275,7 @@ exports.report3 = function (req, res, next) {
                 export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
         })
+        .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
         .filter(q)
         // .filter(d)
         .orderBy('exporter_no')
@@ -630,9 +629,6 @@ exports.exporter_detail = function (req, res) {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
     r.db('external').table('exporter').getAll(req.params.id, { index: 'id' })
-        .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
-        .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("left", { right: ["change_status"] }).zip()
-        .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck("left", { right: ["type_lic_name"] }).zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -644,19 +640,20 @@ exports.exporter_detail = function (req, res) {
                     m('exporter_date_approve').day(),
                     "+07:00"
                 ).toISO8601(),
-                date_export_expire: r.time(m('date_exported').year().add(1),
+                date_export_expire: r.branch(m.hasFields('date_exported'), r.time(m('date_exported').year().add(1),
                     m('date_exported').month(),
                     m('date_exported').day(),
                     "+07:00"
                 ).toISO8601(),
+                    null),
                 exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
-                date_exported: m('date_exported').toISO8601()
+                date_exported: r.branch(m.hasFields('date_exported'),m('date_exported').toISO8601(),null)
             }
         })
         .merge(function (mm) {
             return {
                 export_date_expire: r.branch(mm('date_export_expire').gt(mm('exporter_date_expire')),
-                    mm('date_export_expire').split('T')(0),
+                    r.branch(mm('date_export_expire').ne(null),mm('date_export_expire').split('T')(0),null),
                     mm('exporter_date_expire').split('T')(0))
             }
         }).without('date_export_expire', 'exporter_date_expire')
@@ -670,6 +667,9 @@ exports.exporter_detail = function (req, res) {
                 export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
         })
+        .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
+        .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("left", { right: ["change_status"] }).zip()
+        .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck("left", { right: ["type_lic_name"] }).zip()
         // .filter({ exporter_id: params.exporter_id })
         // .filter(q)
         .filter(d)
@@ -802,8 +802,6 @@ exports.approve_general_1 = function (req, res) {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
     r.db('external').table('confirm_exporter').getAll(req.params.id, { index: 'id' })
-        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
-        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -813,6 +811,8 @@ exports.approve_general_1 = function (req, res) {
                 date_created: m('date_created').toISO8601().split('T')(0)
             }
         })
+        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
+        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         // .merge({ date_created: r.row('date_created').split('T')(0) })
         // .orderBy('exporter_no')
         // .filter(function (c) {
@@ -838,8 +838,6 @@ exports.approve_general_2 = function (req, res) {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
     r.db('external').table('confirm_exporter').getAll(req.params.id, { index: 'id' })
-        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
-        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -849,6 +847,8 @@ exports.approve_general_2 = function (req, res) {
                 date_created: m('date_created').toISO8601().split('T')(0)
             }
         })
+        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
+        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         // .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         // .merge({ date_created: r.row('date_created').split('T')(0) })
         // .orderBy('exporter_no')
@@ -919,9 +919,6 @@ exports.approve_renew_1 = function (req, res) {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
     r.db('external').table('exporter')
-        .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("right", { left: "exporter_date_approve" }).zip()//.getAll(req.params.id, {index: 'id'})
-        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
-        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -933,6 +930,9 @@ exports.approve_renew_1 = function (req, res) {
         .filter(function (row) {
             return row("id").eq(req.params.id)
         })
+        .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("right", { left: "exporter_date_approve" }).zip()//.getAll(req.params.id, {index: 'id'})
+        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
+        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         .run()
         .then(function (result) {
             // res.json(result);
@@ -948,9 +948,6 @@ exports.approve_renew_2 = function (req, res) {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
     r.db('external').table('exporter')
-        .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("right", { left: "exporter_date_approve" }).zip()//.getAll(req.params.id, {index: 'id'})
-        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
-        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -962,6 +959,9 @@ exports.approve_renew_2 = function (req, res) {
         .filter(function (row) {
             return row("id").eq(req.params.id)
         })
+        .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("right", { left: "exporter_date_approve" }).zip()//.getAll(req.params.id, {index: 'id'})
+        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
+        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         .run()
         .then(function (result) {
             res.json(result);
