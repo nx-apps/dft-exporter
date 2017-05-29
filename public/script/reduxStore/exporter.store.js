@@ -19,6 +19,8 @@ export function exporterReducer(state = initialState, action) {
             return Object.assign({}, state, { docType: action.payload });
         case 'EXPORTER_GET_FILE_DELETE':
             return Object.assign({}, state, { files: action.payload });
+        case 'EXPORTER_SEARCH':
+            return Object.assign({}, state, { list: action.payload });
         default:
             return state
     }
@@ -89,6 +91,21 @@ export function exporterAction(store) {
                 .catch(function (error){
                     console.log(error);
                 })
+            },
+            EXPORTER_SEARCH: function(val){
+                // this.fire('toast', { status: 'load' })
+                axios.get('./external/exporter'+ val)
+                .then(function(response){
+                    response.data.map((item) => {
+                        for (var key in item) {
+                            if (item[key] === '') {
+                                item[key] = '-';
+                            }
+                        }
+                    })
+                    store.dispatch({ type: 'EXPORTER_SEARCH', payload: response.data })
+                    this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback:function(){} })
+                });
             }
         }
     ]
