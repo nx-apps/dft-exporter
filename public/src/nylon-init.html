@@ -118,7 +118,10 @@
 		</div>
 		<layout-main path="[[selected]]">
 			<iron-pages role="main" selected="[[selected]]" attr-for-selected="path" selected-attribute="visible">
-				<page-admin-exporter path="admin-exporter"></page-admin-exporter>
+				<page-admin-exporter path="admin-exporter" current-path="[[selected]]"></page-admin-exporter>
+				<page-admin-confirm path="admin-confirm" current-path="[[selected]]"></page-admin-confirm>
+				<page-company path="company" current-path="[[selected]]"></page-company>
+				<page-company-edit path="company-edit" current-path="[[selected]]"></page-company-edit>
                 <page-401 path="401"></page-401> <!-- ยังไม่ login -->
                 <page-403 path="403"></page-403> <!-- ไม่มีสิทธิ -->
                 <page-404 path="404"></page-404> <!-- ไม่พบไฟล์ -->
