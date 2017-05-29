@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report2" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7ab00411-f197-4f02-9091-e25ab6106afe">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.x" value="3"/>
+	<property name="ireport.y" value="59"/>
 	<import value="nylon.report.*"/>
 	<parameter name="date_start" class="java.lang.String"/>
 	<parameter name="date_end" class="java.lang.String"/>
@@ -29,7 +29,7 @@
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[รายชื่อผู้ส่งออกข้าวออกต่างประเทศ และ คณะกรรมการบริษัท
-ประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศ (ทั่วไป,ชายแดน,ไม่เกิน 12 ก.ก)]]></text>
+ประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศ (ทั่วไป,ชายแดน,ข้าวสารบรรจุกล่องหรือหีบห่อ)]]></text>
 			</staticText>
 			<textField>
 				<reportElement x="0" y="64" width="802" height="25" uuid="90005564-606c-4042-94ce-d47612543e17"/>
@@ -136,7 +136,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{company_name_th}]]></textFieldExpression>
 			</textField>
@@ -149,7 +149,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{exporter_no_name}]]></textFieldExpression>
 			</textField>
@@ -162,7 +162,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{type_lic_name}]]></textFieldExpression>
 			</textField>
@@ -175,7 +175,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{exporter_status_name}]]></textFieldExpression>
 			</textField>
@@ -188,7 +188,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 					<rightPen lineWidth="1.0"/>
 				</box>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="TH SarabunPSK" size="14" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{ROW}++]]></textFieldExpression>
 			</textField>
@@ -309,7 +309,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<text><![CDATA[รายชื่อผู้ส่งออกข้าวออกต่างประเทศ และ คณะกรรมการบริษัท
-ประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศ (ทั่วไป,ชายแดน,ไม่เกิน 12 ก.ก)]]></text>
+ประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศ (ทั่วไป,ชายแดน,ข้าวสารบรรจุกล่องหรือหีบห่อ)]]></text>
 			</staticText>
 		</band>
 	</noData>

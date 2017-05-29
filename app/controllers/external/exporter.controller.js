@@ -27,120 +27,54 @@ exports.exporter = function (req, res) {
     if (Object.getOwnPropertyNames(d).length !== 0) {
         d = r.row('exporter_date_approve').gt(d.date_start).and(r.row('exporter_date_approve').lt(d.date_end));
     }
-
-    r.db('external').table("company").outerJoin(
-        r.db('external').table("exporter")
-            .merge(function (m) {
-                return {
-                    exporter_id: m('id'),
-                    book: r.db('g2g').table('shipment_detail')
-                        .getAll(m('id'), { index: 'exporter_id' })
-                        .pluck('book_id')
-                        .distinct()
-                        .coerceTo('array')
-                        .eqJoin('book_id', r.db('g2g').table('book')).pluck({ right: 'etd_date' }, "left").zip()
-                        .orderBy(r.desc('etd_date'))
-                        .limit(1)
-                        .getField('etd_date')
-                }
-            }).without('id')
-            .merge(function (m) {
-                return {
-                    export_date: r.branch(
-                        m('book').eq([]),
-                        null,
-                        m('book')(0).split('T')(0)
-                    ),
-                    export_date_expire: r.branch(
-                        m('book').eq([]),
-                        null,
-                        r.ISO8601(m('book')(0)).add(31449600)
-                        // r.ISO8601(m('book')(0)).year().add(1)
-                        //  r.ISO8601(m('book')(0)).month()
-                        //r.ISO8601(m('book')(0)).day().sub(1)
-                        //.add(31536000)
-                    ),
-                    // export_status: r.branch(
-                    //     m('book').eq([]),
-                    //     false,
-                    //     r.ISO8601(m('book')(0)).add(31449600).gt(r.now())
-                    // ),
-                    exporter_date_expire: r.ISO8601(m('exporter_date_approve')).add(31449600)
-                }
-            })
-            .merge(function (mm) {
-                return {
-                    export_date_expire: r.branch(mm('export_date_expire').gt(mm('exporter_date_expire')),
-                        mm('export_date_expire'),
-                        mm('exporter_date_expire'))
-                }
-            })
-            .merge(function (mmm) {
-                return {
-                    export_status: r.branch(mmm('export_date_expire').gt(r.now()), true, false),
-                    export_date_expire: mmm('export_date_expire').toISO8601(),
-                    exporter_date_expire: mmm('exporter_date_expire').toISO8601()
-                }
-            })
-            .without('book'),
-        function (company, exporter) {
-            return exporter("company_id").eq(company("id"))
+    r.db('external').table('exporter')
+        .merge(function (m) {
+            return {
+                exporter_no_name: r.branch(
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
+                exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
+                exporter_date_expire: r.time(m('exporter_date_approve').year().add(1),
+                    m('exporter_date_approve').month(),
+                    m('exporter_date_approve').day(),
+                    "+07:00"
+                ).toISO8601(),
+                date_export_expire: r.branch(m.hasFields('date_exported'), r.time(m('date_exported').year().add(1),
+                    m('date_exported').month(),
+                    m('date_exported').day(),
+                    "+07:00"
+                ).toISO8601(),
+                    null),
+                exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
+                date_exported: r.branch(m.hasFields('date_exported'),m('date_exported').toISO8601(),null)
+            }
         })
         .merge(function (mm) {
             return {
-                left: {
-                    company_id: mm('left')('id')
-                }
+                export_date_expire: r.branch(mm('date_export_expire').gt(mm('exporter_date_expire')),
+                    r.branch(mm('date_export_expire').ne(null),mm('date_export_expire').split('T')(0),null),
+                    mm('exporter_date_expire').split('T')(0))
             }
-        })
-        .without({ left: 'id' })
-        .zip()
-        .merge(function (m) {
+        }).without('date_export_expire', 'exporter_date_expire')
+        .merge(function (mmm) {
             return {
-                export_date_expire: r.branch(m.hasFields('export_date_expire'), m('export_date_expire').split('T')(0), null),
-                export_status: r.branch(m.hasFields('export_status'), m('export_status'), null),
-                exporter_id: r.branch(m.hasFields('exporter_id'), m('exporter_id'), null),
-                exporter_status: m.hasFields('exporter_no'),
-                exporter_status_name: r.branch(m.hasFields('exporter_no'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                exporter_date_approve: r.branch(m.hasFields('exporter_date_approve'), m('exporter_date_approve').split('T')(0), null),
-                exporter_date_expire: r.branch(m.hasFields('exporter_date_expire'), m('exporter_date_expire').split('T')(0), null),
-                exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
-                // trader_date_approve: m('trader_date_approve').split('T')(0),
-                // trader_date_expire: m('trader_date_approve').split('T')(0).split('-')(0).add("-12-31"),
-                // trader_active: r.now().toISO8601().lt(m('trader_date_approve').split('T')(0).split('-')(0).add("-12-31T00:00:00.000Z"))
-                // r.time(m('trader_date_approve').split('T')(0).split('-')(0).coerceTo('number'), r.december, 31, 0, 0, 0, '+07:00').toISO8601()
+                export_status: r.branch(mmm('export_date_expire').gt(r.now().toISO8601().split('T')(0)), true, false)
             }
         })
         .merge(function (m) {
             return {
-                // trader_active_name: r.branch(m('trader_active').eq(true), 'ปกติ', 'หมดอายุ'),
-                export_status_name: r.branch(m('export_status').eq(null), null, m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
+                export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
         })
-        .without('id')
-        // .eqJoin("seller_id", r.db('external').table("seller")).without({ right: ["id", "date_create"] }).zip()
-        // .eqJoin("type_lic_id", r.db('external').table("type_license")).without({ right: ["id", "date_created", "date_updated", "creater", "updater"] }).zip()
+        .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
+        .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("left", { right: ["change_status"] }).zip()
+        .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck("left", { right: ["type_lic_name"] }).zip()
         .filter(q)
         .filter(d)
         .orderBy('exporter_no')
         .run()
         .then(function (result) {
+            res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3001')
             res.json(result)
         })
         .error(function (err) {
@@ -149,42 +83,47 @@ exports.exporter = function (req, res) {
 }
 exports.exporterId = function (req, res) {
     var r = req.r;
-    r.db('external').table("exporter")
-        .get(req.params.exporter_id)
-        .merge({
-            exporter_id: r.row('id'),
-            exporter_active: r.ISO8601(d1y).toEpochTime().lt(r.ISO8601(r.row('exporter_date_approve')).toEpochTime()),
-            exporter_date_approve: r.row('exporter_date_approve').split('T')(0),
-            exporter_status: r.row.hasFields('exporter_no'),
-            exporter_status_name: r.branch(r.row.hasFields('exporter_no'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-            exporter_no_name: r.branch(
-                r.row('exporter_no').lt(10)
-                , r.expr('ข.000')
-                , r.branch(
-                    r.row('exporter_no').lt(100)
-                    , r.expr('ข.00')
-                    , r.branch(
-                        r.row('exporter_no').lt(1000)
-                        , r.expr('ข.0')
-                        , r.expr('ข.')
-                    )
-                )
-            ).add(r.row('exporter_no').coerceTo('string'))
-        },
-        // r.db('external').table("trader").get(r.row("trader_id"))
-        //     .merge(function (m) {
-        //         return {
-        //             trader_date_approve: m('trader_date_approve').split('T')(0),
-        //             trader_date_expire: m('trader_date_approve').split('T')(0).split('-')(0).add("-12-31"),
-        //             trader_active: r.now().toISO8601().lt(m('trader_date_approve').split('T')(0).split('-')(0).add("-12-31T00:00:00.000Z"))
-        //         }
-        //     }),
-        r.db('external').table("seller").get(r.row("seller_id")),
-        r.db('external').table("type_license").get(r.row("type_lic_id"))
-        // r.db('common').table("country").get(r.row("country_id"))
-        )
-        //  .merge(r.db('common').table("country").get(r.row("country_id")))
-        .without('id')
+    r.db('external').table("exporter").getAll(req.params.exporter_id, { index: 'id' })
+        .merge(function (m) {
+            return {
+                exporter_no_name: r.branch(
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
+                exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
+                exporter_date_expire: r.time(m('exporter_date_approve').year().add(1),
+                    m('exporter_date_approve').month(),
+                    m('exporter_date_approve').day(),
+                    "+07:00"
+                ).toISO8601(),
+                date_export_expire: r.branch(m.hasFields('date_exported'), r.time(m('date_exported').year().add(1),
+                    m('date_exported').month(),
+                    m('date_exported').day(),
+                    "+07:00"
+                ).toISO8601(),
+                    null),
+                exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
+                date_exported: r.branch(m.hasFields('date_exported'),m('date_exported').toISO8601(),null)
+            }
+        })
+        .merge(function (mm) {
+            return {
+                export_date_expire: r.branch(mm('date_export_expire').gt(mm('exporter_date_expire')),
+                    r.branch(mm('date_export_expire').ne(null),mm('date_export_expire').split('T')(0),null),
+                    mm('exporter_date_expire').split('T')(0))
+            }
+        }).without('date_export_expire', 'exporter_date_expire')
+        .merge(function (mmm) {
+            return {
+                export_status: r.branch(mmm('export_date_expire').gt(r.now()), true, false)
+            }
+        }).merge(function (m) {
+            return {
+                export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
+            }
+        })
+        .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
+        .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("left", { right: ["change_status"] }).zip()
+        .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck("left", { right: ["type_lic_name"] }).zip()
         .run()
         .then(function (result) {
             res.json(result)
@@ -192,14 +131,6 @@ exports.exporterId = function (req, res) {
         .error(function (err) {
             res.json(err)
         })
-    // .run(conn, function (err, cursor) {
-    //     //console.log(err);
-    //     if (!err) {
-    //         res.json(cursor);
-    //     } else {
-    //         res.json(null);
-    //     }
-    // });
 }
 exports.insert = function (req, res) {
     var r = req.r;
@@ -215,9 +146,9 @@ exports.insert = function (req, res) {
                         req.body.exporter_date_approve = req.body.exporter_date_approve;
                         req.body = Object.assign(req.body, {
                             creater: 'admin',
-                            updater: 'admin',
-                            date_created: new Date().toISOString(),
-                            date_updated: new Date().toISOString()
+                            date_created: new Date().inTimezone('+07')
+                            // updater: 'admin',
+                            // date_updated: new Date().toISOString()
                         });
                         r.db('external').table('exporter')
                             .insert(req.body)
@@ -247,51 +178,50 @@ exports.insert = function (req, res) {
 }
 exports.update = function (req, res) {
     var r = req.r;
-    var valid = req.ajv.validate('exporter.exporter', req.body);
+    // var valid = req.ajv.validate('exporter.exporter', req.body);
     var result = { result: false, message: null, id: null };
-    if (valid) {
-        if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
-            result.id = req.body.id;
-            req.body = Object.assign(req.body, { date_updated: this.date_updated, updater: 'admin' });
-            r.db('external').table('exporter')
-                .get(req.body.id)
-                .update(req.body, { returnChanges: true })
-                .run()
-                .then(function (response) {
-                    result.message = response;
-                    if (response.errors == 0) {
-                        result.result = true;
-                        var history = {
-                            tb_name: 'exporter',
-                            action: "update",
-                            id_value: req.body.id,
-                            old_value: null,
-                            new_value: req.body,
-                            date_created: new Date(),
-                            actor: 'admin'
-                        };
-                        if (response.changes != [] && response.unchanged != 1 || response.replaced == 1) {
-                            // console.log(history.old_value);
-                            history.old_value = response.changes[0].old_val;
-                            //console.log(history.old_value);
-                        }
-
-                        r.db('external').table('history').insert(history).run().then()
+    // if (valid) {
+    if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
+        result.id = req.body.id;
+        req.body = Object.assign(req.body, { date_updated: r.now().inTimezone('+07'), updater: 'admin' });
+        r.db('external').table('exporter').get(req.body.id)
+            .update(req.body, { returnChanges: true })
+            .run()
+            .then(function (response) {
+                result.message = response;
+                if (response.errors == 0) {
+                    result.result = true;
+                    var history = {
+                        tb_name: 'exporter',
+                        action: "update",
+                        id_value: req.body.id,
+                        old_value: null,
+                        new_value: req.body,
+                        date_created: r.now().inTimezone('+07'),
+                        actor: 'admin'
+                    };
+                    if (response.changes != [] && response.unchanged != 1 || response.replaced == 1) {
+                        // console.log(history.old_value);
+                        history.old_value = response.changes[0].old_val;
+                        //console.log(history.old_value);
                     }
-                    res.json(result);
-                })
-                .error(function (err) {
-                    result.message = err;
-                    res.json(result);
-                })
-        } else {
-            result.message = 'require field id';
-            res.json(result);
-        }
+
+                    r.db('external').table('history').insert(history).run().then()
+                }
+                res.json(result);
+            })
+            .error(function (err) {
+                result.message = err;
+                res.json(result);
+            })
     } else {
-        result.message = req.ajv.errorsText()
+        result.message = 'require field id';
         res.json(result);
     }
+    // } else {
+    //     result.message = req.ajv.errorsText()
+    //     res.json(result);
+    // }
 }
 exports.delete = function (req, res) {
     var r = req.r;
@@ -312,7 +242,7 @@ exports.delete = function (req, res) {
                         id_value: req.params.id,
                         old_value: response.changes[0].old_val,
                         new_value: null,
-                        date_created: new Date(),
+                        date_created: r.now().inTimezone('+07'),
                         actor: 'admin'
                     }
                     r.db('external').table('history').insert(history).run().then()
@@ -327,4 +257,65 @@ exports.delete = function (req, res) {
         result.message = 'require field id';
         res.json(result);
     }
+}
+exports.updateDate = function (req, res) {
+    var r = req.r;
+    // var valid = req.ajv.validate('exporter.exporter', req.body);
+    var result = { result: false, message: null, id: null };
+    // if (valid) {
+    if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
+        result.id = req.body.id;
+        req.body = Object.assign(req.body,
+            {
+                exporter_date_approve: r.now().inTimezone('+07'),
+                date_updated: r.now().inTimezone('+07'),
+                updater: 'admin',
+                expire_status: true
+            });
+        r.db('external').table('exporter').get(req.body.id)
+            .update(req.body, { returnChanges: true })
+            .do(function () {
+                return r.db('external').table('confirm_exporter').get(req.body.confirm_id)
+                    .update({
+                        approve_status: 'approve',
+                        date_updated: r.now().inTimezone('+07'),
+                        updater: 'admin'
+                    }, { returnChanges: true })
+            })
+            .run()
+            .then(function (response) {
+                result.message = response;
+                if (response.errors == 0) {
+                    result.result = true;
+                    var history = {
+                        tb_name: 'exporter',
+                        action: "update",
+                        id_value: req.body.id,
+                        old_value: null,
+                        new_value: req.body,
+                        date_created: r.now().inTimezone('+07'),
+                        actor: 'admin'
+                    };
+                    if (response.changes != [] && response.unchanged != 1 || response.replaced == 1) {
+                        // console.log(history.old_value);
+                        history.old_value = response.changes[0].old_val;
+                        //console.log(history.old_value);
+                    }
+
+                    r.db('external').table('history').insert(history).run().then()
+                }
+                res.json(result);
+            })
+            .error(function (err) {
+                result.message = err;
+                res.json(result);
+            })
+    } else {
+        result.message = 'require field id';
+        res.json(result);
+    }
+    // } else {
+    //     result.message = req.ajv.errorsText()
+    //     res.json(result);
+    // }
 }
