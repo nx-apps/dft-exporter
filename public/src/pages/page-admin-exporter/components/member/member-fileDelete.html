@@ -21,7 +21,7 @@
       <table class="gl-table-default">
         <thead class="table-head">
           <tr>
-            <th><div class="text-table">ชือไฟล์</div></th>
+            <th><div class="text-table">{{localize('file_name')}}</div></th>
             <th></th>
           </tr>
         </thead>
@@ -30,7 +30,7 @@
           <tbody>
             <tr style="cursor:pointer;" data="[[item]]">
               <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.name}}</div></td>
-              <td on-tap="recovery" data="[[item]]"><paper-button class="gl-btn-info" raised>กู้ไฟล์คืน</paper-button></td>
+              <td on-tap="recovery" data="[[item]]"><paper-button class="gl-btn-info" title="{{localize('bt_recovery')}}" raised>{{localize('bt_recovery')}}</paper-button></td>
             </tr>
           </tbody>
         </template>
@@ -40,7 +40,10 @@
   <script>
     Polymer({
       is: "member-fileDelete",
-      behaviors: [dataBehavior],
+      behaviors: [dataBehavior, nylonLocalizeBehavior, nylonBehavior],
+      created:function(){
+          this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
+      },
       _selectData:function(e){
       // console.log(e.currentTarget.data);
         var idFile = e.currentTarget.data.file_id
