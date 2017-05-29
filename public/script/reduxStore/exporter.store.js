@@ -4,7 +4,7 @@ const initialState = {
     list: [],
     data: {}
 }
-export function bankReducer(state = initialState, action) {
+export function exporterReducer(state = initialState, action) {
     switch (action.type) {
         case 'BANK_GET_DATA':
             return Object.assign({}, state, { list: action.payload });
@@ -16,16 +16,26 @@ export function bankReducer(state = initialState, action) {
             return state
     }
 }
-export function bankAction(store) {
+export function exporterAction(store) {
     return [commonAction(),
     {
-        BANK_GET_DATA: function () {
-            axios.get('./bank')
+        EXPORTER_GET_DATA: function () {
+            axios.get('./external/exporter')
                 .then(function (response) {
-                    store.dispatch({ type: 'BANK_GET_DATA', payload: response.data })
+                    // response.data.map((item) => {
+                    //     for (var key in item) {
+                    //     if(item[key] === ""){
+                    //         item[key] = '-';
+                    //     }
+                    //     }
+                    //     return item.company_name = '('+item.company_taxno+ ') ' + item.company_name_th +' '+ item.company_name_en;
+                    // })
+                    console.log(response);
+                    // this.exporters = response;
+                    // this.exporter_id = response;
+                    // store.dispatch({ type: 'BANK_GET_DATA', payload: response.data })
                 })
                 .catch(function (error) {
-                    console.log('error');
                     console.log(error);
                 });
         },
