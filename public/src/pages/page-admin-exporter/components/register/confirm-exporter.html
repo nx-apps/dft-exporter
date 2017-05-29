@@ -195,14 +195,14 @@
           observer: '_changeselectDataAll'
         }
       },
-      behaviors: [dataBehavior, nylonLocalizeBehavior, nylonBehavior],
+      behaviors: [dataBehavior, nylonBehavior],/*, nylonLocalizeBehavior*/
       listeners: {
         'back_page' : '_backPage',
         'clearData' : 'clearData'
       },
-      created: function () {
-        this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
-      },
+      // created: function () {
+      //   this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
+      // },
       _selectData: function (e) {
         this.pageSelected = "detailExporter";
         this.dataSelect = e.currentTarget.data;
