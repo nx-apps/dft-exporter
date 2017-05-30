@@ -102,6 +102,7 @@ export function exporterAction(store) {
                                 item[key] = '-';
                             }
                         }
+                        return item.company_name = '('+item.company_taxno+ ') ' + item.company_name_th +' '+ item.company_name_en;
                     })
                     store.dispatch({ type: 'EXPORTER_SEARCH', payload: response.data })
                 });
