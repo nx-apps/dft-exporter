@@ -266,7 +266,7 @@ exports.getId = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_date_expire: m('exporter_date_approve').add(31449600),
-                date_export_expire: m('date_exported').add(31449600)
+                date_export_expire: r.branch(m.hasFields('date_exported'),m('date_exported').add(31449600),null)
             }
         })
         .merge(function (mm) {
