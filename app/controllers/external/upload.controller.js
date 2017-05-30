@@ -152,7 +152,7 @@ exports.listFileDelete = function (req, res) {
 exports.recoveryFile = function (req, res) {
     var r = req.r;
     var params = req.params;
-    console.log(params.file_id+'mmm');
+    console.log(params.file_id + 'mmm');
     r.db('external').table('document_file').getAll(params.file_id, { index: 'file_id' }).update({ file_status: true, date_update: new Date() })
         .run().then(function (result) {
             res.json(result);
