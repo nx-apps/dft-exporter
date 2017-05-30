@@ -43,7 +43,7 @@ var config = {
         {
          name:"mssql",
          driver:"com.microsoft.sqlserver.jdbc.SQLServerDriver",
-         url:"jdbc:sqlserver://192.168.10.117:1433;databaseName=external",
+         url:"jdbc:sqlserver://mssql.nextcorp.co.th:1433;databaseName=external",
          user:"external",
          password:"external@2017"
        }
