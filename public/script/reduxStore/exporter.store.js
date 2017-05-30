@@ -107,6 +107,43 @@ export function exporterAction(store) {
                     store.dispatch({ type: 'EXPORTER_SEARCH', payload: response.data })
                 });
                 this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback:function(){} })
+            },
+            EXPORTER_UPDATE: function(data){
+                if(data.type_lic_id === undefined){
+                    // console.log('ตัวเดิม');
+                    this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+                    axios.put('./external/exporter/update', data)
+                    .then((result) => {
+                        this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
+                            this.EXPORTER_GET_DATA();
+                            this.EXPORTER_GET_DATA_ID(data.id);
+                        }});
+                    })
+                }else{
+                    // console.log('เปลี่ยน');
+                    this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+                    axios.put('./external/confirm_exporter/update', data)
+                    .then((result) => {
+                        this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
+                            this.EXPORTER_GET_DATA();
+                            this.EXPORTER_GET_DATA_ID(data.exporter_id);
+                        }});
+                    })
+                }
+            },
+            EXPORTER_ACTIVE_RENEW: function(data, date){
+                console.log(data,date);
+                this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
+                axios.put('./external/confirm_exporter/update', data)
+                .then((result) => {
+                    axios.put('./external/exporter/update', date)
+                    .then((result2) => {
+                        this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
+                            this.EXPORTER_GET_DATA();
+                            this.EXPORTER_GET_DATA_ID(date.id);
+                        }});
+                    })
+                })
             }
         }
     ]

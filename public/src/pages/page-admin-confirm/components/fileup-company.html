@@ -24,7 +24,7 @@
     }
   </style>
   <template>
-    <div class="title-head">{{localize('doc_attach')}}</div>
+    <div class="title-head">{{localize.doc_attach}}</div>
     <template is="dom-repeat" items="[[docType]]">
       <div class="title">[[item.doc_name_th]]</div>
       <upload-file
@@ -41,13 +41,15 @@
   <script>
     Polymer({
       is: "fileup-company",
-      behaviors: [dataBehavior,nylonBehavior, nylonLocalizeBehavior],
+      behaviors: [ReduxBehavior],
+      properties:{
+        localize:{
+          statePath : 'i18n.exporter'
+        }
+      },
       observers: [
         '_dataInput(data)'
       ],
-      created: function () {
-        this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
-      },
       _dataInput:function(data) {
         this.companyId = data.company_id;
         // console.log(this.companyId);
