@@ -104,8 +104,8 @@ export function exporterAction(store) {
                         }
                     })
                     store.dispatch({ type: 'EXPORTER_SEARCH', payload: response.data })
-                    this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback:function(){} })
                 });
+                this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback:function(){} })
             }
         }
     ]
