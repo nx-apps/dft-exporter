@@ -361,17 +361,6 @@
         }
         // console.log(str);
         this.dispatchAction('EXPORTER_SEARCH', str);
-        // this.read('./external/exporter' + str, (data) => {
-        //   data.map((item) => {
-        //     for (var key in item) {
-        //       if (item[key] === '') {
-        //         item[key] = '-';
-        //       }
-        //     }
-        //   })
-        //   this.exporters = data;
-        //   this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback:function(){} })
-        // })
         return str;
       },
       _report: function (e) {

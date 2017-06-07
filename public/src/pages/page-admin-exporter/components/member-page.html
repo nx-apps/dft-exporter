@@ -180,54 +180,37 @@
         this.isEnabled = false;
         this.pages = 0;
       },
-      // save:function(e) {
-      //   this.fire('toast',{status:'dialog',
-      //   text:'คุณต้องการแก้ไขข้อมูลใช่หรือไม่ ?',
-      //   confirmed : this._confirmSave.bind(this),
-      //   datas : this.data
-      //   });
-      // },
-      // _confirmSave:function(result,detail){
-      //   if(result == true){
-      //     if(detail.datas.type_lic_id == this.cloneData.type_lic_id){
-      //       // console.log('ตัวเดิม');
-      //       let{id, exporter_status} = detail.datas;
-      //       let newData = {id,exporter_status};
-      //       this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-      //       this.update('./external/exporter/update', newData, () => {
-      //         this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
-      //           this.fire('refresh-exporter');
-      //           this.pages = 0;
-      //           this.isEnabled = false;
-      //           this.fire('refresh-edit',newData.id);
-      //         }});
-      //       });
-      //     }
-      //     else{
-      //       // console.log('เปลี่ยนแล้ว');
-      //       let{confirm_id, type_lic_id} = detail.datas;
-      //       let newData = {type_lic_id};
-      //       newData.id = detail.datas.confirm_id,
-      //       newData.change_status = true,
-      //       newData.approve_status = 'process'
-      //       // console.log(newData);
-      //       this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-      //       this.update('./external/confirm_exporter/update', newData, () => {
-      //         this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
-      //           this.fire('refresh-exporter');
-      //           this.pages = 0;
-      //           this.isEnabled = false;
-      //           this.fire('refresh-edit',detail.datas.id);
-      //         }});
-      //       });
-      //     }
-      //   }
-      // },
-      // _cancel:function() {
-      //   this.isEnabled = false;
-      //   this.pages = 0;
-      //   this.fire('refresh-edit',this.data.id);
-      // },
+      save:function(){
+        this.fire('toast', {status:'openDialog',
+        text:'คุณต้องการแก้ไขข้อมูลใช่หรือไม่ ?',
+        confirmed: (result) => {
+          if(result == true){
+            if(this.data.type_lic_id == this.cloneData.type_lic_id){
+              let{id, exporter_status} = this.data;
+              let newData = {id,exporter_status};
+              this.dispatchAction('EXPORTER_UPDATE', newData);
+              this.pages = 0;
+              this.isEnabled = false;
+            }else{
+              let{confirm_id, type_lic_id} = this.data;
+              let newData = {type_lic_id};
+              newData.exporter_id = this.data.id,
+              newData.id = this.data.confirm_id,
+              newData.change_status = true,
+              newData.approve_status = 'process'
+              this.dispatchAction('EXPORTER_UPDATE', newData);
+              this.pages = 0;
+              this.isEnabled = false;
+            }
+          }
+        }
+        });
+      },
+      _cancel:function() {
+        this.isEnabled = false;
+        this.pages = 0;
+        this.dispatchAction('EXPORTER_GET_DATA_ID',this.data.id);
+      },
       _dialogRemark: function(){
         this.$.dialog.toggle();
       },
@@ -238,6 +221,23 @@
       //   datas : this.data
       //   });
       // },
+      _active:function(){
+        this.fire('toast', {statis:'openDialog',
+        text:'คุณต้องการจะต่ออายุผู้ส่งออกใช่หรือไม่ ?',
+        confirmed : (result) => {
+          if(result == true){
+            let newData = {};
+            newData.id = this.data.confirm_id;
+            newData.approve_status = 'process';
+            let dataDate = {};
+            dataDate.id = this.data.id;
+            dataDate.expire_status = false;
+            this.dispatchAction('EXPORTER_ACTIVE_RENEW', newData, dataDate);
+            this.$.dialog.toggle();
+          }
+        }
+      });
+      },
       // _confirmToast:function(result,detail){
       //   if(result == true){
       //     let newData = {};

@@ -55,8 +55,8 @@
 
     <div>
       <paper-tabs selected="{{pages}}" align-bottom no-slide>
-        <paper-tab>{{localize('detail')}}</paper-tab>
-        <paper-tab id="tabFile">{{localize('doc_ev')}}</paper-tab>
+        <paper-tab>{{localize.detail}}</paper-tab>
+        <paper-tab id="tabFile">{{localize.doc_ev}}</paper-tab>
       </paper-tabs>
       <gl-form-panel>
         <iron-pages selected="{{pages}}">
@@ -68,15 +68,15 @@
 
     <div class="horizontal end-justified layout" style="margin:10px">
       <paper-button id="btn-register" raised class="gl-btn-primary" on-tap="_register" hidden>
-        <iron-icon icon="add"></iron-icon>{{localize('bt_register')}}</paper-button>
+        <iron-icon icon="add"></iron-icon>{{localize.bt_register}}</paper-button>
       <paper-button id="btn-reject" raised class="gl-btn-primary" on-tap="_reject" hidden>
-        <iron-icon icon="add"></iron-icon>{{localize('bt_sent_new')}}</paper-button>
+        <iron-icon icon="add"></iron-icon>{{localize.bt_sent_new}}</paper-button>
     </div>
   </template>
   <script>
     Polymer({
       is: "company-page",
-      behaviors: [dataBehavior, nylonBehavior, ValidateFormBehavior, nylonLocalizeBehavior],
+      behaviors: [ReduxBehavior, ValidateFormBehavior],
       properties: {
         pages: {
           type: Number,
@@ -86,11 +86,14 @@
         data: {
           type: Object,
           value: {}
+        },
+        localize:{
+          statePath : 'i18n.exporter'
         }
       },
-      created: function () {
-        this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
-      },
+      // created: function () {
+      //   this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
+      // },
       listeners: {
         'refresh-exporterTrader': 'getExporterTrader'
       },
@@ -124,7 +127,7 @@
         }
         // console.log(data);
         this.fire('toast', {
-          status: 'dialog',
+          status: 'openDialog',
           text: 'คุณต้องการจะสมัครผู้ส่งออกใช่หรือไม่ ?',
           confirmed: this._confirm.bind(this),
           datas: data
