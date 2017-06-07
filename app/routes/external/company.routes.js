@@ -6,4 +6,5 @@ module.exports = function (app) {
     app.route('/insert').post(controller.insert);
     app.route('/update').put(controller.update);
     app.route('/delete/id/:id').delete(controller.delete);
+    app.get('/toRethink',controller.toRethink);
 }
