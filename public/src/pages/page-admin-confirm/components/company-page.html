@@ -60,8 +60,8 @@
       </paper-tabs>
       <gl-form-panel>
         <iron-pages selected="{{pages}}">
-          <detail-company data="[[data]]" type-lic="[[typeLic]]"></detail-company>
-          <fileup-company data="[[data]]" doc-type="[[docType]]"></fileup-company>
+          <detail-company></detail-company>
+          <fileup-company></fileup-company>
         </iron-pages>
       </gl-form-panel>
     </div>
@@ -84,16 +84,12 @@
           value: 0
         },
         data: {
-          type: Object,
-          value: {}
+          statePath : 'confirm.data'
         },
         localize:{
           statePath : 'i18n.exporter'
         }
       },
-      // created: function () {
-      //   this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
-      // },
       listeners: {
         'refresh-exporterTrader': 'getExporterTrader'
       },
@@ -119,41 +115,33 @@
         }
       },
       _register: function () {
+        // let {company_address_en, company_address_th, company_name_en, company_name_th, company_phone,
+        // company_province_en, company_province_th, company_taxno} = this.data;
+        // let data_company = {company_address_en, company_address_th, company_name_en, company_name_th, company_phone,
+        // company_province_en, company_province_th, company_taxno};
         var data = {
           approve_status: 'request',
           company_id: this.data.id,
           type_lic_id: this.data.type_lic_id,
-          exporter_status: this.data.exporter_status
+          company_taxno: this.data.company_taxno
+          // ,company: data_company
         }
         // console.log(data);
         this.fire('toast', {
           status: 'openDialog',
           text: 'คุณต้องการจะสมัครผู้ส่งออกใช่หรือไม่ ?',
-          confirmed: this._confirm.bind(this),
-          datas: data
-        });
-      },
-      _confirm: function (result, detail) {
-        if (result == true) {
-          var check = this.$$('detail-company').validate();
-          if (check == true) {
-            // console.log(detail.datas);
-            this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-            this.insert('./external/confirm_exporter/register', detail.datas, () => {
-              this.fire('toast', {
-                status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                  this.fire('refresh-company');
-                  this.fire('back_page');
-                  this.fire('clearData');
-                  this.$$('#btn-register').setAttribute("hidden", "hidden");
-                  // console.log('success');
-                }
-              });
-            })
-          } else {
-            this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' })
+          confirmed: (result) => {
+            if(result == true){
+              var check = this.$$('detail-company').validate();
+              if (check == true) {
+                this.dispatchAction('CONFIRM_REGISTER',data);
+                this.$$('#btn-register').setAttribute("hidden", "hidden");
+              } else {
+                this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' })
+              }
+            }
           }
-        }
+        });
       },
       _reject: function () {
         var data = {
@@ -161,28 +149,15 @@
           id: this.data.id
         }
         this.fire('toast', {
-          status: 'dialog',
+          status: 'openDialog',
           text: 'คุณต้องการจะส่งเอกสารใหม่ใช่หรือไม่ ?',
-          confirmed: this._confirmReject.bind(this),
-          datas: data
+          confirmed: (result) => {
+            if (result == true) {
+              this.dispatchAction('CONFIRM_COMPANY_REJECT', data)
+              this.$$('#btn-reject').setAttribute("hidden", "hidden");
+            }
+          }
         });
-      },
-      _confirmReject: function (result, detail) {
-        if (result == true) {
-          // console.log(detail.datas);
-          this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-          this.update('./external/confirm_exporter/reject', detail.datas, () => {
-            this.fire('toast', {
-              status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                this.fire('refresh-company');
-                this.fire('back_page');
-                this.fire('clearData');
-                this.$$('#btn-reject').setAttribute("hidden", "hidden");
-                // console.log('success');
-              }
-            });
-          })
-        }
       }
     });
   </script>

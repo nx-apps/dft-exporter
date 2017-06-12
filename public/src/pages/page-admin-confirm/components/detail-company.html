@@ -40,12 +40,12 @@
     }
   </style>
   <template>
-    <template is="dom-if" if={{!obExporter(exporterData.export_status)}}>
+    <template is="dom-if" if={{!obExporter(exporterData.expire_status)}}>
       <div id="titleBg" class="boxNortify">
         <div id="titleExporter" class="title-head"><iron-icon icon="icons:info"></iron-icon>  {{localize.request_change_expire}}</div>
       </div>
     </template>
-    <template is="dom-if" if={{obExporter(exporterData.export_status)}}>
+    <template is="dom-if" if={{obExporter(exporterData.expire_status)}}>
       <template is="dom-if" if={{data.change_status}}>
         <div id="titleBg" class="boxChange_status">
           <div id="titleExporter" class="title-head"><iron-icon icon="icons:info"></iron-icon>  {{localize.request_change_status}}</div>
@@ -108,14 +108,6 @@
             </paper-menu>
           </gl-form-dropdown-menu>
         </gl-grid-col>
-        <!--<gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-dropdown-menu style="width:60%;" class="checkValidate" label="สถานะสมาชิกสมาคมผู้ส่งออก" placeholder="กรุณาเลือกทั้งหมด" disabled="[[obItem(data.creater)]]" required>
-            <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.exporter_status}}" name="exporter_status">
-              <paper-item value="yes">{{localize.member}}</paper-item>
-              <paper-item value="no">{{localize.no_member}}</paper-item>
-            </paper-menu>
-          </gl-form-dropdown-menu>
-        </gl-grid-col>-->
       </gl-grid-row>
       <div class="horizontal layout">
         <div class="text">{{localize.list_board}}</div>
@@ -136,19 +128,21 @@
         </gl-grid-col>
       </gl-grid-row>
     </gl-form-panel>
-
   </template>
   <script>
     Polymer({
       is: "detail-company",
+      test:function(){console.log(this.data)},
       behaviors: [ReduxBehavior, ValidateFormBehavior],
       properties: {
         data: {
-          type: Object,
-          notify: true
+          statePath : 'confirm.data'
         },
         localize:{
           statePath : 'i18n.exporter'
+        },
+        typeLic:{
+          statePath : 'exporter.typeLic'
         }
       },
       backPage: function () {
@@ -188,9 +182,9 @@
         if(typeof val === 'undefined' && val == undefined){
           return true
         }else if(val === true){
-          return true
-        }else{
           return false
+        }else{
+          return true
         }
       }
     });

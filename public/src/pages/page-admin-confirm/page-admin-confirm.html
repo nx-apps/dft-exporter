@@ -9,7 +9,7 @@
 <link rel="import" href="./../../../bower_components/gl-styles/gl-size.html">
 <link rel="import" href="./../../../bower_components/gl-styles/gl-color.html">
 <link rel="import" href="./../../../bower_components/gl-styles/gl-table.html">
-<link rel="import" href="./../../../bower_components/gl-styles/gl-panel.html">
+<!--<link rel="import" href="./../../../bower_components/gl-styles/gl-panel.html">-->
 <link rel="import" href="./../../../bower_components/gl-styles/gl-toast.html">
 <link rel="import" href="./../../../bower_components/gl-form/gl-form-input.html">
 <link rel="import" href="./../../../bower_components/iron-pages/iron-pages.html">
@@ -23,9 +23,8 @@
 <link rel="import" href="./../../../bower_components/gl-form/gl-form-textarea.html">
 <link rel="import" href="./../../../bower_components/gl-form/gl-form-dropdown-menu.html">
 <link rel="import" href="./../../../bower_components/gl-form/gl-form-input.html">
-
-
-
+<link rel="import" href="./../../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="./../../../bower_components/paper-item/paper-item.html">
 
 <dom-module id="page-admin-confirm">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
@@ -40,6 +39,7 @@
       border: 1px solid var(--gl-gray-light-color);
       margin: 15px;
       border-radius: 3px;
+      background-color: #fff;
     }
     .text-table {
       text-align: center;
@@ -91,6 +91,7 @@
       </gl-form-input>
       <paper-button hidden="{{isHidden}}" class="gl-btn-info btn" raised on-tap="_search">{{localize.bt_search}}</paper-button>
     </div>
+
     <iron-pages selected="{{pageSelected}}" attr-for-selected="name">
       <div name="listCompany">
         <div class="searchBorder" style="overflow-x:auto;">
@@ -134,8 +135,8 @@
         </paper-tabs>
         <gl-form-panel>
           <iron-pages selected="{{pages}}">
-            <detail-company data="[[dataSelect]]" type-lic="[[typeLic]]" exporter-data="[[exporter_data]]"></detail-company>
-            <fileup-company data="[[dataSelect]]" doc-type="[[docType]]" exporter-data="[[exporter_data]]"></fileup-company>
+            <detail-company exporter-data="[[exporter_data]]"></detail-company>
+            <fileup-company exporter-data="[[exporter_data]]"></fileup-company>
           </iron-pages>
         </gl-form-panel>
 
@@ -163,10 +164,10 @@
             </template>
             
             <template is="dom-if" if={{!isEnabled}}>
-              <template is="dom-if" if={{!obExporter(exporter_data.export_status)}}>
+              <template is="dom-if" if={{obExporter(exporter_data.expire_status)}}>
                 <paper-button class="gl-btn-warning btn-bottom" on-tap="_extend" raised>{{localize.bt_exporter_extend}}</paper-button>
               </template>
-              <template is="dom-if" if={{obExporter(exporter_data.export_status)}}>
+              <template is="dom-if" if={{!obExporter(exporter_data.expire_status)}}>
                 <paper-button hidden="[[_hidBtnApp(dataSelect.approve_status)]]" class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
               </template>
             </template>
@@ -175,7 +176,8 @@
       </div>
 
       <div name="register">
-        <company-page doc-type="[[docType]]" data="[[data]]" type-lic="[[typeLic]]"></company-page>
+        <!--<company-page doc-type="[[docType]]" data="[[data]]" type-lic="[[typeLic]]"></company-page>-->
+        <company-page></company-page>
       </div>
     </iron-pages>
     <paper-dialog id="dialog" style="width:60%;">
@@ -230,13 +232,15 @@
       },
       nylonPageActive: function () {
         this.dispatchAction('CONFIRM_GET_DATA');
+        this.dispatchAction('EXPORTER_GET_TYPE_LIC');
+        this.dispatchAction('EXPORTER_GET_DOC_TYPE');
       },
       _selectData: function (e) {
         this.isHidden = true;
         this.pageSelected = "detailCompany";
         this.dataSelect = e.currentTarget.data;
-        this.dispatchAction('EXPORTER_GET_TYPE_LIC');
-        this.dispatchAction('EXPORTER_GET_DOC_TYPE');
+        var companyId = e.currentTarget.data.company_taxno;
+        this.dispatchAction('CONFIRM_SEARCH', companyId);
       },
       _backPage: function (data) {
         this.pageSelected = 'listCompany';
@@ -244,75 +248,33 @@
         this.isHidden = false;
       },
       _save: function () {
-        this.dispatchAction('CONFIRM_ACCEPT_PASS');
-        // this.fire('toast', {
-        //   status: 'openDialog',
-        //   text: 'เอกสารครบถ้วนแล้วใช่หรือไม่ ?',
-        //   confirmed: this._confirmProcess.bind(this),
-        //   datas: {
-        //     id: this.dataSelect.id,
-        //     company_id: this.dataSelect.company_id,
-        //     exporter_no: this.dataSelect.exporter_no,
-        //     approve_status: 'process'
-        //   }
-        // });
-      },
-      _confirmProcess: function (result, detail) {
-        if (result == true) {
-          // console.log(detail.datas);
-          this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-          this.update('./external/confirm_exporter/update', detail.datas, () => {
-            this.fire('toast', {
-              status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                this.pageSelected = 'listCompany';
-                this.getCompany();
-                // this.fire('refresh-company');
-                // this.fire('refresh-exporter');
-                // console.log('success');
-              }
-            });
-          });
-        }
+        var data = {
+                      id: this.dataSelect.id,
+                      company_id: this.dataSelect.company_id,
+                      exporter_no: this.dataSelect.exporter_no,
+                      approve_status: 'process'
+                    };
+        // console.log(data);
+        this.fire('toast', {
+          status: 'openDialog',
+          text: 'เอกสารครบถ้วนแล้วใช่หรือไม่ ?',
+          confirmed: (result) => {
+            if (result == true) {
+              this.dispatchAction('CONFIRM_ACCEPT_PASS', data);
+            }
+          }
+        });
       },
       approve: function () {
         this.fire('toast', {
           status: 'openDialog',
           text: 'คุณต้องการจะอนุมัติใช่หรือไม่ ?',
-          confirmed: this._confirmApprove.bind(this),
-          datas: this.dataSelect
-        });
-      },
-      _confirmApprove: function (result, detail) {
-        if (result == true) {
-          if(this.dataSelect.change_status === true){
-            let {id, exporter_id, type_lic_id} = this.exporter_data;
-            let newData = {id, exporter_id, type_lic_id};
-            this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-            this.update('./external/confirm_exporter/changetype', newData, () => {
-              this.fire('toast', {
-                status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                  this.pageSelected = 'listCompany';
-                  this.getCompany();
-                }
-              });
-            })
-          }else{
-            let { exporter_no, company_id, id, type_lic_id} = detail.datas;
-            let newData = { exporter_no, company_id, type_lic_id};
-            newData.confirm_id = this.dataSelect.id;
-            newData.exporter_status = 'no';
-            newData.expire_status = true;
-            this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-            this.insert('./external/confirm_exporter/insert', newData, () => {
-              this.fire('toast', {
-                status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                  this.pageSelected = 'listCompany';
-                  this.getCompany();
-                }
-              });
-            });
+          confirmed: (result) => {
+            if(result == true){
+              this.dispatchAction('CONFIRM_ADMIN_APPROVE', this.dataSelect, this.exporter_data);
+            }
           }
-        }
+        });
       },
       _changeselectDataAll: function (val) {
         // console.log(val);
@@ -327,48 +289,6 @@
       _close: function () {
         this.fire('close-toggle');
       },
-      _approveAll: function () {
-        const check = (item) => {
-          return item.check == true;
-        }
-        this.companys.filter(check).map((datas) => {
-          // console.log(datas);
-          let { exporter_no, company_id, id, exporter_status, type_lic_id} = datas;
-          let newData = { exporter_no, company_id, exporter_status, type_lic_id};
-          newData.confirm_id = datas.id
-          // console.log(newData);
-          this.data.push(newData);
-        });
-        this.fire('toast', {
-          status: 'openDialog',
-          text: 'คุณต้องการจะอนุมัติใช่หรือไม่ ?',
-          confirmed: this._confirm.bind(this)
-        });
-      },
-      _confirm: function (result, detail) {
-        this.data.map((datas) => {
-          datas = {
-            confirm_id: datas.id,
-            company_id: datas.company_id,
-            exporter_no: datas.exporter_no
-          }
-          if (result == true) {
-            // console.log(datas);
-            this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-            this.insert('./external/confirm_exporter/insert', datas, () => {
-              this.fire('toast', {
-                status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                  this.fire('refresh-company');
-                  this.fire('refresh-exporter');
-                  this.fire('refresh-listcompany');
-                  this.selectDataAll = false;
-                  // console.log('success');
-                }
-              });
-            });
-          }
-        });
-      },
       _dialogRemark: function () {
         this.$.dialog.toggle();
         // console.log(this.dataSelect);
@@ -378,72 +298,41 @@
         this.company_remark = "";
       },
       _reject: function () {
+        var data= {
+                    id: this.dataSelect.id,
+                    company_id: this.dataSelect.company_id,
+                    approve_status: 'reject',
+                    company_remark: this.company_remark
+                  }
         this.fire('toast', {
           status: 'openDialog',
           text: 'คุณต้องการจะให้ผู้ส่งออกส่งเอกสารเพิ่มเติมใช่หรือไม่ ?',
-          confirmed: this._confirmReject.bind(this),
-          data: {
-            id: this.dataSelect.id,
-            company_id: this.dataSelect.company_id,
-            approve_status: 'reject',
-            company_remark: this.company_remark
+          confirmed: (result) => {
+            if(result == true){
+              this.dispatchAction('CONFIRM_ADMIN_REJECT', data);
+              this.$.dialog.toggle()
+              this.company_remark = "";
+              this._backPage();
+            }
           }
         });
       },
-      _confirmReject: function (result, detail) {
-        if (result == true) {
-          // console.log(detail.data);
-          this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-          this.update('./external/confirm_exporter/update', detail.data, () => {
-            this.fire('toast', {
-              status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                this.$.dialog.toggle()
-                this.company_remark = "";
-                this.fire('refresh-company');
-                this.fire('refresh-exporter');
-                this._backPage();
-                // console.log('success');
-              }
-            });
-          });
-        }
-      },
       _extend:function(){
+        var data = {
+                      id: this.exporter_data.exporter_id,
+                      confirm_id: this.dataSelect.id,
+                      change_status: this.exporter_data.change_status
+                    };
         this.fire('toast', {
           status: 'openDialog',
           text: 'คุณต้องการจะต่ออายุผู้ส่งออกใช่หรือไม่ ?',
-          confirmed: this._confirmExtend.bind(this),
-          datas: {
-            id: this.exporter_data.exporter_id,
-            confirm_id: this.dataSelect.id
+          confirmed: (result) => {
+            if( result == true){
+              this.dispatchAction('CONFIRM_ADMIN_EXTEND', data);
+              this.pageSelected = 'listCompany';
+            }
           }
         });
-      },
-      _confirmExtend: function (result, detail) {
-        if (result == true) {
-          // console.log(detail.datas);
-          this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-          this.update('./external/exporter/update/date', detail.datas, () => {
-            if(this.dataSelect.change_status === true){
-              let newData = {};
-              newData.id = detail.datas.confirm_id;
-              newData.approve_status = 'process';
-              this.update('./external/confirm_exporter/update', newData, () => {
-                this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
-                  this.getCompany();
-                  this.pageSelected = 'listCompany';
-                }});
-              });
-            }else{
-              this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
-                this.pageSelected = 'listCompany';
-                this.getCompany();
-                // this.fire('refresh-exporter');
-                // this.fire('refresh-edit',detail.datas.id);
-              }});
-            }
-          });
-        }
       },
       changeNo: function (e) {
         var company = e.currentTarget.data;
@@ -493,7 +382,7 @@
         // console.log(e.target.getAttribute('report'));
         if(e.target.getAttribute('report') == 'report1'){
           if(typeof this.exporter_data !== 'undefined'){
-            if(this.exporter_data.export_status === false){
+            if(this.exporter_data.expire_status === true){
               // console.log('หมดอายุ');
               window.open('./api/external/report_exporter/approve_renew_1/'+this.dataSelect.id);
             }else{
@@ -514,41 +403,8 @@
       },
       _search: function () {
         if(this.companyId != ''){
-          this.read('./external/company/' + this.companyId, (data) => {
-            if(data != [] && data != ''){
-              this.read('./external/confirm_exporter/list/' + data[0].id, (data) => {
-                if (data != []) {
-                  for (var key in data) {
-                    // console.log(data[key]);
-                    if (data[key] == '') {
-                      data[key] = "-";
-                    }
-                  }
-                  this.pageSelected = "register";
-                  this.data = data;
-                  // console.log('มี',data);
-                }
-                else {
-                    this.read('./external/company/' + this.companyId, (data) => {
-                      data[0].approve_status = 'register';
-                      data[0].approve_status_name = 'ยังไม่ลงทะเบียนผู้ส่งออก';
-                      for (var key in data[0]) {
-                        // console.log(data[key]);
-                        if (data[0][key] == '') {
-                          data[0][key] = "-";
-                        }
-                      }
-                      this.pageSelected = "register";
-                      this.data = data[0];
-                      // console.log('ไม่มี',data);
-                    })
-                  }
-              })
-            }
-            else{
-              this.fire('toast', { status: 'connectError', text: 'ไม่มีเลขประจำตัวผู้ส่งออกในระบบ' })
-            }
-          })
+          this.dispatchAction('CONFIRM_SEARCH',this.companyId);
+          this.pageSelected = "register";
         }
         else{
           this.fire('toast', { status: 'connectError', text: 'กรุณากรอกเลขประจำตัวผู้ส่งออก' })
@@ -559,24 +415,11 @@
         this.companyId = '';
         this._backPage();
       },
-      // getFile: function () {
-      //   if (typeof this.dataSelect != 'undefined' && this.dataSelect != '') {
-      //     var companyId = this.dataSelect.company_id;
-      //     if (companyId != '' && companyId != undefined) {
-      //       axios.get('/external/upload/list/' + companyId)
-      //         .then((response) => {
-      //           // console.log(response);
-      //           this.listFiles = response.data;
-      //         })
-      //         .catch(function (error) {
-      //           console.log(error);
-      //         });
-      //     }
-      //   }
-      // },
       obData: function(val){
-        this.dispatchAction('CONFIRM_GET_ID', val.id)
+        // console.log(val)
+        this.dispatchAction('CONFIRM_OB_DATA', val.id)
         .then((response) => {
+          // console.log(response.data);
           this.exporter_data = response.data[0];
           if(typeof this.exporter_data === 'undefined'){
             this.isEnabled = true;
@@ -584,14 +427,6 @@
             this.isEnabled = false;
           }
         })
-      //   this.read('./external/confirm_exporter/get/'+val.id, (data) =>{
-      //       this.exporter_data = data[0];
-      //       if(typeof this.exporter_data === 'undefined'){
-      //         this.isEnabled = true;
-      //       }else{
-      //         this.isEnabled = false;
-      //       }
-      //   })
       },
       indexNo:function(val){
         return val+1
@@ -625,7 +460,49 @@
         }else{
           return true
         }
-      }
+      },
+      // _approveAll: function () {
+      //   const check = (item) => {
+      //     return item.check == true;
+      //   }
+      //   this.companys.filter(check).map((datas) => {
+      //     // console.log(datas);
+      //     let { exporter_no, company_id, id, exporter_status, type_lic_id} = datas;
+      //     let newData = { exporter_no, company_id, exporter_status, type_lic_id};
+      //     newData.confirm_id = datas.id
+      //     // console.log(newData);
+      //     this.data.push(newData);
+      //   });
+      //   this.fire('toast', {
+      //     status: 'openDialog',
+      //     text: 'คุณต้องการจะอนุมัติใช่หรือไม่ ?',
+      //     confirmed: this._confirm.bind(this)
+      //   });
+      // },
+      // _confirm: function (result, detail) {
+      //   this.data.map((datas) => {
+      //     datas = {
+      //       confirm_id: datas.id,
+      //       company_id: datas.company_id,
+      //       exporter_no: datas.exporter_no
+      //     }
+      //     if (result == true) {
+      //       // console.log(datas);
+      //       this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
+      //       this.insert('./external/confirm_exporter/insert', datas, () => {
+      //         this.fire('toast', {
+      //           status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
+      //             this.fire('refresh-company');
+      //             this.fire('refresh-exporter');
+      //             this.fire('refresh-listcompany');
+      //             this.selectDataAll = false;
+      //             // console.log('success');
+      //           }
+      //         });
+      //       });
+      //     }
+      //   });
+      // }
     });
   </script>
 </dom-module>

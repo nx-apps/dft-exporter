@@ -57,13 +57,13 @@
   <template>
     [[cloneDatas(data)]]
     <gl-form-panel set-border="0px">
-      <template is="dom-if" if={{!data.expire_status}}>
+      <template is="dom-if" if={{data.expire_status}}>
         <div id="titleBg" class="boxNortify">
           <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize.change_expire}}</div>
         </div>
       </template>
-
-      <template is="dom-if" if={{data.expire_status}}>
+      
+      <template is="dom-if" if={{!data.expire_status}}>
         <template is="dom-if" if={{!data.export_status}}>
           <div id="titleBg" class="boxNortify">
             <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize.exporter_expire}}</div>
@@ -81,7 +81,7 @@
           </div>
         </template>
       </template>
-      <template is="dom-if" if={{data.expire_status}}>
+      <template is="dom-if" if={{!data.expire_status}}>
         <template is="dom-if" if={{data.export_status}}>
           <div class="horizontal end-justified layout">
             <div hidden="[[isEnabled]]"><paper-icon-button icon="create" on-tap="editChange" title="{{localize.edit_data}}"></paper-icon-button></div>
@@ -214,52 +214,24 @@
       _dialogRemark: function(){
         this.$.dialog.toggle();
       },
-      // _active: function(){
-      //   this.fire('toast',{status:'dialog',
-      //   text:'คุณต้องการจะต่ออายุผู้ส่งออกใช่หรือไม่ ?',
-      //   confirmed : this._confirmToast.bind(this),
-      //   datas : this.data
-      //   });
-      // },
       _active:function(){
-        this.fire('toast', {statis:'openDialog',
-        text:'คุณต้องการจะต่ออายุผู้ส่งออกใช่หรือไม่ ?',
-        confirmed : (result) => {
-          if(result == true){
-            let newData = {};
-            newData.id = this.data.confirm_id;
-            newData.approve_status = 'process';
-            let dataDate = {};
-            dataDate.id = this.data.id;
-            dataDate.expire_status = false;
-            this.dispatchAction('EXPORTER_ACTIVE_RENEW', newData, dataDate);
-            this.$.dialog.toggle();
+        this.fire('toast', {
+          status:'openDialog',
+          text:'คุณต้องการจะต่ออายุผู้ส่งออกใช่หรือไม่ ?',
+          confirmed : (result) => {
+            if(result == true){
+              let newData = {};
+              newData.id = this.data.confirm_id;
+              newData.approve_status = 'process';
+              let dataDate = {};
+              dataDate.id = this.data.id;
+              dataDate.expire_status = true;
+              this.dispatchAction('EXPORTER_ACTIVE_RENEW', newData, dataDate);
+              this.$.dialog.toggle();
+            }
           }
-        }
       });
       },
-      // _confirmToast:function(result,detail){
-      //   if(result == true){
-      //     let newData = {};
-      //     newData.id = detail.datas.confirm_id;
-      //     newData.approve_status = 'process';
-      //     let dataDate = {};
-      //     dataDate.id = detail.datas.id;
-      //     dataDate.expire_status = false;
-      //     // console.log(dataDate);
-          
-      //     this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
-      //     this.update('./external/confirm_exporter/update', newData, () => {
-      //       this.update('./external/exporter/update', dataDate, () => {
-      //         this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
-      //           this.$.dialog.toggle();
-      //           this.fire('refresh-edit',detail.datas.id);
-      //           this.fire('refresh-exporter');
-      //         }});
-      //       });
-      //     });
-      //   }
-      // },
       _dialogcancle:function() {
         this.$.dialog.toggle();
         this.exporter_remark = "";

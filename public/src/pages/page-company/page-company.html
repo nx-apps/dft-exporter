@@ -69,7 +69,7 @@
   <script>
     Polymer({
       is: "page-company",
-      behaviors: [dataBehavior, nylonBehavior],
+      behaviors: [ReduxBehavior, nylonBehavior, confirmAction, exporterAction],
       properties: {
         pages: {
           type: Number,
@@ -89,8 +89,10 @@
         // console.log(this.id);
       },
       attached: function () {
-        this.getDocType();
-        this.getCompany();
+        this.dispatchAction('EXPORTER_GET_DOC_TYPE');
+        this.dispatchAction('CONFIRM_SEARCH', this.id);
+        // this.getDocType();
+        // this.getCompany();
       },
       checkStatus: function (val) {
         if (typeof val != 'undefined' && val != undefined) {
@@ -108,94 +110,130 @@
           }
         }
       },
-      getDocType: function () {
-        this.read('./external/document_type', (data) => {
-          this.docType = data;
-        })
-      },
+      // getDocType: function () {
+      //   this.read('./external/document_type', (data) => {
+      //     this.docType = data;
+      //   })
+      // },
       _register: function () {
+        // var data = {
+        //   approve_status: 'request',
+        //   company_id: this.data.id,
+        // }
+        // this.fire('toast', {
+        //   status: 'dialog',
+        //   text: 'คุณต้องการจะลงทะเบียนผู้ส่งออกใช่หรือไม่ ?',
+        //   confirmed: this._confirm.bind(this),
+        //   datas: data
+        // });
         var data = {
           approve_status: 'request',
           company_id: this.data.id,
+          type_lic_id: this.data.type_lic_id
+          // ,company: data_company
         }
+        // console.log(data);
         this.fire('toast', {
-          status: 'dialog',
-          text: 'คุณต้องการจะลงทะเบียนผู้ส่งออกใช่หรือไม่ ?',
-          confirmed: this._confirm.bind(this),
-          datas: data
+          status: 'openDialog',
+          text: 'คุณต้องการจะสมัครผู้ส่งออกใช่หรือไม่ ?',
+          confirmed: (result) => {
+            if(result == true){
+              var check = this.$$('detail-company').validate();
+              if (check == true) {
+                this.dispatchAction('CONFIRM_REGISTER',data);
+                this.$$('#btn-register').setAttribute("hidden", "hidden");
+              } else {
+                this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' })
+              }
+            }
+          }
         });
       },
-      _confirm: function (result, detail) {
-        if (result == true) {
-          // console.log(detail.datas);
-          this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-          this.insert('./external/confirm_exporter/register', detail.datas, () => {
-            this.fire('toast', {
-              status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                this.getCompany();
-                this.$$('#btn-register').setAttribute("hidden", "hidden");
-                console.log('success');
-              }
-            });
-          })
-        }
-      },
+      // _confirm: function (result, detail) {
+      //   if (result == true) {
+      //     // console.log(detail.datas);
+      //     this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
+      //     this.insert('./external/confirm_exporter/register', detail.datas, () => {
+      //       this.fire('toast', {
+      //         status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
+      //           this.getCompany();
+      //           this.$$('#btn-register').setAttribute("hidden", "hidden");
+      //           console.log('success');
+      //         }
+      //       });
+      //     })
+      //   }
+      // },
       _reject: function () {
+        // var data = {
+        //   approve_status: 'request',
+        //   id: this.data.id
+        // }
+        // this.fire('toast', {
+        //   status: 'dialog',
+        //   text: 'คุณต้องการจะลงทะเบียนผู้ส่งออกใช่หรือไม่ ?',
+        //   confirmed: this._confirmReject.bind(this),
+        //   datas: data
+        // });
         var data = {
           approve_status: 'request',
           id: this.data.id
         }
         this.fire('toast', {
-          status: 'dialog',
-          text: 'คุณต้องการจะลงทะเบียนผู้ส่งออกใช่หรือไม่ ?',
-          confirmed: this._confirmReject.bind(this),
-          datas: data
+          status: 'openDialog',
+          text: 'คุณต้องการจะส่งเอกสารใหม่ใช่หรือไม่ ?',
+          confirmed: (result) => {
+            if (result == true) {
+              this.dispatchAction('CONFIRM_COMPANY_REJECT', data)
+              this.$$('#btn-reject').setAttribute("hidden", "hidden");
+            }
+          }
         });
       },
-      _confirmReject: function (result, detail) {
-        if (result == true) {
-          // console.log(detail.datas);
-          this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-          this.update('./external/confirm_exporter/reject', detail.datas, () => {
-            this.fire('toast', {
-              status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                this.getCompany();
-                this.$$('#btn-reject').setAttribute("hidden", "hidden");
-                console.log('success');
-              }
-            });
-          })
-        }
-      },
-      getCompany: function () {
-        this.read('./external/confirm_exporter/list/' + this.id, (data) => {
-          if (data != []) {
-            for(var key in data){
-              // console.log(data[key]);
-              if(data[key] == ''){
-                data[key] = "-";
-              }
-            }
-            this.data = data;
-            // console.log('id',this.data);
-          }
-          else {
-            this.read('./external/company/' + this.id, (data) => {
-              data.approve_status = 'register';
-              data.approve_status_name = 'ยังไม่ลงทะเบียนผู้ส่งออก';
-              for(var key in data){
-                // console.log(data[key]);
-                if(data[key] == ''){
-                  data[key] = "-";
-                }
-              }
-              this.data = data;
-              // console.log(data);
-            })
-          }
+      // _confirmReject: function (result, detail) {
+      //   if (result == true) {
+      //     // console.log(detail.datas);
+      //     this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
+      //     this.update('./external/confirm_exporter/reject', detail.datas, () => {
+      //       this.fire('toast', {
+      //         status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
+      //           this.getCompany();
+      //           this.$$('#btn-reject').setAttribute("hidden", "hidden");
+      //           console.log('success');
+      //         }
+      //       });
+      //     })
+      //   }
+      // },
+      // getCompany: function () {
+        // this.read('./external/confirm_exporter/list/' + this.id, (data) => {
+        //   if (data != []) {
+        //     for(var key in data){
+        //       // console.log(data[key]);
+        //       if(data[key] == ''){
+        //         data[key] = "-";
+        //       }
+        //     }
+        //     this.data = data;
+        //     // console.log('id',this.data);
+        //   }
+        //   else {
+        //     this.read('./external/company/' + this.id, (data) => {
+        //       data.approve_status = 'register';
+        //       data.approve_status_name = 'ยังไม่ลงทะเบียนผู้ส่งออก';
+        //       for(var key in data){
+        //         // console.log(data[key]);
+        //         if(data[key] == ''){
+        //           data[key] = "-";
+        //         }
+        //       }
+        //       this.data = data;
+        //       // console.log(data);
+        //     })
+        //   }
 
-        })
-      }
+        // })
+      // }
     });
   </script>
 </dom-module>

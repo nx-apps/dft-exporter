@@ -132,7 +132,7 @@ export function exporterAction(store) {
                 }
             },
             EXPORTER_ACTIVE_RENEW: function(data, date){
-                console.log(data,date);
+                // console.log(data,date);
                 this.fire('toast',{status:'load',text:'กำลังบันทึกข้อมูล...'})
                 axios.put('./external/confirm_exporter/update', data)
                 .then((result) => {

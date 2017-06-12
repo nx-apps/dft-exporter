@@ -42,12 +42,19 @@ exports.insert = function (req, res) {
     var r = req.r;
     var valid = req.ajv.validate('exporter.confirm_exporter', req.body);
     var result = { result: false, message: null, id: null };
+    var company = r.db('external').table('company').getAll(req.body.company_taxno, { index: 'company_taxno' }).without('date_created', 'date_updated', 'date_exported')(0);
+    var type_lic = r.db('external').table('type_license').get(req.body.type_lic_id);
+
     if (valid) {
         r.db('external').table('confirm_exporter').get(req.body.confirm_id).update({ approve_status: 'approve' })
             .run()
+        req.body.company = company;
+        req.body.type_lic = type_lic;
         req.body = Object.assign(req.body, {
             creater: 'admin',
+            date_created: r.now().inTimezone('+07'),
             company_id: req.body.company_id,
+            company_taxno: req.body.company_taxno,
             exporter_no: req.body.exporter_no,
             exporter_date_approve: r.now().inTimezone('+07')
         }),
@@ -122,16 +129,24 @@ exports.update = function (req, res) {
 exports.register = function (req, res) {
     var r = req.r
     var result = { result: false, message: null, id: null };
-    r.db('external').table('confirm_exporter').max('exporter_no').getField('exporter_no').add(1)
+    var maxno = r.branch(r.db('external').table('confirm_exporter').count().eq(0),
+        1,
+        r.db('external').table('confirm_exporter').max('exporter_no').getField('exporter_no').add(1)
+    );
+    var company = r.db('external').table('company').getAll(req.body.company_taxno, { index: 'company_taxno' }).without('date_created', 'date_updated', 'date_exported')(0);
+    var type_lic = r.db('external').table('type_license').get(req.body.type_lic_id);
+    r.expr(maxno)
         .run()
         .then(function (response) {
+            // res.json(response)
             if (response > 0) {
                 req.body.exporter_no = response;
+                req.body.company = company;
+                req.body.type_lic = type_lic;
                 req.body = Object.assign(req.body, {
-                    date_created: r.now().inTimezone('+07'),//new Date().toISOString()
+                    date_created: r.now().inTimezone('+07'),
                     creater: 'admin'
                 })
-                console.log(req.body);
                 r.db('external').table('confirm_exporter').insert(req.body)
                     .run()
                     .then(function (response) {
@@ -181,22 +196,8 @@ exports.list = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่')
             }
         })
@@ -221,29 +222,15 @@ exports.listId = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),
-                    r.branch(
-                        m('exporter_no').lt(10)
-                        , r.expr('ข.000')
-                        , r.branch(
-                            m('exporter_no').lt(100)
-                            , r.expr('ข.00')
-                            , r.branch(
-                                m('exporter_no').lt(1000)
-                                , r.expr('ข.0')
-                                , r.expr('ข.')
-                            )
-                        )
-                    ).add(m('exporter_no').coerceTo('string'))
-                    , null
-                ),
+                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    , null),
                 approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่'),
 
             }
         })
         .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         // .merge({ date_created: r.row('date_created').split('T')(0) })
-        .orderBy('exporter_no')
+        // .orderBy('exporter_no')
         .run()
         .then(function (result) {
             res.json(result[0])
@@ -261,12 +248,21 @@ exports.getId = function (req, res) {
             }
         })
         .eqJoin('confirm_id', r.db('external').table('confirm_exporter'))
-        .pluck('right', { left: ['exporter_date_approve', 'exporter_id', 'company_id'] }).zip()
+        .pluck('right', { left: ['exporter_date_approve', 'exporter_id', 'company_id', 'expire_status'] }).zip()
         .eqJoin('company_id', r.db('external').table('company')).pluck('left', { right: 'date_exported' }).zip()
         .merge(function (m) {
             return {
-                exporter_date_expire: m('exporter_date_approve').add(31449600),
-                date_export_expire: m('date_exported').add(31449600)
+                exporter_date_expire: r.time(m('exporter_date_approve').year().add(1),
+                    m('exporter_date_approve').month(),
+                    m('exporter_date_approve').day(),
+                    "+07:00"
+                ).toISO8601(),
+                date_export_expire: r.branch(m.hasFields('date_exported'), r.time(m('date_exported').year().add(1),
+                    m('date_exported').month(),
+                    m('date_exported').day(),
+                    "+07:00"
+                ).toISO8601(),
+                    null)
             }
         })
         .merge(function (mm) {

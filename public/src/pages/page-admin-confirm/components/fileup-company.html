@@ -1,3 +1,4 @@
+<link rel="import" href="./../../components/upload-file.html">
 <dom-module id="fileup-company">
   <style include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
     .title{
@@ -45,13 +46,23 @@
       properties:{
         localize:{
           statePath : 'i18n.exporter'
+        },
+        data: {
+          statePath : 'confirm.data'
+        },
+        docType: {
+          statePath : 'exporter.docType'
         }
       },
       observers: [
         '_dataInput(data)'
       ],
       _dataInput:function(data) {
-        this.companyId = data.company_id;
+        if(data.company_id === undefined){
+          this.companyId = data.id;
+        }else{
+          this.companyId = data.company_id;
+        }
         // console.log(this.companyId);
       }
     });

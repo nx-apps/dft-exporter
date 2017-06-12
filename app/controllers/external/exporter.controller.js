@@ -114,9 +114,10 @@ exports.exporterId = function (req, res) {
         }).without('date_export_expire', 'exporter_date_expire')
         .merge(function (mmm) {
             return {
-                export_status: r.branch(mmm('export_date_expire').gt(r.now()), true, false)
+                export_status: r.branch(mmm('export_date_expire').gt(r.now().toISO8601().split('T')(0)), true, false)
             }
-        }).merge(function (m) {
+        })
+        .merge(function (m) {
             return {
                 export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
@@ -270,7 +271,7 @@ exports.updateDate = function (req, res) {
                 exporter_date_approve: r.now().inTimezone('+07'),
                 date_updated: r.now().inTimezone('+07'),
                 updater: 'admin',
-                expire_status: true
+                expire_status: false
             });
         r.db('external').table('exporter').get(req.body.id)
             .update(req.body, { returnChanges: true })
