@@ -1,5 +1,11 @@
+<link rel="import" href="./../../components/upload-file.html">
+
 <dom-module id="fileup-company">
   <style include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
+    * {
+      font-family: 'CSChatThaiUI', sans-serif !important;
+      -webkit-font-smoothing: antialiased;
+    }
     .title{
       font-size: 17px;
       font-family: 'rsubold', sans-serif;
@@ -41,10 +47,18 @@
   <script>
     Polymer({
       is: "fileup-company",
-      behaviors: [dataBehavior],
+      behaviors: [ReduxBehavior],
       observers: [
         '_dataInput(data)'
       ],
+      properties:{
+        docType : {
+          statePath : 'exporter.docType'
+        },
+        data : {
+          statePath : 'confirm.data'
+        }
+      },
       _dataInput:function(data) {
         this.companyId = data.company_id;
         // console.log(this.companyId);

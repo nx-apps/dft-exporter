@@ -1,9 +1,25 @@
 <link rel="import" href="../components/dataBehavior.html">
 <link rel="import" href="components/detail-company.html">
 <link rel="import" href="components/fileup-company.html">
+<link rel="import" href="./../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../nylon-behavior.html">
+<link rel="import" href="./../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="./../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="./../../../bower_components/gl-styles/gl-size.html">
+<link rel="import" href="./../../../bower_components/gl-styles/gl-color.html">
+<link rel="import" href="./../../../bower_components/gl-styles/gl-toast.html">
+<link rel="import" href="./../../layout/nylon-toast.html">
+<link rel="import" href="./../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="./../../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="./../../../bower_components/gl-form/gl-form-panel.html">
+<link rel="import" href="./../../../bower_components/iron-pages/iron-pages.html">
 
 <dom-module id="page-company">
-  <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
+  <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-toast">
+    * {
+      font-family: 'CSChatThaiUI', sans-serif !important;
+      -webkit-font-smoothing: antialiased;
+    }
     .title {
       text-align: center;
       font-size: var(--font-size-h4);
@@ -60,8 +76,8 @@
       </paper-tabs>
       <gl-form-panel>
         <iron-pages selected="{{pages}}">
-          <detail-company data="[[data]]"></detail-company>
-          <fileup-company doc-type="[[docType]]" data="[[data]]"></fileup-company>
+          <detail-company></detail-company>
+          <fileup-company></fileup-company>
         </iron-pages>
       </gl-form-panel>
     </div>
@@ -77,8 +93,7 @@
           value: 0
         },
         data: {
-          type: Object,
-          value: {}
+          statePath : 'confirm.data'
         }
       },
       listeners: {
@@ -86,13 +101,9 @@
       },
       nylonPageActive: function () {
         this.id = window.location.pathname.split('/')[2];
-        // console.log(this.id);
-      },
-      attached: function () {
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');
         this.dispatchAction('CONFIRM_SEARCH', this.id);
-        // this.getDocType();
-        // this.getCompany();
+        this.dispatchAction('EXPORTER_GET_TYPE_LIC');
       },
       checkStatus: function (val) {
         if (typeof val != 'undefined' && val != undefined) {
@@ -110,29 +121,13 @@
           }
         }
       },
-      // getDocType: function () {
-      //   this.read('./external/document_type', (data) => {
-      //     this.docType = data;
-      //   })
-      // },
       _register: function () {
-        // var data = {
-        //   approve_status: 'request',
-        //   company_id: this.data.id,
-        // }
-        // this.fire('toast', {
-        //   status: 'dialog',
-        //   text: 'คุณต้องการจะลงทะเบียนผู้ส่งออกใช่หรือไม่ ?',
-        //   confirmed: this._confirm.bind(this),
-        //   datas: data
-        // });
         var data = {
           approve_status: 'request',
           company_id: this.data.id,
+          company_taxno: this.data.company_taxno,
           type_lic_id: this.data.type_lic_id
-          // ,company: data_company
         }
-        // console.log(data);
         this.fire('toast', {
           status: 'openDialog',
           text: 'คุณต้องการจะสมัครผู้ส่งออกใช่หรือไม่ ?',
@@ -149,35 +144,11 @@
           }
         });
       },
-      // _confirm: function (result, detail) {
-      //   if (result == true) {
-      //     // console.log(detail.datas);
-      //     this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-      //     this.insert('./external/confirm_exporter/register', detail.datas, () => {
-      //       this.fire('toast', {
-      //         status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-      //           this.getCompany();
-      //           this.$$('#btn-register').setAttribute("hidden", "hidden");
-      //           console.log('success');
-      //         }
-      //       });
-      //     })
-      //   }
-      // },
       _reject: function () {
-        // var data = {
-        //   approve_status: 'request',
-        //   id: this.data.id
-        // }
-        // this.fire('toast', {
-        //   status: 'dialog',
-        //   text: 'คุณต้องการจะลงทะเบียนผู้ส่งออกใช่หรือไม่ ?',
-        //   confirmed: this._confirmReject.bind(this),
-        //   datas: data
-        // });
         var data = {
           approve_status: 'request',
-          id: this.data.id
+          id: this.data.id,
+          company_taxno: this.data.company_taxno
         }
         this.fire('toast', {
           status: 'openDialog',
@@ -189,51 +160,7 @@
             }
           }
         });
-      },
-      // _confirmReject: function (result, detail) {
-      //   if (result == true) {
-      //     // console.log(detail.datas);
-      //     this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-      //     this.update('./external/confirm_exporter/reject', detail.datas, () => {
-      //       this.fire('toast', {
-      //         status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-      //           this.getCompany();
-      //           this.$$('#btn-reject').setAttribute("hidden", "hidden");
-      //           console.log('success');
-      //         }
-      //       });
-      //     })
-      //   }
-      // },
-      // getCompany: function () {
-        // this.read('./external/confirm_exporter/list/' + this.id, (data) => {
-        //   if (data != []) {
-        //     for(var key in data){
-        //       // console.log(data[key]);
-        //       if(data[key] == ''){
-        //         data[key] = "-";
-        //       }
-        //     }
-        //     this.data = data;
-        //     // console.log('id',this.data);
-        //   }
-        //   else {
-        //     this.read('./external/company/' + this.id, (data) => {
-        //       data.approve_status = 'register';
-        //       data.approve_status_name = 'ยังไม่ลงทะเบียนผู้ส่งออก';
-        //       for(var key in data){
-        //         // console.log(data[key]);
-        //         if(data[key] == ''){
-        //           data[key] = "-";
-        //         }
-        //       }
-        //       this.data = data;
-        //       // console.log(data);
-        //     })
-        //   }
-
-        // })
-      // }
+      }
     });
   </script>
 </dom-module>

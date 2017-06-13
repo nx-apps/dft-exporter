@@ -82,6 +82,7 @@ export function confirmAction(store) {
                 this.fire('toast',{
                     status: 'success', text: 'บันทึกสำเร็จ', callback: () =>{
                         this.CONFIRM_GET_DATA();
+                        this.CONFIRM_SEARCH(data.company_taxno);
                         this.fire('back_page');
                         this.fire('clearData');
                     }
@@ -95,6 +96,7 @@ export function confirmAction(store) {
                 this.fire('toast', {
                     status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
                         this.CONFIRM_GET_DATA();
+                        this.CONFIRM_SEARCH(data.company_taxno);
                         this.fire('back_page');
                         this.fire('clearData');
                     }
@@ -123,7 +125,6 @@ export function confirmAction(store) {
                 this.fire('toast', {
                 status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
                         this.CONFIRM_GET_DATA();
-                    // this.fire('refresh-exporter');
                     }
                 });
             });
@@ -181,26 +182,7 @@ export function confirmAction(store) {
                     }});
                 }
             })
-      //     this.update('./external/exporter/update/date', detail.datas, () => {
-      //       if(this.dataSelect.change_status === true){
-      //         let newData = {};
-      //         newData.id = detail.datas.confirm_id;
-      //         newData.approve_status = 'process';
-      //         this.update('./external/confirm_exporter/update', newData, () => {
-      //           this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback: () => {
-      //             this.getCompany();
-      //             this.pageSelected = 'listCompany';
-      //           }});
-      //         });
-      //       }else{
-      //         this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
-      //           this.pageSelected = 'listCompany';
-      //           this.getCompany();
-      //           // this.fire('refresh-exporter');
-      //           // this.fire('refresh-edit',detail.datas.id);
-      //         }});
-      //       }
-      //     });
+
         }
     }
     ]

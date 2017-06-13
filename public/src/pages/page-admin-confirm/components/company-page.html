@@ -146,7 +146,8 @@
       _reject: function () {
         var data = {
           approve_status: 'request',
-          id: this.data.id
+          id: this.data.id,
+          company_taxno: this.data.company_taxno
         }
         this.fire('toast', {
           status: 'openDialog',

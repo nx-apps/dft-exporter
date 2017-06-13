@@ -298,6 +298,9 @@
         this.company_remark = "";
       },
       _reject: function () {
+        if(this.company_remark === undefined){
+          this.company_remark = '';
+        }
         var data= {
                     id: this.dataSelect.id,
                     company_id: this.dataSelect.company_id,
