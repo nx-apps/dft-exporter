@@ -69,6 +69,7 @@ export const exporter = {
         del_board:"ลบชื่อกรรมการ",
         request_form:"กรุณากรอกข้อมูลให้ครบถ้วน",
         insert_form:"กรุณากรอกข้อมูลและรายละเอียด",
+        province:"จังหวัด",
 
         bt_save:"บันทึก",
         bt_cancel:"ยกเลิก",
@@ -164,6 +165,7 @@ export const exporter = {
         del_board:"Delete board",
         request_form:"Please complete the form",
         insert_form:"Please fill out the information and details",
+        province:"Province",
 
         bt_recovery:"Recovery file",
         bt_save:"Save",
