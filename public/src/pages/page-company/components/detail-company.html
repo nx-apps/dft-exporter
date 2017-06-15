@@ -80,7 +80,7 @@
           <gl-form-input label="{{localize.fax}} :" value="{{data.company_fax}}" disabled></gl-form-input>
         </gl-grid-col>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-dropdown-menu style="width:60%;" class="checkValidate" label="{{localize.type_license}}" placeholder="{{localize.select_type}}" disabled="[[obItem(data.creater)]]" required>
+          <gl-form-dropdown-menu style="width:60%;" class="checkValidate" label="{{localize.type_license}}" placeholder="{{localize.select_type}}" disabled="[[obItem(data.company_id)]]" required>
             <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.type_lic_id}}" name="type_lic_id">
               <template is="dom-repeat" items={{typeLic}}>
                 <paper-item value="[[item.type_lic_id]]">{{item.type_lic_name}}</paper-item>
@@ -146,12 +146,9 @@
       },
       obItem:function(val){
         if(typeof val != 'undefined' && val != undefined){
-          if(val == 'admin'){
-            return true;
-          }
-          else{
-            return false;
-          }
+          return true;
+        }else{
+          return false;
         }
       },
       validate:function(){

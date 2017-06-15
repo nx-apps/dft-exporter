@@ -62,17 +62,18 @@
   </style>
   <template>
     [[checkStatus(data.approve_status)]]
+    
     <div class="horizontal end-justified layout" style="margin:10px">
       <paper-button id="btn-register" raised class="gl-btn-primary" on-tap="_register" hidden>
-        <iron-icon icon="add"></iron-icon>ลงทะเบียนผู้ส่งออก</paper-button>
+        <iron-icon icon="add"></iron-icon>{{localize.bt_register}}</paper-button>
       <paper-button id="btn-reject" raised class="gl-btn-primary" on-tap="_reject" hidden>
-        <iron-icon icon="add"></iron-icon>ส่งเอกสารใหม่</paper-button>
+        <iron-icon icon="add"></iron-icon>{{localize.bt_sent_new}}</paper-button>
     </div>
 
     <div>
       <paper-tabs selected="{{pages}}" align-bottom no-slide>
-        <paper-tab>รายละเอียด</paper-tab>
-        <paper-tab id="tabFile">เอกสารหลักฐาน</paper-tab>
+        <paper-tab>{{localize.detail}}</paper-tab>
+        <paper-tab id="tabFile">{{localize.doc_ev}}</paper-tab>
       </paper-tabs>
       <gl-form-panel>
         <iron-pages selected="{{pages}}">
@@ -94,6 +95,9 @@
         },
         data: {
           statePath : 'confirm.data'
+        },
+        localize:{
+          statePath : 'i18n.exporter'
         }
       },
       listeners: {

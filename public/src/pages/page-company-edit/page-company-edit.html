@@ -1,7 +1,16 @@
-<link rel="import" href="../components/dataBehavior.html">
 <link rel="import" href="components/company-manage.html">
 <link rel="import" href="./../components/panel-right/panel-right.html">
 <link rel="import" href="./../../nylon-behavior.html">
+<link rel="import" href="./../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="./../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="./../../../bower_components/gl-form/gl-combo-box.html">
+<link rel="import" href="./../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="./../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="./../../../bower_components/gl-styles/gl-size.html">
+<link rel="import" href="./../../../bower_components/gl-styles/gl-color.html">
+<link rel="import" href="./../../../bower_components/gl-styles/gl-toast.html">
+<link rel="import" href="./../../../bower_components/gl-styles/gl-table.html">
+
 
 <dom-module id="page-company-edit">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
@@ -51,26 +60,26 @@
     <paper-material elevation="1" class="elevation">
 
       <div class="layout horizontal end-justified">
-        <paper-button raised class="gl-btn-primary" style="margin-right:15px;" on-tap="_add" title="{{localize('bt_add_company')}}">
-        <iron-icon icon="add"></iron-icon>{{localize('bt_add_company')}}</paper-button>
+        <paper-button raised class="gl-btn-primary" style="margin-right:15px;" on-tap="_add" title="{{localize.bt_add_company}}">
+        <iron-icon icon="add"></iron-icon>{{localize.bt_add_company}}</paper-button>
       </div>
 
       <div class="horizontal center-justified layout">
-        <gl-combo-box label="{{localize('tax_no')}}" placeholder="{{localize('insert_taxno')}}" items="{{company}}" 
+        <gl-combo-box label="{{localize.tax_no}}" placeholder="{{localize.insert_taxno}}" items="{{company}}" 
         item-label-path="company_name" item-value-path="company_taxno"
         on-value-changed="_checkID" style="width:600px; margin-top:10px;">
         <template>[[item.company_name]]</template>
         </gl-combo-box>
       </div>
 
-      <div class="searchBorder" style="overflow-x:auto;">
+      <div class="searchBorder" style="height:600px; overflow-x:auto; overflow-y:auto;">
           <table class="gl-table-default">
             <thead class="table-head">
               <tr>
-                <th><div class="text-table">{{localize('No')}}</div></th>
-                <th><div class="text-table">{{localize('tax_no')}}</div></th>
-                <th><div class="text-table">{{localize('name_company')}}</div></th>
-                <th><div class="text-table">{{localize('country')}}</div></th>
+                <th><div class="text-table">{{localize.No}}</div></th>
+                <th><div>{{localize.tax_no}}</div></th>
+                <th><div>{{localize.name_company}}</div></th>
+                <th><div>{{localize.country}}</div></th>
               </tr>
             </thead>
             
@@ -78,14 +87,14 @@
               <tbody>
                 <tr id="detailRegExporter" on-tap="_selectData" data="[[item]]" style="cursor:pointer;">
                   <td><div class="text-table">[[toIndex(index)]]</div></td>
-                  <td><div class="text-table">{{item.company_taxno}}</div></td>
-                  <td><div>{{item.company_name_th}}</div></td>
-                  <td><div>{{item.company_country_th}}</div></td>
+                  <td><div>{{item.company_taxno}}</div></td>
+                  <td><div style="width:300px;">{{item.company_name_th}}</div></td>
+                  <td><div>{{item.company_province_th}}</div></td>
                 </tr>
               </template>
               <template is="dom-if" if={{_checkData(company)}}>
                 <tr>
-                    <td colspan="4"><div class="text-table" style="margin:20px">{{localize('not_found')}}</div></td>
+                    <td colspan="4"><div class="text-table" style="margin:20px">{{localize.not_found}}</div></td>
                 </tr>
               </template>
             </tbody>
@@ -95,14 +104,14 @@
     </paper-material>
 
     <panel-right title="{{titleName}}">
-      <company-manage data="[[data]]" is-enabled="{{isEnabled}}" enabled="{{enabled}}" status-action="[[statusAction]]"></company-manage>
+      <company-manage hid-button="{{hidButton}}" is-enabled="{{isEnabled}}" status-action="[[statusAction]]"></company-manage>
     </panel-right>
 
   </template>
   <script>
     Polymer({
       is: "page-company-edit",
-      behaviors: [nylonBehavior, dataBehavior, nylonLocalizeBehavior],
+      behaviors: [ReduxBehavior, nylonBehavior, companyAction],
       properties: {
         pages: {
           type: Number,
@@ -112,6 +121,12 @@
         data: {
           type: Object,
           value: {}
+        },
+        localize:{
+          statePath : 'i18n.exporter'
+        },
+        company:{
+          statePath : 'company.list'
         }
       },
       listeners: {
@@ -119,61 +134,14 @@
         'refresh-company': 'listCompany',
         'back-page': '_backPage'
       },
-      created: function () {
-        this.nylonLocalizeImport('/i18n-page-admin-exporter.json');
-      },
-      ready: function () {
-        this.getCompany();
-        this.listCompany();
-      },
-      getCompany: function (id) {
-        if(typeof id !== 'undefined'){
-          if(typeof id.detail === 'undefined'){
-            this.read('./external/company/' + id, (data) => {
-              for(var key in data[0]){
-                // console.log(data[key]);
-                if(data[0][key] === ''){
-                  data[0][key] = "-";
-                }
-              }
-              this.data = data[0];
-            })
-          }else{
-            this.read('./external/company/' + id.detail, (data) => {
-              for(var key in data[0]){
-                // console.log(data[key]);
-                if(data[0][key] === ''){
-                  data[0][key] = "-";
-                }
-              }
-              this.data = data[0];
-            })
-          }
-
-        }
-      },
-      listCompany:function(){
-        this.read('./external/company', (data) => {
-          data.map((val) => {
-            for(var key in val){
-              if(val[key] === ''){
-                val[key] = "-";
-              }
-            }
-            return val.company_name = '('+val.company_taxno+ ') ' + val.company_name_th +' '+ val.company_name_en;
-          })
-          // console.log(data);
-          this.company = data;
-        })
+      nylonPageActive: function () {
+        this.dispatchAction('COMPANY_GET_DATA');
       },
       _checkID:function(id){
         if(id.detail.value !== ''){
           // console.log(id.detail.value);
           this.statusAction = 'edit';
           this.$$('panel-right').open();
-          this.getCompany(id.detail.value);
-          this.isEnabled = false;
-          this.enabled = true;
           this.$$('company-manage').clearData(id.detail.value);
           this.titleName = 'แก้ไขข้อมูล';
         }
@@ -182,22 +150,20 @@
         return index+1;
       },
       _selectData:function(e){
+        // console.log(e.currentTarget.data);
+        var id = e.currentTarget.data.company_taxno;
         this.statusAction = 'edit';
         this.$$('panel-right').open();
-        this.data = e.currentTarget.data;
-        this.isEnabled = false;
-        this.enabled = true;
-        var company_tax = e.currentTarget.data.company_taxno;
-        this.$$('company-manage').clearData(company_tax);
         this.titleName = 'แก้ไขข้อมูล';
+        this.$$('company-manage').clearData(id);
       },
       _add:function(){
         this.statusAction = 'add';
-        this.isEnabled = true;
-        this.enabled = false;
+        this.hidButton = true;
+        this.isEnabled = false;
         this.$$('panel-right').open();
         this.titleName = 'เพิ่มข้อมูล';
-        this.data = {company_agent:[]};
+        this.dispatchAction('COMPANY_CLEAR_DATA');
       },
       _backPage:function(){
         this.$$('panel-right').close();
