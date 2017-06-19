@@ -1,12 +1,68 @@
 exports.list = function (req, res) {
     var r = req.r;
+    var page = parseInt(req.query.page) - 1;
+    var limit = parseInt(req.query.limit);
+    var skip = page * limit;
+
     r.db('external').table('company')
+        .skip(skip)
+        .limit(limit)
         .run()
         .then(function (result) {
             res.json(result);
         })
         .catch(function (err) {
             res.status(500).json(err);
+        })
+}
+exports.page = function (req, res) {
+    var limit = parseInt(req.query.limit);
+    var page = parseInt(req.query.page);
+    req.r.db('external').table('company').count()
+        .run()
+        .then(function (data) {
+            var countPage = Math.ceil(data / limit);
+            // var halfPage = Math.round(countPage / 2);
+            var txt = '<select id="mySelect" onchange="myFunction()">';
+            for (var i = 1; i <= countPage; i++) {
+                if (i == page) {
+                    txt += '<option value="' + i + '" selected>' + i + '</option>';
+                } else {
+                    txt += '<option value="' + i + '">' + i + '</option>';
+                }
+
+            }
+            txt += '</select>';
+
+            txt += `
+            <script>
+            function myFunction(){
+                var x = document.getElementById("mySelect").value;
+                window.open('https://localhost:3000/api/external/company?page='+x+'&limit=100');
+            }
+            </script>
+            `;
+            // if (page < halfPage) {
+            //     for (var i = (page + 1); i <= (page + 3); i++) {
+            //         txt += '<a  href="?page=' + i + '&limit=100" api="external/company/list">p' + i + '</a> ';
+            //     }
+            //     txt += '........' + page + '..........';
+            //     for (var i = (countPage - 2); i <= countPage; i++) {
+            //         txt += '<a  href="?page=' + i + '&limit=100" api="external/company/list">p' + i + '</a> ';
+            //     }
+            // } else {
+            //     for (var i = 1; i <= 3; i++) {
+            //         txt += '<a  href="?page=' + i + '&limit=100" api="external/company/list">p' + i + '</a> ';
+            //     }
+            //     txt += '........' + page + '..........';
+            //     for (var i = (page + 1); i <= (page + 3); i++) {
+            //         if (i <= countPage)
+            //             txt += '<a  href="?page=' + i + '&limit=100" api="external/company/list">p' + i + '</a> ';
+            //     }
+            // }
+
+            res.send(txt);
+
         })
 }
 exports.listId = function (req, res) {
