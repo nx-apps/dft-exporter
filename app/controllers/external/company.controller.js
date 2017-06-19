@@ -22,7 +22,6 @@ exports.page = function (req, res) {
         .run()
         .then(function (data) {
             var countPage = Math.ceil(data / limit);
-            // var halfPage = Math.round(countPage / 2);
             var txt = '<select id="mySelect" onchange="myFunction()">';
             for (var i = 1; i <= countPage; i++) {
                 if (i == page) {
@@ -42,6 +41,9 @@ exports.page = function (req, res) {
             }
             </script>
             `;
+
+            // var halfPage = Math.round(countPage / 2);
+            // var txt = '';
             // if (page < halfPage) {
             //     for (var i = (page + 1); i <= (page + 3); i++) {
             //         txt += '<a  href="?page=' + i + '&limit=100" api="external/company/list">p' + i + '</a> ';
