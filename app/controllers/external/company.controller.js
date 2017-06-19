@@ -31,7 +31,7 @@ exports.page = function (req, res) {
                 }
 
             }
-            txt += '</select>';
+            txt += '</select> / '+countPage + ' pages.';
 
             txt += `
             <script>
