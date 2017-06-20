@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="approve_renew_1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f591e4a0-38f4-44dd-b603-74498effb1d9">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="177"/>
+	<property name="ireport.y" value="224"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["E:\\lookpad\\กองคลัง\\"]]></defaultValueExpression>
 	</parameter>
@@ -11,7 +11,7 @@
 	</parameter>
 	<parameter name="CURRENT_DATE" class="java.lang.String"/>
 	<field name="company_name_th" class="java.lang.String"/>
-	<field name="exporter_no_name" class="java.lang.String"/>
+	<field name="exporter_no" class="java.lang.String"/>
 	<field name="date_updated" class="java.lang.String"/>
 	<field name="type_lic_name" class="java.lang.String"/>
 	<field name="exporter_date_approve" class="java.lang.String"/>
@@ -171,8 +171,7 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\t๒.๑ ประกาศกรมการค้าต่างประเทศ ฉบับที่ ๙๙ (พ.ศ. ๒๕๓๔) ลงวันที่ ๒๒ เมษายน ๒๕๓๔ เรื่อง หลักเกณฑ์และวิธีการส่งข้าวเอกชนออกไป นอกราชอาณาจักร กำหนดให้ผู้ประสงค์่จะทำการค้าส่งข้าวออกไปนอกราชอาณาจักร ยื่นความจำนงขอขึ้นทะเบียนเป็นผู้ส่งออกตามแบบที่กำหนดพร้อมเอกสารประกอบ หากปรากฏว่ารายใดมิได้ประกอบการค้าส่งออกตามที่ขึ้นทะเบียนไว้เป็นระยะเวลา ๑ ปีติดต่อกัน กรมการค้า ต่างประเทศจะถอนการแจ้งความจำนงของรายนั้นเสีย หากประสงค์จะประกอบกิจการ ต่อไปให้มายื่นความจำนงใหม่ (เอกสาร ๒)"
-]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\t\t๒.๑ ประกาศกรมการค้าต่างประเทศ ฉบับที่ ๙๙ (พ.ศ. ๒๕๓๔) ลงวันที่ ๒๒ เมษายน ๒๕๓๔ เรื่อง หลักเกณฑ์และวิธีการส่งข้าวเอกชนออกไป นอกราชอาณาจักร กำหนดให้ผู้ประสงค์่จะทำการค้าส่งข้าวออกไปนอกราชอาณาจักร ยื่นความจำนงขอขึ้นทะเบียนเป็นผู้ส่งออกตามแบบที่กำหนดพร้อมเอกสารประกอบ หากปรากฏว่ารายใดมิได้ประกอบการค้าส่งออกตามที่ขึ้นทะเบียนไว้เป็นระยะเวลา ๑ ปีติดต่อกัน กรมการค้า ต่างประเทศจะถอนการแจ้งความจำนงของรายนั้นเสีย หากประสงค์จะประกอบกิจการ ต่อไปให้มายื่นความจำนงใหม่ (เอกสาร ๒)"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="62" y="0" width="214" height="20" uuid="cff44879-2496-453a-a071-1819b18d6c55"/>
@@ -191,7 +190,7 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\t๒.๒ กรมฯ ได้เคยอนุมัติให้ "+$F{company_name_th}+" ขึ้นทะเบียนเป็นผู้ส่งออกข้าวเลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no_name})+" เมื่อวันที่ "+new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{exporter_date_approve}))+" ทั้งนี้ จากการตรวจสอบข้อมูลการส่งออกข้าวของบริษัท ปรากฏว่าบริษัทฯ มิได้มีการส่งออกข้าวไปต่างประเทศ ตั้งแต่วันที่ "+new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{exporter_date_approve}))+" จนถึงปัจจุบัน (เอกสาร ๓-๔)"
+				<textFieldExpression><![CDATA["\t\t๒.๒ กรมฯ ได้เคยอนุมัติให้ "+$F{company_name_th}+" ขึ้นทะเบียนเป็นผู้ส่งออกข้าวเลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no})+" เมื่อวันที่ "+new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{exporter_date_approve}))+" ทั้งนี้ จากการตรวจสอบข้อมูลการส่งออกข้าวของบริษัท ปรากฏว่าบริษัทฯ มิได้มีการส่งออกข้าวไปต่างประเทศ ตั้งแต่วันที่ "+new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{exporter_date_approve}))+" จนถึงปัจจุบัน (เอกสาร ๓-๔)"
 +"\n"]]></textFieldExpression>
 			</textField>
 			<line>
@@ -224,7 +223,7 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\tคข. พิจารณาแล้วเห็นควรขึ้นทะเบียน"+$F{company_name_th}+"เป็นผู้ส่งข้าวออกโดยใช้เลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no_name})+" ตามเดิม ทั้งนี้ เพื่อให้การจัดเก็บข้อมูลมีความต่อเนื่องกับฐานข้อมูลเดิม"
+				<textFieldExpression><![CDATA["\t\tคข. พิจารณาแล้วเห็นควรขึ้นทะเบียน"+$F{company_name_th}+"เป็นผู้ส่งข้าวออกโดยใช้เลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no})+" ตามเดิม ทั้งนี้ เพื่อให้การจัดเก็บข้อมูลมีความต่อเนื่องกับฐานข้อมูลเดิม"
 +"\n\n\t\tจึงเรียนมาเพื่อโปรดพิจารณาอนุมัติตามข้อ ๓"]]></textFieldExpression>
 			</textField>
 			<line>

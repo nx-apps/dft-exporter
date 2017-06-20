@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report2" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7ab00411-f197-4f02-9091-e25ab6106afe">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="3"/>
-	<property name="ireport.y" value="59"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<import value="nylon.report.*"/>
 	<parameter name="date_start" class="java.lang.String"/>
 	<parameter name="date_end" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
-	<field name="exporter_no_name" class="java.lang.String"/>
+	<field name="exporter_no" class="java.lang.String"/>
 	<field name="company_name_th" class="java.lang.String"/>
 	<field name="company_taxno" class="java.lang.String"/>
 	<field name="type_lic_name" class="java.lang.String"/>
-	<field name="exporter_status_name" class="java.lang.String"/>
+	<field name="exporter_status" class="java.lang.String"/>
 	<field name="company_agent" class="java.lang.Object">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="count_exporter" class="java.lang.String"/>
 	<variable name="ROW" class="java.lang.Integer" calculation="Count">
-		<variableExpression><![CDATA[($F{exporter_no_name}?true:false)]]></variableExpression>
+		<variableExpression><![CDATA[($F{exporter_no}?true:false)]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
 	<pageHeader>
@@ -151,7 +151,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{exporter_no_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{exporter_no}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="517" y="0" width="135" height="25" uuid="0b8f7ed5-765d-415d-874e-932fbfe297e9"/>
@@ -177,7 +177,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{exporter_status_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{exporter_status}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="22" y="0" width="30" height="25" uuid="adf88bd0-dae3-4def-a4df-505f3dfb892f"/>
@@ -193,7 +193,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textFieldExpression><![CDATA[$V{ROW}++]]></textFieldExpression>
 			</textField>
 			<subreport>
-				<reportElement stretchType="RelativeToBandHeight" x="22" y="0" width="749" height="25" isPrintWhenDetailOverflows="true" uuid="88c02011-06a8-4cfb-9305-e3788948ce32"/>
+				<reportElement stretchType="RelativeToBandHeight" x="327" y="0" width="190" height="25" isPrintWhenDetailOverflows="true" uuid="88c02011-06a8-4cfb-9305-e3788948ce32"/>
 				<dataSourceExpression><![CDATA[new iJsonDS($F{company_agent})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"/exporter/report2_subreport1.jasper"]]></subreportExpression>
 			</subreport>

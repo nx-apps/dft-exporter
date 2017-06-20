@@ -11,7 +11,7 @@
 	</parameter>
 	<parameter name="CURRENT_DATE" class="java.lang.String"/>
 	<field name="company_name_th" class="java.lang.String"/>
-	<field name="exporter_no_name" class="java.lang.String"/>
+	<field name="exporter_no" class="java.lang.String"/>
 	<field name="type_lice_name_new" class="java.lang.String"/>
 	<field name="type_lice_name_old" class="java.lang.String"/>
 	<field name="date_updated" class="java.lang.String"/>
@@ -192,8 +192,7 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\t๒.๒ "+$F{company_name_th}+" ได้รับอนุญาตให้เป็นผู้ประกอบการค้าข้าวประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศ ที่เป็นผู้ส่งออกทั่วไปจากกรมการค้าภายในแล้ว ซึ่งบริษัทฯ ได้ปฏิบัติถูกต้องตามเงื่อนไขข้อ ๒.๑"
-]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\t\t๒.๒ "+$F{company_name_th}+" ได้รับอนุญาตให้เป็นผู้ประกอบการค้าข้าวประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศ ที่เป็นผู้ส่งออกทั่วไปจากกรมการค้าภายในแล้ว ซึ่งบริษัทฯ ได้ปฏิบัติถูกต้องตามเงื่อนไขข้อ ๒.๑"]]></textFieldExpression>
 			</textField>
 			<line>
 				<reportElement stretchType="RelativeToBandHeight" x="426" y="0" width="1" height="20" isPrintWhenDetailOverflows="true" uuid="44f73018-ebf0-4698-8b96-629699b60ede"/>
@@ -205,7 +204,7 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\t๒.๓ กรมฯ ได้อนุมัติให้"+$F{company_name_th}+" ขึ้นทะเบียนเป็นผู้ส่งออกข้าวประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออกก"+$F{type_lice_name_old} +" เลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no_name})+" เมื่อวันที่ " +new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{exporter_date_approve}))+" (เอกสาร ๓)"
+				<textFieldExpression><![CDATA["\t\t๒.๓ กรมฯ ได้อนุมัติให้"+$F{company_name_th}+" ขึ้นทะเบียนเป็นผู้ส่งออกข้าวประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออกก"+$F{type_lice_name_old} +" เลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no})+" เมื่อวันที่ " +new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{exporter_date_approve}))+" (เอกสาร ๓)"
 +"\n"]]></textFieldExpression>
 			</textField>
 			<line>
@@ -225,7 +224,7 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\tคข. พิจารณาแล้วเห็นว่า "+$F{company_name_th}+" ได้รับอนุญาตให้เป็นผู้ประกอบการค้าข้าวประเภทค้าข้าว ส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออก"+$F{type_lice_name_new}+"จากกรมการค้าภายในตามเงื่อนไขในข้อ ๒.๑-๒.๒ แล้ว จึงเห็นควรเปลี่ยนแปลงประเภทการเป็นผู้ส่งออกข้าวของบริษัทฯ จากประเภท"+$F{type_lice_name_old}+"เป็นประเภทผู้ส่งออก"+$F{type_lice_name_new}+" โดยใช้เลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no_name})+" ตามเดิม ทั้งนี้ เพื่อให้การจัดเก็บข้อมูลมีความต่อเนื่องกับฐานข้อมูลเดิม"
+				<textFieldExpression><![CDATA["\t\tคข. พิจารณาแล้วเห็นว่า "+$F{company_name_th}+" ได้รับอนุญาตให้เป็นผู้ประกอบการค้าข้าวประเภทค้าข้าว ส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออก"+$F{type_lice_name_new}+"จากกรมการค้าภายในตามเงื่อนไขในข้อ ๒.๑-๒.๒ แล้ว จึงเห็นควรเปลี่ยนแปลงประเภทการเป็นผู้ส่งออกข้าวของบริษัทฯ จากประเภท"+$F{type_lice_name_old}+"เป็นประเภทผู้ส่งออก"+$F{type_lice_name_new}+" โดยใช้เลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no})+" ตามเดิม ทั้งนี้ เพื่อให้การจัดเก็บข้อมูลมีความต่อเนื่องกับฐานข้อมูลเดิม"
 +"\n\t\tจึงเรียนมาเพื่อโปรดพิจารณาอนุมัติตามข้อ ๓"
 +"\n"]]></textFieldExpression>
 			</textField>
