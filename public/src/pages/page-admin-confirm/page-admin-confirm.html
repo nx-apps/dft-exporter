@@ -112,8 +112,8 @@
                 <tr style="cursor:pointer;">
                   <td><div class="text-table">[[indexNo(index)]]</div></td>
                   <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]"></gl-form-input></td>
-                  <td on-tap="_selectData" data="[[item]]"><div>{{item.company_name_th}}</div></td>
-                  <td on-tap="_selectData" data="[[item]]"><div>{{item.type_lic_name}}</div></td>
+                  <td on-tap="_selectData" data="[[item]]"><div>{{item.company.company_name_th}}</div></td>
+                  <td on-tap="_selectData" data="[[item]]"><div>{{item.type_lic.type_lic_name}}</div></td>
                   <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.date_created}}</div></td>
                   <td on-tap="_selectData" data="[[item]]"><div>{{item.approve_status_name}}</div></td>
                 </tr>

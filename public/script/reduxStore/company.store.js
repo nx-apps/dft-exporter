@@ -45,7 +45,7 @@ export function companyAction(store) {
         COMPANY_SEARCH: function (id) {
             if (typeof id !== 'undefined') {
                 if (typeof id.detail === 'undefined') {
-                    axios.get('./external/company/' + id)
+                    axios.get('./external/company/id/' + id)
                         .then((response) => {
                             for (var key in response[0]) {
                                 if (response[0][key] === '') {
@@ -55,7 +55,7 @@ export function companyAction(store) {
                             store.dispatch({ type: 'COMPANY_SEARCH', payload: response.data[0] })
                         });
                 } else {
-                    axios.get('./external/company/' + id.detail)
+                    axios.get('./external/company/id/' + id.detail)
                         .then((response) => {
                             for (var key in data[0]) {
                                 if (data[0][key] === '') {

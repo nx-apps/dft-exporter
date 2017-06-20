@@ -201,8 +201,8 @@ exports.list = function (req, res) {
                 approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่')
             }
         })
-        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
-        .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck('left', { right: 'type_lic_name' }).zip()
+        // .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
+        // .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck('left', { right: 'type_lic_name' }).zip()
         .merge({ date_created: r.row('date_created').toISO8601().split('T')(0) })
         .orderBy('exporter_no')
         .filter(function (c) {
@@ -228,7 +228,7 @@ exports.listId = function (req, res) {
 
             }
         })
-        .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
+        // .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         // .merge({ date_created: r.row('date_created').split('T')(0) })
         // .orderBy('exporter_no')
         .run()

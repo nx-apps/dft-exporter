@@ -37,7 +37,7 @@ export function exporterAction(store) {
                                     item[key] = '-';
                                 }
                             }
-                            return item.company_name = '('+item.company_taxno+ ') ' + item.company_name_th +' '+ item.company_name_en;
+                            return item.company_name = '('+item.company.company_taxno+ ') ' + item.company.company_name_th +' '+ item.company.company_name_en;
                         })
                         // console.log(response.data);
                         store.dispatch({ type: 'EXPORTER_GET_DATA', payload: response.data })

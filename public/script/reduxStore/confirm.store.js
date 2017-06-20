@@ -38,7 +38,7 @@ export function confirmAction(store) {
                 });
         },
         CONFIRM_SEARCH: function(id){
-            axios.get('./external/company/'+id)
+            axios.get('./external/company/id/'+id)
             .then((response) => {
                 var data = response.data;
                 if(data.length > 0){
@@ -54,17 +54,18 @@ export function confirmAction(store) {
                             store.dispatch({type: 'CONFIRM_SEARCH', payload: data2})
                             // console.log('มี');
                         }else{
-                            axios.get('./external/company/' + id)
+                            axios.get('./external/company/id/' + id)
                             .then((response3) => {
                                 var data3 = response3.data;
-                                data3[0].approve_status = 'register';
-                                data3[0].approve_status_name = 'ยังไม่ลงทะเบียนผู้ส่งออก';
                                 for (var key in data3[0]) {
                                     if (data3[0][key] === '') {
                                         data3[0][key] = "-";
                                     }
                                 }
-                                store.dispatch({type: 'CONFIRM_SEARCH', payload: data3[0]})
+                                let newData = { company: data3[0] };
+                                newData.approve_status = 'register';
+                                newData.approve_status_name = 'ยังไม่ลงทะเบียนผู้ส่งออก';
+                                store.dispatch({type: 'CONFIRM_SEARCH', payload: newData })
                             });
                             // console.log('ไม่มี');
                         }

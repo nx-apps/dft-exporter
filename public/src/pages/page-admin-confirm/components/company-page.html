@@ -121,12 +121,11 @@
         // company_province_en, company_province_th, company_taxno};
         var data = {
           approve_status: 'request',
-          company_id: this.data.id,
+          company_id: this.data.company.id,
           type_lic_id: this.data.type_lic_id,
-          company_taxno: this.data.company_taxno
+          company_taxno: this.data.company.company_taxno
           // ,company: data_company
         }
-        // console.log(data);
         this.fire('toast', {
           status: 'openDialog',
           text: 'คุณต้องการจะสมัครผู้ส่งออกใช่หรือไม่ ?',
