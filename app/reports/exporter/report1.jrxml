@@ -10,7 +10,7 @@
 	</parameter>
 	<parameter name="date_end" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
-	<field name="exporter_no_name" class="java.lang.String"/>
+	<field name="exporter_no" class="java.lang.String"/>
 	<field name="company_name_th" class="java.lang.String"/>
 	<field name="type_lic_name" class="java.lang.String"/>
 	<field name="company_taxno" class="java.lang.String"/>
@@ -19,7 +19,7 @@
 	<field name="type_lic_id" class="java.lang.String"/>
 	<field name="count_exporter" class="java.lang.String"/>
 	<variable name="ROW" class="java.lang.Integer" calculation="Count">
-		<variableExpression><![CDATA[($F{exporter_no_name}?true:false)]]></variableExpression>
+		<variableExpression><![CDATA[($F{exporter_no}?true:false)]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
 	<variable name="SUM" class="java.lang.String" calculation="Sum">
@@ -156,7 +156,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 	<detail>
 		<band height="30" splitType="Stretch">
 			<textField>
-				<reportElement x="50" y="0" width="119" height="30" uuid="bbcaba11-1e2c-47ff-8910-d169d7df7de9"/>
+				<reportElement stretchType="RelativeToBandHeight" x="50" y="0" width="119" height="30" uuid="bbcaba11-1e2c-47ff-8910-d169d7df7de9"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -166,10 +166,10 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{exporter_no_name} != "null")?$F{exporter_no_name}:"-"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{exporter_no} != "null")?$F{exporter_no}:"-"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="349" y="0" width="110" height="30" uuid="418bbf72-3d47-4613-81f5-1cd88dbb08e8"/>
+				<reportElement stretchType="RelativeToBandHeight" x="349" y="0" width="110" height="30" uuid="418bbf72-3d47-4613-81f5-1cd88dbb08e8"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -182,7 +182,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textFieldExpression><![CDATA[$F{type_lic_name}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="0" width="50" height="30" uuid="adf88bd0-dae3-4def-a4df-505f3dfb892f"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="30" uuid="adf88bd0-dae3-4def-a4df-505f3dfb892f"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -195,7 +195,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textFieldExpression><![CDATA[$V{ROW}++]]></textFieldExpression>
 			</textField>
 			<textField pattern="">
-				<reportElement x="459" y="0" width="150" height="30" uuid="e9a3caa5-4933-425c-b2b0-b1ebef811f11"/>
+				<reportElement stretchType="RelativeToBandHeight" x="459" y="0" width="150" height="30" uuid="e9a3caa5-4933-425c-b2b0-b1ebef811f11"/>
 				<box leftPadding="5">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -208,7 +208,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textFieldExpression><![CDATA[$F{company_taxno}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="609" y="0" width="95" height="30" uuid="3e567ff0-e2d0-40ab-928c-d1044d25ae6a"/>
+				<reportElement stretchType="RelativeToBandHeight" x="609" y="0" width="95" height="30" uuid="3e567ff0-e2d0-40ab-928c-d1044d25ae6a"/>
 				<box leftPadding="3">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -235,7 +235,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textFieldExpression><![CDATA[$F{company_name_th}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="704" y="0" width="98" height="30" uuid="0b8f7ed5-765d-415d-874e-932fbfe297e9"/>
+				<reportElement stretchType="RelativeToBandHeight" x="704" y="0" width="98" height="30" uuid="0b8f7ed5-765d-415d-874e-932fbfe297e9"/>
 				<box leftPadding="3">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -251,7 +251,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 		</band>
 	</detail>
 	<noData>
-		<band height="197">
+		<band height="196">
 			<staticText>
 				<reportElement x="0" y="169" width="802" height="27" uuid="a52bc9e1-cc80-4115-be46-1e04b402e7a9"/>
 				<box>

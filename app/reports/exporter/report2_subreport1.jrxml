@@ -17,7 +17,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{agent_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{agent_name} != null)?$F{agent_name}:"-"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

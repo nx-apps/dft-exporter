@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7ab00411-f197-4f02-9091-e25ab6106afe">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="61"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="nylon.report.*"/>
 	<parameter name="date_start" class="java.lang.String"/>
 	<parameter name="date_end" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
-	<field name="exporter_no_name" class="java.lang.String"/>
+	<field name="exporter_no" class="java.lang.String"/>
 	<field name="company_name_th" class="java.lang.String"/>
 	<field name="company_taxno" class="java.lang.String"/>
 	<field name="type_lic_name" class="java.lang.String"/>
@@ -17,7 +17,7 @@
 	<field name="company_fax" class="java.lang.String"/>
 	<field name="count_exporter" class="java.lang.String"/>
 	<variable name="ROW" class="java.lang.Integer" calculation="Count">
-		<variableExpression><![CDATA[($F{exporter_no_name}?true:false)]]></variableExpression>
+		<variableExpression><![CDATA[($F{exporter_no}?true:false)]]></variableExpression>
 		<initialValueExpression><![CDATA[]]></initialValueExpression>
 	</variable>
 	<pageHeader>
@@ -85,7 +85,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<text><![CDATA[ชื่อผู้ส่งออก]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="330" y="15" width="272" height="50" uuid="7439733e-7ab1-4f1c-b8d6-b6845b8d42c6"/>
+				<reportElement x="330" y="15" width="312" height="50" uuid="7439733e-7ab1-4f1c-b8d6-b6845b8d42c6"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -98,7 +98,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<text><![CDATA[ที่ตั้งสำนักงาน]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="602" y="15" width="100" height="50" uuid="ccb2c16d-76bf-44e5-879f-8848e2e02720"/>
+				<reportElement x="642" y="15" width="80" height="50" uuid="ccb2c16d-76bf-44e5-879f-8848e2e02720"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -111,7 +111,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<text><![CDATA[โทรศัพท์]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="702" y="15" width="100" height="50" uuid="52661573-db88-4ccd-98df-6b8fce9f5a9a"/>
+				<reportElement x="722" y="15" width="80" height="50" uuid="52661573-db88-4ccd-98df-6b8fce9f5a9a"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -151,10 +151,10 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{exporter_no_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{exporter_no}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="330" y="0" width="272" height="30" isPrintWhenDetailOverflows="true" uuid="418bbf72-3d47-4613-81f5-1cd88dbb08e8"/>
+				<reportElement stretchType="RelativeToBandHeight" x="330" y="0" width="312" height="30" isPrintWhenDetailOverflows="true" uuid="418bbf72-3d47-4613-81f5-1cd88dbb08e8"/>
 				<box leftPadding="5">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -167,7 +167,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textFieldExpression><![CDATA[$F{company_address_th}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="602" y="0" width="100" height="30" isPrintWhenDetailOverflows="true" uuid="0b8f7ed5-765d-415d-874e-932fbfe297e9"/>
+				<reportElement stretchType="RelativeToBandHeight" x="642" y="0" width="80" height="30" isPrintWhenDetailOverflows="true" uuid="0b8f7ed5-765d-415d-874e-932fbfe297e9"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -180,7 +180,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textFieldExpression><![CDATA[$F{company_phone}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToBandHeight" x="702" y="0" width="100" height="30" isPrintWhenDetailOverflows="true" uuid="aa115351-2cff-461f-a71f-cc3f7d06578d"/>
+				<reportElement stretchType="RelativeToBandHeight" x="722" y="0" width="80" height="30" isPrintWhenDetailOverflows="true" uuid="aa115351-2cff-461f-a71f-cc3f7d06578d"/>
 				<box>
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
