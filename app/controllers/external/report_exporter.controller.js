@@ -666,6 +666,7 @@ exports.exporter_detail = function (req, res) {
                     company_address_th: m('company')('company_address_th'),
                     company_address_en: m('company')('company_address_en'),
                     company_phone: m('company')('company_phone'),
+                    company_taxno: m('company')('company_taxno'),
                     company_fax: m('company')('company_fax'),
                     company_agent: [],
                     type_lic_name: m('type_lic')('type_lic_name'),
