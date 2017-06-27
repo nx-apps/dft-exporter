@@ -11,7 +11,6 @@
 <link rel="import" href="./../../../bower_components/gl-styles/gl-toast.html">
 <link rel="import" href="./../../../bower_components/gl-styles/gl-table.html">
 
-
 <dom-module id="page-company-edit">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
     * {
@@ -65,7 +64,7 @@
       </div>
 
       <div class="horizontal center-justified layout">
-        <gl-combo-box label="{{localize.tax_no}}" placeholder="{{localize.insert_taxno}}" items="{{company}}" 
+        <gl-combo-box label="{{localize.tax_no}}" placeholder="{{localize.insert_taxno}}" items="{{list_search}}" 
         item-label-path="company_name" item-value-path="company_taxno"
         on-value-changed="_checkID" style="width:600px; margin-top:10px;">
         <template>[[item.company_name]]</template>
@@ -76,7 +75,7 @@
           <table class="gl-table-default">
             <thead class="table-head">
               <tr>
-                <th><div class="text-table">{{localize.No}}</div></th>
+                <th><div class="text-table">#</div></th>
                 <th><div>{{localize.tax_no}}</div></th>
                 <th><div>{{localize.name_company}}</div></th>
                 <th><div>{{localize.province}}</div></th>
@@ -99,6 +98,21 @@
               </template>
             </tbody>
           </table>
+        </div>
+      </div>
+      
+      <div class="horizontal justified layout" style="margin:20px;">
+        <div>
+          ผู้ส่งออกทั้งหมด [[countCompany(list_search)]] บริษัท
+        </div>
+        <div>
+          หน้าที่
+          <select id="selectedPage" on-change="selectPage">
+              <template is="dom-repeat" items={{pages}}>
+                  <option value="{{item}}">{{item}}</option>
+              </template>
+          </select>
+          / [[countPage(pages)]] หน้า
         </div>
       </div>
     </paper-material>
@@ -127,6 +141,12 @@
         },
         company:{
           statePath : 'company.list'
+        },
+        pages:{
+          statePath : 'company.pages'
+        },
+        list_search:{
+          statePath : 'company.list_search'
         }
       },
       listeners: {
@@ -136,6 +156,8 @@
       },
       nylonPageActive: function () {
         this.dispatchAction('COMPANY_GET_DATA');
+        this.dispatchAction('COMPANY_GET_PAGE');
+        this.dispatchAction('COMPANY_GET_DATA_SEARCH');
       },
       _checkID:function(id){
         if(id.detail.value !== ''){
@@ -174,6 +196,16 @@
         }else{
           return true
         }
+      },
+      selectPage: function(){
+        var page = this.$$('#selectedPage').value;
+        this.dispatchAction('COMPANY_GET_DATA', page);      
+      },
+      countPage: function(page){
+        return page.length
+      },
+      countCompany: function(c){
+        return numeral(c.length).format('0,0');
       }
     });
   </script>

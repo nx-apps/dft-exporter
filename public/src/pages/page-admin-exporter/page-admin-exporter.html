@@ -152,11 +152,11 @@
             </gl-form-dropdown-menu>
           </div>
 
-        <div class="searchBorder" style="overflow-x:auto;">
+        <div class="searchBorder" style="height:600px; overflow-x:auto; overflow-y:auto;">
           <table class="gl-table-default">
             <thead class="table-head">
               <tr>
-                <th><div class="text-table">{{localize.No}}</div></th>
+                <th><div class="text-table">#</div></th>
                 <th><div class="text-table">{{localize.no_exporter}}</div></th>
                 <th><div class="text-table">{{localize.no_tax}}</div></th>  
                 <th><div class="text-table">{{localize.name_company}}</div></th>
@@ -190,81 +190,21 @@
           </table>
         </div>
       </div>
-
-      <!--<div class="searchBox searchBorder">
-        <template is="dom-if" if={{_checkData(exporters)}}>
-          <div class="searchBorder">
-            <vaadin-grid id="grid" active-item="{{activeItem}}" items="{{exporters}}">
-
-              <vaadin-grid-column width="50px" flex-grow="0">
-                <template class="header">{{localize('No')}}</div></template>
-                <template><div class="text-table" style="cursor:pointer;">[[toIndex(index)]]</div></template>
-              </vaadin-grid-column>
-
-              <vaadin-grid-column width="100px">
-                <template class="header"><div class="text-table">{{localize('no_exporter')}}</div></template>
-                <template><div class="text-table" style="cursor:pointer;">[[item.exporter_no_name]]</div></template>
-              </vaadin-grid-column>
-
-              <vaadin-grid-column width="150px">
-                <template class="header"><div class="text-table">{{localize('no_tax')}}</div></template>
-                <template><div class="text-table" style="cursor:pointer;">[[item.company_taxno]]</div></template>
-              </vaadin-grid-column>
-
-              <vaadin-grid-column width="500px">
-                <template class="header"><div class="text-table">{{localize('name_company')}}</div></template>
-                <template><div style="cursor:pointer;">[[item.company_name_th]]</div></template>
-              </vaadin-grid-column>
-
-              <vaadin-grid-column width="250px">
-                <template class="header"><div class="text-table">{{localize('type_license')}}</div></template>
-                <template><div style="cursor:pointer;">[[item.type_lic_name]]</div></template>
-              </vaadin-grid-column>
-
-              <vaadin-grid-column width="200px">
-                <template class="header"><div class="text-table">{{localize('status_export')}}</div></template>
-                <template><div class="text-table" style="cursor:pointer;">[[item.exporter_status_name]]</div></template>
-              </vaadin-grid-column>
-
-              <vaadin-grid-column width="200px">
-                <template class="header"><div class="text-table">{{localize('status_exporter')}}</div></template>
-                <template><div class="text-table" style="cursor:pointer;">[[item.export_status_name]]</div></template>
-              </vaadin-grid-column>
-
-              <vaadin-grid-column width="150px">
-                <template class="header"><div class="text-table">{{localize('date_expire')}}</div></template>
-                <template><div class="text-table" style="cursor:pointer;">[[item.export_date_expire]]</div></template>
-              </vaadin-grid-column>
-
-            </vaadin-grid>
-          </div>
-        </template>
-
-        <template is="dom-if" if={{!_checkData(exporters)}}>
-          <div class="searchBorder">
-            <table class="gl-table-default">
-              <thead class="table-head">
-                <tr>
-                  <th><div class="text-table">{{localize('No')}}</div></th>
-                  <th><div class="text-table">{{localize('no_exporter')}}</div></th>
-                  <th><div class="text-table">{{localize('no_tax')}}</div></th>
-                  <th><div class="text-table">{{localize('name_company')}}</div></th>
-                  <th><div class="text-table">{{localize('type_license')}}</div></th>
-                  <th><div class="text-table">{{localize('status_export')}}</div></th>
-                  <th><div class="text-table">{{localize('status_exporter')}}</div></th>
-                  <th><div class="text-table">{{localize('date_expire')}}</div></th>
-                </tr>
-              </thead>
-              
-              <tbody>
-                <tr>
-                  <td colspan="8"><div class="text-table" style="margin:20px">{{localize('not_found')}}</div></td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </template>
-      </div>-->
+      
+      <div class="horizontal justified layout" style="margin:20px;">
+        <div>
+          บริษัททั้งหมด [[countExporters(exporters)]] บริษัท
+        </div>
+        <div>
+          หน้าที่
+          <select id="selectedPage" on-change="selectPage">
+              <template is="dom-repeat" items={{pages}}>
+                  <option value="{{item}}">{{item}}</option>
+              </template>
+          </select>
+          / [[countPage(pages)]] หน้า
+        </div>
+      </div>
 
     </paper-material>
 
@@ -300,15 +240,16 @@
         },
         typeLic:{
           statePath : 'exporter.typeLic'
+        },
+        pages:{
+          statePath : 'exporter.pages'
         }
-        // activeItem: {
-        //   observer: '_activeItemChanged'
-        // }
       },
       behaviors: [ReduxBehavior, nylonBehavior, i18nAction, exporterAction, uploadAction],
       nylonPageActive: function () {
         this.dispatchAction('EXPORTER_GET_DATA');
         this.dispatchAction('EXPORTER_GET_TYPE_LIC');
+        this.dispatchAction('EXPORTER_GET_PAGE');
       },
       _register: function (e) {
         window.open('./admin-confirm');
@@ -377,10 +318,17 @@
       },
       toIndex:function(index){
         return index+1;
+      },
+      selectPage: function(){
+        var page = this.$$('#selectedPage').value;
+        this.dispatchAction('EXPORTER_GET_DATA', page);      
+      },
+      countPage: function(page){
+        return page.length
+      },
+      countExporters:function(val){
+        return numeral(val.length).format('0,0');
       }
-      // _activeItemChanged: function(item) {
-      //   console.log(item);
-      //   }
     });
   </script>
 </dom-module>

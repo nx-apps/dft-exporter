@@ -2,12 +2,18 @@ import axios from '../axios'
 import { commonAction } from '../config'
 const initialState = {
     list: [],
+    list_search: [],
+    pages: [],
     data: {}
 }
 export function companyReducer(state = initialState, action) {
     switch (action.type) {
         case 'COMPANY_GET_DATA':
             return Object.assign({}, state, { list: action.payload });
+        case 'COMPANY_GET_PAGE':
+            return Object.assign({}, state, { pages: action.payload });
+        case 'COMPANY_GET_DATA_SEARCH':
+            return Object.assign({}, state, { list_search: action.payload });
         case 'COMPANY_SEARCH':
             return Object.assign({}, state, { data: action.payload });
         case 'COMPANY_CLEAR_DATA':
@@ -19,9 +25,14 @@ export function companyReducer(state = initialState, action) {
 export function companyAction(store) {
     return [commonAction(),
     {
-        COMPANY_GET_DATA: function () {
+        COMPANY_GET_DATA: function (page) {
+            if (page == 'COMPANY_GET_DATA') {
+                page = 1;
+            } else {
+                page = parseInt(page);
+            }
             this.fire('toast', { status: 'load', text: 'กำลังโหลดข้อมูล...' })
-            axios.get('./external/company')
+            axios.get('./external/company?page=' + page + '&limit=100')
                 .then((response) => {
                     this.fire('toast', {
                         status: 'success', text: 'โหลดข้อมูลสำเร็จ', callback: () => {
@@ -37,6 +48,29 @@ export function companyAction(store) {
                             store.dispatch({ type: 'COMPANY_GET_DATA', payload: response.data })
                         }
                     });
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+        COMPANY_GET_PAGE: function () {
+            axios.get('./external/company/page?limit=100')
+                .then((response) => {
+                    var pages = [];
+                    for (var i = 1; i <= response.data; i++) {
+                        pages.push(i);
+                    }
+                    // console.log(pages);
+                    store.dispatch({ type: 'COMPANY_GET_PAGE', payload: pages })
+                })
+        },
+        COMPANY_GET_DATA_SEARCH: function (id) {
+            axios.get('./external/company/list_search')
+                .then((response) => {
+                    response.data.map((item) => {
+                        return item.company_name = '(' + item.company_taxno + ') ' + item.company_name_th + ' ' + item.company_name_en;
+                    })
+                    store.dispatch({ type: 'COMPANY_GET_DATA_SEARCH', payload: response.data })
                 })
                 .catch((error) => {
                     console.log(error);

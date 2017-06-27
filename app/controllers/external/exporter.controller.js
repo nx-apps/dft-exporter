@@ -6,6 +6,9 @@ var tz = "T00:00:00.000Z";
 var d1y = (y - 1) + '-' + (m < 9 ? '0' : '') + (m + 1) + '-' + (d < 10 ? '0' : '') + d + tz;
 
 exports.exporter = function (req, res) {
+    var page = parseInt(req.params.page) - 1;
+    var limit = parseInt(req.params.limit);
+    var skip = page * limit;
     var r = req.r;
     var q = {}, d = {};
     for (key in req.query) {
@@ -72,6 +75,8 @@ exports.exporter = function (req, res) {
         .filter(q)
         .filter(d)
         .orderBy('exporter_no')
+        .skip(skip)
+        .limit(limit)
         .run()
         .then(function (result) {
             res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3001')
@@ -319,4 +324,16 @@ exports.updateDate = function (req, res) {
     //     result.message = req.ajv.errorsText()
     //     res.json(result);
     // }
+}
+exports.page = function (req, res) {
+    var limit = parseInt(req.query.limit);
+    req.r.db('external').table('exporter').count()
+        .run()
+        .then(function (data) {
+            var countPage = Math.ceil(data / limit);
+            res.json(countPage);
+        })
+        .catch(function (err) {
+            res.json(err);
+        })
 }
