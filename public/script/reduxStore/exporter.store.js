@@ -2,6 +2,7 @@ import axios from '../axios'
 import { commonAction } from '../config'
 const initialState = {
     list: [],
+    list_search: [],
     pages:[],
     data: {},
     typeLic: [],
@@ -12,6 +13,8 @@ export function exporterReducer(state = initialState, action) {
     switch (action.type) {
         case 'EXPORTER_GET_DATA':
             return Object.assign({}, state, { list: action.payload });
+        case 'EXPORTER_GET_DATA_SEARCH':
+            return Object.assign({}, state, { list_search: action.payload });
         case 'EXPORTER_GET_PAGE':
             return Object.assign({}, state, { pages: action.payload });
         case 'EXPORTER_GET_DATA_ID':
@@ -53,6 +56,15 @@ export function exporterAction(store) {
                 .catch(function (error) {
                     console.log(error);
                 });
+        },
+        EXPORTER_GET_DATA_SEARCH: function(){
+            axios.get('./external/exporter/search')
+            .then((response) => {
+                response.data.map((item) => {
+                    return item.company_name = '(' + item.company.company_taxno + ') ' + item.company.company_name_th + ' ' + item.company.company_name_en;
+                })
+                store.dispatch({type : 'EXPORTER_GET_DATA_SEARCH', payload: response.data})
+            })
         },
         EXPORTER_GET_PAGE: function () {
             axios.get('./external/exporter/page?limit=100')

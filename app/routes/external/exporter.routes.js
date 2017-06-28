@@ -2,6 +2,7 @@ module.exports = function (app) {
 
     var exporter = require('../../controllers/external/exporter.controller');
     app.route('/page/:page/limit/:limit').get(exporter.exporter);
+    app.route('/search').get(exporter.exporter_search);
     app.route('/id/:exporter_id').get(exporter.exporterId);
     app.route('/insert').post(exporter.insert);
     app.route('/update').put(exporter.update);

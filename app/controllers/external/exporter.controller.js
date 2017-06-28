@@ -69,9 +69,6 @@ exports.exporter = function (req, res) {
                 export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
         })
-        // .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
-        // .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("left", { right: ["change_status"] }).zip()
-        // .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck("left", { right: ["type_lic_name"] }).zip()
         .filter(q)
         .filter(d)
         .orderBy('exporter_no')
@@ -80,6 +77,18 @@ exports.exporter = function (req, res) {
         .run()
         .then(function (result) {
             res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3001')
+            res.json(result)
+        })
+        .error(function (err) {
+            res.json(err)
+        })
+}
+exports.exporter_search = function (req, res) {
+    var r = req.r;
+    r.db('external').table('exporter')
+        .orderBy('company_taxno')
+        .run()
+        .then(function (result) {
             res.json(result)
         })
         .error(function (err) {

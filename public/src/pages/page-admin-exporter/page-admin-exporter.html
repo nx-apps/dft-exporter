@@ -81,7 +81,7 @@
           <gl-grid-row width="{{getWidth}}">
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,6]]">
-              <gl-combo-box label="{{localize.name_exporter}}" items="{{exporters}}" item-label-path="company_name" item-value-path="id"
+              <gl-combo-box label="{{localize.name_exporter}}" items="{{list_search}}" item-label-path="company_name" item-value-path="id"
                 value="{{dataSelected.id}}" on-value-changed="_checkID">
                 <template>[[item.company_name]]</template>
               </gl-combo-box>
@@ -193,16 +193,16 @@
       
       <div class="horizontal justified layout" style="margin:0px 40px 10px 40px;">
         <div>
-          บริษัททั้งหมด [[countExporters(exporters)]] บริษัท
+          {{localize.company}}{{localize.all}} [[countExporters(exporters)]] {{localize.company}}
         </div>
         <div>
-          หน้าที่
+          {{localize.page}}
           <select id="selectedPage" on-change="selectPage">
               <template is="dom-repeat" items={{pages}}>
                   <option value="{{item}}">{{item}}</option>
               </template>
           </select>
-          / [[countPage(pages)]] หน้า
+          / [[countPage(pages)]] {{localize.page}}
         </div>
       </div>
 
@@ -238,6 +238,9 @@
         exporters:{
           statePath : 'exporter.list'
         },
+        list_search:{
+          statePath : 'exporter.list_search'
+        },
         typeLic:{
           statePath : 'exporter.typeLic'
         },
@@ -248,6 +251,7 @@
       behaviors: [ReduxBehavior, nylonBehavior, i18nAction, exporterAction, uploadAction],
       nylonPageActive: function () {
         this.dispatchAction('EXPORTER_GET_DATA');
+        this.dispatchAction('EXPORTER_GET_DATA_SEARCH');
         this.dispatchAction('EXPORTER_GET_TYPE_LIC');
         this.dispatchAction('EXPORTER_GET_PAGE');
       },

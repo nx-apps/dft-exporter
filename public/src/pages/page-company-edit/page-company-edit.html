@@ -103,16 +103,16 @@
       
       <div class="horizontal justified layout" style="margin:20px;">
         <div>
-          ผู้ส่งออกทั้งหมด [[countCompany(list_search)]] บริษัท
+          {{localize.company}}{{localize.all}} [[countCompany(list_search)]] {{localize.company}}
         </div>
         <div>
-          หน้าที่
+          {{localize.page}}
           <select id="selectedPage" on-change="selectPage">
               <template is="dom-repeat" items={{pages}}>
                   <option value="{{item}}">{{item}}</option>
               </template>
           </select>
-          / [[countPage(pages)]] หน้า
+          / [[countPage(pages)]] {{localize.page}}
         </div>
       </div>
     </paper-material>
