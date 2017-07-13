@@ -86,6 +86,7 @@
           <template is="dom-if" if={{!data.change_status}}>
             <div class="horizontal end-justified layout">
               <div hidden="[[isEnabled]]"><paper-icon-button icon="create" on-tap="editChange" title="{{localize.edit_data}}"></paper-icon-button></div>
+              <div hidden="[[isEnabled]]"><paper-icon-button icon="delete" on-tap="delete" title="{{localize.bt_delete}}"></paper-icon-button></div>
             </div>
           </template>
         </template>
@@ -237,6 +238,16 @@
       _dialogcancle:function() {
         this.$.dialog.toggle();
         this.exporter_remark = "";
+      },
+      delete:function(){
+        this.fire('toast', {status:'openDialog',
+        text:'คุณต้องการลบผู้ส่งออกใช่หรือไม่ ?',
+        confirmed: (result) => {
+          if(result == true){
+            this.dispatchAction('EXPORTER_DELETE', this.data.id);
+          }
+        }
+        });
       }
     });
   </script>

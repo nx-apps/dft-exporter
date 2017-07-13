@@ -1,3 +1,4 @@
+var soap = require('soap');
 exports.list = function (req, res) {
     var r = req.r;
     var page = parseInt(req.query.page) - 1;
@@ -91,15 +92,67 @@ exports.page = function (req, res) {
         })
 }
 exports.listId = function (req, res) {
-    var r = req.r;
-    r.db('external').table('company').getAll(req.params.id, { index: 'company_taxno' })
-        .run()
-        .then(function (result) {
-            res.json(result);
-        })
-        .catch(function (err) {
-            res.status(500).json(err);
-        })
+    var url = 'http://reg-users.dft.go.th/RegistrationService.asmx?WSDL';
+    var args = { CompanyTaxNo: req.params.id, BranchNo: 0 };
+    //0205545008860
+    soap.createClient(url, function (err, client) {
+        client.GetCompanyProfile(args, function (err, result) {
+            var data = result.GetCompanyProfileResult;
+            var address = data.CompanyAddress;
+            var newdata = {
+                company_name_th: data.CompanyNameTH,
+                company_name_en: data.CompanyNameEN,
+                company_taxno: data.CompanyTaxno,
+                company_address_th: address.AddressNo
+                + (address.Moo == "" ? "" : " ม." + address.Moo)
+                + (address.BuildingTH == "" ? "" : " อาคาร" + address.BuildingTH)
+                + (address.SoiTH == "" ? "" : " ซ." + address.SoiTH)
+                + (address.RoadTH == "" ? "" : " ถ." + address.RoadTH)
+                + (address.TumbolTH == "" ? "" : " ต." + address.TumbolTH)
+                + (address.AmphurTH == "" ? "" : " อ." + address.AmphurTH),
+                company_address_en: address.AddressNo
+                + (address.Moo == "" ? "" : " Village No." + address.Moo)
+                + (address.BuildingEN == "" ? "" : " " + address.BuildingEN + " Building")
+                + (address.SoiEN == "" ? "" : " " + address.SoiEN + " Lane")
+                + (address.RoadEN == "" ? "" : " " + address.RoadEN + " Road,")
+                + (address.TumbolEN == "" ? "" : " " + address.TumbolEN + " Sub-district,")
+                + (address.AmphurEN == "" ? "" : " " + address.AmphurEN + " District"),
+                company_province_th: address.ProvinceTH
+                + (address.Zipcode == "" ? "" : " " + address.Zipcode),
+                company_province_en: address.ProvinceEN
+                + (address.Zipcode == "" ? "" : " " + address.Zipcode),
+                company_fax: data.CompanyFaxNo,
+                company_phone: data.CompanyPhoneNo,
+                company_email: data.CompanyEmail,
+                company_date: new Date(data.JuristicRegDate).toISOString().split('T')[0] + 'T00:00:00+07:00',
+                directors: data.Directors,
+
+            };
+            var newdata = r.expr(newdata).merge({
+                company_date: r.ISO8601(r.row('company_date')).inTimezone('+07')
+            });
+            res.json(newdata);
+            // var db = r.db('external').table('test');
+            // var company = db.getAll(data.CompanyTaxno, { index: 'company_taxno' });
+            // r.branch(company.count().eq(0),
+            //     db.insert(newdata),
+            //     db.get(company(0)('id')).update(newdata)
+            // )
+            //     .run()
+            //     .then(function (datas) {
+            //         res.json(newdata)
+            //     })
+        });
+    });
+    // var r = req.r;
+    // r.db('external').table('company').getAll(req.params.id, { index: 'company_taxno' })
+    //     .run()
+    //     .then(function (result) {
+    //         res.json(result);
+    //     })
+    //     .catch(function (err) {
+    //         res.status(500).json(err);
+    //     })
 }
 exports.insert = function (req, res) {
     var r = req.r;
