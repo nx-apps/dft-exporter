@@ -40,42 +40,44 @@ export function confirmAction(store) {
         CONFIRM_SEARCH: function(id){
             axios.get('./external/company/id/'+id)
             .then((response) => {
-                console.log(response.data);
-                // var data = response.data;
-                // if(data.length > 0){
-                //     axios.get('./external/confirm_exporter/list/'+ data[0].id)
-                //     .then((response2) => {
-                //         var data2 = response2.data;
-                //         if(data2.length === undefined){
-                //             for (var key in data2) {
-                //                 if (data2[key] === '') {
-                //                     data2[key] = "-";
-                //                 }
-                //             }
-                //             store.dispatch({type: 'CONFIRM_SEARCH', payload: data2})
-                //             // console.log('มี');
-                //         }else{
-                //             axios.get('./external/company/id/' + id)
-                //             .then((response3) => {
-                //                 var data3 = response3.data;
-                //                 for (var key in data3[0]) {
-                //                     if (data3[0][key] === '') {
-                //                         data3[0][key] = "-";
-                //                     }
-                //                 }
-                //                 let newData = { company: data3[0] };
-                //                 newData.approve_status = 'register';
-                //                 newData.approve_status_name = 'ยังไม่ลงทะเบียนผู้ส่งออก';
-                //                 store.dispatch({type: 'CONFIRM_SEARCH', payload: newData })
-                //             });
-                //             // console.log('ไม่มี');
-                //         }
-                //     });
-                // }else{
-                //     this.fire('toast', { status: 'connectError', text: 'ไม่มีเลขประจำตัวผู้เสียภาษีในระบบ' })
-                //     store.dispatch({type: 'CONFIRM_SEARCH', payload: {}})
-                // }
-            });
+                var data = response.data;
+                if(data.length > 0){
+                    axios.get('./external/confirm_exporter/list/'+ data[0].id)
+                    .then((response2) => {
+                        var data2 = response2.data;
+                        if(data2.length === undefined){
+                            for (var key in data2) {
+                                if (data2[key] === '') {
+                                    data2[key] = "-";
+                                }
+                            }
+                            store.dispatch({type: 'CONFIRM_SEARCH', payload: data2})
+                            // console.log('มี');
+                        }else{
+                            axios.get('./external/company/id/' + id)
+                            .then((response3) => {
+                                var data3 = response3.data;
+                                for (var key in data3[0]) {
+                                    if (data3[0][key] === '') {
+                                        data3[0][key] = "-";
+                                    }
+                                }
+                                let newData = { company: data3[0] };
+                                newData.approve_status = 'register';
+                                newData.approve_status_name = 'ยังไม่ลงทะเบียนผู้ส่งออก';
+                                store.dispatch({type: 'CONFIRM_SEARCH', payload: newData })
+                            });
+                            // console.log('ไม่มี');
+                        }
+                    });
+                }else{
+                    this.fire('toast', { status: 'connectError', text: 'ไม่มีเลขประจำตัวผู้เสียภาษีในระบบ' })
+                    store.dispatch({type: 'CONFIRM_SEARCH', payload: {}})
+                }
+            })
+            .catch((err)=>{
+                console.log(err);
+            })
         },
         CONFIRM_REGISTER: function(data){
             this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })

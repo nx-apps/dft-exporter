@@ -49,13 +49,13 @@ exports.exporter = function (req, res) {
                 ).toISO8601(),
                     null),
                 exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
-                date_exported: r.branch(m.hasFields('date_exported'),m('date_exported').toISO8601(),null)
+                date_exported: r.branch(m.hasFields('date_exported'), m('date_exported').toISO8601(), null)
             }
         })
         .merge(function (mm) {
             return {
                 export_date_expire: r.branch(mm('date_export_expire').gt(mm('exporter_date_expire')),
-                    r.branch(mm('date_export_expire').ne(null),mm('date_export_expire').split('T')(0),null),
+                    r.branch(mm('date_export_expire').ne(null), mm('date_export_expire').split('T')(0), null),
                     mm('exporter_date_expire').split('T')(0))
             }
         }).without('date_export_expire', 'exporter_date_expire')
@@ -116,13 +116,13 @@ exports.exporterId = function (req, res) {
                 ).toISO8601(),
                     null),
                 exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
-                date_exported: r.branch(m.hasFields('date_exported'),m('date_exported').toISO8601(),null)
+                date_exported: r.branch(m.hasFields('date_exported'), m('date_exported').toISO8601(), null)
             }
         })
         .merge(function (mm) {
             return {
                 export_date_expire: r.branch(mm('date_export_expire').gt(mm('exporter_date_expire')),
-                    r.branch(mm('date_export_expire').ne(null),mm('date_export_expire').split('T')(0),null),
+                    r.branch(mm('date_export_expire').ne(null), mm('date_export_expire').split('T')(0), null),
                     mm('exporter_date_expire').split('T')(0))
             }
         }).without('date_export_expire', 'exporter_date_expire')
@@ -243,26 +243,31 @@ exports.delete = function (req, res) {
     var result = { result: false, message: null, id: null };
     if (req.params.id != '' || req.params.id != null) {
         // result.id = req.params.id;
-        r.db('external').table('exporter')
-            .get(req.params.id)
-            .delete()
+        r.db('external').table('exporter').get(req.params.id)
+            .merge(function (m) {
+                return r.db('external').table('confirm_exporter').get(m('confirm_id')).delete()
+            })
+            .do(function (d) {
+                return r.db('external').table('exporter').get(req.params.id).delete()
+            })
             .run()
             .then(function (response) {
-                result.message = response;
-                if (response.errors == 0) {
-                    result.result = true;
-                    var history = {
-                        tb_name: 'exporter',
-                        action: "delete",
-                        id_value: req.params.id,
-                        old_value: response.changes[0].old_val,
-                        new_value: null,
-                        date_created: r.now().inTimezone('+07'),
-                        actor: 'admin'
-                    }
-                    r.db('external').table('history').insert(history).run().then()
-                }
                 res.json(response);
+                // result.message = response;
+                // if (response.errors == 0) {
+                //     result.result = true;
+                //     var history = {
+                //         tb_name: 'exporter',
+                //         action: "delete",
+                //         id_value: req.params.id,
+                //         old_value: response.changes[0].old_val,
+                //         new_value: null,
+                //         date_created: r.now().inTimezone('+07'),
+                //         actor: 'admin'
+                //     }
+                //     r.db('external').table('history').insert(history).run().then()
+                // }
+                // res.json(response);
             })
             .error(function (err) {
                 // result.message = err;

@@ -138,14 +138,14 @@ exports.listId = function (req, res) {
             // newdata.run().then(function (data) {
             //     res.json(data);
             // })
-            var db = r.db('external').table('test');
+            var db = r.db('external').table('company');
             var company = db.getAll(data.CompanyTaxno, { index: 'company_taxno' });
             r.branch(company.count().eq(0),
                 db.insert(newdata).do(function (d) {
-                    return db.get(d('generated_keys')(0))
+                    return db.getAll(d('generated_keys')(0), {index: 'id'})
                 }),
                 db.get(company(0)('id')).update(newdata).do(function (d) {
-                    return db.get(company(0)('id'))
+                    return db.getAll(company(0)('id'), {index: 'id'})
                 })
             ).run().then(function (datas) {
                 res.json(datas)
