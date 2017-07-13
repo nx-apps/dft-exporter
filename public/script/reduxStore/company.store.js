@@ -112,8 +112,9 @@ export function companyAction(store) {
                                         .then((response3) => {
                                             this.fire('toast', {
                                                 status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                                                    this.COMPANY_GET_DATA();
+                                                    this.COMPANY_GET_DATA(1);
                                                     this.COMPANY_CLEAR_DATA();
+                                                    this.COMPANY_GET_DATA_SEARCH();
                                                 }
                                             });
                                         })
@@ -135,7 +136,8 @@ export function companyAction(store) {
                                 this.fire('toast', {
                                     status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
                                         this.COMPANY_SEARCH(data.company_taxno);
-                                        this.COMPANY_GET_DATA();
+                                        this.COMPANY_GET_DATA(1);
+                                        this.COMPANY_GET_DATA_SEARCH();
                                     }
                                 });
                             })
@@ -165,8 +167,9 @@ export function companyAction(store) {
                 .then((response) => {
                     this.fire('toast', {
                         status: 'success', text: 'ลบข้อมูลสำเร็จ', callback: () => {
-                            this.COMPANY_GET_DATA();
+                            this.COMPANY_GET_DATA(1);
                             this._backPage();
+                            this.COMPANY_GET_DATA_SEARCH();
                         }
                     });
                 })

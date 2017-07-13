@@ -96,61 +96,60 @@ exports.listId = function (req, res) {
     var args = { CompanyTaxNo: req.params.id, BranchNo: 0 };
     //0205545008860
     soap.createClient(url, function (err, client) {
-        client.GetCompanyProfile(args, function (err, result) {
-            var data = result.GetCompanyProfileResult;
-            var address = data.CompanyAddress;
-            var bkk = (address.ProvinceEN.toUpperCase() == "BANGKOK" ? true : false);
-            var newdata = {
-                company_name_th: data.CompanyNameTH,
-                company_name_en: data.CompanyNameEN,
-                company_taxno: data.CompanyTaxno,
-                company_address_th: address.AddressNo
-                + (address.Moo == "" ? "" : " ม." + address.Moo)
-                + (address.BuildingTH == "" ? "" : " " + address.BuildingTH)
-                + (address.SoiTH == "" ? "" : " ซ." + address.SoiTH)
-                + (address.RoadTH == "" ? "" : " ถ." + address.RoadTH)
-                + (address.TumbolTH == "" ? "" : " " + (bkk ? "แขวง" : "ต.") + address.TumbolTH)
-                + (address.AmphurTH == "" ? "" : " " + (bkk ? "เขต" : "อ.") + address.AmphurTH),
-                company_address_en: address.AddressNo
-                + (address.Moo == "" ? "" : " Moo." + address.Moo)
-                + (address.BuildingEN == "" ? "" : " " + address.BuildingEN)
-                + (address.SoiEN == "" ? "" : " Soi." + address.SoiEN)
-                + (address.RoadEN == "" ? "" : " " + address.RoadEN + " Road,")
-                + (address.TumbolEN == "" ? "" : " " + address.TumbolEN + ",")
-                + (address.AmphurEN == "" ? "" : " " + address.AmphurEN),
-                company_province_th: address.ProvinceTH
-                + (address.Zipcode == "" ? "" : " " + address.Zipcode),
-                company_province_en: address.ProvinceEN
-                + (address.Zipcode == "" ? "" : " " + address.Zipcode),
-                company_fax: data.CompanyFaxNo,
-                company_phone: data.CompanyPhoneNo,
-                company_email: data.CompanyEmail,
-                company_date: r.ISO8601(data.JuristicRegDate.toISOString().replace(".000Z", "+07:00")).inTimezone('+07'),
-                directors: data.Directors
-            };
-            // res.json(newdata);
-            // var newdata = r.expr(newdata).merge(function (m) {
-            //     return {
-            //         company_date: r.ISO8601(m('company_date')).inTimezone('+07')
-            //     }
-            // });
-
-            // newdata.run().then(function (data) {
-            //     res.json(data);
-            // })
-            var db = r.db('external').table('company');
-            var company = db.getAll(data.CompanyTaxno, { index: 'company_taxno' });
-            r.branch(company.count().eq(0),
-                db.insert(newdata).do(function (d) {
-                    return db.getAll(d('generated_keys')(0), {index: 'id'})
-                }),
-                db.get(company(0)('id')).update(newdata).do(function (d) {
-                    return db.getAll(company(0)('id'), {index: 'id'})
+        client.GetCompanyProfile(args, function (err2, result) {
+            // console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+            // // console.log(err);
+            // console.log(result);
+            // console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
+            if(result.GetCompanyProfileResult.CompanyAddress === null){
+                res.json([]);
+            }else{
+                var data = result.GetCompanyProfileResult;
+                var address = data.CompanyAddress;
+                var bkk = (address.ProvinceEN.toUpperCase() == "BANGKOK" ? true : false);
+                var newdata = {
+                    company_name_th: data.CompanyNameTH,
+                    company_name_en: data.CompanyNameEN,
+                    company_taxno: data.CompanyTaxno,
+                    company_address_th: address.AddressNo
+                    + (address.Moo == "" ? "" : " ม." + address.Moo)
+                    + (address.BuildingTH == "" ? "" : " " + address.BuildingTH)
+                    + (address.SoiTH == "" ? "" : " ซ." + address.SoiTH)
+                    + (address.RoadTH == "" ? "" : " ถ." + address.RoadTH)
+                    + (address.TumbolTH == "" ? "" : " " + (bkk ? "แขวง" : "ต.") + address.TumbolTH)
+                    + (address.AmphurTH == "" ? "" : " " + (bkk ? "เขต" : "อ.") + address.AmphurTH),
+                    company_address_en: address.AddressNo
+                    + (address.Moo == "" ? "" : " Moo." + address.Moo)
+                    + (address.BuildingEN == "" ? "" : " " + address.BuildingEN)
+                    + (address.SoiEN == "" ? "" : " Soi." + address.SoiEN)
+                    + (address.RoadEN == "" ? "" : " " + address.RoadEN + " Road,")
+                    + (address.TumbolEN == "" ? "" : " " + address.TumbolEN + ",")
+                    + (address.AmphurEN == "" ? "" : " " + address.AmphurEN),
+                    company_province_th: address.ProvinceTH
+                    + (address.Zipcode == "" ? "" : " " + address.Zipcode),
+                    company_province_en: address.ProvinceEN
+                    + (address.Zipcode == "" ? "" : " " + address.Zipcode),
+                    company_fax: data.CompanyFaxNo,
+                    company_phone: data.CompanyPhoneNo,
+                    company_email: data.CompanyEmail,
+                    company_date: r.ISO8601(data.JuristicRegDate.toISOString().replace(".000Z", "+07:00")).inTimezone('+07'),
+                    directors: data.Directors
+                };
+                var db = r.db('external').table('company');
+                var company = db.getAll(data.CompanyTaxno, { index: 'company_taxno' });
+                r.branch(company.count().eq(0),
+                    db.insert(newdata).do(function (d) {
+                        return db.getAll(d('generated_keys')(0), {index: 'id'})
+                    }),
+                    db.get(company(0)('id')).update(newdata).do(function (d) {
+                        return db.getAll(company(0)('id'), {index: 'id'})
+                    })
+                ).run().then(function (datas) {
+                    res.json(datas)
                 })
-            ).run().then(function (datas) {
-                res.json(datas)
-            })
+            }
         });
+        
     });
     // var r = req.r;
     // r.db('external').table('company').getAll(req.params.id, { index: 'company_taxno' })

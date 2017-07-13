@@ -151,7 +151,7 @@ export function confirmAction(store) {
                 let { exporter_no, company_id, company_taxno, id, type_lic_id} = data;
                 let newData = { exporter_no, company_id, company_taxno, type_lic_id};
                 newData.confirm_id = data.id;
-                newData.exporter_status = 'no';
+                newData.exporter_status = false;
                 newData.expire_status = false;
                 this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
                 axios.post('./external/confirm_exporter/insert', newData)
