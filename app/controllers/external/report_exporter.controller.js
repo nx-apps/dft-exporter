@@ -733,7 +733,7 @@ exports.approve_general_1 = function (req, res) {
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
-    r.db('external').table('confirm_exporter').getAll(req.params.id, { index: 'id' })
+    r.db('external').table('draft').getAll(req.params.id, { index: 'id' })
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -769,7 +769,7 @@ exports.approve_general_2 = function (req, res) {
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
-    r.db('external').table('confirm_exporter').getAll(req.params.id, { index: 'id' })
+    r.db('external').table('draft').getAll(req.params.id, { index: 'id' })
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -821,7 +821,7 @@ exports.approve_changtype = function (req, res) {
                 type_lice_id_old: m('type_lic_id')
             }
         })
-        .eqJoin('confirm_id', r.db('external').table('confirm_exporter'))//.getAll(req.params.id, {index: 'id'})
+        .eqJoin('confirm_id', r.db('external').table('draft'))//.getAll(req.params.id, {index: 'id'})
         .without([{ left: ['type_lic_name', 'type_lic_id'] }]).zip()
         .eqJoin('type_lic_id', r.db('external').table('type_license')).without({ right: 'id' }).zip()
         .merge(function (m) {
@@ -866,7 +866,7 @@ exports.approve_renew_1 = function (req, res) {
                     type_lic_name: m('type_lic')('type_lic_name')
                 })
         })
-        .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("left", { right: "approve_status" }).zip()//.getAll(req.params.id, {index: 'id'})
+        .eqJoin('confirm_id', r.db('external').table('draft')).pluck("left", { right: "approve_status" }).zip()//.getAll(req.params.id, {index: 'id'})
         .merge(function (m) {
             return {
                 exporter_no: r.branch(
@@ -903,7 +903,7 @@ exports.approve_renew_2 = function (req, res) {
                     type_lic_name: m('type_lic')('type_lic_name')
                 })
         })
-        .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("left", { right: "approve_status" }).zip()
+        .eqJoin('confirm_id', r.db('external').table('draft')).pluck("left", { right: "approve_status" }).zip()
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
