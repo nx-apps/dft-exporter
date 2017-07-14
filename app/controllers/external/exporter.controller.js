@@ -6,8 +6,8 @@ var tz = "T00:00:00.000Z";
 var d1y = (y - 1) + '-' + (m < 9 ? '0' : '') + (m + 1) + '-' + (d < 10 ? '0' : '') + d + tz;
 
 exports.exporter = function (req, res) {
-    var page = parseInt(req.params.page) - 1;
-    var limit = parseInt(req.params.limit);
+    var page = parseInt(req.query.page) - 1;
+    var limit = parseInt(req.query.limit);
     var skip = page * limit;
     var r = req.r;
     var q = {}, d = {};
@@ -137,7 +137,7 @@ exports.exporterId = function (req, res) {
             }
         })
         // .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
-        .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("left", { right: ["change_status"] }).zip()
+        .eqJoin('draft_id', r.db('external').table('draft')).pluck("left", { right: ["change_status"] }).zip()
         // .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck("left", { right: ["type_lic_name"] }).zip()
         .run()
         .then(function (result) {
@@ -245,7 +245,7 @@ exports.delete = function (req, res) {
         // result.id = req.params.id;
         r.db('external').table('exporter').get(req.params.id)
             .merge(function (m) {
-                return r.db('external').table('confirm_exporter').get(m('confirm_id')).delete()
+                return r.db('external').table('draft').get(m('draft_id')).delete()
             })
             .do(function (d) {
                 return r.db('external').table('exporter').get(req.params.id).delete()

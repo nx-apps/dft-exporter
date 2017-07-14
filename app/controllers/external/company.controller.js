@@ -97,10 +97,6 @@ exports.listId = function (req, res) {
     //0205545008860
     soap.createClient(url, function (err, client) {
         client.GetCompanyProfile(args, function (err2, result) {
-            // console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
-            // // console.log(err);
-            // console.log(result);
-            // console.log('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx');
             if(result.GetCompanyProfileResult.CompanyAddress === null){
                 res.json([]);
             }else{

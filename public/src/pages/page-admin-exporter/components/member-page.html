@@ -166,7 +166,7 @@
         if(e.target.getAttribute('report') == 'report1'){
           window.open('./api/external/report_exporter/exporter_detail/'+this.data.id,'_blank');
         }else{
-          window.open('./api/external/report_exporter/approve_general_2/'+this.data.confirm_id,'_blank');
+          window.open('./api/external/report_exporter/approve_general_2/'+this.data.draft_id,'_blank');
         }
       },
       refreshFile:function(){
@@ -195,12 +195,13 @@
               this.pages = 0;
               this.isEnabled = false;
             }else{
-              let{confirm_id, type_lic_id} = this.data;
+              let{draft_id, type_lic_id} = this.data;
               let newData = {type_lic_id};
               newData.exporter_id = this.data.id,
-              newData.id = this.data.confirm_id,
-              newData.change_status = true,
-              newData.approve_status = 'process'
+              newData.id = this.data.draft_id,
+              newData.draft_status = 'type'
+              // newData.change_status = true,
+              // newData.approve_status = 'process'
               this.dispatchAction('EXPORTER_UPDATE', newData);
               this.pages = 0;
               this.isEnabled = false;
@@ -224,8 +225,9 @@
             confirmed : (result) => {
               if(result == true){
                 let newData = {};
-                newData.id = this.data.confirm_id;
-                newData.approve_status = 'process';
+                newData.id = this.data.draft_id;
+                // newData.approve_status = 'process';
+                newData.draft_status = 'extend'
                 let dataDate = {};
                 dataDate.id = this.data.id;
                 dataDate.expire_status = true;

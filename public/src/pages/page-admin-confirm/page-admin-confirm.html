@@ -1,7 +1,7 @@
 <link rel="import" href="components/list-company.html">
 <link rel="import" href="components/detail-company.html">
 <link rel="import" href="components/fileup-company.html">
-<link rel="import" href="components/company-page.html">
+<link rel="import" href="components/register-page.html">
 <link rel="import" href="./../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../nylon-behavior.html">
 <link rel="import" href="../components/panel-right/panel-right.html">
@@ -221,8 +221,14 @@
 
             <div class="horizontal layout justified">
               <div>
-                <paper-button hidden="[[_hidBtnPass(dataSelect.approve_status)]]" class="gl-btn-warning" style="margin-left:15px;" on-tap="_dialogRemark" raised>{{localize.bt_no_pass}}</paper-button>
-                <div hidden="[[_hidBtnApp(dataSelect.approve_status)]]" style="margin-left:20px;">
+                <template is="dom-if" if={{!data.approve_status}}>
+                  <template is="dom-if" if={{data.doc_status}}>
+                    <paper-button class="gl-btn-warning" style="margin-left:15px;" on-tap="_dialogRemark" raised>{{localize.bt_no_pass}}</paper-button>
+                  </template>
+                </template>
+                
+                <!-- <div hidden="[[_hidBtnApp(data.approve_status)]]" style="margin-left:20px;"> -->
+                <template is="dom-if" if={{data.approve_status}}>
                   <div class="btn-bottom">
                     <iron-icon icon="print"></iron-icon>
                     <paper-dropdown-menu style="width:300px" placeholder="{{localize.select_report}}" no-label-float name="report">
@@ -232,22 +238,33 @@
                       </paper-tabs>
                     </paper-dropdown-menu>
                   </div>
-                </div>
+                </template>
+                <!-- </div> -->
               </div>
+
               <div>
                 <paper-button on-tap="_backPage" raised>{{localize.bt_back}}</paper-button>
-                <paper-button hidden="[[_hidBtnPass(dataSelect.approve_status)]]" class="gl-btn-success btn-bottom" on-tap="_save" raised>{{localize.bt_pass}}</paper-button>
-                
-                <template is="dom-if" if={{isEnabled}}>
-                  <paper-button hidden="[[_hidBtnApp(dataSelect.approve_status)]]" class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
+                <template is="dom-if" if={{!data.approve_status}}>
+                  <template is="dom-if" if={{data.doc_status}}>
+                    <paper-button class="gl-btn-success btn-bottom" on-tap="_pass" raised>{{localize.bt_pass}}</paper-button>
+                  </template>
                 </template>
                 
-                <template is="dom-if" if={{!isEnabled}}>
+                
+                <!-- <template is="dom-if" if={{isEnabled}}> -->
+                <template is="dom-if" if={{!data.date_approve_status}}>
+                  <template is="dom-if" if={{data.approve_status}}>
+                    <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
+                  </template>
+                </template>
+                
+                <!-- <template is="dom-if" if={{!isEnabled}}> -->
+                <template is="dom-if" if={{data.date_approve_status}}>
                   <template is="dom-if" if={{obExporter(exporter_data.expire_status)}}>
                     <paper-button class="gl-btn-warning btn-bottom" on-tap="_extend" raised>{{localize.bt_exporter_extend}}</paper-button>
                   </template>
                   <template is="dom-if" if={{!obExporter(exporter_data.expire_status)}}>
-                    <paper-button hidden="[[_hidBtnApp(dataSelect.approve_status)]]" class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
+                    <paper-button hidden="[[_hidBtnApp(data.approve_status)]]" class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
                   </template>
                 </template>
               </div>
@@ -255,7 +272,7 @@
           </div> 
 
           <div name="register">
-            <company-page></company-page>
+            <register-page></register-page>
           </div> 
         </iron-pages>
         <paper-dialog id="dialog" style="width:60%;">
@@ -269,7 +286,7 @@
             <paper-button class="gl-btn-primary button-size" raised on-tap="_reject">{{localize.bt_save}}</paper-button>
           </div>
         </paper-dialog>  
-        [[obData(dataSelect)]]
+        [[obData(data)]]
        <!-- </section> -->
 
       <!-- <section id="content2"> -->
@@ -290,10 +307,6 @@
           type: String,
           value: 'listCompany'
         },
-        data: {
-          type: Array,
-          value: []
-        },
         selectDataAll: {
           type: Boolean,
           value: false,
@@ -306,10 +319,15 @@
         localize:{
           statePath : 'i18n.exporter'
         },
+        data: {
+          statePath : 'confirm.data',
+          observer : 'test'
+        },
         companys:{
           statePath : 'confirm.list'
         }
       },
+      test:function(data){console.log(data)},
       behaviors: [ReduxBehavior, nylonBehavior, i18nAction, confirmAction, exporterAction],
       listeners: {
         'back_page' : '_backPage',
@@ -323,7 +341,7 @@
       _selectData: function (e) {
         this.isHidden = true;
         this.pageSelected = "detailCompany";
-        this.dataSelect = e.currentTarget.data;
+        // this.dataSelect = e.currentTarget.data;
         // console.log(e.currentTarget.data);
         var companyId = e.currentTarget.data.company_taxno;
         this.dispatchAction('CONFIRM_SEARCH', companyId);
@@ -333,12 +351,13 @@
         this.pages = 0;
         this.isHidden = false;
       },
-      _save: function () {
+      _pass: function () {
         var data = {
-                      id: this.dataSelect.id,
-                      company_id: this.dataSelect.company_id,
-                      exporter_no: this.dataSelect.exporter_no,
-                      approve_status: 'process'
+                      id: this.data.id,
+                      company_id: this.data.company_id,
+                      exporter_no: this.data.exporter_no,
+                      // approve_status: 'process',
+                      approve_status: true
                     };
         // console.log(data);
         this.fire('toast', {
@@ -352,12 +371,13 @@
         });
       },
       approve: function () {
+        console.log(this.data);
         this.fire('toast', {
           status: 'openDialog',
           text: 'คุณต้องการจะอนุมัติใช่หรือไม่ ?',
           confirmed: (result) => {
             if(result == true){
-              this.dispatchAction('CONFIRM_ADMIN_APPROVE', this.dataSelect, this.exporter_data);
+              this.dispatchAction('CONFIRM_ADMIN_APPROVE', this.data, this.exporter_data);
             }
           }
         });
@@ -388,9 +408,10 @@
           this.company_remark = '';
         }
         var data= {
-                    id: this.dataSelect.id,
-                    company_id: this.dataSelect.company_id,
-                    approve_status: 'reject',
+                    id: this.data.id,
+                    company_id: this.data.company_id,
+                    doc_status: false,
+                    // approve_status: 'reject',
                     company_remark: this.company_remark
                   }
         this.fire('toast', {
@@ -409,7 +430,7 @@
       _extend:function(){
         var data = {
                       id: this.exporter_data.exporter_id,
-                      confirm_id: this.dataSelect.id,
+                      confirm_id: this.data.id,
                       change_status: this.exporter_data.change_status
                     };
         this.fire('toast', {
@@ -470,22 +491,24 @@
       _print: function (e) {
         // console.log(e.target.getAttribute('report'));
         if(e.target.getAttribute('report') == 'report1'){
-          if(typeof this.exporter_data !== 'undefined'){
+          if(this.data.date_approve_status === true){
+          // if(typeof this.exporter_data !== 'undefined'){
             if(this.exporter_data.expire_status === true){
               // console.log('หมดอายุ');
-              window.open('./api/external/report_exporter/approve_renew_1/'+this.dataSelect.id);
+              window.open('./api/external/report_exporter/approve_renew_1/'+this.data.id);
             }else{
               // console.log('ไม่หมดอายุ');
-              window.open('./api/external/report_exporter/approve_changtype/'+this.dataSelect.id);
+              window.open('./api/external/report_exporter/approve_changtype/'+this.data.id);
             }
           }else{
-              window.open('./api/external/report_exporter/approve_general_1/'+this.dataSelect.id);
+            window.open('./api/external/report_exporter/approve_general_1/'+this.data.id);
           }
         }else{
-          if(typeof this.exporter_data !== 'undefined'){
-            window.open('./api/external/report_exporter/approve_renew_2/'+this.dataSelect.id);
+          if(this.data.date_approve_status === true){
+          // if(typeof this.exporter_data !== 'undefined'){
+            window.open('./api/external/report_exporter/approve_renew_2/'+this.data.id);
           }else{
-            window.open('./api/external/report_exporter/approve_general_2/'+this.dataSelect.id);
+            window.open('./api/external/report_exporter/approve_general_2/'+this.data.id);
           }
         }
         
@@ -508,7 +531,7 @@
         // console.log(val)
         this.dispatchAction('CONFIRM_OB_DATA', val.id)
         .then((response) => {
-          console.log(response.data);
+          // console.log(response.data);
           this.exporter_data = response.data[0];
           if(typeof this.exporter_data === 'undefined'){
             this.isEnabled = true;

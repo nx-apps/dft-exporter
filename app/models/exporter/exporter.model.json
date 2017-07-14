@@ -7,19 +7,32 @@
         "exporter_no": {
             "type": "number"
         },
-        "exporter_date_approve": {
-            "type": "string",
-            "format": "date-time"
-        },
-        "exporter_remark": {
+        "company_id": {
             "type": "string"
         },
-        "trader_id": {
+        "company_taxno": {
             "type": "string"
+        },
+        "draft_id": {
+            "type": "string"
+        },
+        "type_lic_id": {
+            "type": "string"
+        },
+        "exporter_status": {
+            "type": "boolean"
+        },
+        "expire_status": {
+            "type": "boolean"
         }
     },
     "required": [
-        "exporter_date_approve",
-        "trader_id"
+        "exporter_no",
+        "company_id",
+        "company_taxno",
+        "draft_id",
+        "type_lic_id",
+        "exporter_status",
+        "expire_status"
     ]
 }

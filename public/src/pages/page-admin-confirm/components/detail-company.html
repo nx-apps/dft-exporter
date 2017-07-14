@@ -55,18 +55,32 @@
     <gl-grid-row width="{{getWidth}}">
       <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,9]]"></gl-grid-col>
       <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
-        <div class="text" style="text-align: right;">{{localize.status}} : {{data.approve_status_name}}</div>
+        <div class="text" style="text-align: right;">{{localize.status}} : 
+          <template is="dom-if" if={{!data.approve_status}}>
+            {{data.doc_status_name}}
+          </template>
+          <template is="dom-if" if={{data.approve_status}}>
+            <template is="dom-if" if={{!data.date_approve_status}}>
+              {{data.approve_status_name}}
+            </template>
+            <template is="dom-if" if={{data.date_approve_status}}>
+              {{data.date_approve_status_name}}
+            </template>
+          </template>
+        </div>
       </gl-grid-col>
     </gl-grid-row>
 
     <div class="title">{{localize.detail_data}}</div>
     <gl-form-panel set-border="0">
 
-      [[checkStatus(data.approve_status)]]
+      <!-- [[checkStatus(data.approve_status)]] -->
 
       <gl-grid-row>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-input hidden id="input-no" label="{{localize.no_exporter_fullname}} :" value="{{data.exporter_no_name}}" disabled></gl-form-input>
+          <template is="dom-if" if={{data.approve_status}}>
+            <gl-form-input label="{{localize.no_exporter_fullname}} :" value="{{data.exporter_no_name}}" disabled></gl-form-input>
+          </template>
         </gl-grid-col>
       </gl-grid-row>
 
@@ -130,7 +144,11 @@
       <gl-grid-row>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,9]]"></gl-grid-col>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
-          <gl-form-input hidden id="input-remark" always-float-label label="{{localize.note}} : " value="{{data.company_remark}}" disabled></gl-form-input>
+          <template is="dom-if" if={{!data.register_status}}>
+            <template is="dom-if" if={{!data.doc_status}}>
+              <gl-form-input always-float-label label="{{localize.note}} : " value="{{data.company_remark}}" disabled></gl-form-input>
+            </template>
+          </template>
         </gl-grid-col>
       </gl-grid-row>
     </gl-form-panel>
@@ -153,22 +171,22 @@
       backPage: function () {
         this.fire('backPage');
       },
-      checkStatus: function (val) {
-        if (typeof val != 'undefined' && val != undefined) {
-          if (val == 'request') {
-            this.$$('#input-no').setAttribute("hidden", "hidden");
-            this.$$('#input-remark').setAttribute("hidden", "hidden");
-          }
-          else if (val == 'reject') {
-            this.$$('#input-no').setAttribute("hidden", "hidden");
-            this.$$('#input-remark').removeAttribute("hidden");
-          }
-          else if (val == 'approve') {
-            this.$$('#input-no').removeAttribute("hidden");
-            this.$$('#input-remark').setAttribute("hidden", "hidden");
-          }
-        }
-      },
+      // checkStatus: function (val) {
+      //   if (typeof val != 'undefined' && val != undefined) {
+      //     if (val == 'request') {
+      //       this.$$('#input-no').setAttribute("hidden", "hidden");
+      //       this.$$('#input-remark').setAttribute("hidden", "hidden");
+      //     }
+      //     else if (val == 'reject') {
+      //       this.$$('#input-no').setAttribute("hidden", "hidden");
+      //       this.$$('#input-remark').removeAttribute("hidden");
+      //     }
+      //     else if (val == 'approve') {
+      //       this.$$('#input-no').removeAttribute("hidden");
+      //       this.$$('#input-remark').setAttribute("hidden", "hidden");
+      //     }
+      //   }
+      // },
       obItem:function(val){
         if(typeof val != 'undefined' && val != undefined){
           return true;

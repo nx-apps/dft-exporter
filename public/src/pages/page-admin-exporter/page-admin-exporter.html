@@ -261,8 +261,8 @@
       _selectData: function (e) {
         var companyId = e.currentTarget.data.company_id;
         this.dispatchAction('EXPORTER_GET_FILE_DELETE',companyId);
-        var exporterId = e.currentTarget.data.id;
-        this.dispatchAction('EXPORTER_GET_DATA_ID',exporterId);
+        var id = e.currentTarget.data.id;
+        this.dispatchAction('EXPORTER_GET_DATA_ID',id);
         this.dispatchAction('EXPORTER_GET_TYPE_LIC');
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');
         this.layerContent = "detailRegExporter";

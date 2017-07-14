@@ -142,15 +142,16 @@ export function companyAction(store) {
                                 });
                             })
                     } else {
-                        axios.get('./external/check/myowner?table=company&id=' + data.id + '&field=company_name_th&value=' + data.company_name_th)
+                        axios.get('./external/check/duplicate?table=company&id=' + data.id + '&field=company_name_th&value=' + data.company_name_th)
                             .then((response2) => {
                                 if (response2.data == 1) {
                                     axios.put('./external/company/update', data)
                                         .then((response3) => {
+                                            console.log(response3);
                                             this.fire('toast', {
                                                 status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
                                                     this.COMPANY_SEARCH(data.company_taxno);
-                                                    this.COMPANY_GET_DATA();
+                                                    this.COMPANY_GET_DATA(1);
                                                 }
                                             });
                                         })
