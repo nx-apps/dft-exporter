@@ -2,12 +2,12 @@ var dd = new Date();
 var y = dd.getFullYear();
 var m = dd.getMonth();
 var d = dd.getDate();
-var tz = "T00:00:00.000Z";
+var tz = "T00:00:00+07:00";
 var d1y = (y - 1) + '-' + (m < 9 ? '0' : '') + (m + 1) + '-' + (d < 10 ? '0' : '') + d + tz;
 
 exports.exporter = function (req, res) {
-    var page = parseInt(req.params.page) - 1;
-    var limit = parseInt(req.params.limit);
+    var page = parseInt(req.query.page) - 1;
+    var limit = parseInt(req.query.limit);
     var skip = page * limit;
     var r = req.r;
     var q = {}, d = {};
@@ -23,7 +23,7 @@ exports.exporter = function (req, res) {
 
         if (key.indexOf('date') > -1) {
             d[key] = req.query[key] + tz;
-        } else {
+        } else if (key != 'page' && key != 'limit') {
             q[key] = req.query[key];
         }
 

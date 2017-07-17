@@ -9,4 +9,6 @@ module.exports = function (app) {
     app.route('/delete/id/:id').delete(controller.delete);
     app.get('/toRethink',controller.toRethink);
     app.get('/page',controller.page);
+    app.route('/companyUpdate').get(controller.companyUpdate);
+    app.get('/test',controller.test);
 }

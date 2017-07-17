@@ -40,7 +40,7 @@ export function exporterAction(store) {
             } else {
                 page = parseInt(page);
             }
-            axios.get('./external/exporter/page/'+page+'/limit/100')
+            axios.get('./external/exporter?page='+page+'&limit=100')
                 .then(function (response) {
                     response.data.map((item) => {
                         for (var key in item) {
@@ -126,7 +126,7 @@ export function exporterAction(store) {
         EXPORTER_SEARCH: function (val, page) {
             var page = parseInt(page);
             // this.fire('toast', { status: 'load' })
-            axios.get('./external/exporter/page/'+page+'/limit/100' + val)
+            axios.get('./external/exporter?page='+page+'&limit=100' + val)
                 .then(function (response) {
                     response.data.map((item) => {
                         for (var key in item) {

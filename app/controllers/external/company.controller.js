@@ -1,4 +1,5 @@
 var soap = require('soap');
+var async = require('async');
 exports.list = function (req, res) {
     var r = req.r;
     var page = parseInt(req.query.page) - 1;
@@ -97,9 +98,9 @@ exports.listId = function (req, res) {
     //0205545008860
     soap.createClient(url, function (err, client) {
         client.GetCompanyProfile(args, function (err2, result) {
-            if(result.GetCompanyProfileResult.CompanyAddress === null){
+            if (result.GetCompanyProfileResult.CompanyAddress === null) {
                 res.json([]);
-            }else{
+            } else {
                 var data = result.GetCompanyProfileResult;
                 var address = data.CompanyAddress;
                 var bkk = (address.ProvinceEN.toUpperCase() == "BANGKOK" ? true : false);
@@ -135,17 +136,16 @@ exports.listId = function (req, res) {
                 var company = db.getAll(data.CompanyTaxno, { index: 'company_taxno' });
                 r.branch(company.count().eq(0),
                     db.insert(newdata).do(function (d) {
-                        return db.getAll(d('generated_keys')(0), {index: 'id'})
+                        return db.getAll(d('generated_keys')(0), { index: 'id' })
                     }),
                     db.get(company(0)('id')).update(newdata).do(function (d) {
-                        return db.getAll(company(0)('id'), {index: 'id'})
+                        return db.getAll(company(0)('id'), { index: 'id' })
                     })
                 ).run().then(function (datas) {
                     res.json(datas)
                 })
             }
         });
-        
     });
     // var r = req.r;
     // r.db('external').table('company').getAll(req.params.id, { index: 'company_taxno' })
@@ -227,4 +227,148 @@ exports.toRethink = function (req, res) {
                     res.json(result);
                 })
         })
+}
+exports.companyUpdate = function (req, res) {
+    r.db('external').table('exporter').getField('company_taxno')
+        .run()
+        .then(function (taxnos) {
+            var url = 'http://reg-users.dft.go.th/RegistrationService.asmx?WSDL';
+            soap.createClient(url, function (err, client) {
+                var msg = { error: [], updated: 0 };
+                async.eachOfLimit(taxnos, 25, function (value, index, callback) {
+                    var args = { CompanyTaxNo: value, BranchNo: 0 };
+                    client.GetCompanyProfile(args, function (err2, result) {
+                        if (result.GetCompanyProfileResult.CompanyAddress === null) {
+                            msg.error.push(value);
+                            callback();
+                        } else {
+                            var data = setDataCompany(result.GetCompanyProfileResult);
+                            var company = r.db('external').table('test').getAll(data.company_taxno, { index: 'company_taxno' });
+                            company(0).update({ company: data })
+                                .run().then(function (datas) {
+                                    // var keys = Object.keys(datas);
+                                    // for (i = 0; i < keys.length; i++) {
+                                    //     if (index == 0) {
+                                    //         msg.success[keys[i]] = 0;
+                                    //     }
+                                    //     msg.success[keys[i]] += Number(datas[keys[i]]);
+                                    // }
+                                    msg.updated++;
+                                    callback();
+
+                                })
+                        }
+                    });
+                }, function (err) {
+                    if (err !== null) {
+                        res.json(err);
+                    } else {
+                        res.json(msg);
+                    }
+                });
+                //
+
+                /*   client.GetCompanyProfile(args, function (err2, result) {
+                       // if (result.GetCompanyProfileResult.CompanyAddress === null) {
+                       //     msg.error.push(value);
+                       //     callback();
+                       // } else {
+                       var data = setDataCompany(result.GetCompanyProfileResult);
+                       r.expr(data).run().then(function (data) {
+                           return res.json(data)
+                       })
+   
+                       //     var db = r.db('external').table('test');
+                       //     var company = db.getAll(data.CompanyTaxno, { index: 'company_taxno' });
+                       //     company(0).update({ company: newdata })
+                       //         .run().then(function (datas) {
+                       //             msg.success.push(datas);
+                       //             callback();
+                       //         })
+                       // }
+                   }); */
+            });
+
+        })
+}
+exports.test = function (req, res) {
+    //insert
+    // getCompany(['0105553124599'], function (datas) {
+    //     r.expr(datas)
+    //         .forEach(function (fe) {
+    //             return r.db('external').table('test').insert(fe)
+    //         })
+    //         .run()
+    //         .then(function (datas) {
+    //             res.json(datas);
+    //         })
+    // });
+    //update
+    // r.db('external').table('test').getField('company_taxno')
+    //     .run()
+    //     .then(function (datas) {
+    //         getCompany(datas, function (datas) {
+    //             r.expr(datas)
+    //                 .forEach(function (fe) {
+    //                     return r.db('external').table('test').getAll(fe('company_taxno'), { index: 'company_taxno' }).update(fe)
+    //                 })
+    //                 .run()
+    //                 .then(function (datas) {
+    //                     res.json(datas);
+    //                 })
+    //         });
+    //     });
+}
+function setDataCompany(data) {
+    var address = data.CompanyAddress;
+    var bkk = (address.ProvinceEN.toUpperCase() == "BANGKOK" ? true : false);
+    return {
+        company_name_th: data.CompanyNameTH,
+        company_name_en: data.CompanyNameEN,
+        company_taxno: data.CompanyTaxno,
+        company_address_th: address.AddressNo
+        + (address.Moo == "" ? "" : " ม." + address.Moo)
+        + (address.BuildingTH == "" ? "" : " " + address.BuildingTH)
+        + (address.SoiTH == "" ? "" : " ซ." + address.SoiTH)
+        + (address.RoadTH == "" ? "" : " ถ." + address.RoadTH)
+        + (address.TumbolTH == "" ? "" : " " + (bkk ? "แขวง" : "ต.") + address.TumbolTH)
+        + (address.AmphurTH == "" ? "" : " " + (bkk ? "เขต" : "อ.") + address.AmphurTH),
+        company_address_en: address.AddressNo
+        + (address.Moo == "" ? "" : " Moo." + address.Moo)
+        + (address.BuildingEN == "" ? "" : " " + address.BuildingEN)
+        + (address.SoiEN == "" ? "" : " Soi." + address.SoiEN)
+        + (address.RoadEN == "" ? "" : " " + address.RoadEN + " Road,")
+        + (address.TumbolEN == "" ? "" : " " + address.TumbolEN + ",")
+        + (address.AmphurEN == "" ? "" : " " + address.AmphurEN),
+        company_province_th: address.ProvinceTH
+        + (address.Zipcode == "" ? "" : " " + address.Zipcode),
+        company_province_en: address.ProvinceEN
+        + (address.Zipcode == "" ? "" : " " + address.Zipcode),
+        company_fax: data.CompanyFaxNo,
+        company_phone: data.CompanyPhoneNo,
+        company_email: data.CompanyEmail,
+        company_date: data.JuristicRegDate.toISOString().replace(".000Z", "+07:00"),
+        directors: data.Directors
+    };
+}
+function getCompany(company_taxno, callback) { //['1234567890123',...,'xxxx']
+    var url = 'http://reg-users.dft.go.th/RegistrationService.asmx?WSDL';
+    soap.createClient(url, function (err, client) {
+        var datas = [];
+        async.eachOfLimit(company_taxno, 25, function (value, index, callback) {
+            var args = { CompanyTaxNo: value, BranchNo: 0 };
+            client.GetCompanyProfile(args, function (err2, result) {
+                var result = result.GetCompanyProfileResult;
+                if (result.CompanyAddress === null) {
+                    datas.push({ company_taxno: value });
+                    callback();
+                } else {
+                    datas.push(setDataCompany(result));
+                    callback();
+                }
+            });
+        }, function (err) {
+            callback(datas);
+        });
+    });
 }
