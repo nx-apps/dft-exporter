@@ -1,16 +1,21 @@
 exports.list = function (req, res) {
-    r.db('external').table('draft').getAll([false, false], [true, false], [true, true], { index: 'docAppStatus' })
+    r.db('external').table('draft').getAll([false, false, 'sign'], [true, false, 'sign'], [true, true, 'sign'],
+        [true, true, 'type'], [true, true, 'extend'], { index: 'docAppDraftStatus' })
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
                     m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
                     , null),
-                date_approve_status: r.branch(m.hasFields('date_approve'), true, false)
+                status_approve: r.branch(m.hasFields('date_approve'),
+                    r.branch(m('draft_status').eq('sign'),
+                        true,
+                        false),
+                    false)
             }
         })
         .merge({ date_created: r.row('date_created').toISO8601().split('T')(0) })
         .orderBy('exporter_no')
-        .filter({ date_approve_status: false })
+        .filter({ status_approve: false })
         .run()
         .then(function (result) {
             res.json(result)
@@ -28,13 +33,17 @@ exports.company_id = function (req, res) {
                     , null),
                 doc_status_name: r.branch(m('doc_status').eq(true), 'ตรวจสอบเอกสาร',
                     'รอส่งเอกสารใหม่'),
-                date_approve_status: r.branch(m.hasFields('date_approve'), true, false),
+                status_approve: r.branch(m.hasFields('date_approve'),
+                    r.branch(m('draft_status').eq('sign'),
+                        true,
+                        false),
+                    false),
                 approve_status_name: r.branch(m('approve_status').eq(true), 'รออนุมัติ', 'ยังไม่อนุมัติ')
             }
         })
         .merge(function (mm) {
             return {
-                date_approve_status_name: r.branch(mm('date_approve_status').eq(true), 'อนุมัติแล้ว', 'ยังไม่อนุมัติ')
+                status_approve_name: r.branch(mm('status_approve').eq(true), 'อนุมัติแล้ว', 'รออนุมัติ')
             }
         })
         .run()
@@ -150,4 +159,35 @@ exports.approve = function (req, res) {
         // result.message = req.ajv.errorsText()
         // res.json('xxx');
     }
+}
+exports.changetype = function (req, res) {
+    var type_lic = r.db('external').table('type_license').get(req.body.type_lic_id)
+        .merge(function (m) {
+            return {
+                date_updated: r.now().inTimezone('+07')
+            }
+        });
+    r.db('external').table('draft').get(req.body.id)
+        .update({
+            draft_status: 'sign',
+            type_lic: type_lic,
+            date_updated: r.now().inTimezone('+07'),
+            updater: 'admin'
+        }, { nonAtomic: true })
+        .do(function (d) {
+            return r.db('external').table('exporter').get(req.body.exporter_id)
+                .update({
+                    type_lic_id: req.body.type_lic_id,
+                    type_lic: type_lic,
+                    date_updated: r.now().inTimezone('+07'),
+                    updater: 'admin'
+                }, { nonAtomic: true })
+        })
+        .run()
+        .then(function (result) {
+            res.json(result);
+        })
+        .error(function (err) {
+            res.json(err)
+        })
 }

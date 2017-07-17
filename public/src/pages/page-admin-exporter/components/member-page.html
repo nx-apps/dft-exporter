@@ -75,7 +75,7 @@
       </template>
       
       <template is="dom-if" if={{data.export_status}}>
-        <template is="dom-if" if={{data.change_status}}>
+        <template is="dom-if" if={{checkstatus(data.draft_status)}}>
           <div id="titleBg" class="boxChange_status">
             <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize.change_status}}</div>
           </div>
@@ -83,7 +83,7 @@
       </template>
       <template is="dom-if" if={{!data.expire_status}}>
         <template is="dom-if" if={{data.export_status}}>
-          <template is="dom-if" if={{!data.change_status}}>
+          <template is="dom-if" if={{!checkstatus(data.draft_status)}}>
             <div class="horizontal end-justified layout">
               <div hidden="[[isEnabled]]"><paper-icon-button icon="create" on-tap="editChange" title="{{localize.edit_data}}"></paper-icon-button></div>
               <div hidden="[[isEnabled]]"><paper-icon-button icon="delete" on-tap="delete" title="{{localize.bt_delete}}"></paper-icon-button></div>
@@ -250,6 +250,13 @@
           }
         }
         });
+      },
+      checkstatus:function(data){
+        if(data == 'type'){
+          return true
+        }else{
+          return false
+        }
       }
     });
   </script>

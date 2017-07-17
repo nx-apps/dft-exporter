@@ -190,11 +190,11 @@
                   <tbody>
                     <tr style="cursor:pointer;">
                       <td><div class="text-table">[[indexNo(index)]]</div></td>
-                      <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]"></gl-form-input></td>
+                      <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]" disabled="{{_disabledType(item.draft_status)}}"></gl-form-input></td>
                       <td on-tap="_selectData" data="[[item]]"><div>{{item.company.company_name_th}}</div></td>
                       <td on-tap="_selectData" data="[[item]]"><div>{{item.type_lic.type_lic_name}}</div></td>
                       <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.date_created}}</div></td>
-                      <td on-tap="_selectData" data="[[item]]"><div>{{item.approve_status_name}}</div></td>
+                      <td on-tap="_selectData" data="[[item]]"><div>{{obDraftStatus(item.draft_status, item.doc_status, item.approve_status)}}</div></td>
                     </tr>
                 </template>
                 <template is="dom-if" if={{_checkData(companys)}}>
@@ -252,14 +252,19 @@
                 
                 
                 <!-- <template is="dom-if" if={{isEnabled}}> -->
-                <template is="dom-if" if={{!data.date_approve_status}}>
-                  <template is="dom-if" if={{data.approve_status}}>
+                <template is="dom-if" if={{!data.status_approve}}>
+                  <template is="dom-if" if={{!checkStatus(data.draft_status)}}>
+                    <template is="dom-if" if={{data.approve_status}}>
+                      <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
+                    </template>
+                  </template>
+                  <template is="dom-if" if={{checkStatus(data.draft_status)}}>
                     <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
                   </template>
                 </template>
                 
                 <!-- <template is="dom-if" if={{!isEnabled}}> -->
-                <template is="dom-if" if={{data.date_approve_status}}>
+                <template is="dom-if" if={{data.status_approve}}>
                   <template is="dom-if" if={{obExporter(exporter_data.expire_status)}}>
                     <paper-button class="gl-btn-warning btn-bottom" on-tap="_extend" raised>{{localize.bt_exporter_extend}}</paper-button>
                   </template>
@@ -320,14 +325,12 @@
           statePath : 'i18n.exporter'
         },
         data: {
-          statePath : 'confirm.data',
-          observer : 'test'
+          statePath : 'confirm.data'
         },
         companys:{
           statePath : 'confirm.list'
         }
       },
-      test:function(data){console.log(data)},
       behaviors: [ReduxBehavior, nylonBehavior, i18nAction, confirmAction, exporterAction],
       listeners: {
         'back_page' : '_backPage',
@@ -371,13 +374,12 @@
         });
       },
       approve: function () {
-        console.log(this.data);
         this.fire('toast', {
           status: 'openDialog',
           text: 'คุณต้องการจะอนุมัติใช่หรือไม่ ?',
           confirmed: (result) => {
             if(result == true){
-              this.dispatchAction('CONFIRM_ADMIN_APPROVE', this.data, this.exporter_data);
+              this.dispatchAction('CONFIRM_ADMIN_APPROVE', this.data);
             }
           }
         });
@@ -491,25 +493,26 @@
       _print: function (e) {
         // console.log(e.target.getAttribute('report'));
         if(e.target.getAttribute('report') == 'report1'){
-          if(this.data.date_approve_status === true){
-          // if(typeof this.exporter_data !== 'undefined'){
-            if(this.exporter_data.expire_status === true){
-              // console.log('หมดอายุ');
-              window.open('./api/external/report_exporter/approve_renew_1/'+this.data.id);
-            }else{
-              // console.log('ไม่หมดอายุ');
-              window.open('./api/external/report_exporter/approve_changtype/'+this.data.id);
-            }
-          }else{
+          // console.log(this.data.draft_status);
+          if(this.data.draft_status == 'sign'){
             window.open('./api/external/report_exporter/approve_general_1/'+this.data.id);
+          }else if(this.data.draft_status == 'type'){
+            window.open('./api/external/report_exporter/approve_changtype/'+this.data.id);
+          }else{
+            window.open('./api/external/report_exporter/approve_renew_1/'+this.data.id);
           }
         }else{
-          if(this.data.date_approve_status === true){
-          // if(typeof this.exporter_data !== 'undefined'){
-            window.open('./api/external/report_exporter/approve_renew_2/'+this.data.id);
-          }else{
+          if(this.data.draft_status == 'sign'){
             window.open('./api/external/report_exporter/approve_general_2/'+this.data.id);
+          }else{
+            window.open('./api/external/report_exporter/approve_renew_2/'+this.data.id);
           }
+          // if(this.data.status_approve === true){
+          // // if(typeof this.exporter_data !== 'undefined'){
+          //   window.open('./api/external/report_exporter/approve_renew_2/'+this.data.id);
+          // }else{
+          //   window.open('./api/external/report_exporter/approve_general_2/'+this.data.id);
+          // }
         }
         
       },
@@ -573,6 +576,36 @@
           return true
         }
       },
+      checkStatus:function(val){
+        if(val == 'type'){
+          return true
+        }else{
+          return false
+        }
+      },
+      obDraftStatus:function(data, doc_status, approve_status){
+        if(data == 'type'){
+          return 'เปลี่ยนประเภทใบอนุญาต (รออนุมัติ)'
+        }
+        if(data == 'extend'){
+          return 'ต่ออายุผู้ส่งออก (รออนุมัติ)'
+        }
+        if(data == 'sign'){
+          if(doc_status === true && approve_status === false){
+            return 'ลงทะเบียนผู้ส่งออก (ตรวจสอบเอกสาร)'
+          }
+          else if(doc_status === true && approve_status === true){
+            return 'ลงทะเบียนผู้ส่งออก (รออนุมัติ)'
+          }
+        }
+      },
+      _disabledType:function(val){
+        if(val == 'sign'){
+          return false
+        }else{
+          return true
+        }
+      }
       // _approveAll: function () {
       //   const check = (item) => {
       //     return item.check == true;

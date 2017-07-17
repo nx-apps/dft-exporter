@@ -139,12 +139,12 @@ export function confirmAction(store) {
                 });
             });
         },
-        CONFIRM_ADMIN_APPROVE: function(data, exp_data){
-            if(data.change_status === true){
-                let {id, exporter_id, type_lic_id} = exp_data;
+        CONFIRM_ADMIN_APPROVE: function(data){
+            if(data.draft_status == 'type'){
+                let {id, exporter_id, type_lic_id} = data;
                 let newData = {id, exporter_id, type_lic_id};
                 this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-                axios.put('./external/confirm_exporter/changetype', newData)
+                axios.put('./external/draft/changetype', newData)
                 .then((response) => {
                     this.fire('toast', {
                         status: 'success', text: 'บันทึกสำเร็จ', callback: () => {

@@ -6,8 +6,8 @@ var tz = "T00:00:00.000Z";
 var d1y = (y - 1) + '-' + (m < 9 ? '0' : '') + (m + 1) + '-' + (d < 10 ? '0' : '') + d + tz;
 
 exports.exporter = function (req, res) {
-    var page = parseInt(req.query.page) - 1;
-    var limit = parseInt(req.query.limit);
+    var page = parseInt(req.params.page) - 1;
+    var limit = parseInt(req.params.limit);
     var skip = page * limit;
     var r = req.r;
     var q = {}, d = {};
@@ -26,6 +26,7 @@ exports.exporter = function (req, res) {
         } else {
             q[key] = req.query[key];
         }
+        
     }
     if (Object.getOwnPropertyNames(d).length !== 0) {
         d = r.row('exporter_date_approve').gt(d.date_start).and(r.row('exporter_date_approve').lt(d.date_end));
@@ -136,9 +137,7 @@ exports.exporterId = function (req, res) {
                 export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
         })
-        // .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
-        .eqJoin('draft_id', r.db('external').table('draft')).pluck("left", { right: ["change_status"] }).zip()
-        // .eqJoin("type_lic_id", r.db('external').table("type_license")).pluck("left", { right: ["type_lic_name"] }).zip()
+        .eqJoin('draft_id', r.db('external').table('draft')).pluck("left", { right: ["draft_status"] }).zip()
         .run()
         .then(function (result) {
             res.json(result)

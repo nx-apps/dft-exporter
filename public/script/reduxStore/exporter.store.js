@@ -40,7 +40,7 @@ export function exporterAction(store) {
             } else {
                 page = parseInt(page);
             }
-            axios.get('./external/exporter/?page='+page+'&limit=100')
+            axios.get('./external/exporter/page/'+page+'/limit/100')
                 .then(function (response) {
                     response.data.map((item) => {
                         for (var key in item) {
@@ -140,7 +140,6 @@ export function exporterAction(store) {
             this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback: function () { } })
         },
         EXPORTER_UPDATE: function (data) {
-            
             if (data.type_lic_id === undefined) {
                 // console.log('ตัวเดิม');
                 this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
@@ -156,11 +155,11 @@ export function exporterAction(store) {
             } else {
                 // console.log('เปลี่ยน');
                 this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-                axios.put('./external/confirm_exporter/update', data)
+                axios.put('./external/draft/update', data)
                     .then((result) => {
                         this.fire('toast', {
                             status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                                this.EXPORTER_GET_DATA();
+                                this.EXPORTER_GET_DATA(1);
                                 this.EXPORTER_GET_DATA_ID(data.exporter_id);
                             }
                         });

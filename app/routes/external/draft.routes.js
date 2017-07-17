@@ -5,4 +5,5 @@ module.exports = function (app) {
     app.route('/insert').post(controller.insert);
     app.route('/update').put(controller.update);
     app.route('/approve').post(controller.approve);
+    app.route('/changetype').put(controller.changetype);
 }

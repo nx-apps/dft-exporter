@@ -45,13 +45,13 @@
         <div id="titleExporter" class="title-head"><iron-icon icon="icons:info"></iron-icon>  {{localize.request_change_expire}}</div>
       </div>
     </template>
-    <template is="dom-if" if={{obExporter(exporterData.expire_status)}}>
-      <template is="dom-if" if={{data.change_status}}>
+    <!-- <template is="dom-if" if={{obExporter(exporterData.expire_status)}}> -->
+      <template is="dom-if" if={{checkStatus(data.draft_status)}}>
         <div id="titleBg" class="boxChange_status">
           <div id="titleExporter" class="title-head"><iron-icon icon="icons:info"></iron-icon>  {{localize.request_change_status}}</div>
         </div>
       </template>
-    </template>
+    <!-- </template> -->
     <gl-grid-row width="{{getWidth}}">
       <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,9]]"></gl-grid-col>
       <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
@@ -60,11 +60,11 @@
             {{data.doc_status_name}}
           </template>
           <template is="dom-if" if={{data.approve_status}}>
-            <template is="dom-if" if={{!data.date_approve_status}}>
+            <template is="dom-if" if={{!data.status_approve}}>
               {{data.approve_status_name}}
             </template>
-            <template is="dom-if" if={{data.date_approve_status}}>
-              {{data.date_approve_status_name}}
+            <template is="dom-if" if={{data.status_approve}}>
+              {{data.status_approve_name}}
             </template>
           </template>
         </div>
@@ -205,6 +205,13 @@
           return false
         }else{
           return true
+        }
+      },
+      checkStatus:function(val){
+        if(val == 'type'){
+          return true
+        }else{
+          return false
         }
       }
     });
