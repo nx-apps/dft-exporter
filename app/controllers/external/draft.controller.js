@@ -25,6 +25,8 @@ exports.list = function (req, res) {
         })
 }
 exports.company_id = function (req, res) {
+    var exporter_id = r.db('external').table('exporter')
+        .getAll(req.params.company_id, { index: 'company_id' }).coerceTo('array').getField('id');
     r.db('external').table('draft').getAll(req.params.company_id, { index: 'company_id' })
         .merge(function (m) {
             return {
@@ -38,7 +40,8 @@ exports.company_id = function (req, res) {
                         true,
                         false),
                     false),
-                approve_status_name: r.branch(m('approve_status').eq(true), 'รออนุมัติ', 'ยังไม่อนุมัติ')
+                approve_status_name: r.branch(m('approve_status').eq(true), 'รออนุมัติ', 'ยังไม่อนุมัติ'),
+                exporter_id: r.branch(exporter_id.eq([]), null, exporter_id(0))
             }
         })
         .merge(function (mm) {
@@ -48,7 +51,12 @@ exports.company_id = function (req, res) {
         })
         .run()
         .then(function (result) {
-            res.json(result[0])
+            if (result.length > 0) {
+                res.json(result[0])
+            } else {
+                res.json(null)
+            }
+
         })
         .error(function (err) {
             res.json(err)

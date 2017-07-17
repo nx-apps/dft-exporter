@@ -214,8 +214,8 @@
             </paper-tabs>
             <gl-form-panel>
               <iron-pages selected="{{pages}}">
-                <detail-company exporter-data="[[exporter_data]]"></detail-company>
-                <fileup-company exporter-data="[[exporter_data]]"></fileup-company>
+                <detail-company></detail-company>
+                <fileup-company></fileup-company>
               </iron-pages>
             </gl-form-panel>
 
@@ -227,7 +227,6 @@
                   </template>
                 </template>
                 
-                <!-- <div hidden="[[_hidBtnApp(data.approve_status)]]" style="margin-left:20px;"> -->
                 <template is="dom-if" if={{data.approve_status}}>
                   <div class="btn-bottom">
                     <iron-icon icon="print"></iron-icon>
@@ -239,7 +238,6 @@
                     </paper-dropdown-menu>
                   </div>
                 </template>
-                <!-- </div> -->
               </div>
 
               <div>
@@ -253,25 +251,31 @@
                 
                 <!-- <template is="dom-if" if={{isEnabled}}> -->
                 <template is="dom-if" if={{!data.status_approve}}>
-                  <template is="dom-if" if={{!checkStatus(data.draft_status)}}>
-                    <template is="dom-if" if={{data.approve_status}}>
-                      <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
+                  <template is="dom-if" if={{!checkStatusExtend(data.draft_status)}}>
+                    <template is="dom-if" if={{!checkStatusType(data.draft_status)}}>
+                      <template is="dom-if" if={{data.approve_status}}>
+                        <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
+                      </template>
                     </template>
                   </template>
-                  <template is="dom-if" if={{checkStatus(data.draft_status)}}>
+
+                  <template is="dom-if" if={{checkStatusExtend(data.draft_status)}}>
+                    <paper-button class="gl-btn-warning btn-bottom" on-tap="_extend" raised>{{localize.bt_exporter_extend}}</paper-button>
+                  </template>
+                  <template is="dom-if" if={{checkStatusType(data.draft_status)}}>
                     <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
                   </template>
                 </template>
                 
                 <!-- <template is="dom-if" if={{!isEnabled}}> -->
-                <template is="dom-if" if={{data.status_approve}}>
-                  <template is="dom-if" if={{obExporter(exporter_data.expire_status)}}>
+                 <!-- <template is="dom-if" if={{data.status_approve}}> -->
+                  <!-- <template is="dom-if" if={{obExporter(exporter_data.expire_status)}}>
                     <paper-button class="gl-btn-warning btn-bottom" on-tap="_extend" raised>{{localize.bt_exporter_extend}}</paper-button>
-                  </template>
-                  <template is="dom-if" if={{!obExporter(exporter_data.expire_status)}}>
-                    <paper-button hidden="[[_hidBtnApp(data.approve_status)]]" class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
-                  </template>
-                </template>
+                  </template> -->
+                  <!-- <template is="dom-if" if={{!obExporter(exporter_data.expire_status)}}> -->
+                    <!-- <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button> -->
+                  <!-- </template> -->
+                <!-- </template>  -->
               </div>
             </div> 
           </div> 
@@ -291,7 +295,7 @@
             <paper-button class="gl-btn-primary button-size" raised on-tap="_reject">{{localize.bt_save}}</paper-button>
           </div>
         </paper-dialog>  
-        [[obData(data)]]
+        <!-- [[obData(data)]] -->
        <!-- </section> -->
 
       <!-- <section id="content2"> -->
@@ -431,9 +435,8 @@
       },
       _extend:function(){
         var data = {
-                      id: this.exporter_data.exporter_id,
-                      confirm_id: this.data.id,
-                      change_status: this.exporter_data.change_status
+                      id: this.data.exporter_id,
+                      draft_id: this.data.id
                     };
         this.fire('toast', {
           status: 'openDialog',
@@ -507,12 +510,6 @@
           }else{
             window.open('./api/external/report_exporter/approve_renew_2/'+this.data.id);
           }
-          // if(this.data.status_approve === true){
-          // // if(typeof this.exporter_data !== 'undefined'){
-          //   window.open('./api/external/report_exporter/approve_renew_2/'+this.data.id);
-          // }else{
-          //   window.open('./api/external/report_exporter/approve_general_2/'+this.data.id);
-          // }
         }
         
       },
@@ -530,42 +527,6 @@
         this.companyId = '';
         this._backPage();
       },
-      obData: function(val){
-        // console.log(val)
-        this.dispatchAction('CONFIRM_OB_DATA', val.id)
-        .then((response) => {
-          // console.log(response.data);
-          this.exporter_data = response.data[0];
-          if(typeof this.exporter_data === 'undefined'){
-            this.isEnabled = true;
-          }else{
-            this.isEnabled = false;
-          }
-        })
-      },
-      obExporter:function(val){
-        if(typeof val === 'undefined' && val == undefined){
-          return true
-        }else if(val === true){
-          return true
-        }else{
-          return false
-        }
-      },
-      _hidBtnApp:function(val){
-        if(val == 'process'){
-          return false
-        }else{
-          return true
-        }
-      },
-      _hidBtnPass:function(val){
-        if(val == 'request'){
-          return false
-        }else{
-          return true
-        }
-      },
       indexNo:function(val){
         return val+1
       },
@@ -576,7 +537,7 @@
           return true
         }
       },
-      checkStatus:function(val){
+      checkStatusType:function(val){
         if(val == 'type'){
           return true
         }else{
@@ -605,7 +566,36 @@
         }else{
           return true
         }
+      },
+      checkStatusExtend:function(val){
+        if(val == 'extend'){
+          return true
+        }else{
+          return false
+        }
       }
+      // obData: function(val){
+      //   // console.log(val)
+      //   this.dispatchAction('CONFIRM_OB_DATA', val.id)
+      //   .then((response) => {
+      //     // console.log(response.data);
+      //     this.exporter_data = response.data[0];
+      //     if(typeof this.exporter_data === 'undefined'){
+      //       this.isEnabled = true;
+      //     }else{
+      //       this.isEnabled = false;
+      //     }
+      //   })
+      // },
+      // obExporter:function(val){
+      //   if(typeof val === 'undefined' && val == undefined){
+      //     return true
+      //   }else if(val === true){
+      //     return true
+      //   }else{
+      //     return false
+      //   }
+      // },
       // _approveAll: function () {
       //   const check = (item) => {
       //     return item.check == true;

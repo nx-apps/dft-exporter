@@ -226,12 +226,11 @@
               if(result == true){
                 let newData = {};
                 newData.id = this.data.draft_id;
-                // newData.approve_status = 'process';
                 newData.draft_status = 'extend'
-                let dataDate = {};
-                dataDate.id = this.data.id;
-                dataDate.expire_status = true;
-                this.dispatchAction('EXPORTER_ACTIVE_RENEW', newData, dataDate);
+                let newData2 = {};
+                newData2.id = this.data.id;
+                newData2.expire_status = true;
+                this.dispatchAction('EXPORTER_ACTIVE_RENEW', newData, newData2);
                 this.$.dialog.toggle();
               }
             }

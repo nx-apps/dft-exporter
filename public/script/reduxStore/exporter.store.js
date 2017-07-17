@@ -166,17 +166,17 @@ export function exporterAction(store) {
                     })
             }
         },
-        EXPORTER_ACTIVE_RENEW: function (data, date) {
+        EXPORTER_ACTIVE_RENEW: function (data, data2) {
             // console.log(data,date);
             this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-            axios.put('./external/confirm_exporter/update', data)
+            axios.put('./external/draft/update', data)
                 .then((result) => {
-                    axios.put('./external/exporter/update', date)
+                    axios.put('./external/exporter/update', data2)
                         .then((result2) => {
                             this.fire('toast', {
                                 status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
                                     this.EXPORTER_GET_DATA(1);
-                                    this.EXPORTER_GET_DATA_ID(date.id);
+                                    this.EXPORTER_GET_DATA_ID(data2.id);
                                 }
                             });
                         })

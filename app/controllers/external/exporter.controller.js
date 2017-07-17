@@ -26,7 +26,7 @@ exports.exporter = function (req, res) {
         } else {
             q[key] = req.query[key];
         }
-        
+
     }
     if (Object.getOwnPropertyNames(d).length !== 0) {
         d = r.row('exporter_date_approve').gt(d.date_start).and(r.row('exporter_date_approve').lt(d.date_end));
@@ -278,10 +278,7 @@ exports.delete = function (req, res) {
     }
 }
 exports.updateDate = function (req, res) {
-    var r = req.r;
-    // var valid = req.ajv.validate('exporter.exporter', req.body);
     var result = { result: false, message: null, id: null };
-    // if (valid) {
     if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
         result.id = req.body.id;
         req.body = Object.assign(req.body,
@@ -292,37 +289,17 @@ exports.updateDate = function (req, res) {
                 expire_status: false
             });
         r.db('external').table('exporter').get(req.body.id)
-            .update(req.body, { returnChanges: true })
+            .update(req.body)
             .do(function () {
-                return r.db('external').table('confirm_exporter').get(req.body.confirm_id)
+                return r.db('external').table('draft').get(req.body.draft_id)
                     .update({
-                        approve_status: 'approve',
+                        draft_status: 'sign',
                         date_updated: r.now().inTimezone('+07'),
                         updater: 'admin'
-                    }, { returnChanges: true })
+                    })
             })
             .run()
             .then(function (response) {
-                result.message = response;
-                if (response.errors == 0) {
-                    result.result = true;
-                    var history = {
-                        tb_name: 'exporter',
-                        action: "update",
-                        id_value: req.body.id,
-                        old_value: null,
-                        new_value: req.body,
-                        date_created: r.now().inTimezone('+07'),
-                        actor: 'admin'
-                    };
-                    if (response.changes != [] && response.unchanged != 1 || response.replaced == 1) {
-                        // console.log(history.old_value);
-                        history.old_value = response.changes[0].old_val;
-                        //console.log(history.old_value);
-                    }
-
-                    r.db('external').table('history').insert(history).run().then()
-                }
                 res.json(result);
             })
             .error(function (err) {
@@ -333,10 +310,6 @@ exports.updateDate = function (req, res) {
         result.message = 'require field id';
         res.json(result);
     }
-    // } else {
-    //     result.message = req.ajv.errorsText()
-    //     res.json(result);
-    // }
 }
 exports.page = function (req, res) {
     var limit = parseInt(req.query.limit);
