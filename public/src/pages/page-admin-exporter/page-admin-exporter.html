@@ -126,11 +126,13 @@
               <div style="margin-top:30px; text-align:right;">{{localize.register}}</div>
             </gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <vaadin-date-picker class="bg-title" label="{{localize.date}}" value="{{dataSelected.date_start}}" name="date_start"></vaadin-date-picker>
+              <gl-form-input type="date" label="{{localize.date}}" value="{{dataSelected.date_start}}" name="date_start"></gl-form-input>
+              <!-- <vaadin-date-picker class="bg-title" label="{{localize.date}}" value="{{dataSelected.date_start}}" name="date_start"></vaadin-date-picker> -->
             </gl-grid-col>
             <div style="margin-top:30px;"> {{localize.to}} </div>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <vaadin-date-picker label="{{localize.date}}" value="{{dataSelected.date_end}}" name="date_end"></vaadin-date-picker>
+              <gl-form-input type="date" label="{{localize.date}}" value="{{dataSelected.date_end}}" name="date_end"></gl-form-input>
+              <!-- <vaadin-date-picker label="{{localize.date}}" value="{{dataSelected.date_end}}" name="date_end"></vaadin-date-picker> -->
             </gl-grid-col>
           </gl-grid-row>
           <gl-grid-row>
@@ -304,10 +306,11 @@
         }
         else if (this.dataSelected.date_end != undefined && this.dataSelected.date_end != '' && (this.dataSelected.date_start == undefined || this.dataSelected.date_start == '')) {
           this.fire('toast', { status: 'connectError', text: 'กรุณาใส่วันที่เริ่มต้นค้นหา' })
+        }else{
+          // console.log(str);
+          this.dispatchAction('EXPORTER_SEARCH', str, page);
+          return str;
         }
-        // console.log(str);
-        this.dispatchAction('EXPORTER_SEARCH', str, page);
-        return str;
       },
       _report: function (e) {
         var str = this._search();
