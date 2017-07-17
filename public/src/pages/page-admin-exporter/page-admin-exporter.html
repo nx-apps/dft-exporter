@@ -104,8 +104,8 @@
               <gl-form-dropdown-menu label="{{localize.status_export}}" placeholder="{{localize.all}}">
                 <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.exporter_status}}" name="exporter_status">
                   <paper-item>{{localize.all}}</paper-item>
-                  <paper-item value="yes">{{localize.member}}</paper-item>
-                  <paper-item value="no">{{localize.no_member}}</paper-item>
+                  <paper-item value="true">{{localize.member}}</paper-item>
+                  <paper-item value="false">{{localize.no_member}}</paper-item>
                 </paper-menu>
               </gl-form-dropdown-menu>
             </gl-grid-col>
@@ -291,6 +291,7 @@
       _search: function () {
         this.fire('toast', { status: 'load' })
         // console.log(this.dataSelected);
+        var page = this.$$('#selectedPage').value;
         var str = '';
         for (key in this.dataSelected) {
           if (this.dataSelected[key] != '' && this.dataSelected[key] != null) {
@@ -305,7 +306,7 @@
           this.fire('toast', { status: 'connectError', text: 'กรุณาใส่วันที่เริ่มต้นค้นหา' })
         }
         // console.log(str);
-        this.dispatchAction('EXPORTER_SEARCH', str);
+        this.dispatchAction('EXPORTER_SEARCH', str, page);
         return str;
       },
       _report: function (e) {

@@ -123,9 +123,10 @@ export function exporterAction(store) {
                     console.log(error);
                 })
         },
-        EXPORTER_SEARCH: function (val) {
+        EXPORTER_SEARCH: function (val, page) {
+            var page = parseInt(page);
             // this.fire('toast', { status: 'load' })
-            axios.get('./external/exporter' + val)
+            axios.get('./external/exporter/page/'+page+'/limit/100' + val)
                 .then(function (response) {
                     response.data.map((item) => {
                         for (var key in item) {
