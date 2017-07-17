@@ -40,13 +40,13 @@
     }
   </style>
   <template>
-    <template is="dom-if" if={{!obExporter(exporterData.expire_status)}}>
+    <template is="dom-if" if={{checkStatusExtend(data.draft_status)}}>
       <div id="titleBg" class="boxNortify">
         <div id="titleExporter" class="title-head"><iron-icon icon="icons:info"></iron-icon>  {{localize.request_change_expire}}</div>
       </div>
     </template>
     <!-- <template is="dom-if" if={{obExporter(exporterData.expire_status)}}> -->
-      <template is="dom-if" if={{checkStatus(data.draft_status)}}>
+      <template is="dom-if" if={{checkStatusType(data.draft_status)}}>
         <div id="titleBg" class="boxChange_status">
           <div id="titleExporter" class="title-head"><iron-icon icon="icons:info"></iron-icon>  {{localize.request_change_status}}</div>
         </div>
@@ -207,8 +207,15 @@
           return true
         }
       },
-      checkStatus:function(val){
+      checkStatusType:function(val){
         if(val == 'type'){
+          return true
+        }else{
+          return false
+        }
+      },
+      checkStatusExtend:function(val){
+        if(val == 'extend'){
           return true
         }else{
           return false
