@@ -31,7 +31,7 @@
   </style>
   <template>
     <div class="horizontal end-justified layout">
-      <div hidden="{{hidButton}}">
+      <div hidden="{{!_checkStatus(statusAction)}}">
         <paper-icon-button icon="create" on-tap="editChange" title="{{localize.edit_data}}"></paper-icon-button>
         <paper-icon-button style="margin-right: 10px;" icon="delete" on-tap="_delete" title="{{localize.bt_delete}}"></paper-icon-button>
       </div>
@@ -46,6 +46,13 @@
             label="{{localize.tax_no}} :" value="{{data.company_taxno}}" disabled="{{_checkStatus(statusAction)}}" allowed-pattern="[0-9]"
             maxlength="13"></gl-form-input>
         </gl-grid-col>
+        <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+          <paper-button hidden="{{btnEnabled}}" raised class="gl-btn-info" style="margin-right:15px;" on-tap="_search" title="{{localize.bt_search}}">
+          <iron-icon icon="search"></iron-icon>{{localize.bt_search}}</paper-button>
+        </gl-grid-col>
+      </gl-grid-row>
+
+      <gl-grid-row>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
           <gl-form-textarea class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
             label="{{localize.name_company}} :" value="{{data.company_name_th}}" disabled="{{isEnabled}}"></gl-form-textarea>
@@ -86,6 +93,10 @@
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
           <gl-form-input class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
             label="{{localize.fax}} :" value="{{data.company_fax}}" disabled="{{isEnabled}}"></gl-form-input>
+        </gl-grid-col>
+        <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+          <gl-form-input class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
+            label="{{localize.email}} :" value="{{data.company_email}}" disabled="{{isEnabled}}"></gl-form-input>
         </gl-grid-col>
       </gl-grid-row>
 
@@ -140,7 +151,6 @@
         }
       },
       editChange: function () {
-        this.hidButton = true;
         this.isEnabled = false;
       },
       _addAgent: function () {
@@ -203,8 +213,12 @@
       },
       _checkStatus: function (val) {
         if (val == 'add') {
+          this.isEnabled = false;
+          this.btnEnabled = false;
           return false
         } else {
+          this.isEnabled = true;
+          this.btnEnabled = true;
           return true
         }
       },
@@ -222,6 +236,9 @@
           }
         }
         })
+      },
+      _search: function(){
+        this.dispatchAction('COMPANY_GET_TAXNO', this.data.company_taxno);
       }
     });
   </script>

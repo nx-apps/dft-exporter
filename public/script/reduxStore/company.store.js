@@ -18,6 +18,8 @@ export function companyReducer(state = initialState, action) {
             return Object.assign({}, state, { data: action.payload });
         case 'COMPANY_CLEAR_DATA':
             return Object.assign({}, state, { data: action.payload });
+        case 'COMPANY_GET_TAXNO':
+            return Object.assign({}, state, { data: action.payload });
         default:
             return state
     }
@@ -81,9 +83,9 @@ export function companyAction(store) {
                 if (typeof id.detail === 'undefined') {
                     axios.get('./external/company/id/' + id)
                         .then((response) => {
-                            for (var key in response[0]) {
-                                if (response[0][key] === '') {
-                                    response[0][key] = "-";
+                            for (var key in response.data[0]) {
+                                if (response.data[0][key] === '') {
+                                    response.data[0][key] = "-";
                                 }
                             }
                             store.dispatch({ type: 'COMPANY_SEARCH', payload: response.data[0] })
@@ -91,9 +93,9 @@ export function companyAction(store) {
                 } else {
                     axios.get('./external/company/id/' + id.detail)
                         .then((response) => {
-                            for (var key in data[0]) {
-                                if (data[0][key] === '') {
-                                    data[0][key] = "-";
+                            for (var key in response.data[0]) {
+                                if (response.data[0][key] === '') {
+                                    response.data[0][key] = "-";
                                 }
                             }
                             store.dispatch({ type: 'COMPANY_SEARCH', payload: response.data[0] })
@@ -177,6 +179,27 @@ export function companyAction(store) {
         },
         COMPANY_CLEAR_DATA: function () {
             store.dispatch({ type: 'COMPANY_CLEAR_DATA', payload: { company_agent: [] } })
+        },
+        COMPANY_GET_TAXNO: function (taxno) {
+            if (typeof taxno !== 'undefined' && taxno !== '') {
+                axios.get('./external/company/id/' + taxno)
+                    .then((response) => {
+                        var data = response.data[0];
+                        if(typeof data.company_name_th !== 'undefined'){
+                            for (var key in data) {
+                                if (data[key] === '') {
+                                    data[key] = "-";
+                                }
+                            }
+                            store.dispatch({ type: 'COMPANY_GET_TAXNO', payload: data })
+                        }else{
+                            store.dispatch({ type: 'COMPANY_GET_TAXNO', payload: data })
+                            this.fire('toast', { status: 'connectError', text: 'ไม่มีข้อมูล' });
+                        }
+                    })
+            } else {
+                this.fire('toast', { status: 'connectError', text: 'กรุณากรอกเลขประจำตัวผู้เสียภาษี' });
+            }
         }
     }
     ]

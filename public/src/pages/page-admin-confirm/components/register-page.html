@@ -71,12 +71,17 @@
         <iron-icon icon="add"></iron-icon>{{localize.bt_register}}</paper-button>
       </template>
       
-      <template is="dom-if" if={{!data.register_status}}>
-        <template is="dom-if" if={{!data.doc_status}}>
-          <paper-button raised class="gl-btn-primary" on-tap="_reject">
-            <iron-icon icon="add"></iron-icon>{{localize.bt_sent_new}}</paper-button>
+      
+      <template is="dom-if" if={{_checkData(data)}}>
+        <template is="dom-if" if={{!data.register_status}}>
+          <template is="dom-if" if={{!data.doc_status}}>
+            <paper-button raised class="gl-btn-primary" on-tap="_reject">
+              <iron-icon icon="add"></iron-icon>{{localize.bt_sent_new}}</paper-button>
+          </template>
         </template>
       </template>
+      
+      
     </div>
   </template>
   <script>
@@ -142,6 +147,15 @@
             }
           }
         });
+      },
+      _checkData: function(data){
+        if(typeof data !== 'undefined'){
+          if(Object.keys(data).length > 0){
+            return true
+          }else{
+            return false
+          }
+        }
       }
     });
   </script>

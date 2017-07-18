@@ -1,5 +1,5 @@
 exports.list = function (req, res) {
-    r.db('external').table('draft').getAll([false, false, 'sign'], [true, false, 'sign'], [true, true, 'sign'],
+    r.db('external').table('draft').getAll([true, false, 'sign'], [true, true, 'sign'],
         [true, true, 'type'], [true, true, 'extend'], { index: 'docAppDraftStatus' })
         .merge(function (m) {
             return {

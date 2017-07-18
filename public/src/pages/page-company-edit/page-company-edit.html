@@ -118,7 +118,8 @@
     </paper-material>
 
     <panel-right title="{{titleName}}">
-      <company-manage hid-button="{{hidButton}}" is-enabled="{{isEnabled}}" status-action="[[statusAction]]"></company-manage>
+      <company-manage status-action="[[statusAction]]"></company-manage>
+       <!-- hid-button="{{hidButton}}" is-enabled="{{isEnabled}}" -->
     </panel-right>
 
   </template>
@@ -150,8 +151,6 @@
         }
       },
       listeners: {
-        'get-company': 'getCompany',
-        'refresh-company': 'listCompany',
         'back-page': '_backPage'
       },
       nylonPageActive: function () {
@@ -181,8 +180,8 @@
       },
       _add:function(){
         this.statusAction = 'add';
-        this.hidButton = true;
-        this.isEnabled = false;
+        // this.hidButton = true;
+        // this.isEnabled = false;
         this.$$('panel-right').open();
         this.titleName = 'เพิ่มข้อมูล';
         this.dispatchAction('COMPANY_CLEAR_DATA');

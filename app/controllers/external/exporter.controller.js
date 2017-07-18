@@ -23,7 +23,7 @@ exports.exporter = function (req, res) {
 
         if (key.indexOf('date') > -1) {
             d[key] = req.query[key] + tz;
-        } else if (key != 'page' && key != 'limit') {
+        } else if (key != 'page' && key != 'limit' && key != 'pluck' && key != 'without') {
             q[key] = req.query[key];
         }
 
@@ -31,7 +31,7 @@ exports.exporter = function (req, res) {
     if (Object.getOwnPropertyNames(d).length !== 0) {
         d = r.row('exporter_date_approve').gt(d.date_start).and(r.row('exporter_date_approve').lt(d.date_end));
     }
-    r.db('external').table('exporter')
+    var table = r.db('external').table('exporter')
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
@@ -72,10 +72,18 @@ exports.exporter = function (req, res) {
         })
         .filter(q)
         .filter(d)
-        .orderBy('exporter_no')
-        .skip(skip)
-        .limit(limit)
-        .run()
+        .orderBy('exporter_no');
+    if (typeof req.query.pluck !== 'undefined') {
+        table = table.pluck(req.query.pluck);
+    }
+    if (typeof req.query.without !== 'undefined') {
+        table = table.without(req.query.without);
+    }
+    if (!isNaN(skip)) {
+        table = table.skip(skip).limit(limit);
+    }
+    // .pluck(req.query.pluck)
+    table.run()
         .then(function (result) {
             res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3001')
             res.json(result)

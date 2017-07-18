@@ -42,10 +42,9 @@ export function confirmAction(store) {
                 var data = response.data;
                 if(data.length > 0){
                     axios.get('./external/draft/companyId/'+ data[0].id)
-                    // axios.get('./external/confirm_exporter/list/'+ data[0].id)
                     .then((response2) => {
                         var data2 = response2.data;
-                        if(data2.length === undefined){
+                        if(data2 !== null){
                             for (var key in data2) {
                                 if (data2[key] === '') {
                                     data2[key] = "-";
@@ -61,19 +60,24 @@ export function confirmAction(store) {
                             axios.get('./external/company/id/' + id)
                             .then((response3) => {
                                 var data3 = response3.data;
-                                for (var key in data3[0]) {
-                                    if (data3[0][key] === '') {
-                                        data3[0][key] = "-";
-                                    }
-                                }
-                                let newData = { company: data3[0] };
-                                newData.register_status = true;
-                                newData.doc_status_name = 'ยังไม่ลงทะเบียนผู้ส่งออก';
-                                this.fire('toast',{
-                                    status: 'success', text: 'โหลดข้อมูลสำเร็จ', callback: () =>{
-                                        store.dispatch({type: 'CONFIRM_SEARCH', payload: newData })
-                                    }
-                                });                                
+                                if(typeof data3[0].company_name_th !== 'undefined'){
+                                    for (var key in data3[0]) {
+                                        if (data3[0][key] === '') {
+                                                data3[0][key] = "-";
+                                            }
+                                        }
+                                        let newData = { company: data3[0] };
+                                        newData.register_status = true;
+                                        newData.doc_status_name = 'ยังไม่ลงทะเบียนผู้ส่งออก';
+                                        this.fire('toast',{
+                                            status: 'success', text: 'โหลดข้อมูลสำเร็จ', callback: () =>{
+                                                store.dispatch({type: 'CONFIRM_SEARCH', payload: newData })
+                                        }
+                                    });
+                                }else{
+                                    this.fire('toast', { status: 'connectError', text: 'ไม่มีเลขประจำตัวผู้เสียภาษีในระบบ' })
+                                    store.dispatch({type: 'CONFIRM_SEARCH', payload: {}})
+                                }                    
                             });
                             // console.log('ไม่มี');
                         }
