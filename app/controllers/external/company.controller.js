@@ -371,7 +371,7 @@ function setDataCompany(data) {
         company_phone: data.CompanyPhoneNo,
         company_email: data.CompanyEmail,
         company_date: data.JuristicRegDate.toISOString().replace(".000Z", "+07:00"),
-        directors: data.Directors
+        company_agent: data.Directors.Director
     };
 }
 function getCompany(company_taxno, callback) { //['1234567890123',...,'xxxx']
