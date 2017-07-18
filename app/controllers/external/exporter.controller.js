@@ -50,7 +50,12 @@ exports.exporter = function (req, res) {
                 ).toISO8601(),
                     null),
                 exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
-                date_exported: r.branch(m.hasFields('date_exported'), m('date_exported').toISO8601(), null)
+                date_exported: r.branch(m.hasFields('date_exported'), m('date_exported').toISO8601(), null),
+                company: m('company').merge(function(company_merge){
+                    return {
+                        company_agent: company_merge('company_agent').pluck('TitleNameTH','FirstNameTH','LastNameTH')
+                    }
+                })
             }
         })
         .merge(function (mm) {
