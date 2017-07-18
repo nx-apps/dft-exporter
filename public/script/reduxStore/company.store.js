@@ -149,7 +149,7 @@ export function companyAction(store) {
                                 if (response2.data == 1) {
                                     axios.put('./external/company/update', data)
                                         .then((response3) => {
-                                            console.log(response3);
+                                            // console.log(response3);
                                             this.fire('toast', {
                                                 status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
                                                     this.COMPANY_SEARCH(data.company_taxno);

@@ -194,6 +194,10 @@ exports.insert = function (req, res) {
 }
 exports.update = function (req, res) {
     var r = req.r;
+    req.body = Object.assign(req.body, {
+        updater: 'admin',
+        date_updated: r.now().inTimezone('+07')
+    });
     r.db('external').table('company').get(req.body.id).update(req.body)
         .run()
         .then(function (result) {

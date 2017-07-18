@@ -60,7 +60,8 @@ exports.downloadFile = function (req, res) {
 exports.deleteFile = function (req, res) {
     var r = req.r;
     var params = req.params;
-    r.db('external').table('document_file').getAll(params.id, { index: 'file_id' }).update({ file_status: false, date_update: new Date() })
+    r.db('external').table('document_file').getAll(params.id, { index: 'file_id' })
+    .update({ file_status: false, date_update: r.now().inTimezone('+07') })
 
         // r.db('files').table('files').get(params.id).delete()
         //     .do(
@@ -93,7 +94,7 @@ exports.uploadFileExporter = function (req, res) {
                 name: prefile.originalFilename.split('.')[0] + '_' + new Date().getTime() + "." + prefile.originalFilename.split('.')[1],
                 type: prefile.headers['content-type'],
                 contents: data,
-                timestamp: new Date(),
+                timestamp: r.now().inTimezone('+07'),
                 ref_path: req.headers['ref-path']
             })('generated_keys')(0)
                 .do(function (file_id) {
@@ -102,8 +103,8 @@ exports.uploadFileExporter = function (req, res) {
                         file_status: true,
                         doc_type_id: doc_type_id,
                         company_id: params.company_id,
-                        date_upload: new Date(),
-                        date_update: new Date()
+                        date_created: r.now().inTimezone('+07'),
+                        date_updated: r.now().inTimezone('+07')
                     })
                 })
                 .run().then(function (result) {
