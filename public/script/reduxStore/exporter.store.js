@@ -5,7 +5,7 @@ const initialState = {
     list_search: [],
     pages:[],
     data: {},
-    typeLic: [],
+    licType: [],
     docType: [],
     files: []
 }
@@ -19,8 +19,8 @@ export function exporterReducer(state = initialState, action) {
             return Object.assign({}, state, { pages: action.payload });
         case 'EXPORTER_GET_DATA_ID':
             return Object.assign({}, state, { data: action.payload });
-        case 'EXPORTER_GET_TYPE_LIC':
-            return Object.assign({}, state, { typeLic: action.payload });
+        case 'EXPORTER_GET_LIC_TYPE':
+            return Object.assign({}, state, { licType: action.payload });
         case 'EXPORTER_GET_DOC_TYPE':
             return Object.assign({}, state, { docType: action.payload });
         case 'EXPORTER_GET_FILE_DELETE':
@@ -104,11 +104,11 @@ export function exporterAction(store) {
                     console.log(error);
                 });
         },
-        EXPORTER_GET_TYPE_LIC: function () {
-            axios.get('./external/type_license')
+        EXPORTER_GET_LIC_TYPE: function () {
+            axios.get('./external/license_type')
                 .then(function (response) {
                     // console.log(response.data);
-                    store.dispatch({ type: 'EXPORTER_GET_TYPE_LIC', payload: response.data })
+                    store.dispatch({ type: 'EXPORTER_GET_LIC_TYPE', payload: response.data })
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -141,7 +141,7 @@ export function exporterAction(store) {
             this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback: function () { } })
         },
         EXPORTER_UPDATE: function (data) {
-            if (data.type_lic_id === undefined) {
+            if (data.lic_type_id === undefined) {
                 // console.log('ตัวเดิม');
                 this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
                 axios.put('./external/exporter/update', data)

@@ -1,5 +1,5 @@
 {
-    "name": "exporter.type_license",
+    "name": "exporter.license_type",
     "patternProperties": {
         ".*$": {
             "type": "string"

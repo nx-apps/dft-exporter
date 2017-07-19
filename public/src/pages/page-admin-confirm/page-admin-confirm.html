@@ -192,7 +192,7 @@
                       <td><div class="text-table">[[indexNo(index)]]</div></td>
                       <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]" disabled="{{_disabledType(item.draft_status)}}"></gl-form-input></td>
                       <td on-tap="_selectData" data="[[item]]"><div>{{item.company.company_name_th}}</div></td>
-                      <td on-tap="_selectData" data="[[item]]"><div>{{item.type_lic.type_lic_name}}</div></td>
+                      <td on-tap="_selectData" data="[[item]]"><div>{{item.lic_type.lic_type_name}}</div></td>
                       <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.date_created}}</div></td>
                       <td on-tap="_selectData" data="[[item]]"><div>{{obDraftStatus(item.draft_status, item.doc_status, item.approve_status)}}</div></td>
                     </tr>
@@ -342,7 +342,7 @@
       },
       nylonPageActive: function () {
         this.dispatchAction('CONFIRM_GET_DATA');
-        this.dispatchAction('EXPORTER_GET_TYPE_LIC');
+        this.dispatchAction('EXPORTER_GET_LIC_TYPE');
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');
       },
       _selectData: function (e) {
@@ -363,7 +363,6 @@
                       id: this.data.id,
                       company_id: this.data.company_id,
                       exporter_no: this.data.exporter_no,
-                      // approve_status: 'process',
                       approve_status: true
                     };
         // console.log(data);
@@ -417,7 +416,6 @@
                     id: this.data.id,
                     company_id: this.data.company_id,
                     doc_status: false,
-                    // approve_status: 'reject',
                     company_remark: this.company_remark
                   }
         this.fire('toast', {
@@ -470,7 +468,7 @@
             });
           }
           else {
-            this.read('./external/check/myowner?table=confirm_exporter&id=' + datas.id + '&field=exporter_no&value=' + datas.exporter_no, (response) => {
+            this.read('./external/check/duplicate?table=confirm_exporter&id=' + datas.id + '&field=exporter_no&value=' + datas.exporter_no, (response) => {
               if (response == 1) {
                 this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
                 this.update('./external/confirm_exporter/update', datas, () => {

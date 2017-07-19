@@ -201,7 +201,7 @@ exports.report2 = function (req, res, next) {
         //     }
         // })
         // .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
-        // .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
+        // .eqJoin('type_lic_id', r.db('external').table('license_type')).pluck({ right: 'type_lic_name' }, 'left').zip()
         // .filter(q)
         // // .filter(d)
         .orderBy('exporter_no')
@@ -376,7 +376,7 @@ exports.report4 = function (req, res) {
         function (company, exporter) {
             return company('id').eq(exporter('company_id'))
         }).zip()
-        // .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck({ right: 'type_lic_name' }, 'left').zip()
+        // .eqJoin('type_lic_id', r.db('external').table('license_type')).pluck({ right: 'type_lic_name' }, 'left').zip()
         // .eqJoin('seller_id', r.db('external').table('seller'))
         // .pluck({ right: ['seller_name_th', 'seller_name_en', 'seller_address_th', 'seller_address_en'] }, 'left').zip()
         .merge(function (m) {
@@ -742,7 +742,7 @@ exports.approve_general_1 = function (req, res) {
                 date_created: m('date_created').toISO8601().split('T')(0)
             }
         })
-        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
+        .eqJoin('type_lic_id', r.db('external').table('license_type')).pluck("left", { right: "type_lic_name" }).zip()
         .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         // .merge({ date_created: r.row('date_created').split('T')(0) })
         // .orderBy('exporter_no')
@@ -777,7 +777,7 @@ exports.approve_general_2 = function (req, res) {
                 date_created: m('date_created').toISO8601().split('T')(0)
             }
         })
-        .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
+        .eqJoin('type_lic_id', r.db('external').table('license_type')).pluck("left", { right: "type_lic_name" }).zip()
         .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         // .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         // .merge({ date_created: r.row('date_created').split('T')(0) })
@@ -786,7 +786,7 @@ exports.approve_general_2 = function (req, res) {
         //     return c('approve_status').ne('approve').and(c('approve_status').ne('reject'))
         // })
         // .filter({ approve_status_name: 'รออนุมัติ' })
-        // .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
+        // .eqJoin('type_lic_id', r.db('external').table('license_type')).pluck("left", { right: "type_lic_name" }).zip()
         // .filter(function (row) {
         //     return row("type_lic_id").eq(req.query.type_lic_id)
         // })
@@ -812,7 +812,7 @@ exports.approve_changtype = function (req, res) {
                     type_lic_name: m('type_lic')('type_lic_name'),
                 })
         })
-        // .eqJoin('type_lic_id', r.db('external').table('type_license')).without({ right: 'id' })//.zip()
+        // .eqJoin('type_lic_id', r.db('external').table('license_type')).without({ right: 'id' })//.zip()
         .merge(function (m) {
             return {
                 type_lice_name_old: m('type_lic_name'),
@@ -821,7 +821,7 @@ exports.approve_changtype = function (req, res) {
         })
         .eqJoin('draft_id', r.db('external').table('draft'))//.getAll(req.params.id, {index: 'id'})
         .without([{ left: ['type_lic_name', 'type_lic_id'] }]).zip()
-        .eqJoin('type_lic_id', r.db('external').table('type_license')).without({ right: 'id' }).zip()
+        .eqJoin('type_lic_id', r.db('external').table('license_type')).without({ right: 'id' }).zip()
         .merge(function (m) {
             return {
                 type_lice_name_new: m('type_lic_name'),
@@ -877,7 +877,7 @@ exports.approve_renew_1 = function (req, res) {
             return row("draft_id").eq(req.params.id)
         })
         // .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("right", { left: "exporter_date_approve" }).zip()//.getAll(req.params.id, {index: 'id'})
-        // .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
+        // .eqJoin('type_lic_id', r.db('external').table('license_type')).pluck("left", { right: "type_lic_name" }).zip()
         // .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         .run()
         .then(function (result) {
@@ -914,7 +914,7 @@ exports.approve_renew_2 = function (req, res) {
             return row("draft_id").eq(req.params.id)
         })
         // .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("right", { left: "exporter_date_approve" }).zip()//.getAll(req.params.id, {index: 'id'})
-        // .eqJoin('type_lic_id', r.db('external').table('type_license')).pluck("left", { right: "type_lic_name" }).zip()
+        // .eqJoin('type_lic_id', r.db('external').table('license_type')).pluck("left", { right: "type_lic_name" }).zip()
         // .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         .run()
         .then(function (result) {

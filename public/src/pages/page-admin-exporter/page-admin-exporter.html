@@ -92,10 +92,10 @@
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
                 <gl-form-dropdown-menu label="{{localize.type_license}}" placeholder="{{localize.all}}">
-                  <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.type_lic_id}}" name="type_lic_id">
+                  <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.lic_type_id}}" name="lic_type_id">
                     <paper-item>{{localize.all}}</paper-item>
-                    <template is="dom-repeat" items={{typeLic}}>
-                      <paper-item value="[[item.type_lic_id]]">{{item.type_lic_name}}</paper-item>
+                    <template is="dom-repeat" items={{licType}}>
+                      <paper-item value="[[item.lic_type_id]]">{{item.lic_type_name}}</paper-item>
                     </template>
                   </paper-menu>
                 </gl-form-dropdown-menu>
@@ -176,7 +176,7 @@
                   <td><div class="text-table">{{item.exporter_no_name}}</div></td>
                   <td><div class="text-table">{{item.company_taxno}}</div></td>
                   <td><div>{{item.company.company_name_th}}</div></td>
-                  <td><div>{{item.type_lic.type_lic_name}}</div></td>
+                  <td><div>{{item.lic_type.lic_type_name}}</div></td>
                   <td><div class="text-table">{{item.exporter_status_name}}</div></td>
                   <td><div class="text-table">{{item.export_status_name}}</div></td>
                   <td><div class="text-table">{{item.export_date_expire}}</div></td>
@@ -215,7 +215,7 @@
         <iron-pages selected="{{layerContent}}" attr-for-selected="name">
           <div name="detailRegExporter">
             <member-page></member-page>
-            <!--<member-page data="{{dataSelect}}" doc-type="[[docType]]" list-files="{{listFiles}}" type-lic="{{typeLic}}"></member-page>-->
+            <!--<member-page data="{{dataSelect}}" doc-type="[[docType]]" list-files="{{listFiles}}" type-lic="{{licType}}"></member-page>-->
           </div>
         </iron-pages>
       </div>
@@ -243,8 +243,8 @@
         list_search:{
           statePath : 'exporter.list_search'
         },
-        typeLic:{
-          statePath : 'exporter.typeLic'
+        licType:{
+          statePath : 'exporter.licType'
         },
         pages:{
           statePath : 'exporter.pages'
@@ -254,7 +254,7 @@
       nylonPageActive: function () {
         this.dispatchAction('EXPORTER_GET_DATA');
         this.dispatchAction('EXPORTER_GET_DATA_SEARCH');
-        this.dispatchAction('EXPORTER_GET_TYPE_LIC');
+        this.dispatchAction('EXPORTER_GET_LIC_TYPE');
         this.dispatchAction('EXPORTER_GET_PAGE');
       },
       _register: function (e) {
@@ -265,7 +265,7 @@
         this.dispatchAction('EXPORTER_GET_FILE_DELETE',companyId);
         var id = e.currentTarget.data.id;
         this.dispatchAction('EXPORTER_GET_DATA_ID',id);
-        this.dispatchAction('EXPORTER_GET_TYPE_LIC');
+        this.dispatchAction('EXPORTER_GET_LIC_TYPE');
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');
         this.layerContent = "detailRegExporter";
         this.titleName = 'ข้อมูลผู้ส่งออก';
@@ -276,7 +276,7 @@
         if(id.detail.value !== "" && typeof id.detail.value !== 'undefined'){
           var id = id.detail.value;
         this.dispatchAction('EXPORTER_GET_DATA_ID',id);
-        this.dispatchAction('EXPORTER_GET_TYPE_LIC');
+        this.dispatchAction('EXPORTER_GET_LIC_TYPE');
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');
         this.layerContent = "detailRegExporter";
         this.titleName = 'ข้อมูลผู้ส่งออก';

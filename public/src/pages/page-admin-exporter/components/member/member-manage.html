@@ -70,9 +70,9 @@
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-dropdown-menu style="width:100%;" class="checkValidate" label="{{localize.type_license}}" placeholder="{{localize.select_type}}"
               disabled="[[isEnabled]]" required>
-              <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.type_lic_id}}" name="type_lic_id">
-                <template is="dom-repeat" items={{typeLic}}>
-                  <paper-item value="[[item.type_lic_id]]">{{item.type_lic_name}}</paper-item>
+              <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.lic_type_id}}" name="lic_type_id">
+                <template is="dom-repeat" items={{licType}}>
+                  <paper-item value="[[item.lic_type_id]]">{{item.lic_type_name}}</paper-item>
                 </template>
               </paper-menu>
             </gl-form-dropdown-menu>
@@ -106,8 +106,8 @@
         data:{
           statePath : 'exporter.data'
         },
-        typeLic:{
-          statePath : 'exporter.typeLic'
+        licType:{
+          statePath : 'exporter.licType'
         },
         localize:{
           statePath : 'i18n.exporter'

@@ -188,15 +188,15 @@
         text:'คุณต้องการแก้ไขข้อมูลใช่หรือไม่ ?',
         confirmed: (result) => {
           if(result == true){
-            if(this.data.type_lic_id == this.cloneData.type_lic_id){
+            if(this.data.lic_type_id == this.cloneData.lic_type_id){
               let{id, exporter_status} = this.data;
               let newData = {id,exporter_status};
               this.dispatchAction('EXPORTER_UPDATE', newData);
               this.pages = 0;
               this.isEnabled = false;
             }else{
-              let{draft_id, type_lic_id} = this.data;
-              let newData = {type_lic_id};
+              let{draft_id, lic_type_id} = this.data;
+              let newData = {lic_type_id};
               newData.exporter_id = this.data.id,
               newData.id = this.data.draft_id,
               newData.draft_status = 'type'

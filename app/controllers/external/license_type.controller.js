@@ -1,8 +1,8 @@
-exports.type_license = function (req, res) {
+exports.license_type = function (req, res) {
     var r = req.r;
-    r.db('external').table("type_license")
+    r.db('external').table("license_type")
         .merge(function (row) {
-            return { type_lic_id: row('id') }
+            return { lic_type_id: row('id') }
         })
         .without('id')
         .run()
@@ -13,12 +13,12 @@ exports.type_license = function (req, res) {
             res.json(err);
         })
 }
-exports.type_licenseId = function (req, res) {
+exports.license_typeId = function (req, res) {
     var r = req.r;
-    r.db('external').table("type_license")
-        .get(req.params.type_lic_id.toUpperCase())
+    r.db('external').table("license_type")
+        .get(req.params.lic_type_id.toUpperCase())
         .merge({
-            type_lic_id: r.row('id')
+            lic_type_id: r.row('id')
         })
         .without('id')
         .run()
@@ -31,16 +31,16 @@ exports.type_licenseId = function (req, res) {
 }
 exports.insert = function (req, res) {
     var r = req.r;
-    var valid = req.ajv.validate('exporter.type_license', req.body);
+    var valid = req.ajv.validate('exporter.license_type', req.body);
     if (valid) {
         if (req.body.id == null) {
             req.body = Object.assign(req.body, {
                 creater: 'admin',
                 updater: 'admin',
-                date_created: new Date().toISOString(),
-                date_updated: new Date().toISOString()
+                date_created: r.now().inTimezone('+07'),
+                date_updated: r.now().inTimezone('+07')
             });
-            r.db('external').table('type_license')
+            r.db('external').table('license_type')
                 .insert(req.body)
                 .run()
                 .then(function (response) {

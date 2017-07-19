@@ -69,7 +69,7 @@ exports.insert = function (req, res) {
         r.db('external').table('draft').max('exporter_no').getField('exporter_no').add(1)
     );
     var company = r.db('external').table('company').getAll(req.body.company_taxno, { index: 'company_taxno' }).without('date_created', 'date_updated', 'date_exported')(0);
-    var type_lic = r.db('external').table('type_license').get(req.body.type_lic_id)
+    var lic_type = r.db('external').table('license_type').get(req.body.lic_type_id)
         .merge(function (m) {
             return {
                 date_created: r.now().inTimezone('+07')
@@ -82,7 +82,7 @@ exports.insert = function (req, res) {
             if (response > 0) {
                 req.body.exporter_no = response;
                 req.body.company = company;
-                req.body.type_lic = type_lic;
+                req.body.lic_type = lic_type;
                 req.body = Object.assign(req.body, {
                     date_created: r.now().inTimezone('+07'),
                     creater: 'admin'
@@ -130,14 +130,14 @@ exports.approve = function (req, res) {
     var valid = req.ajv.validate('exporter.exporter', req.body);
     // var result = { result: false, message: null, id: null };
     var company = r.db('external').table('company').getAll(req.body.company_taxno, { index: 'company_taxno' }).without('date_created', 'date_updated', 'date_exported')(0);
-    var type_lic = r.db('external').table('type_license').get(req.body.type_lic_id).merge(function (m) {
+    var lic_type = r.db('external').table('license_type').get(req.body.lic_type_id).merge(function (m) {
         return {
             date_approve: r.now().inTimezone('+07')
         }
     });
     if (valid) {
         req.body.company = company;
-        req.body.type_lic = type_lic;
+        req.body.lic_type = lic_type;
         req.body = Object.assign(req.body, {
             creater: 'admin',
             date_created: r.now().inTimezone('+07'),
@@ -169,7 +169,7 @@ exports.approve = function (req, res) {
     }
 }
 exports.changetype = function (req, res) {
-    var type_lic = r.db('external').table('type_license').get(req.body.type_lic_id)
+    var lic_type = r.db('external').table('license_type').get(req.body.lic_type_id)
         .merge(function (m) {
             return {
                 date_updated: r.now().inTimezone('+07')
@@ -178,15 +178,15 @@ exports.changetype = function (req, res) {
     r.db('external').table('draft').get(req.body.id)
         .update({
             draft_status: 'sign',
-            type_lic: type_lic,
+            lic_type: lic_type,
             date_updated: r.now().inTimezone('+07'),
             updater: 'admin'
         }, { nonAtomic: true })
         .do(function (d) {
             return r.db('external').table('exporter').get(req.body.exporter_id)
                 .update({
-                    type_lic_id: req.body.type_lic_id,
-                    type_lic: type_lic,
+                    lic_type_id: req.body.lic_type_id,
+                    lic_type: lic_type,
                     date_updated: r.now().inTimezone('+07'),
                     updater: 'admin'
                 }, { nonAtomic: true })

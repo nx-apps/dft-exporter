@@ -147,8 +147,8 @@ export function confirmAction(store) {
         },
         CONFIRM_ADMIN_APPROVE: function(data){
             if(data.draft_status == 'type'){
-                let {id, exporter_id, type_lic_id} = data;
-                let newData = {id, exporter_id, type_lic_id};
+                let {id, exporter_id, lic_type_id} = data;
+                let newData = {id, exporter_id, lic_type_id};
                 this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
                 axios.put('./external/draft/changetype', newData)
                 .then((response) => {
@@ -160,8 +160,8 @@ export function confirmAction(store) {
                     });
                 })
             }else{
-                let { exporter_no, company_id, company_taxno, id, type_lic_id, approve_status, doc_status} = data;
-                let newData = { exporter_no, company_id, company_taxno, type_lic_id};
+                let { exporter_no, company_id, company_taxno, id, lic_type_id, approve_status, doc_status} = data;
+                let newData = { exporter_no, company_id, company_taxno, lic_type_id};
                 newData.draft_id = data.id;
                 newData.exporter_status = false;
                 newData.expire_status = false;
