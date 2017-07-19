@@ -380,10 +380,10 @@ exports.approve_renew_2 = function (req, res) {
     };
     r.db('external').table('exporter')
         .map(function (m) {
-            return m.pluck('exporter_no', 'id', 'exporter_date_approve', 'draft_id')
+            return m.pluck('exporter_no', 'id', 'date_approve', 'draft_id')
                 .merge({
                     company_name_th: m('company')('company_name_th'),
-                    type_lic_name: m('type_lic')('type_lic_name')
+                    // lic_type_name: m('lic_type')('lic_type_name')
                 })
         })
         .eqJoin('draft_id', r.db('external').table('draft')).pluck("left", { right: "date_updated" }).zip()
@@ -392,15 +392,11 @@ exports.approve_renew_2 = function (req, res) {
                 exporter_no_name: r.branch(
                     m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
                     , null)
-                // ,approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่')
             }
         })
         .filter(function (row) {
             return row("draft_id").eq(req.params.id)
         })
-        // .eqJoin('confirm_id', r.db('external').table('confirm_exporter')).pluck("right", { left: "exporter_date_approve" }).zip()//.getAll(req.params.id, {index: 'id'})
-        // .eqJoin('type_lic_id', r.db('external').table('license_type')).pluck("left", { right: "type_lic_name" }).zip()
-        // .eqJoin("company_id", r.db('external').table("company")).without({ right: 'id' }).zip()
         .run()
         .then(function (result) {
             // res.json(result);
