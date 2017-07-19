@@ -194,6 +194,42 @@ export function confirmAction(store) {
         },
         CONFIRM_OB_DATA: function (id) {
             return axios.get('./external/confirm_exporter/get/' + id)
+        },
+        CONFIRM_CHANGE_EXPORTER_NO: function(data){
+            axios.get('./external/check/duplicate?table=draft&field=exporter_no&value=' + data.exporter_no)
+            .then((response) => {
+                if(response.data == 0){
+                    this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
+                    axios.put('./external/draft/update', data)
+                    .then((response2) => {
+                        this.fire('toast', {
+                            status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
+                                this.CONFIRM_GET_DATA();
+                            }
+                        });
+                    })
+                }else{
+                    axios.get('./external/check/duplicate?table=draft&id=' + data.id + '&field=exporter_no&value=' + data.exporter_no)
+                    .then((response2) => {
+                        if(response2.data == 1){
+                            this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
+                            axios.put('./external/draft/update', data)
+                            .then((response3) => {
+                                this.fire('toast', {
+                                    status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
+                                        this.CONFIRM_GET_DATA();
+                                    }
+                                });
+                            })
+                        }else{
+                            this.fire('toast', {
+                                status: 'connectError', text: 'เลข ข. นี้มีอยู่แล้ว',
+                                callback: function () {}
+                            })
+                        }
+                    })
+                }
+            })
         }
     }
     ]

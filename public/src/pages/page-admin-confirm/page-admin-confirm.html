@@ -455,41 +455,7 @@
           company_id: company.company_id
         }
         // console.log(datas);
-        this.read('./external/check/duplicate?table=confirm_exporter&field=exporter_no&value=' + datas.exporter_no, (response) => {
-          if (response == 0) {
-            this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-            this.update('./external/confirm_exporter/update', datas, () => {
-              this.fire('toast', {
-                status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                  this.fire('refresh-company');
-                  // console.log('success');
-                }
-              });
-            });
-          }
-          else {
-            this.read('./external/check/duplicate?table=confirm_exporter&id=' + datas.id + '&field=exporter_no&value=' + datas.exporter_no, (response) => {
-              if (response == 1) {
-                this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-                this.update('./external/confirm_exporter/update', datas, () => {
-                  this.fire('toast', {
-                    status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                      this.fire('refresh-company');
-                      // console.log('success');
-                    }
-                  });
-                });
-              }
-              else {
-                this.fire('toast', {
-                  status: 'connectError', text: 'เลข ข. นี้มีอยู่แล้ว',
-                  callback: function () {
-                  }
-                })
-              }
-            });
-          }
-        });
+        this.dispatchAction('CONFIRM_CHANGE_EXPORTER_NO', datas);
       },
       _print: function (e) {
         // console.log(e.target.getAttribute('report'));
