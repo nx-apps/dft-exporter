@@ -164,9 +164,9 @@ exports.report3 = function (req, res, next) {
     if (Object.getOwnPropertyNames(d).length !== 0) {
         parameters['date_start'] = d['date_start'];
         parameters['date_end'] = d['date_end'];
-        d = r.row('exporter_date_approve').gt(d.date_start).and(r.row('exporter_date_approve').lt(d.date_end));
+        d = r.row('date_approve').gt(d.date_start).and(r.row('date_approve').lt(d.date_end));
     } else {
-        d = r.row('exporter_date_approve').gt(parameters['date_start']).and(r.row('exporter_date_approve').lt(parameters['date_end']));
+        d = r.row('date_approve').gt(parameters['date_start']).and(r.row('date_approve').lt(parameters['date_end']));
         parameters['date_start'] = parameters['date_start'];
         parameters['date_end'] = parameters['date_end'];
     }
@@ -176,61 +176,21 @@ exports.report3 = function (req, res, next) {
 
     r.db('external').table('exporter')
         .filter(function (f) {
-            return f('exporter_date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(),
+            return f('date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(),
                 r.ISO8601(date_end).inTimezone('+07').date(), { rightBound: 'closed' })
         })
         .map(function (m) {
-            return m.pluck('exporter_no', 'id', 'exporter_date_approve')
+            return m.pluck('exporter_no', 'id', 'date_approve')
                 .merge({
                     company_name_th: m('company')('company_name_th'),
-                    type_lic_name: m('type_lic')('type_lic_name'),
+                    // lic_type_name: m('lic_type')('lic_type_name'),
                     company_address_th: m('company')('company_address_th'),
                     company_phone: m('company')('company_phone'),
                     company_fax: m('company')('company_fax'),
-                    exporter_status: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก')
+                    // exporter_status: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
+                    exporter_no: r.expr('ข.').add(m('exporter_no').coerceTo('string'))
                 })
         })
-        .merge(function (m) {
-            return {
-                exporter_no: r.branch(
-                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
-                    , null),
-                //         exporter_status_name: r.branch(m('exporter_status').eq('yes'), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                //         exporter_date_expire: r.time(m('exporter_date_approve').year().add(1),
-                //             m('exporter_date_approve').month(),
-                //             m('exporter_date_approve').day(),
-                //             "+07:00"
-                //         ).toISO8601(),
-                //         date_export_expire: r.branch(m.hasFields('date_exported'), r.time(m('date_exported').year().add(1),
-                //             m('date_exported').month(),
-                //             m('date_exported').day(),
-                //             "+07:00"
-                //         ).toISO8601(),
-                //             null),
-                //         exporter_date_approve: m('exporter_date_approve').toISO8601().split('T')(0),
-                //         date_exported: r.branch(m.hasFields('date_exported'), m('date_exported').toISO8601(), null)
-            }
-        })
-        // .merge(function (mm) {
-        //     return {
-        //         export_date_expire: r.branch(mm('date_export_expire').gt(mm('exporter_date_expire')),
-        //             r.branch(mm('date_export_expire').ne(null), mm('date_export_expire').split('T')(0), null),
-        //             mm('exporter_date_expire').split('T')(0))
-        //     }
-        // }).without('date_export_expire', 'exporter_date_expire')
-        // .merge(function (mmm) {
-        //     return {
-        //         export_status: r.branch(mmm('export_date_expire').gt(r.now().toISO8601().split('T')(0)), true, false)
-        //     }
-        // })
-        // .merge(function (m) {
-        //     return {
-        //         export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
-        //     }
-        // })
-        // .eqJoin('company_id', r.db('external').table('company')).without({ right: ["id", "date_create", "date_update", "creater", "updater"] }).zip()
-        // .filter(q)
-        // // .filter(d)
         .orderBy('exporter_no')
         .run()
         .then(function (result) {
