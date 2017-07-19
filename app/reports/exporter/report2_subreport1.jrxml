@@ -3,7 +3,7 @@
 	<property name="ireport.zoom" value="0.8264462809917361"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
-	<field name="agent_name" class="java.lang.String"/>
+	<field name="director_name" class="java.lang.String"/>
 	<detail>
 		<band height="25" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
@@ -17,7 +17,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{agent_name} != null)?$F{agent_name}:"-"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{director_name} != null)?$F{director_name}:"-"]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

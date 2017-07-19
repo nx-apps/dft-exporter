@@ -123,22 +123,29 @@ export function exporterAction(store) {
                     console.log(error);
                 })
         },
-        EXPORTER_SEARCH: function (val, page) {
-            var page = parseInt(page);
-            // this.fire('toast', { status: 'load' })
-            axios.get('./external/exporter?page='+page+'&limit=100' + val)
-                .then(function (response) {
-                    response.data.map((item) => {
-                        for (var key in item) {
-                            if (item[key] === '') {
-                                item[key] = '-';
+        EXPORTER_SEARCH: function (val, page, type) {
+            if(type !== 'report'){
+                // console.log('search');
+                var page = parseInt(page);
+                this.fire('toast', { status: 'load' })
+                axios.get('./external/exporter?page='+page+'&limit=100&' + val.substring(1))
+                    .then(function (response) {
+                        response.data.map((item) => {
+                            for (var key in item) {
+                                if (item[key] === '') {
+                                    item[key] = '-';
+                                }
                             }
-                        }
-                        return item.company_name = '(' + item.company_taxno + ') ' + item.company_name_th + ' ' + item.company_name_en;
-                    })
-                    store.dispatch({ type: 'EXPORTER_SEARCH', payload: response.data })
-                });
-            this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback: function () { } })
+                            return item.company_name = '(' + item.company_taxno + ') ' + item.company_name_th + ' ' + item.company_name_en;
+                        })
+                        store.dispatch({ type: 'EXPORTER_SEARCH', payload: response.data })
+                    });
+                this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback: function () { } })
+            }else{
+                // console.log('report');
+                axios.get('./external/exporter'+val)
+                    .then(function (response) {});
+            }
         },
         EXPORTER_UPDATE: function (data) {
             if (data.lic_type_id === undefined) {

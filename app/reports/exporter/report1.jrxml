@@ -12,10 +12,10 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<field name="exporter_no" class="java.lang.String"/>
 	<field name="company_name_th" class="java.lang.String"/>
-	<field name="type_lic_name" class="java.lang.String"/>
+	<field name="lic_type_name" class="java.lang.String"/>
 	<field name="company_taxno" class="java.lang.String"/>
-	<field name="exporter_date_approve" class="java.lang.String"/>
-	<field name="export_date_expire" class="java.lang.String"/>
+	<field name="date_approve" class="java.lang.String"/>
+	<field name="date_expire" class="java.lang.String"/>
 	<field name="type_lic_id" class="java.lang.String"/>
 	<field name="count_exporter" class="java.lang.String"/>
 	<variable name="ROW" class="java.lang.Integer" calculation="Count">
@@ -179,7 +179,7 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{type_lic_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{lic_type_name}]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="50" height="30" uuid="adf88bd0-dae3-4def-a4df-505f3dfb892f"/>
@@ -218,8 +218,8 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{exporter_date_approve} != null)
-?new nylon.utility.NumberFormat().toThaiDate($F{exporter_date_approve}):'-']]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{date_approve} != null)
+?new nylon.utility.NumberFormat().toThaiDate($F{date_approve}):'-']]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement stretchType="RelativeToBandHeight" x="169" y="0" width="180" height="30" uuid="eeec59ac-a06b-4827-a3f3-7d7afe11d689"/>
@@ -245,8 +245,8 @@ new nylon.utility.NumberFormat().toThaiDate($P{date_end})]]></textFieldExpressio
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{export_date_expire} != null && $F{export_date_expire} != "null")
-?new nylon.utility.NumberFormat().toThaiDate($F{export_date_expire}):'-']]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{date_expire} != null && $F{date_expire} != "null")
+?new nylon.utility.NumberFormat().toThaiDate($F{date_expire}):'-']]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>
