@@ -16,7 +16,7 @@
         "draft_id": {
             "type": "string"
         },
-        "type_lic_id": {
+        "lic_type_id": {
             "type": "string"
         },
         "exporter_status": {
@@ -31,7 +31,7 @@
         "company_id",
         "company_taxno",
         "draft_id",
-        "type_lic_id",
+        "lic_type_id",
         "exporter_status",
         "expire_status"
     ]

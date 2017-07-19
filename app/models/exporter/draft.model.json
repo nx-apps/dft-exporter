@@ -22,7 +22,7 @@
         "exporter_no": {
             "type": "number"
         },
-        "type_lic_id": {
+        "lic_type_id": {
             "type": "string"
         }
     },
@@ -33,6 +33,6 @@
         "doc_status",
         "draft_status",
         "exporter_no",
-        "type_lic_id"
+        "lic_type_id"
     ]
 }

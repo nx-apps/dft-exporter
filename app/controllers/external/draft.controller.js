@@ -152,11 +152,6 @@ exports.approve = function (req, res) {
             })
             .run()
             .then(function (response) {
-                // result.message = response;
-                // if (response.errors == 0) {
-                //     result.result = true;
-                //     result.id = response.generated_keys;
-                // }
                 res.json(response);
             })
             .error(function (err) {
@@ -165,7 +160,7 @@ exports.approve = function (req, res) {
             })
     } else {
         // result.message = req.ajv.errorsText()
-        // res.json('xxx');
+        res.json(req.ajv.errorsText());
     }
 }
 exports.changetype = function (req, res) {
