@@ -219,12 +219,14 @@ exports.exporter_detail = function (req, res) {
                     lic_type_name: m('lic_type')('lic_type_name'),
                     exporter_status: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                     exporter_no: r.expr('ข.').add(m('exporter_no').coerceTo('string')),
-                    company_directors: m('company')('company_directors').pluck('TitleNameTH', 'FirstNameTH', 'LastNameTH')
+                    company_directors: r.branch(m('company').hasFields('company_directors').eq(true),m('company')('company_directors').pluck('TitleNameTH', 'FirstNameTH', 'LastNameTH')
                         .merge(function (m_name) {
                             return {
                                 director_name: m_name('TitleNameTH').add(' ').add(m_name('FirstNameTH')).add(' ').add(m_name('LastNameTH'))
                             }
                         }).without('TitleNameTH', 'FirstNameTH', 'LastNameTH'),
+                        []
+                    ),
                     date_approve: m('date_approve').inTimezone('+07').toISO8601().split('T')(0)
                 })
         })
