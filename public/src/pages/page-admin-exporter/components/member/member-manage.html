@@ -88,14 +88,19 @@
         </gl-grid-row>
         <div class="horizontal layout">
           <div class="text">{{localize.list_board}}</div>
-        </div>
-        <gl-grid-row>
-          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
+          <ol>
             <template is="dom-repeat" items="{{data.company.company_directors}}">
-              <gl-form-input label="{{localize.name_committee}} :" value="{{item.TitleNameTH}} {{item.FirstNameTH}} {{item.LastNameTH}}" disabled></gl-form-input>
+              <li>{{item.TitleNameTH}} {{item.FirstNameTH}} {{item.LastNameTH}}</li>
             </template>
-          </gl-grid-col>
-        </gl-grid-row>
+          </ol>
+        </div>
+         <!-- <gl-grid-row>
+          <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">  
+              <template is="dom-repeat" items="{{data.company.company_directors}}">
+                 <gl-form-input label="{{localize.name_committee}} :" value="{{item.TitleNameTH}} {{item.FirstNameTH}} {{item.LastNameTH}}" disabled></gl-form-input> 
+              </template>
+           </gl-grid-col>
+        </gl-grid-row>   -->
       </gl-form-panel-body>
     </div>
 
