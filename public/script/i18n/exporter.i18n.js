@@ -72,6 +72,9 @@ export const exporter = {
         request_form:"กรุณากรอกข้อมูลให้ครบถ้วน",
         insert_form:"กรุณากรอกข้อมูลและรายละเอียด",
         province:"จังหวัด",
+        title_name:"คำนำหน้า",
+        first_name:"ชื่อ",
+        last_name:"นามสกุล",
 
         bt_save:"บันทึก",
         bt_cancel:"ยกเลิก",
@@ -170,6 +173,9 @@ export const exporter = {
         request_form:"Please complete the form",
         insert_form:"Please fill out the information and details",
         province:"Province",
+        title_name:"Title Name",
+        first_name:"First Name",
+        last_name:"Last Name",
 
         bt_recovery:"Recovery file",
         bt_save:"Save",

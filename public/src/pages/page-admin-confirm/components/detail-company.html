@@ -132,9 +132,8 @@
       </div>
       <gl-grid-row>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <template is="dom-repeat" items="{{data.company_agent}}">
-            <gl-form-input label="{{localize.name_committee}}" auto-validate error-message="{{localize.insert_board}}" required value="{{item.agent_name}}"
-              no-label-float disabled></gl-form-input>
+          <template is="dom-repeat" items="{{data.company.company_directors}}">
+            <gl-form-input label="{{localize.name_committee}} :" value="{{item.TitleNameTH}} {{item.FirstNameTH}} {{item.LastNameTH}}" disabled></gl-form-input>
           </template>
         </gl-grid-col>
       </gl-grid-row>

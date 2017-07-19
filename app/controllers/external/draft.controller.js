@@ -138,13 +138,20 @@ exports.approve = function (req, res) {
     if (valid) {
         req.body.company = company;
         req.body.lic_type = lic_type;
+        req.body.date_approve = r.now().inTimezone('+07');
+        req.body.date_load = r.now().inTimezone('+07');
         req.body = Object.assign(req.body, {
             creater: 'admin',
             date_created: r.now().inTimezone('+07'),
             company_id: req.body.company_id,
             company_taxno: req.body.company_taxno,
             exporter_no: req.body.exporter_no,
-            exporter_date_approve: r.now().inTimezone('+07')
+            date_expire: r.time(req.body.date_load.year().add(1),
+                req.body.date_load.month(),
+                req.body.date_load.day(),
+                "+07:00"
+            ).inTimezone('+07')
+            // exporter_date_approve: r.now().inTimezone('+07')
         });
         r.db('external').table('exporter').insert(req.body)
             .do(function () {

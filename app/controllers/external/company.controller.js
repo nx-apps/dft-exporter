@@ -96,32 +96,33 @@ exports.listId = function (req, res) {
     var id = [];
     id.push(req.params.id);
     getCompany(id, function (data) {
-        var db = r.db('external').table('company');
-        var company = db.getAll(req.params.id, { index: 'company_taxno' });
-        if (typeof data[0].company_name_th === 'undefined') {
-            company.run().then(function (datas) {
-                if (datas.length > 0) {
-                    res.json(datas);
-                } else {
-                    res.json(data);
-                }
-            })
-        } else {
-            // console.log(data[0].company_agent);
-            // r.expr(company(0)('id')).run().then(function (dd) {
-            //     res.json(dd)
-            // })
-            r.branch(company.count().eq(0),
-                db.insert(data).do(function (d) {
-                    return db.getAll(d('generated_keys')(0), { index: 'id' })
-                }),
-                db.get(company(0)('id')).update(data[0]).do(function (d) {
-                    return db.getAll(company(0)('id'), { index: 'id' })
-                })
-            ).run().then(function (datas) {
-                res.json(datas)
-            })
-        }
+        res.json(data);
+        // var db = r.db('external').table('company');
+        // var company = db.getAll(req.params.id, { index: 'company_taxno' });
+        // if (typeof data[0].company_name_th === 'undefined') {
+        //     company.run().then(function (datas) {
+        //         if (datas.length > 0) {
+        //             res.json(datas);
+        //         } else {
+        //             res.json(data);
+        //         }
+        //     })
+        // } else {
+        //     // console.log(data[0].company_agent);
+        //     // r.expr(company(0)('id')).run().then(function (dd) {
+        //     //     res.json(dd)
+        //     // })
+        //     r.branch(company.count().eq(0),
+        //         db.insert(data).do(function (d) {
+        //             return db.getAll(d('generated_keys')(0), { index: 'id' })
+        //         }),
+        //         db.get(company(0)('id')).update(data[0]).do(function (d) {
+        //             return db.getAll(company(0)('id'), { index: 'id' })
+        //         })
+        //     ).run().then(function (datas) {
+        //         res.json(datas)
+        //     })
+        // }
     })
     // var url = 'http://reg-users.dft.go.th/RegistrationService.asmx?WSDL';
     // var args = { CompanyTaxNo: req.params.id, BranchNo: 0 };
@@ -373,7 +374,7 @@ function setDataCompany(data) {
         company_phone: data.CompanyPhoneNo,
         company_email: data.CompanyEmail,
         company_date: data.JuristicRegDate.toISOString().replace(".000Z", "+07:00"),
-        company_agent: data.Directors.Director
+        company_directors: data.Directors === null ? [] : data.Directors.Director
     };
 }
 function getCompany(company_taxno, callback) { //['1234567890123',...,'xxxx']

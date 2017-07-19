@@ -62,7 +62,7 @@
             <gl-form-textarea label="{{localize.fax}} :" value="{{data.company.company_fax}}" disabled></gl-form-textarea>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <vaadin-date-picker label="{{localize.date_approve}} :" value="{{data.exporter_date_approve}}" disabled></vaadin-date-picker>
+            <vaadin-date-picker label="{{localize.date_approve}} :" value="{{data.date_approve}}" disabled></vaadin-date-picker>
           </gl-grid-col>
         </gl-grid-row>
 
@@ -86,11 +86,13 @@
             </gl-form-dropdown-menu>
           </gl-grid-col>
         </gl-grid-row>
-
+        <div class="horizontal layout">
+          <div class="text">{{localize.list_board}}</div>
+        </div>
         <gl-grid-row>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <template is="dom-repeat" items="{{data.company_agent}}">
-              <gl-form-input label="{{localize.name_committee}} :" value="{{item.agent_name}}" disabled></gl-form-input>
+            <template is="dom-repeat" items="{{data.company.company_directors}}">
+              <gl-form-input label="{{localize.name_committee}} :" value="{{item.TitleNameTH}} {{item.FirstNameTH}} {{item.LastNameTH}}" disabled></gl-form-input>
             </template>
           </gl-grid-col>
         </gl-grid-row>

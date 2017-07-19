@@ -172,18 +172,21 @@ exports.sql = function (req, res) {
 
     mssql.query("mssql", `
         select
-            company_taxno,max(approve_date) as approve_date
+            company_taxno,left(convert(varchar,max(approve_date),120),10) as approve_date
         from f3
         where tran_type='E'
         group by company_taxno
     `, [], function (e, str_companys) {
-
             var companys = JSON.parse(str_companys);
-
             async.each(companys, function (company, next) {
-                var cmd = re.db('external').table('company').getAll(company.company_taxno, { index: 'company_taxno' })
+                var date = r.ISO8601(company.approve_date + 'T00:00:00+07:00');
+                var cmd = re.db('external').table('exporter').getAll(company.company_taxno, { index: 'company_taxno' })
                     .update({
-                        date_exported: r.epochTime(company.approve_date / 1000).inTimezone('+07:00')
+                        date_load: date.inTimezone('+07:00'),
+                        date_expire: r.time(date.year().add(1),
+                            date.month(),
+                            date.day(),
+                            '+07:00').inTimezone('+07')
                     });
 
                 // .run()

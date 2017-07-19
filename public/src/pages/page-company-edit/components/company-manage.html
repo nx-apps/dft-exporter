@@ -107,7 +107,7 @@
         </div>
       </div>
       
-      <template is="dom-repeat" items="{{data.company_agent}}">
+      <!-- <template is="dom-repeat" items="{{data.company_directors}}">
         <div class="vertical layout">
           <div class="horizontal layout">
             <gl-form-input style="width:400px;" label="{{localize.name_committee}}" auto-validate error-message="{{localize.insert_board}}"
@@ -118,7 +118,27 @@
             </div>
           </div>
         </div>
-      </template>
+      </template> -->
+
+        <template is="dom-repeat" items="{{data.company_directors}}">
+        <div class="vertical layout">
+          {{localize.name_committee}}
+          <div class="horizontal layout">
+            <gl-form-input style="width:100px;" label="{{localize.title_name}}" auto-validate error-message="{{localize.insert_form}}"
+              required value="{{item.TitleNameTH}}" disabled="{{isEnabled}}">
+            </gl-form-input>
+             <gl-form-input style="width:250px; margin-left:15px;" label="{{localize.first_name}}" auto-validate error-message="{{localize.insert_form}}"
+              required value="{{item.FirstNameTH}}" disabled="{{isEnabled}}">
+            </gl-form-input>
+            <gl-form-input style="width:250px; margin-left:15px;" label="{{localize.last_name}}" auto-validate error-message="{{localize.insert_form}}"
+              required value="{{item.LastNameTH}}" disabled="{{isEnabled}}">
+            </gl-form-input> 
+            <div hidden="[[isEnabled]]">
+              <paper-icon-button id="[[index]]" style="margin:0px;" icon="icons:remove-circle" on-tap="_deleteAgent" title="{{localize.del_board}}"></paper-icon-button>
+            </div>
+          </div>
+        </div>
+      </template>  
 
     </gl-form-panel>
 
@@ -154,8 +174,11 @@
         this.isEnabled = false;
       },
       _addAgent: function () {
-        this.push('data.company_agent', {
-          agent_name: ''
+        this.push('data.company_directors', {
+          TitleNameTH: '',
+          FirstNameTH: '',
+          LastNameTH: ''
+
         });
       },
       _cancel: function () {
@@ -209,7 +232,7 @@
       _deleteAgent: function (e) {
         // console.log(e.currentTarget.id);
         var index = e.currentTarget.id;
-        this.splice('data.company_agent', index, 1);
+        this.splice('data.company_directors', index, 1);
       },
       _checkStatus: function (val) {
         if (val == 'add') {

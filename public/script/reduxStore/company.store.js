@@ -178,7 +178,7 @@ export function companyAction(store) {
                 })
         },
         COMPANY_CLEAR_DATA: function () {
-            store.dispatch({ type: 'COMPANY_CLEAR_DATA', payload: { company_agent: [] } })
+            store.dispatch({ type: 'COMPANY_CLEAR_DATA', payload: { company_directors: [] } })
         },
         COMPANY_GET_TAXNO: function (taxno) {
             if (typeof taxno !== 'undefined' && taxno !== '') {

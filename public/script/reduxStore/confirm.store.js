@@ -185,6 +185,7 @@ export function confirmAction(store) {
             .then((response) => {
                 this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',callback:() => {
                     this.CONFIRM_GET_DATA();
+                    this._backPage();
                 }});
             })
             .catch(function(err){
