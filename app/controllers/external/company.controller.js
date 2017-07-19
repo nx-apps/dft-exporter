@@ -107,8 +107,6 @@ exports.listId = function (req, res) {
                 }
             })
         } else {
-            // var db = r.db('external').table('company');
-            // var company = db.getAll(req.params.id, { index: 'company_taxno' });
             r.branch(company.count().eq(0),
                 db.insert(data).do(function (d) {
                     return db.getAll(d('generated_keys')(0), { index: 'id' })
