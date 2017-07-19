@@ -301,11 +301,10 @@ exports.approve_changtype = function (req, res) {
                     lic_type_name: m('lic_type')('lic_type_name'),
                 })
         })
-        // .eqJoin('type_lic_id', r.db('external').table('license_type')).without({ right: 'id' })//.zip()
         .merge(function (m) {
             return {
-                type_lice_name_old: m('type_lic_name'),
-                type_lice_id_old: m('type_lic_id')
+                lice_type_name_old: m('lic_type_name'),
+                lice_type_id_old: m('lic_type_id')
             }
         })
         .eqJoin('draft_id', r.db('external').table('draft'))//.getAll(req.params.id, {index: 'id'})
