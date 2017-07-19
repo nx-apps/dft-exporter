@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report3" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7ab00411-f197-4f02-9091-e25ab6106afe">
 	<property name="ireport.zoom" value="1.0"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="59"/>
 	<property name="ireport.y" value="0"/>
 	<import value="nylon.report.*"/>
 	<parameter name="date_start" class="java.lang.String"/>
@@ -10,7 +10,7 @@
 	<field name="exporter_no" class="java.lang.String"/>
 	<field name="company_name_th" class="java.lang.String"/>
 	<field name="company_taxno" class="java.lang.String"/>
-	<field name="type_lic_name" class="java.lang.String"/>
+	<field name="lic_type_name" class="java.lang.String"/>
 	<field name="exporter_status_name" class="java.lang.String"/>
 	<field name="company_address_th" class="java.lang.String"/>
 	<field name="company_phone" class="java.lang.String"/>
