@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="approve_general_1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f591e4a0-38f4-44dd-b603-74498effb1d9">
 	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="16"/>
-	<property name="ireport.y" value="229"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="169"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["E:\\lookpad\\กองคลัง\\"]]></defaultValueExpression>
 	</parameter>
@@ -12,8 +12,8 @@
 	<parameter name="CURRENT_DATE" class="java.lang.String"/>
 	<field name="company_name_th" class="java.lang.String"/>
 	<field name="exporter_no_name" class="java.lang.String"/>
-	<field name="type_lic_name" class="java.lang.String"/>
-	<field name="type_lic_id" class="java.lang.String"/>
+	<field name="lic_type_name" class="java.lang.String"/>
+	<field name="lic_type_id" class="java.lang.String"/>
 	<field name="date_created" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
@@ -183,7 +183,7 @@
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["\t\t๒.๑ ประกาศกรมการค้าต่างประเทศ ฉบับที่ ๙๙ (พ.ศ. ๒๕๓๔) ลงวันที่ ๒๒ เมษายน ๒๕๓๔ เรื่อง หลักเกณฑ์และวิธีการส่งข้าวเอกชนออกไป นอกราชอาณาจักร กำหนดให้ผู้ประสงค์่จะทำการค้าส่งข้าวออกไปนอกราชอาณาจักรยื่นความจำนงขอขึ้น ทะเบียนเป็นผู้ส่งออกตามแบบที่กำหนดพร้อมเอกสารประกอบ (เอกสาร ๒)"
-+"\n\t\t๒.๒ ประกาศคณะกรรมการปฏิบัติการตามพระราชบัญญัติ การค้าข้าว พุทธศักราช ๒๕๘๙ ฉบับที่ ๑๔๖ พ.ศ. ๒๕๕๘ หมวด ๑ ข้อ ๓ (๑) กำหนด ให้ผู้ประกอบ การค้าข้าวประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออก"+$F{type_lic_name}+" ต้องขออนุญาตประกอบการค้าข้าวและเมื่อได้รับหนังสืออนุญาตแล้วจึงประกอบการ ค้าข้าวได้ โดยต้องปฏิบัติตามเงื่อนไขในหมวด ๓ ข้อ  "+($F{type_lic_id}=="KK6"?"๑๘ และ ๑๙ (เอกสาร ๓)" : "๒๐ (เอกสาร ๓)")
++"\n\t\t๒.๒ ประกาศคณะกรรมการปฏิบัติการตามพระราชบัญญัติ การค้าข้าว พุทธศักราช ๒๕๘๙ ฉบับที่ ๑๔๖ พ.ศ. ๒๕๕๘ หมวด ๑ ข้อ ๓ (๑) กำหนด ให้ผู้ประกอบ การค้าข้าวประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออก"+$F{lic_type_name}+" ต้องขออนุญาตประกอบการค้าข้าวและเมื่อได้รับหนังสืออนุญาตแล้วจึงประกอบการ ค้าข้าวได้ โดยต้องปฏิบัติตามเงื่อนไขในหมวด ๓ ข้อ  "+($F{lic_type_id}=="NORMAL"?"๑๘ และ ๑๙ (เอกสาร ๓)" : "๒๐ (เอกสาร ๓)")
 +"\n\t\t๒.๓ "+$F{company_name_th}+" ได้รับอนุญาต ให้เป็นผู้ประกอบการค้าข้าวประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออก"+"จากกรมการค้าภายในแล้ว ซึ่งบริษัทฯ ได้ปฏิบัติถูกต้องตามเงื่อนไขข้อ ๒.๒ และ โดยที่"+$F{company_name_th}+"ยังไม่ได้ขึ้นทะเบียนเป็นผู้ส่งออกข้าวกับกรมฯ"+$F{company_name_th} +"จึงยังไม่มีประวัติการส่งออกข้าวไปต่างประเทศ"
 +"\n\t\t๒.๔ จากการตรวจสอบรายชื่อกรรมการของ"+$F{company_name_th}+"ไม่พบว่าเป็นบุคคลที่เคยเป็นกรรมการอยู่ในบริษัทฯ ที่มีประวัติทำความเสียหายต่อการ ส่งออกข้าวไปต่างประเทศ (เอกสาร ๔) ประกอบกับ"+$F{company_name_th}+"ได้ยื่นเอกสาร หลักฐานถูกต้องตามประกาศที่กำหนดตามข้อ ๒.๑ และปฏิบัติถูกต้องตามข้อ ๒.๒"
 +"\n\n\n"]]></textFieldExpression>
