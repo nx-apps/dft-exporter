@@ -107,11 +107,15 @@ exports.listId = function (req, res) {
                 }
             })
         } else {
+            // console.log(data[0].company_agent);
+            // r.expr(company(0)('id')).run().then(function (dd) {
+            //     res.json(dd)
+            // })
             r.branch(company.count().eq(0),
                 db.insert(data).do(function (d) {
                     return db.getAll(d('generated_keys')(0), { index: 'id' })
                 }),
-                db.get(company(0)('id')).update(data).do(function (d) {
+                db.get(company(0)('id')).update(data[0]).do(function (d) {
                     return db.getAll(company(0)('id'), { index: 'id' })
                 })
             ).run().then(function (datas) {
