@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="approve_renew_1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f591e4a0-38f4-44dd-b603-74498effb1d9">
 	<property name="ireport.zoom" value="2.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="224"/>
+	<property name="ireport.y" value="493"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["E:\\lookpad\\กองคลัง\\"]]></defaultValueExpression>
 	</parameter>
@@ -13,8 +13,8 @@
 	<field name="company_name_th" class="java.lang.String"/>
 	<field name="exporter_no" class="java.lang.String"/>
 	<field name="date_updated" class="java.lang.String"/>
-	<field name="type_lic_name" class="java.lang.String"/>
-	<field name="exporter_date_approve" class="java.lang.String"/>
+	<field name="lic_type_name" class="java.lang.String"/>
+	<field name="date_approve" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -190,7 +190,7 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\t๒.๒ กรมฯ ได้เคยอนุมัติให้ "+$F{company_name_th}+" ขึ้นทะเบียนเป็นผู้ส่งออกข้าวเลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no})+" เมื่อวันที่ "+new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{exporter_date_approve}))+" ทั้งนี้ จากการตรวจสอบข้อมูลการส่งออกข้าวของบริษัท ปรากฏว่าบริษัทฯ มิได้มีการส่งออกข้าวไปต่างประเทศ ตั้งแต่วันที่ "+new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{exporter_date_approve}))+" จนถึงปัจจุบัน (เอกสาร ๓-๔)"
+				<textFieldExpression><![CDATA["\t\t๒.๒ กรมฯ ได้เคยอนุมัติให้ "+$F{company_name_th}+" ขึ้นทะเบียนเป็นผู้ส่งออกข้าวเลขที่ "+new nylon.utility.NumberFormat().toThaiNumber($F{exporter_no})+" เมื่อวันที่ "+new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{date_approve}))+" ทั้งนี้ จากการตรวจสอบข้อมูลการส่งออกข้าวของบริษัท ปรากฏว่าบริษัทฯ มิได้มีการส่งออกข้าวไปต่างประเทศ ตั้งแต่วันที่ "+new nylon.utility.NumberFormat().toThaiNumber(new nylon.utility.NumberFormat().toThaiDate($F{date_approve}))+" จนถึงปัจจุบัน (เอกสาร ๓-๔)"
 +"\n"]]></textFieldExpression>
 			</textField>
 			<line>
@@ -203,7 +203,7 @@
 				<textElement>
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\t\t๒.๓ "+$F{company_name_th}+" ได้รับอนุญาตให้เป็นผู้ประกอบการค้าข้าว ประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออก"+$F{type_lic_name}+"จากกรมการค้าภายในแล้ว และจากการตรวจสอบรายชื่อกรรมการของบริษัทฯ ไม่พบว่าเป็นบุคคลที่เคย เป็นกรรมการอยู่ในบริษัทฯ ที่มีประวัติทำความเสียหายต่อการส่งออกข้าวไปต่างประเทศ (เอกสาร ๕) ประกอบกับบริษัท ได้ยื่นเอกสารหลักฐานถูกต้องตามประกาศที่กำหนด ตามข้อ ๒.๑"
+				<textFieldExpression><![CDATA["\t\t๒.๓ "+$F{company_name_th}+" ได้รับอนุญาตให้เป็นผู้ประกอบการค้าข้าว ประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศที่เป็นผู้ส่งออก"+$F{lic_type_name}+"จากกรมการค้าภายในแล้ว และจากการตรวจสอบรายชื่อกรรมการของบริษัทฯ ไม่พบว่าเป็นบุคคลที่เคย เป็นกรรมการอยู่ในบริษัทฯ ที่มีประวัติทำความเสียหายต่อการส่งออกข้าวไปต่างประเทศ (เอกสาร ๕) ประกอบกับบริษัท ได้ยื่นเอกสารหลักฐานถูกต้องตามประกาศที่กำหนด ตามข้อ ๒.๑"
 +"\n"]]></textFieldExpression>
 			</textField>
 			<line>
