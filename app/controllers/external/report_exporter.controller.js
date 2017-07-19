@@ -295,7 +295,7 @@ exports.approve_changtype = function (req, res) {
     };
     r.db('external').table('exporter')
         .map(function (m) {
-            return m.pluck('exporter_no', 'id', 'exporter_date_approve', 'lic_type_id', 'draft_id')
+            return m.pluck('exporter_no', 'id', 'date_approve', 'lic_type_id', 'draft_id')
                 .merge({
                     company_name_th: m('company')('company_name_th'),
                     lic_type_name: m('lic_type')('lic_type_name'),
