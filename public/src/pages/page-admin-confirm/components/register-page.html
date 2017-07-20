@@ -105,10 +105,6 @@
         'refresh-exporterTrader': 'getExporterTrader'
       },
       _register: function () {
-        // let {company_address_en, company_address_th, company_name_en, company_name_th, company_phone,
-        // company_province_en, company_province_th, company_taxno} = this.data;
-        // let data_company = {company_address_en, company_address_th, company_name_en, company_name_th, company_phone,
-        // company_province_en, company_province_th, company_taxno};
         var data = {
           approve_status: false,
           company_id: this.data.company.id,
@@ -125,6 +121,7 @@
               var check = this.$$('detail-company').validate();
               if (check == true) {
                 this.dispatchAction('CONFIRM_REGISTER',data);
+                this.$$('detail-company').resetValidate();
               } else {
                 this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' });
               }

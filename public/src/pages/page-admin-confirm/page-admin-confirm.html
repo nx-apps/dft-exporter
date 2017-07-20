@@ -26,6 +26,7 @@
 <link rel="import" href="./../../../bower_components/gl-form/gl-form-input.html">
 <link rel="import" href="./../../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="./../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../components/validateFormBehaviors.html">
 
 <dom-module id="page-admin-confirm">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
@@ -146,7 +147,7 @@
   </style>
   <template>
     <div class="horizontal layout center-justified" style="margin-top:10px;">
-      <gl-form-input hidden="{{isHidden}}" style="width:300px;" label="{{localize.tax_no}} :" value="{{companyId}}" always-float-label allowed-pattern="[0-9]" maxlength="13">
+      <gl-form-input class="searchForm" hidden="{{isHidden}}" style="width:300px;" label="{{localize.tax_no}} :" value="{{companyId}}" always-float-label allowed-pattern="[0-9]" maxlength="13">
         <iron-icon icon="search" prefix style="width:20px;height:30px;"></iron-icon>
         <paper-icon-button suffix on-tap="clearData" icon="clear" title="clear" style="height:30px;">
       </gl-form-input>
@@ -335,7 +336,7 @@
           statePath : 'confirm.list'
         }
       },
-      behaviors: [ReduxBehavior, nylonBehavior, i18nAction, confirmAction, exporterAction],
+      behaviors: [ReduxBehavior, nylonBehavior, i18nAction, confirmAction, exporterAction, ValidateFormBehavior],
       listeners: {
         'back_page' : '_backPage',
         'clearData' : 'clearData'
@@ -481,6 +482,7 @@
         if(this.companyId != ''){
           this.dispatchAction('CONFIRM_SEARCH',this.companyId);
           this.pageSelected = "register";
+          this.queryFrom('.searchForm').map((el) => { el.reset(); });
         }
         else{
           this.fire('toast', { status: 'connectError', text: 'กรุณากรอกเลขประจำตัวผู้ส่งออก' })

@@ -18,6 +18,7 @@
 <link rel="import" href="./../../../bower_components/gl-styles/gl-panel.html">
 <link rel="import" href="./../../../bower_components/gl-styles/gl-toast.html">
 <link rel="import" href="./../../layout/nylon-toast.html">
+<link rel="import" href="../components/validateFormBehaviors.html">
 
 <dom-module id="page-admin-exporter">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
@@ -81,7 +82,7 @@
           <gl-grid-row width="{{getWidth}}">
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,6]]">
-              <gl-combo-box label="{{localize.name_exporter}}" items="{{list_search}}" item-label-path="company_name" item-value-path="id"
+              <gl-combo-box class="searchForm" label="{{localize.name_exporter}}" items="{{list_search}}" item-label-path="company_name" item-value-path="id"
                 value="{{dataSelected.id}}" on-value-changed="_checkID">
                 <template>[[item.company_name]]</template>
               </gl-combo-box>
@@ -91,7 +92,7 @@
           <gl-grid-row>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-                <gl-form-dropdown-menu label="{{localize.type_license}}" placeholder="{{localize.all}}">
+                <gl-form-dropdown-menu class="searchForm" label="{{localize.type_license}}" placeholder="{{localize.all}}">
                   <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.lic_type_id}}" name="lic_type_id">
                     <paper-item>{{localize.all}}</paper-item>
                     <template is="dom-repeat" items={{licType}}>
@@ -101,7 +102,7 @@
                 </gl-form-dropdown-menu>
               </gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <gl-form-dropdown-menu label="{{localize.status_export}}" placeholder="{{localize.all}}">
+              <gl-form-dropdown-menu class="searchForm" label="{{localize.status_export}}" placeholder="{{localize.all}}">
                 <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.exporter_status}}" name="exporter_status">
                   <paper-item>{{localize.all}}</paper-item>
                   <paper-item value="true">{{localize.member}}</paper-item>
@@ -110,7 +111,7 @@
               </gl-form-dropdown-menu>
             </gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <gl-form-dropdown-menu label="{{localize.status_exporter}}" placeholder="{{localize.all}}">
+              <gl-form-dropdown-menu class="searchForm" label="{{localize.status_exporter}}" placeholder="{{localize.all}}">
                 <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.export_status}}" name="exporter_active">
                   <paper-item>{{localize.all}}</paper-item>
                   <paper-item value="true">{{localize.normally}}</paper-item>
@@ -126,12 +127,12 @@
               <div style="margin-top:30px; text-align:right;">{{localize.register}}</div>
             </gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <gl-form-input type="date" label="{{localize.date}}" value="{{dataSelected.date_start}}" name="date_start"></gl-form-input>
+              <gl-form-input class="searchForm" type="date" label="{{localize.date}}" value="{{dataSelected.date_start}}" name="date_start"></gl-form-input>
               <!-- <vaadin-date-picker class="bg-title" label="{{localize.date}}" value="{{dataSelected.date_start}}" name="date_start"></vaadin-date-picker> -->
             </gl-grid-col>
             <div style="margin-top:30px;"> {{localize.to}} </div>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <gl-form-input type="date" label="{{localize.date}}" value="{{dataSelected.date_end}}" name="date_end"></gl-form-input>
+              <gl-form-input class="searchForm" type="date" label="{{localize.date}}" value="{{dataSelected.date_end}}" name="date_end"></gl-form-input>
               <!-- <vaadin-date-picker label="{{localize.date}}" value="{{dataSelected.date_end}}" name="date_end"></vaadin-date-picker> -->
             </gl-grid-col>
           </gl-grid-row>
@@ -250,7 +251,7 @@
           statePath : 'exporter.pages'
         }
       },
-      behaviors: [ReduxBehavior, nylonBehavior, i18nAction, exporterAction, uploadAction],
+      behaviors: [ReduxBehavior, nylonBehavior, i18nAction, exporterAction, uploadAction, ValidateFormBehavior],
       nylonPageActive: function () {
         this.dispatchAction('EXPORTER_GET_DATA');
         this.dispatchAction('EXPORTER_GET_DATA_SEARCH');
@@ -310,6 +311,7 @@
         }else{
           // console.log(str);
           this.dispatchAction('EXPORTER_SEARCH', str, page, type);
+          this.queryFrom('.searchForm').map((el) => { el.reset(); });
           return str;
         }
       },

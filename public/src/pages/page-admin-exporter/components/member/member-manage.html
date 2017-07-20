@@ -1,3 +1,5 @@
+<link rel="import" href="../../../components/validateFormBehaviors.html">
+
 <dom-module id="member-manage">
   <style is="custom-style" include="">
     * {
@@ -108,7 +110,7 @@
   <script>
     Polymer({
       is: "member-manage",
-      behaviors: [ReduxBehavior],
+      behaviors: [ReduxBehavior, ValidateFormBehavior],
       properties: {
         data:{
           statePath : 'exporter.data'
@@ -123,6 +125,9 @@
           type:Boolean,
           value:false
         }
+      },
+      resetValidate: function(){
+        this.queryFrom('.checkValidate').map((el) => { el.reset(); });
       }
     });
   </script>

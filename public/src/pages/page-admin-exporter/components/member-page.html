@@ -194,6 +194,7 @@
               this.dispatchAction('EXPORTER_UPDATE', newData);
               this.pages = 0;
               this.isEnabled = false;
+              this.$$('member-manage').resetValidate();
             }else{
               let{draft_id, lic_type_id} = this.data;
               let newData = {lic_type_id};
@@ -205,6 +206,7 @@
               this.dispatchAction('EXPORTER_UPDATE', newData);
               this.pages = 0;
               this.isEnabled = false;
+              this.$$('member-manage').resetValidate();
             }
           }
         }
@@ -214,6 +216,7 @@
         this.isEnabled = false;
         this.pages = 0;
         this.dispatchAction('EXPORTER_GET_DATA_ID',this.data.id);
+        this.$$('member-manage').resetValidate();
       },
       _dialogRemark: function(){
         this.$.dialog.toggle();

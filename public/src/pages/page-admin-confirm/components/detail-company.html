@@ -71,9 +71,6 @@
 
     <div class="title">{{localize.detail_data}}</div>
     <gl-form-panel set-border="0">
-
-      <!-- [[checkStatus(data.approve_status)]] -->
-
       <gl-grid-row>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
           <template is="dom-if" if={{data.approve_status}}>
@@ -173,22 +170,6 @@
       backPage: function () {
         this.fire('backPage');
       },
-      // checkStatus: function (val) {
-      //   if (typeof val != 'undefined' && val != undefined) {
-      //     if (val == 'request') {
-      //       this.$$('#input-no').setAttribute("hidden", "hidden");
-      //       this.$$('#input-remark').setAttribute("hidden", "hidden");
-      //     }
-      //     else if (val == 'reject') {
-      //       this.$$('#input-no').setAttribute("hidden", "hidden");
-      //       this.$$('#input-remark').removeAttribute("hidden");
-      //     }
-      //     else if (val == 'approve') {
-      //       this.$$('#input-no').removeAttribute("hidden");
-      //       this.$$('#input-remark').setAttribute("hidden", "hidden");
-      //     }
-      //   }
-      // },
       obItem:function(val){
         if(typeof val != 'undefined' && val != undefined){
           return true;
@@ -222,6 +203,9 @@
         }else{
           return false
         }
+      },
+      resetValidate:function(){
+        this.queryFrom('.checkValidate').map((el) => { el.reset(); });
       }
     });
   </script>
