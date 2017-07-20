@@ -17,6 +17,11 @@
       font-family: 'CSChatThaiUI', sans-serif !important;
       -webkit-font-smoothing: antialiased;
     }
+    .head-title{
+      text-align: center;
+      font-size: var(--font-size-h3);
+      margin-top:15px;
+    }
     .title {
       text-align: center;
       font-size: var(--font-size-h3);
@@ -58,9 +63,13 @@
 
     <paper-material elevation="1" class="elevation">
 
-      <div class="layout horizontal end-justified">
-        <paper-button raised class="gl-btn-primary" style="margin-right:15px;" on-tap="_add" title="{{localize.bt_add_company}}">
-        <iron-icon icon="add"></iron-icon>{{localize.bt_add_company}}</paper-button>
+      <div class="layout horizontal justified">
+        <div></div>
+        <div class="head-title">{{localize.list_name_company}}</div>
+        <div>
+          <paper-button raised class="gl-btn-primary" style="margin-right:15px;" on-tap="_add" title="{{localize.bt_add_company}}">
+          <iron-icon icon="add"></iron-icon>{{localize.bt_add_company}}</paper-button>
+        </div>
       </div>
 
       <div class="horizontal center-justified layout">
