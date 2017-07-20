@@ -140,6 +140,7 @@ export function companyAction(store) {
                                         this.COMPANY_SEARCH(data.company_taxno);
                                         this.COMPANY_GET_DATA(1);
                                         this.COMPANY_GET_DATA_SEARCH();
+                                        this.$$('company-manage').clearData(data.company_taxno);
                                     }
                                 });
                             })
@@ -154,6 +155,7 @@ export function companyAction(store) {
                                                 status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
                                                     this.COMPANY_SEARCH(data.company_taxno);
                                                     this.COMPANY_GET_DATA(1);
+                                                    this.$$('company-manage').clearData(data.company_taxno);
                                                 }
                                             });
                                         })
