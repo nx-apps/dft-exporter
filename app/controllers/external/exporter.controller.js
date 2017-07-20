@@ -93,6 +93,8 @@ exports.exporterId = function (req, res) {
                     , null),
                 exporter_status_name: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                 date_approve: m('date_approve').toISO8601().split('T')(0),
+                date_load: m('date_load').toISO8601().split('T')(0),
+                date_expire: m('date_expire').toISO8601().split('T')(0),
                 company_directors: r.branch(m('company').hasFields('company_directors').eq(true), m('company')('company_directors').pluck('TitleNameTH', 'FirstNameTH', 'LastNameTH')
                     .merge(function (m_name) {
                         return {
@@ -253,9 +255,15 @@ exports.updateDate = function (req, res) {
     var result = { result: false, message: null, id: null };
     if (req.body.id != '' && req.body.id != null && typeof req.body.id != 'undefined') {
         result.id = req.body.id;
+        req.body.date_approve = r.now().inTimezone('+07')
+        req.body.date_load = r.now().inTimezone('+07')
         req.body = Object.assign(req.body,
             {
-                exporter_date_approve: r.now().inTimezone('+07'),
+                date_expire: r.time(req.body.date_load.year().add(1),
+                    req.body.date_load.month(),
+                    req.body.date_load.day(),
+                    "+07:00"
+                ).inTimezone('+07'),
                 date_updated: r.now().inTimezone('+07'),
                 updater: 'admin',
                 expire_status: false
@@ -296,6 +304,6 @@ exports.page = function (req, res) {
         })
 }
 
-function split(data){
+function split(data) {
     return data.split(',')
 }
