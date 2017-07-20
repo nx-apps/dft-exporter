@@ -195,6 +195,7 @@ export function companyAction(store) {
                             }
                             store.dispatch({ type: 'COMPANY_GET_TAXNO', payload: data })
                         }else{
+                            data.company_directors = [];
                             store.dispatch({ type: 'COMPANY_GET_TAXNO', payload: data })
                             this.fire('toast', { status: 'connectError', text: 'ไม่มีข้อมูล' });
                         }

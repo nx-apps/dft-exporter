@@ -185,6 +185,7 @@
         this.$$('panel-right').open();
         this.titleName = 'เพิ่มข้อมูล';
         this.dispatchAction('COMPANY_CLEAR_DATA');
+        this.$$('company-manage').resetValidate();
       },
       _backPage:function(){
         this.$$('panel-right').close();

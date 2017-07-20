@@ -3,7 +3,8 @@
 <link rel="import" href="./../../../../bower_components/gl-form/gl-form-panel.html">
 <link rel="import" href="./../../../../bower_components/gl-grid/gl-grid-col.html">
 <link rel="import" href="./../../../../bower_components/gl-grid/gl-grid-row.html">
-<link rel="import" href="./../../../../bower_components/gl-form/gl-form-textarea.html">
+<link rel="import" href="../../components/gl-form-textarea.html">
+<!-- <link rel="import" href="./../../../../bower_components/gl-form/gl-form-textarea.html"> -->
 <link rel="import" href="./../../../../bower_components/gl-form/gl-form-input.html">
 
 <dom-module id="company-manage">
@@ -124,13 +125,13 @@
         <div class="vertical layout">
           {{localize.name_committee}}
           <div class="horizontal layout">
-            <gl-form-input style="width:100px;" label="{{localize.title_name}}" auto-validate error-message="{{localize.insert_form}}"
+            <gl-form-input class="checkValidate" style="width:100px;" label="{{localize.title_name}}" auto-validate error-message="{{localize.insert_form}}"
               required value="{{item.TitleNameTH}}" disabled="{{isEnabled}}">
             </gl-form-input>
-             <gl-form-input style="width:250px; margin-left:15px;" label="{{localize.first_name}}" auto-validate error-message="{{localize.insert_form}}"
+             <gl-form-input class="checkValidate" style="width:250px; margin-left:15px;" label="{{localize.first_name}}" auto-validate error-message="{{localize.insert_form}}"
               required value="{{item.FirstNameTH}}" disabled="{{isEnabled}}">
             </gl-form-input>
-            <gl-form-input style="width:250px; margin-left:15px;" label="{{localize.last_name}}" auto-validate error-message="{{localize.insert_form}}"
+            <gl-form-input class="checkValidate" style="width:250px; margin-left:15px;" label="{{localize.last_name}}" auto-validate error-message="{{localize.insert_form}}"
               required value="{{item.LastNameTH}}" disabled="{{isEnabled}}">
             </gl-form-input> 
             <div hidden="[[isEnabled]]">
@@ -178,14 +179,15 @@
           TitleNameTH: '',
           FirstNameTH: '',
           LastNameTH: ''
-
         });
       },
       _cancel: function () {
         if (this.statusAction == 'edit') {
           this.clearData(this.data.company_taxno);
+          this.resetValidate();
         } else {
           this.fire('back-page');
+          this.resetValidate();
         }
       },
       _save: function () {
@@ -218,9 +220,16 @@
           if (check === true) {
             if (this.statusAction == 'edit') {
               this.dispatchAction('COMPANY_UPDATE',detail.datas);
+              this.resetValidate();
             } else {
               this.dispatchAction('COMPANY_INSERT',detail.datas);
+              this.resetValidate();
             }
+          }else{
+            this.fire('toast', {
+                status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ',
+                callback: function () {}
+            })
           }
         }
       },
@@ -228,6 +237,7 @@
         this.hidButton = false;
         this.isEnabled = true;
         this.dispatchAction('COMPANY_SEARCH', val);
+        this.resetValidate();
       },
       _deleteAgent: function (e) {
         // console.log(e.currentTarget.id);
@@ -248,6 +258,9 @@
       validate: function () {
         var check = this.validateForm('.checkValidate')
         return check
+      },
+      resetValidate: function(){
+        this.queryFrom('.checkValidate').map((el) => { el.reset(); });
       },
       _delete: function () {
         this.fire('toast', {
