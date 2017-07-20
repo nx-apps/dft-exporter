@@ -76,6 +76,7 @@ exports.exporter_search = function (req, res) {
         .orderBy('company_taxno')
         .run()
         .then(function (result) {
+            res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3001')
             res.json(result)
         })
         .error(function (err) {
