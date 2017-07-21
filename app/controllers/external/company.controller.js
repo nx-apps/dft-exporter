@@ -20,10 +20,19 @@ exports.list = function (req, res) {
 }
 exports.list_search = function (req, res) {
     var r = req.r;
-    r.db('external').table('company')
+    var table = r.db('external').table('company')
         .pluck('id', 'company_taxno', 'company_name_th', 'company_name_en', 'company_province_th')
-        .orderBy('company_taxno')
-        .run()
+        .orderBy('company_taxno');
+        if(req.query.type == 'number'){
+            table = table.filter(r.row('company_taxno').match(req.query.company_taxno));
+        }
+        if(req.query.type == 'char_th'){
+            table = table.filter(r.row('company_name_th').match(req.query.company_name_th));
+        }
+        if(req.query.type == 'char_en'){
+            table = table.filter(r.row('company_name_en').match(req.query.company_name_en));
+        }
+        table.run()
         .then(function (result) {
             res.json(result);
         })

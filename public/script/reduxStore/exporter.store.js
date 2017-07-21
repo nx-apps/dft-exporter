@@ -27,6 +27,8 @@ export function exporterReducer(state = initialState, action) {
             return Object.assign({}, state, { files: action.payload });
         case 'EXPORTER_SEARCH':
             return Object.assign({}, state, { list: action.payload });
+        case 'EXPORTER_CLEAR_LIST_SEARCH':
+            return Object.assign({}, state, { list_search: action.payload});
         default:
             return state
     }
@@ -57,8 +59,8 @@ export function exporterAction(store) {
                     console.log(error);
                 });
         },
-        EXPORTER_GET_DATA_SEARCH: function(){
-            axios.get('./external/exporter/search')
+        EXPORTER_GET_DATA_SEARCH: function(data){
+            axios.get('./external/exporter/search?' + data.att_name + '=' + data.val + '&type=' + data.type)
             .then((response) => {
                 response.data.map((item) => {
                     return item.company_name = '(' + item.company.company_taxno + ') ' + item.company.company_name_th + ' ' + item.company.company_name_en;
@@ -201,6 +203,9 @@ export function exporterAction(store) {
                     }
                 });
             })
+        },
+        EXPORTER_CLEAR_LIST_SEARCH:function(){
+            store.dispatch({type:'EXPORTER_CLEAR_LIST_SEARCH', payload: []});
         }
     }
     ]

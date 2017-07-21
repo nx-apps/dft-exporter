@@ -72,9 +72,18 @@ exports.exporter = function (req, res) {
 }
 exports.exporter_search = function (req, res) {
     var r = req.r;
-    r.db('external').table('exporter')
-        .orderBy('company_taxno')
-        .run()
+    var table = r.db('external').table('exporter')
+        .orderBy('company_taxno');
+    if (req.query.type == 'number') {
+        table = table.filter(r.row('company')('company_taxno').match(req.query.company_taxno));
+    }
+    if (req.query.type == 'char_th') {
+        table = table.filter(r.row('company')('company_name_th').match(req.query.company_name_th));
+    }
+    if (req.query.type == 'char_en') {
+        table = table.filter(r.row('company')('company_name_en').match(req.query.company_name_en));
+    }
+    table.run()
         .then(function (result) {
             res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3001')
             res.json(result)

@@ -20,6 +20,8 @@ export function companyReducer(state = initialState, action) {
             return Object.assign({}, state, { data: action.payload });
         case 'COMPANY_GET_TAXNO':
             return Object.assign({}, state, { data: action.payload });
+        case 'COMPANY_CLEAR_LIST_SEARCH':
+            return Object.assign({}, state, { list_search: action.payload });
         default:
             return state
     }
@@ -66,8 +68,8 @@ export function companyAction(store) {
                     store.dispatch({ type: 'COMPANY_GET_PAGE', payload: pages })
                 })
         },
-        COMPANY_GET_DATA_SEARCH: function (id) {
-            axios.get('./external/company/list_search')
+        COMPANY_GET_DATA_SEARCH: function (data) {
+            axios.get('./external/company/list_search?' + data.att_name + '=' + data.val + '&type=' + data.type)
                 .then((response) => {
                     response.data.map((item) => {
                         return item.company_name = '(' + item.company_taxno + ') ' + item.company_name_th + ' ' + item.company_name_en;
@@ -79,6 +81,7 @@ export function companyAction(store) {
                 });
         },
         COMPANY_SEARCH: function (id) {
+            this.fire('toast', { status: 'load' });
             if (typeof id !== 'undefined') {
                 if (typeof id.detail === 'undefined') {
                     axios.get('./external/company/id/' + id)
@@ -88,7 +91,11 @@ export function companyAction(store) {
                                     response.data[0][key] = "-";
                                 }
                             }
-                            store.dispatch({ type: 'COMPANY_SEARCH', payload: response.data[0] })
+                            this.fire('toast', {
+                                status: 'success', text: 'โหลดข้อมูลสำเร็จ', callback: () => {
+                                    store.dispatch({ type: 'COMPANY_SEARCH', payload: response.data[0] })
+                                }
+                            });
                         });
                 } else {
                     axios.get('./external/company/id/' + id.detail)
@@ -98,7 +105,11 @@ export function companyAction(store) {
                                     response.data[0][key] = "-";
                                 }
                             }
-                            store.dispatch({ type: 'COMPANY_SEARCH', payload: response.data[0] })
+                            this.fire('toast', {
+                                status: 'success', text: 'โหลดข้อมูลสำเร็จ', callback: () => {
+                                    store.dispatch({ type: 'COMPANY_SEARCH', payload: response.data[0] })
+                                }
+                            });
                         })
                 }
             }
@@ -182,19 +193,22 @@ export function companyAction(store) {
         COMPANY_CLEAR_DATA: function () {
             store.dispatch({ type: 'COMPANY_CLEAR_DATA', payload: { company_directors: [] } })
         },
+        COMPANY_CLEAR_LIST_SEARCH: function () {
+            store.dispatch({ type: 'COMPANY_CLEAR_LIST_SEARCH', payload: [] })
+        },
         COMPANY_GET_TAXNO: function (taxno) {
             if (typeof taxno !== 'undefined' && taxno !== '') {
                 axios.get('./external/company/id/' + taxno)
                     .then((response) => {
                         var data = response.data[0];
-                        if(typeof data.company_name_th !== 'undefined'){
+                        if (typeof data.company_name_th !== 'undefined') {
                             for (var key in data) {
                                 if (data[key] === '') {
                                     data[key] = "-";
                                 }
                             }
                             store.dispatch({ type: 'COMPANY_GET_TAXNO', payload: data })
-                        }else{
+                        } else {
                             data.company_directors = [];
                             store.dispatch({ type: 'COMPANY_GET_TAXNO', payload: data })
                             this.fire('toast', { status: 'connectError', text: 'ไม่มีข้อมูล' });
