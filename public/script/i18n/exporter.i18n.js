@@ -89,7 +89,7 @@ export const exporter = {
         bt_print_data:"พิมพ์ข้อมูลผู้ส่งออก",
         bt_print_book:"พิมพ์หนังสือเลข ข.",
         bt_del_file:"ไฟล์ทีถูกลบ",
-        bt_register:"สมัครผู้ส่งออก",
+        bt_register:"ลงทะเบียนผู้ส่งออก",
         bt_sent_new:"ส่งเอกสารใหม่",
         bt_recovery:"กู้ไฟล์คืน",
         bt_add_company:"เพิ่มบริษัท",
