@@ -38,8 +38,8 @@ exports.exporter = function (req, res) {
                     m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
                     , null),
                 exporter_status_name: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                date_approve: m('date_approve').toISO8601().split('T')(0),
-                date_expire: m('date_expire').toISO8601().split('T')(0),
+                // date_approve: m('date_approve').toISO8601().split('T')(0),
+                // date_expire: m('date_expire').toISO8601().split('T')(0),
                 export_status: r.branch(m('date_expire').gt(r.now()), true, false)
             }
         })
