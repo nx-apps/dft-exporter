@@ -89,7 +89,7 @@
                 <template>[[item.company_name]]</template>
               </gl-combo-box> -->
               {{searchInput(dataSearch)}}
-              <vaadin-combo-box class="searchForm" label="{{localize.name_exporter}}" items="{{list_search}}" item-label-path="company_name" item-value-path="id"
+              <vaadin-combo-box label="{{localize.name_exporter}}" items="{{list_search}}" item-label-path="company_name" item-value-path="id"
                 value="{{dataSelected.id}}" on-value-changed="_checkID" loading={{checkLoad}} filter={{dataSearch}}>
                 <template>[[item.company_name]]</template>
               </vaadin-combo-box>
@@ -343,7 +343,8 @@
         }else{
           // console.log(str);
           this.dispatchAction('EXPORTER_SEARCH', str, page, type);
-          this.queryFrom('.searchForm').map((el) => { el.reset(); });
+          // console.log(this.queryFrom('.searchForm'));
+          this.queryFrom('.searchForm').map((el) => el.reset());
           return str;
         }
       },
