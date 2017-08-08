@@ -93,40 +93,68 @@ exports.exporter_search = function (req, res) {
         })
 }
 exports.exporterId = function (req, res) {
-    var r = req.r;
-    r.db('external').table("exporter").getAll(req.params.exporter_id, { index: 'id' })
-        .merge(function (m) {
-            return {
-                exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
-                    , null),
-                exporter_status_name: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                date_approve: m('date_approve').toISO8601().split('T')(0),
-                date_load: m('date_load').toISO8601().split('T')(0),
-                date_expire: m('date_expire').toISO8601().split('T')(0),
-                company_directors: r.branch(m('company').hasFields('company_directors').eq(true), m('company')('company_directors').pluck('TitleNameTH', 'FirstNameTH', 'LastNameTH')
-                    .merge(function (m_name) {
-                        return {
-                            director_name: m_name('TitleNameTH').add(' ').add(m_name('FirstNameTH')).add(' ').add(m_name('LastNameTH'))
+    // res.json(req.query.company_taxno);
+    req.jdbc.query('mssql', `
+        select 
+            convert(nvarchar(10),max(approve_date),120) as date_load
+            from V_Header_EDI_Rice
+            where company_taxno = ? or company_tax=?
+    `, [req.query.company_taxno, req.query.company_taxno],
+        function (err, data) {
+            data = JSON.parse(data);
+            var hasData = data[0]['date_load'];
+            var dataQuery = r.db('external').table("exporter").getAll(req.params.exporter_id, { index: 'id' })
+                .merge(function (m) {
+                    return {
+                        exporter_no_name: r.branch(
+                            m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                            , null),
+                        exporter_status_name: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
+                        date_approve: m('date_approve').toISO8601().split('T')(0),
+                        date_load: m('date_load').toISO8601().split('T')(0),
+                        date_expire: m('date_expire').toISO8601().split('T')(0),
+                        company_directors: r.branch(m('company').hasFields('company_directors').eq(true), m('company')('company_directors').pluck('TitleNameTH', 'FirstNameTH', 'LastNameTH')
+                            .merge(function (m_name) {
+                                return {
+                                    director_name: m_name('TitleNameTH').add(' ').add(m_name('FirstNameTH')).add(' ').add(m_name('LastNameTH'))
+                                }
+                            }).without('TitleNameTH', 'FirstNameTH', 'LastNameTH'),
+                            []
+                        ),
+                        // export_status: r.branch(m('date_expire').gt(r.now()), true, false),
+                        export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
+                    }
+                })
+                .eqJoin('draft_id', r.db('external').table('draft')).pluck("left", { right: ["draft_status"] }).zip();
+            // if (data[0]['date_load'] != null) {
+            r.db('external').table("exporter").get(req.params.exporter_id)
+                .update(function (u) {
+                    var dateLoad = r.ISO8601(data[0]['date_load'] + 'T00:00:00+07:00');
+                    var dateExpire = r.time(dateLoad.year().add(1),
+                        dateLoad.month(),
+                        dateLoad.day(),
+                        "+07:00"
+                    ).inTimezone('+07');
+                    return r.branch(
+                        r.expr(hasData).eq(null),
+                        {
+                            export_status: r.branch(u('date_expire').gt(r.now().inTimezone('+07')), true, false)
+                        },
+                        {
+                            date_load: dateLoad,
+                            date_expire: dateExpire,
+                            export_status: r.branch(dateExpire.gt(r.now().inTimezone('+07')), true, false)
                         }
-                    }).without('TitleNameTH', 'FirstNameTH', 'LastNameTH'),
-                    []
-                ),
-                export_status: r.branch(m('date_expire').gt(r.now()), true, false)
-            }
-        })
-        .merge(function (m) {
-            return {
-                export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
-            }
-        })
-        .eqJoin('draft_id', r.db('external').table('draft')).pluck("left", { right: ["draft_status"] }).zip()
-        .run()
-        .then(function (result) {
-            res.json(result)
-        })
-        .error(function (err) {
-            res.json(err)
+                    )
+                })
+                .do(function (d) {
+                    return dataQuery
+                })
+                .run().then(function (result) {
+                    res.json(result)
+                }).error(function (err) {
+                    res.json(err)
+                })
         })
 }
 exports.insert = function (req, res) {
