@@ -63,7 +63,7 @@ exports.exporter = function (req, res) {
     // .pluck(req.query.pluck)
     table.run()
         .then(function (result) {
-            res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3001')
+            // res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3001')
             res.json(result)
         })
         .error(function (err) {
@@ -85,7 +85,7 @@ exports.exporter_search = function (req, res) {
     }
     table.run()
         .then(function (result) {
-            res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3001')
+            // res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3001')
             res.json(result)
         })
         .error(function (err) {
