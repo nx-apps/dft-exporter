@@ -149,7 +149,11 @@
           value:false
         },
         data:{
-          statePath : 'exporter.data'
+          statePath : 'exporter.data',
+          observer:'updateData'
+        },
+        exporters:{
+          statePath : 'exporter.list'
         },
         localize:{
           statePath : 'i18n.exporter'
@@ -157,6 +161,17 @@
       },
       listeners:{
         'pageFileDelete' : '_pageFileDelete'
+      },
+      updateData(data){
+        // console.log(data);
+        // console.log(this.exporters);
+        if (this.exporters !== undefined) {
+          // console.log(this.exporters.findIndex(item => item.id === data.id));
+          // let index = this.exporters.findIndex(item => item.id === data.id)
+          // this.set('exporters.'+index+'.date_expire',data.date_expire)
+          this.dispatchAction('EXPORTER_GET_DATA');
+        }
+        
       },
       cloneDatas:function(val){
         this.cloneData = JSON.parse(JSON.stringify(val));
