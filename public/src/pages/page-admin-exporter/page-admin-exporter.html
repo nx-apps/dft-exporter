@@ -294,10 +294,13 @@
         window.open('./admin-confirm');
       },
       _selectData: function (e) {
+        // console.log(e.currentTarget.data.company_taxno);
+        // company_taxno
         var companyId = e.currentTarget.data.company_id;
         this.dispatchAction('EXPORTER_GET_FILE_DELETE',companyId);
         var id = e.currentTarget.data.id;
-        this.dispatchAction('EXPORTER_GET_DATA_ID',id);
+        let company_taxno = e.currentTarget.data.company_taxno
+        this.dispatchAction('EXPORTER_GET_DATA_ID',id,company_taxno);
         this.dispatchAction('EXPORTER_GET_LIC_TYPE');
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');
         this.layerContent = "detailRegExporter";

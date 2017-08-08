@@ -79,8 +79,9 @@ export function exporterAction(store) {
                     store.dispatch({ type: 'EXPORTER_GET_PAGE', payload: pages })
                 })
         },
-        EXPORTER_GET_DATA_ID: function (id) {
-            axios.get('./external/exporter/id/' + id)
+        EXPORTER_GET_DATA_ID: function (id,company_taxno = 0) {
+            // console.log(company_taxno);
+            axios.get('./external/exporter/id/' + id+'?company_taxno='+company_taxno)
                 .then(function (response) {
                     response.data.map((item) => {
                         for (var key in item) {
