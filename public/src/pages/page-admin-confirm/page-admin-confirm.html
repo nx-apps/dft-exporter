@@ -34,24 +34,37 @@
       font-family: 'CSChatThaiUI', sans-serif;
       -webkit-font-smoothing: antialiased;
     }
+
     .marginCheckbox {
       margin: 10px 0px 0px 30px;
     }
+
+    .gl-btn-defalse {
+      background-color: #FFF;
+      color: black;
+      min-height: var(--gl-btn-min-hight);
+      min-width: var(--gl-btn-min-width);
+      margin: var(--gl-btn-margin);
+    }
+
     .searchBorder {
       border: 1px solid var(--gl-gray-light-color);
       margin: 15px;
       border-radius: 3px;
       background-color: #fff;
     }
+
     .text-table {
       text-align: center;
       font-size: var(--font-size-h5);
     }
+
     .gl-table-default {
       border-collapse: collapse;
       width: 100%;
       white-space: nowrap;
     }
+
     .tabs {
       background-color: #f7941e;
       margin: 0px 15px 0px 15px;
@@ -61,29 +74,36 @@
         background-color: var(--gl-info-color);
       }
     }
+
     .tab:focus>div.tab-content {
       background-color: yellow;
       opacity: 1;
       font-weight: 0;
     }
+
     .tab:not(:last-of-type) {
       border-right: 3px solid var(--gl-gray-light-color);
       font-size: var(--font-size-h5);
     }
+
     .tabs .tab.iron-selected {
       font-size: var(--font-size-h5);
       color: var(--gl-white-color);
       background-color: var(--gl-info-color);
     }
+
     .table-head>tr>th:nth-child(2) {
       width: 15%;
     }
-    .btn{
-      margin:15px 20px 5px 10px;
+
+    .btn {
+      margin: 15px 20px 5px 10px;
     }
-    .btn-bottom{
-      margin:0px 15px 15px 0px;
+
+    .btn-bottom {
+      margin: 0px 15px 15px 0px;
     }
+
     main {
       padding: 5px;
       margin: 0 auto;
@@ -144,10 +164,24 @@
       --paper-badge-margin-left: 20px;
       --paper-badge-margin-bottom: 0px;
     }
+    .btn-back{
+      margin: 30px 30px 0px 0px;
+    }
   </style>
   <template>
+    <div class="horizontal end-justified layout btn-back">
+      <div>
+        <paper-button class="button-top gl-btn-defalse" raised on-tap="goBack" > ย้อนกลับ </paper-button>
+      </div>
+      <div>
+        <!--<paper-button class="gl-btn-primary button-top" title="เพิ่มกลุ่ม" raised on-tap="_toggleDrawer">
+                        <iron-icon icon="add"></iron-icon>เพิ่มกลุ่มย่อย</paper-button>-->
+      </div>
+
+    </div>
     <div class="horizontal layout center-justified" style="margin-top:10px;">
-      <gl-form-input class="searchForm" hidden="{{isHidden}}" style="width:300px;" label="{{localize.tax_no}} :" value="{{companyId}}" always-float-label allowed-pattern="[0-9]" maxlength="13">
+      <gl-form-input class="searchForm" hidden="{{isHidden}}" style="width:300px;" label="{{localize.tax_no}} :" value="{{companyId}}"
+        always-float-label allowed-pattern="[0-9]" maxlength="13">
         <iron-icon icon="search" prefix style="width:20px;height:30px;"></iron-icon>
         <paper-icon-button suffix on-tap="clearData" icon="clear" title="clear" style="height:30px;">
       </gl-form-input>
@@ -171,145 +205,171 @@
       </label>
 
       <section id="content1"> -->
-        <iron-pages selected="{{pageSelected}}" attr-for-selected="name">
-          <div name="listCompany">
-            <!-- <list-company></list-company> -->
-              <div class="searchBorder" style="overflow-x:auto;">
-              <table class="gl-table-default">
-                <thead class="table-head">
-                  <tr>
-                    <th><div class="text-table">{{localize.No}}</div></th>
-                    <th><div class="text-table">{{localize.no_exporter_fullname}}</div></th>
-                    <th><div class="text-table">{{localize.name_company}}</div></th>
-                    <th><div class="text-table">{{localize.type_license}}</div></th>
-                    <th><div class="text-table">{{localize.date_register}}</div></th>
-                    <th><div class="text-table">{{localize.status}}</div></th>
-                  </tr>
-                </thead>
+    <iron-pages selected="{{pageSelected}}" attr-for-selected="name">
+      <div name="listCompany">
+        <!-- <list-company></list-company> -->
+        <div class="searchBorder" style="overflow-x:auto;">
+          <table class="gl-table-default">
+            <thead class="table-head">
+              <tr>
+                <th>
+                  <div class="text-table">{{localize.No}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.no_exporter_fullname}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.name_company}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.type_license}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.date_register}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.status}}</div>
+                </th>
+              </tr>
+            </thead>
 
-                <template is="dom-repeat" items="{{companys}}">
-                  <tbody>
-                    <tr style="cursor:pointer;">
-                      <td><div class="text-table">[[indexNo(index)]]</div></td>
-                      <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]" disabled="{{_disabledType(item.draft_status)}}"></gl-form-input></td>
-                      <td on-tap="_selectData" data="[[item]]"><div>{{item.company.company_name_th}}</div></td>
-                      <td on-tap="_selectData" data="[[item]]"><div>{{item.lic_type.lic_type_name}}</div></td>
-                      <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.date_created}}</div></td>
-                      <td on-tap="_selectData" data="[[item]]"><div>{{obDraftStatus(item.draft_status, item.doc_status, item.approve_status)}}</div></td>
-                    </tr>
-                </template>
-                <template is="dom-if" if={{_checkData(companys)}}>
-                  <tr>
-                      <td colspan="6"><div class="text-table" style="margin:20px">{{localize.not_found}}</div></td>
-                  </tr>
-                </template>
-                  </tbody>
-              </table>
-            </div> 
+            <template is="dom-repeat" items="{{companys}}">
+              <tbody>
+                <tr style="cursor:pointer;">
+                  <td>
+                    <div class="text-table">[[indexNo(index)]]</div>
+                  </td>
+                  <td style="text-align:center">
+                    <gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]" disabled="{{_disabledType(item.draft_status)}}"></gl-form-input>
+                  </td>
+                  <td on-tap="_selectData" data="[[item]]">
+                    <div>{{item.company.company_name_th}}</div>
+                  </td>
+                  <td on-tap="_selectData" data="[[item]]">
+                    <div>{{item.lic_type.lic_type_name}}</div>
+                  </td>
+                  <td on-tap="_selectData" data="[[item]]">
+                    <div class="text-table">{{item.date_created}}</div>
+                  </td>
+                  <td on-tap="_selectData" data="[[item]]">
+                    <div>{{obDraftStatus(item.draft_status, item.doc_status, item.approve_status)}}</div>
+                  </td>
+                </tr>
+            </template>
+            <template is="dom-if" if={{_checkData(companys)}}>
+              <tr>
+                <td colspan="6">
+                  <div class="text-table" style="margin:20px">{{localize.not_found}}</div>
+                </td>
+              </tr>
+            </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div name="detailCompany">
+        <paper-tabs selected="{{pages}}" align-bottom no-slide class="tabs">
+          <paper-tab class="tab">{{localize.detail}}</paper-tab>
+          <paper-tab id="tabFile" class="tab">{{localize.doc_ev}}</paper-tab>
+        </paper-tabs>
+        <gl-form-panel>
+          <iron-pages selected="{{pages}}">
+            <detail-company></detail-company>
+            <fileup-company></fileup-company>
+          </iron-pages>
+        </gl-form-panel>
+
+        <div class="horizontal layout justified">
+          <div>
+            <template is="dom-if" if={{!data.approve_status}}>
+              <template is="dom-if" if={{data.doc_status}}>
+                <paper-button class="gl-btn-warning" style="margin-left:15px;" on-tap="_dialogRemark" raised>{{localize.bt_no_pass}}</paper-button>
+              </template>
+            </template>
+
+            <template is="dom-if" if={{data.approve_status}}>
+              <div class="btn-bottom">
+                <iron-icon icon="print"></iron-icon>
+                <paper-dropdown-menu style="width:300px" placeholder="{{localize.select_report}}" no-label-float name="report">
+                  <paper-tabs class="dropdown-content" attr-for-selected="report" selected="{{report}}">
+                    <paper-tab on-tap="_print" report="report1">{{localize.memorandum}}</paper-tab>
+                    <paper-tab on-tap="_print" report="report2">{{localize.confirmation}}</paper-tab>
+                  </paper-tabs>
+                </paper-dropdown-menu>
+              </div>
+            </template>
           </div>
 
-          <div name="detailCompany">
-             <paper-tabs selected="{{pages}}" align-bottom no-slide class="tabs">
-              <paper-tab class="tab">{{localize.detail}}</paper-tab>
-              <paper-tab id="tabFile" class="tab">{{localize.doc_ev}}</paper-tab>
-            </paper-tabs>
-            <gl-form-panel>
-              <iron-pages selected="{{pages}}">
-                <detail-company></detail-company>
-                <fileup-company></fileup-company>
-              </iron-pages>
-            </gl-form-panel>
+          <div>
+            <paper-button on-tap="_backPage" raised>{{localize.bt_back}}</paper-button>
+            <template is="dom-if" if={{!data.approve_status}}>
+              <template is="dom-if" if={{data.doc_status}}>
+                <paper-button class="gl-btn-success btn-bottom" on-tap="_pass" raised>{{localize.bt_pass}}</paper-button>
+              </template>
+            </template>
 
-            <div class="horizontal layout justified">
-              <div>
-                <template is="dom-if" if={{!data.approve_status}}>
-                  <template is="dom-if" if={{data.doc_status}}>
-                    <paper-button class="gl-btn-warning" style="margin-left:15px;" on-tap="_dialogRemark" raised>{{localize.bt_no_pass}}</paper-button>
-                  </template>
-                </template>
-                
-                <template is="dom-if" if={{data.approve_status}}>
-                  <div class="btn-bottom">
-                    <iron-icon icon="print"></iron-icon>
-                    <paper-dropdown-menu style="width:300px" placeholder="{{localize.select_report}}" no-label-float name="report">
-                      <paper-tabs class="dropdown-content" attr-for-selected="report" selected="{{report}}">
-                        <paper-tab on-tap="_print" report="report1">{{localize.memorandum}}</paper-tab>
-                        <paper-tab on-tap="_print" report="report2">{{localize.confirmation}}</paper-tab>
-                      </paper-tabs>
-                    </paper-dropdown-menu>
-                  </div>
-                </template>
-              </div>
 
-              <div>
-                <paper-button on-tap="_backPage" raised>{{localize.bt_back}}</paper-button>
-                <template is="dom-if" if={{!data.approve_status}}>
-                  <template is="dom-if" if={{data.doc_status}}>
-                    <paper-button class="gl-btn-success btn-bottom" on-tap="_pass" raised>{{localize.bt_pass}}</paper-button>
-                  </template>
-                </template>
-                
-                
-                <!-- <template is="dom-if" if={{isEnabled}}> -->
-                <template is="dom-if" if={{!data.status_approve}}>
-                  <template is="dom-if" if={{!checkStatusExtend(data.draft_status)}}>
-                    <template is="dom-if" if={{!checkStatusType(data.draft_status)}}>
-                      <template is="dom-if" if={{data.approve_status}}>
-                        <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
-                      </template>
-                    </template>
-                  </template>
-
-                  <template is="dom-if" if={{checkStatusExtend(data.draft_status)}}>
-                    <paper-button class="gl-btn-warning btn-bottom" on-tap="_extend" raised>{{localize.bt_exporter_extend}}</paper-button>
-                  </template>
-                  <template is="dom-if" if={{checkStatusType(data.draft_status)}}>
+            <!-- <template is="dom-if" if={{isEnabled}}> -->
+            <template is="dom-if" if={{!data.status_approve}}>
+              <template is="dom-if" if={{!checkStatusExtend(data.draft_status)}}>
+                <template is="dom-if" if={{!checkStatusType(data.draft_status)}}>
+                  <template is="dom-if" if={{data.approve_status}}>
                     <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
                   </template>
                 </template>
-                
-                <!-- <template is="dom-if" if={{!isEnabled}}> -->
-                 <!-- <template is="dom-if" if={{data.status_approve}}> -->
-                  <!-- <template is="dom-if" if={{obExporter(exporter_data.expire_status)}}>
+              </template>
+
+              <template is="dom-if" if={{checkStatusExtend(data.draft_status)}}>
+                <paper-button class="gl-btn-warning btn-bottom" on-tap="_extend" raised>{{localize.bt_exporter_extend}}</paper-button>
+              </template>
+              <template is="dom-if" if={{checkStatusType(data.draft_status)}}>
+                <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
+              </template>
+            </template>
+
+            <!-- <template is="dom-if" if={{!isEnabled}}> -->
+            <!-- <template is="dom-if" if={{data.status_approve}}> -->
+            <!-- <template is="dom-if" if={{obExporter(exporter_data.expire_status)}}>
                     <paper-button class="gl-btn-warning btn-bottom" on-tap="_extend" raised>{{localize.bt_exporter_extend}}</paper-button>
                   </template> -->
-                  <!-- <template is="dom-if" if={{!obExporter(exporter_data.expire_status)}}> -->
-                    <!-- <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button> -->
-                  <!-- </template> -->
-                <!-- </template>  -->
-              </div>
-            </div> 
-          </div> 
-
-          <div name="register">
-            <register-page></register-page>
-          </div> 
-        </iron-pages>
-        <paper-dialog id="dialog" style="width:60%;">
-          <gl-grid-row width="{{getWidth}}">
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,12]]">
-              <gl-form-textarea label="{{localize.note}} : " always-float-label value="{{company_remark}}"></gl-form-textarea>
-            </gl-grid-col>
-          </gl-grid-row>
-          <div>
-            <paper-button class=" button-size" raised on-tap="_dialogcancle">{{localize.bt_back}}</paper-button>
-            <paper-button class="gl-btn-primary button-size" raised on-tap="_reject">{{localize.bt_save}}</paper-button>
+            <!-- <template is="dom-if" if={{!obExporter(exporter_data.expire_status)}}> -->
+            <!-- <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button> -->
+            <!-- </template> -->
+            <!-- </template>  -->
           </div>
-        </paper-dialog>  
-        <!-- [[obData(data)]] -->
-       <!-- </section> -->
+        </div>
+      </div>
 
-      <!-- <section id="content2"> -->
-        <!-- <list-of-fee-detail data="{{list_fee}}"></list-of-fee-detail> -->
-      <!-- </section>
+      <div name="register">
+        <register-page></register-page>
+      </div>
+    </iron-pages>
+    <paper-dialog id="dialog" style="width:60%;">
+      <gl-grid-row width="{{getWidth}}">
+        <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,12]]">
+          <gl-form-textarea label="{{localize.note}} : " always-float-label value="{{company_remark}}"></gl-form-textarea>
+        </gl-grid-col>
+      </gl-grid-row>
+      <div>
+        <paper-button class=" button-size" raised on-tap="_dialogcancle">{{localize.bt_back}}</paper-button>
+        <paper-button class="gl-btn-primary button-size" raised on-tap="_reject">{{localize.bt_save}}</paper-button>
+      </div>
+    </paper-dialog>
+    <!-- [[obData(data)]] -->
+    <!-- </section> -->
+
+    <!-- <section id="content2"> -->
+    <!-- <list-of-fee-detail data="{{list_fee}}"></list-of-fee-detail> -->
+    <!-- </section>
     </main>  -->
-    
+
   </template>
   <script>
     Polymer({
       is: "page-admin-confirm",
       properties: {
-        pages:{
+        pages: {
           type: String,
           value: 0
         },
@@ -322,24 +382,27 @@
           value: false,
           observer: '_changeselectDataAll'
         },
-        isHidden:{
+        isHidden: {
           type: Boolean,
           value: false
         },
-        localize:{
-          statePath : 'i18n.exporter'
+        localize: {
+          statePath: 'i18n.exporter'
         },
         data: {
-          statePath : 'confirm.data'
+          statePath: 'confirm.data'
         },
-        companys:{
-          statePath : 'confirm.list'
+        companys: {
+          statePath: 'confirm.list'
         }
       },
       behaviors: [ReduxBehavior, nylonBehavior, i18nAction, confirmAction, exporterAction, ValidateFormBehavior],
       listeners: {
-        'back_page' : '_backPage',
-        'clearData' : 'clearData'
+        'back_page': '_backPage',
+        'clearData': 'clearData'
+      },
+      goBack(){
+        this.fire('nylon-change-page',{path:'/admin-exporter'})
       },
       nylonPageActive: function () {
         this.dispatchAction('CONFIRM_GET_DATA');
@@ -361,11 +424,11 @@
       },
       _pass: function () {
         var data = {
-                      id: this.data.id,
-                      company_id: this.data.company_id,
-                      exporter_no: this.data.exporter_no,
-                      approve_status: true
-                    };
+          id: this.data.id,
+          company_id: this.data.company_id,
+          exporter_no: this.data.exporter_no,
+          approve_status: true
+        };
         // console.log(data);
         this.fire('toast', {
           status: 'openDialog',
@@ -382,7 +445,7 @@
           status: 'openDialog',
           text: 'คุณต้องการจะอนุมัติใช่หรือไม่ ?',
           confirmed: (result) => {
-            if(result == true){
+            if (result == true) {
               this.dispatchAction('CONFIRM_ADMIN_APPROVE', this.data);
             }
           }
@@ -410,20 +473,20 @@
         this.company_remark = "";
       },
       _reject: function () {
-        if(this.company_remark === undefined){
+        if (this.company_remark === undefined) {
           this.company_remark = '';
         }
-        var data= {
-                    id: this.data.id,
-                    company_id: this.data.company_id,
-                    doc_status: false,
-                    company_remark: this.company_remark
-                  }
+        var data = {
+          id: this.data.id,
+          company_id: this.data.company_id,
+          doc_status: false,
+          company_remark: this.company_remark
+        }
         this.fire('toast', {
           status: 'openDialog',
           text: 'คุณต้องการจะให้ผู้ส่งออกส่งเอกสารเพิ่มเติมใช่หรือไม่ ?',
           confirmed: (result) => {
-            if(result == true){
+            if (result == true) {
               this.dispatchAction('CONFIRM_ADMIN_REJECT', data);
               this.$.dialog.toggle()
               this.company_remark = "";
@@ -432,16 +495,16 @@
           }
         });
       },
-      _extend:function(){
+      _extend: function () {
         var data = {
-                      id: this.data.exporter_id,
-                      draft_id: this.data.id
-                    };
+          id: this.data.exporter_id,
+          draft_id: this.data.id
+        };
         this.fire('toast', {
           status: 'openDialog',
           text: 'คุณต้องการจะต่ออายุผู้ส่งออกใช่หรือไม่ ?',
           confirmed: (result) => {
-            if( result == true){
+            if (result == true) {
               this.dispatchAction('CONFIRM_ADMIN_EXTEND', data);
               this.pageSelected = 'listCompany';
             }
@@ -460,83 +523,83 @@
       },
       _print: function (e) {
         // console.log(e.target.getAttribute('report'));
-        if(e.target.getAttribute('report') == 'report1'){
+        if (e.target.getAttribute('report') == 'report1') {
           // console.log(this.data.draft_status);
-          if(this.data.draft_status == 'sign'){
-            window.open('./api/external/report_exporter/approve_general_1/'+this.data.id);
-          }else if(this.data.draft_status == 'type'){
-            window.open('./api/external/report_exporter/approve_changtype/'+this.data.id);
-          }else{
-            window.open('./api/external/report_exporter/approve_renew_1/'+this.data.id);
+          if (this.data.draft_status == 'sign') {
+            window.open('./api/external/report_exporter/approve_general_1/' + this.data.id);
+          } else if (this.data.draft_status == 'type') {
+            window.open('./api/external/report_exporter/approve_changtype/' + this.data.id);
+          } else {
+            window.open('./api/external/report_exporter/approve_renew_1/' + this.data.id);
           }
-        }else{
-          if(this.data.draft_status == 'sign'){
-            window.open('./api/external/report_exporter/approve_general_2/'+this.data.id);
-          }else{
-            window.open('./api/external/report_exporter/approve_renew_2/'+this.data.id);
+        } else {
+          if (this.data.draft_status == 'sign') {
+            window.open('./api/external/report_exporter/approve_general_2/' + this.data.id);
+          } else {
+            window.open('./api/external/report_exporter/approve_renew_2/' + this.data.id);
           }
         }
-        
+
       },
       _search: function () {
-        if(this.companyId != ''){
-          this.dispatchAction('CONFIRM_SEARCH',this.companyId);
+        if (this.companyId != '') {
+          this.dispatchAction('CONFIRM_SEARCH', this.companyId);
           this.pageSelected = "register";
           this.queryFrom('.searchForm').map((el) => { el.reset(); });
         }
-        else{
+        else {
           this.fire('toast', { status: 'connectError', text: 'กรุณากรอกเลขประจำตัวผู้ส่งออก' })
         }
       },
-      clearData: function(){
+      clearData: function () {
         this.idCompany = {};
         this.companyId = '';
         this._backPage();
       },
-      indexNo:function(val){
-        return val+1
+      indexNo: function (val) {
+        return val + 1
       },
-      _checkData:function(val){
-        if(val.length > 0){
+      _checkData: function (val) {
+        if (val.length > 0) {
           return false
-        }else{
+        } else {
           return true
         }
       },
-      checkStatusType:function(val){
-        if(val == 'type'){
+      checkStatusType: function (val) {
+        if (val == 'type') {
           return true
-        }else{
+        } else {
           return false
         }
       },
-      obDraftStatus:function(data, doc_status, approve_status){
-        if(data == 'type'){
+      obDraftStatus: function (data, doc_status, approve_status) {
+        if (data == 'type') {
           return 'เปลี่ยนประเภทใบอนุญาต (รออนุมัติ)'
         }
-        if(data == 'extend'){
+        if (data == 'extend') {
           return 'ต่ออายุผู้ส่งออก (รออนุมัติ)'
         }
-        if(data == 'sign'){
-          if(doc_status === true && approve_status === false){
+        if (data == 'sign') {
+          if (doc_status === true && approve_status === false) {
             return 'ลงทะเบียนผู้ส่งออก (ตรวจสอบเอกสาร)'
           }
-          else if(doc_status === true && approve_status === true){
+          else if (doc_status === true && approve_status === true) {
             return 'ลงทะเบียนผู้ส่งออก (รออนุมัติ)'
           }
         }
       },
-      _disabledType:function(val){
-        if(val == 'sign'){
+      _disabledType: function (val) {
+        if (val == 'sign') {
           return false
-        }else{
+        } else {
           return true
         }
       },
-      checkStatusExtend:function(val){
-        if(val == 'extend'){
+      checkStatusExtend: function (val) {
+        if (val == 'extend') {
           return true
-        }else{
+        } else {
           return false
         }
       }
