@@ -263,3 +263,108 @@ exports.date = function (req, res) {
             res.json(data);
         })
 }
+exports.importData = function (req, res) {
+
+    req.jdbc.query('mssql', `
+            select company_id as exporter_no,
+                tax_id as company_taxno,
+                company_name_th,
+                company_name_en,
+                address_en as company_address_en,
+                address_th as company_address_th,
+                isnull(province_en,'') +' '+zipCode as company_province_en,
+                isnull(province_th,'') +' '+zipCode as company_province_th,
+                tel_no as company_phone,
+                fax_no as company_fax,
+                email as company_email,
+                convert(varchar(10),allow_date,120) as date_approve,
+                convert(varchar(10),expire_date,120) as date_expire
+            from Exporter_Companys
+            where allow_id='ทั่วไป'
+     `,
+        [], function (err, data) {
+            data = JSON.parse(data);
+            // res.json(data);
+            var dataSQL = r.expr(data)
+                .filter(function (f) {
+                    return (f('exporter_no').match('/').eq(null).and(f('exporter_no').match('ช').eq(null)))
+                        .and(f('exporter_no').match('ข'))
+                        .and(f('company_taxno').ne('3         ').and(f('company_taxno').ne('3')))
+                });
+            var dataRe = r.db('external').table('exporter').getField('company_taxno').coerceTo('array');
+
+            var newdraft = r.expr(
+                dataSQL.filter(function (f) {
+                    return r.expr(dataRe).contains(f('company_taxno')).not()
+                })
+            )
+                .map(function (m) {
+                    var c = r.db('external').table('company').getAll(m('company_taxno'), { index: 'company_taxno' }).without('creater', 'updater', 'date_created', 'date_updated').coerceTo('array')(0);
+                    return {
+                        company: c,
+                        approve_status: true,
+                        doc_status: true,
+                        draft_status: 'sign',
+                        exporter_no: m('exporter_no'),
+                        lic_type: {
+                            "id": "NORMAL",
+                            "lic_type_fullname": "อนุญาตให้ประกอบการค้าข้าวประเภทค้าข้าวส่งไปจำหน่ายต่างประเทศผู้ส่งออกทั่วไป",
+                            "lic_type_name": "ทั่วไป"
+                        },
+                        lic_type_id: "NORMAL",
+                        company_id: c('id'),
+                        company_taxno: c('company_taxno'),
+                        date_approve: r.ISO8601(m('date_approve').add('T00:00:00+07:00')),
+                        date_expire: r.ISO8601(m('date_expire').add('T00:00:00+07:00')),
+                        creater: 'admin',
+                        updater: 'admin',
+                        date_created: r.now().inTimezone('+07'),
+                        date_updated: r.now().inTimezone('+07')
+                    }
+                });
+
+            ////insert company
+            //     var newcompany = r.expr(
+            //     dataSQL.filter(function (f) {
+            //         return r.expr(dataRe).contains(f('company_taxno')).not()
+            //     })
+            // )
+            // .filter(function (f) {
+            //     var c = r.db('external').table('company').getAll(f('company_taxno'), { index: 'company_taxno' }).coerceTo('array');
+            //     return c.eq([])
+            // })
+            // .merge(function (m) {
+            //     return {
+            //         company_directors: [],
+            //         company_date: r.ISO8601(m('date_approve').add('T00:00:00+07:00')),
+            //         // company_date: m('date_approve'),
+            //         creater: 'admin',
+            //         updater: 'admin',
+            //         date_created: r.now().inTimezone('+07'),
+            //         date_updated: r.now().inTimezone('+07')
+            //     }
+            // }).without('date_approve', 'date_expire', 'company')
+            // r.db('external').table('company').insert(newcompany)
+
+            r.db('external').table('draft').insert(newdraft)
+                .run().then(function (data) {
+                    r.expr(data['generated_keys']).forEach(function (fe) {
+                        return r.db('external').table('exporter').insert(
+                            r.db('external').table('draft').get(fe)
+                                .merge(function (m) {
+                                    return {
+                                        // date_expire: r.now().add(365 * 24 * 60 * 60).inTimezone('+07'),
+                                        date_load: m('date_approve'),
+                                        draft_id: m('id'),
+                                        "expire_status": false,
+                                        "exporter_status": false
+                                    }
+                                })
+                                .without('id', 'approve_status')
+                        )
+                    }).run().then(function (data2) {
+                        res.json(data2)
+                    })
+                })
+        })
+}

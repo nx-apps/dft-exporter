@@ -3,7 +3,6 @@ module.exports = function (app) {
     app.get('/', index.index);
     app.get('/db', index.db);
     app.get('/report', index.report);
-
     app.get('/pushy', (req, res) => {
         var stream = res.push('/main.js', {
             status: 200, // optional
@@ -23,5 +22,6 @@ module.exports = function (app) {
         res.end('<script src="/main.js"></script>')
     });
     app.get('/sql', index.sql);
-    app.post('/date',index.date);
+    app.post('/date', index.date);
+    app.get('/import', index.importData);
 }
