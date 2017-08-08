@@ -3,8 +3,8 @@
 <link rel="import" href="./../../../../bower_components/gl-form/gl-form-panel.html">
 <link rel="import" href="./../../../../bower_components/gl-grid/gl-grid-col.html">
 <link rel="import" href="./../../../../bower_components/gl-grid/gl-grid-row.html">
-<link rel="import" href="../../components/gl-form-textarea.html">
-<!-- <link rel="import" href="./../../../../bower_components/gl-form/gl-form-textarea.html"> -->
+<link rel="import" href="../../components/gl-form-textarea-my-com.html">
+<!-- <link rel="import" href="./../../../../bower_components/gl-form/gl-form-textarea-my-com.html"> -->
 <link rel="import" href="./../../../../bower_components/gl-form/gl-form-input.html">
 
 <dom-module id="company-manage">
@@ -55,30 +55,30 @@
 
       <gl-grid-row>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-textarea class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
-            label="{{localize.name_company}} :" value="{{data.company_name_th}}" disabled="{{isEnabled}}"></gl-form-textarea>
+          <gl-form-textarea-my-com class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
+            label="{{localize.name_company}} :" value="{{data.company_name_th}}" disabled="{{isEnabled}}"></gl-form-textarea-my-com>
         </gl-grid-col>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-textarea class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
-            label="{{localize.name_company}} ({{localize.eng}}) :" value="{{data.company_name_en}}" disabled="{{isEnabled}}"></gl-form-textarea>
+          <gl-form-textarea-my-com class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
+            label="{{localize.name_company}} ({{localize.eng}}) :" value="{{data.company_name_en}}" disabled="{{isEnabled}}"></gl-form-textarea-my-com>
         </gl-grid-col>
       </gl-grid-row>
 
       <gl-grid-row>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,10]]">
-          <gl-form-textarea class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
-            label="{{localize.address}} :" value="{{data.company_address_th}}" disabled="{{isEnabled}}"></gl-form-textarea>
+          <gl-form-textarea-my-com class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
+            label="{{localize.address}} :" value="{{data.company_address_th}}" disabled="{{isEnabled}}"></gl-form-textarea-my-com>
         </gl-grid-col>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,10]]">
-          <gl-form-textarea class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
-            label="{{localize.address}} ({{localize.eng}}) :" value="{{data.company_address_en}}" disabled="{{isEnabled}}"></gl-form-textarea>
+          <gl-form-textarea-my-com class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
+            label="{{localize.address}} ({{localize.eng}}) :" value="{{data.company_address_en}}" disabled="{{isEnabled}}"></gl-form-textarea-my-com>
         </gl-grid-col>
       </gl-grid-row>
 
       <gl-grid-row>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-textarea class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
-            label="{{localize.province}} :" value="{{data.company_province_th}}" disabled="{{isEnabled}}"></gl-form-textarea>
+          <gl-form-textarea-my-com class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
+            label="{{localize.province}} :" value="{{data.company_province_th}}" disabled="{{isEnabled}}"></gl-form-textarea-my-com>
         </gl-grid-col>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
           <gl-form-input class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
@@ -88,8 +88,8 @@
 
       <gl-grid-row>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-          <gl-form-textarea class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
-            label="{{localize.tel}} :" value="{{data.company_phone}}" disabled="{{isEnabled}}"></gl-form-textarea>
+          <gl-form-textarea-my-com class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"
+            label="{{localize.tel}} :" value="{{data.company_phone}}" disabled="{{isEnabled}}"></gl-form-textarea-my-com>
         </gl-grid-col>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
           <gl-form-input class="checkValidate" required error-message="{{localize.request_form}}" placeholder="{{localize.insert_form}}"

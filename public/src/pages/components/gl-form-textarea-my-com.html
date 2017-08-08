@@ -9,7 +9,7 @@
 <link rel="import" href="">
 
 
-<dom-module id="gl-form-textarea">
+<dom-module id="gl-form-textarea-my-com">
   <style>
      :host {
       display: block;
@@ -35,23 +35,23 @@
     paper-input-container {
       --paper-input-container-disabled: {
         opacity: 1;
-        @apply(--gl-form-textarea-container-disabled);
+        @apply(--gl-form-textarea-my-com-container-disabled);
       }
       --paper-input-container-label: {
         color: var(--paper-input-label-color-success);
-        @apply(--gl-form-textarea-container-label);
+        @apply(--gl-form-textarea-my-com-container-label);
       }
       --paper-input-container-underline: {
         border-bottom: var(--paper-input-border-success);
-        @apply(--gl-form-textarea-container-underline);
+        @apply(--gl-form-textarea-my-com-container-underline);
       }
       --paper-input-container-underline-disabled: {
         display: none;
-        @apply(--gl-form-textarea-container-underline-disabled);
+        @apply(--gl-form-textarea-my-com-container-underline-disabled);
       }
       --paper-input-container-label-floating: {
         font-size: 20px;
-        @apply(--gl-form-textarea-container-label-floating);
+        @apply(--gl-form-textarea-my-com-container-label-floating);
       }
     }
   </style>
@@ -78,7 +78,7 @@
   </template>
   <script>
     Polymer({
-      is: 'gl-form-textarea',
+      is: 'gl-form-textarea-my-com',
       behaviors: [
         Polymer.PaperInputBehavior,
         Polymer.IronFormElementBehavior
