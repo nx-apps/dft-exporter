@@ -1,5 +1,7 @@
 <link rel="import" href="../../../components/validateFormBehaviors.html">
 
+<link rel="import" href="./../../../components/month-behavior.html">
+
 <dom-module id="member-manage">
   <style is="custom-style" include="">
     * {
@@ -28,55 +30,60 @@
 
         <gl-grid-row width="{{getWidth}}">
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-input label="{{localize.no_exporter_fullname}} :" value="{{data.exporter_no_name}}" disabled></gl-form-input>
+            <gl-form-input label="{{localize.no_exporter_fullname}} :" always-float-label  value="{{data.exporter_no_name}}" disabled></gl-form-input>
           </gl-grid-col>
         </gl-grid-row>
 
         <gl-grid-row>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-input label="{{localize.tax_no}} :" value="{{data.company_taxno}}" disabled></gl-form-input>
+            <gl-form-input label="{{localize.tax_no}} :" always-float-label  value="{{data.company_taxno}}" disabled></gl-form-input>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-textarea label="{{localize.name_company}} :" value="{{data.company.company_name_th}}" disabled></gl-form-textarea>
+            <gl-form-textarea label="{{localize.name_company}} :" always-float-label  value="{{data.company.company_name_th}}" disabled></gl-form-textarea>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-textarea label="{{localize.name_company}} ({{localize.eng}}) :" value="{{data.company.company_name_en}}" disabled></gl-form-textarea>
+            <gl-form-textarea label="{{localize.name_company}} ({{localize.eng}}) :" always-float-label  value="{{data.company.company_name_en}}" disabled></gl-form-textarea>
           </gl-grid-col>
         </gl-grid-row>
 
         <gl-grid-row>
           <gl-grid-col width="[[getWidth]]" grid="[[500,12],[700,8]]">
-            <gl-form-textarea label="{{localize.address}} :" value="{{data.company.company_address_th}}" disabled></gl-form-textarea>
+            <gl-form-textarea label="{{localize.address}} :" always-float-label  value="{{data.company.company_address_th}}" disabled></gl-form-textarea>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[500,12],[700,8]]">
-            <gl-form-textarea label="{{localize.address}} ({{localize.eng}}) :" value="{{data.company.company_address_en}}" disabled></gl-form-textarea>
+            <gl-form-textarea label="{{localize.address}} ({{localize.eng}}) :" always-float-label  value="{{data.company.company_address_en}}" disabled></gl-form-textarea>
           </gl-grid-col>
         </gl-grid-row>
 
         <gl-grid-row>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-textarea label="{{localize.email}} :" value="{{data.company.company_email}}" disabled></gl-form-textarea>
+            <gl-form-textarea label="{{localize.email}} :" always-float-label value="{{data.company.company_email}}" disabled></gl-form-textarea>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-textarea label="{{localize.tel}} :" value="{{data.company.company_phone}}" disabled></gl-form-textarea>
+            <gl-form-textarea label="{{localize.tel}} :" always-float-label  value="{{data.company.company_phone}}" disabled></gl-form-textarea>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-textarea label="{{localize.fax}} :" value="{{data.company.company_fax}}" disabled></gl-form-textarea>
+            <gl-form-textarea label="{{localize.fax}} :" always-float-label  value="{{data.company.company_fax}}" disabled></gl-form-textarea>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <vaadin-date-picker label="{{localize.date_approve}} :" value="{{data.date_approve}}" disabled></vaadin-date-picker>
+            <gl-form-input label="{{localize.date_approve}} :"always-float-label  value="{{toThaiDate(data.date_approve)}}" disabled></gl-form-input>
+            <!--<vaadin-date-picker label="{{localize.date_approve}} :" always-float-label  value="{{data.date_approve}}" disabled></vaadin-date-picker>-->
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <vaadin-date-picker label="{{localize.date_load}} :" value="{{data.date_load}}" disabled></vaadin-date-picker>
+            
+            <gl-form-input label="{{localize.date_load}} :"always-float-label  value="{{toThaiDate(data.date_load)}}" disabled></gl-form-input>
+            <!--<vaadin-date-picker label="{{localize.date_load}} :" always-float-label  value="{{data.date_load}}" disabled></vaadin-date-picker>-->
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <vaadin-date-picker label="{{localize.date_expire}} :" value="{{data.date_expire}}" disabled></vaadin-date-picker>
+            
+            <gl-form-input label="{{localize.date_expire}} :"always-float-label  value="{{toThaiDate(data.date_expire)}}" disabled></gl-form-input>
+            <!--<vaadin-date-picker label="{{localize.date_expire}} :" always-float-label  value="{{data.date_expire}}" disabled></vaadin-date-picker>-->
           </gl-grid-col>
         </gl-grid-row>
 
         <gl-grid-row>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-dropdown-menu style="width:100%;" class="checkValidate" label="{{localize.type_license}}" placeholder="{{localize.select_type}}"
+            <gl-form-dropdown-menu style="width:100%;" class="checkValidate" always-float-label  label="{{localize.type_license}}" placeholder="{{localize.select_type}}"
               disabled="[[isEnabled]]" required>
               <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.lic_type_id}}" name="lic_type_id">
                 <template is="dom-repeat" items={{licType}}>
@@ -86,7 +93,7 @@
             </gl-form-dropdown-menu>
           </gl-grid-col>
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
-            <gl-form-dropdown-menu style="width:100%;" class="checkValidate" label="{{localize.status_export}}" placeholder="{{localize.select_plz}}" disabled="[[isEnabled]]" required>
+            <gl-form-dropdown-menu style="width:100%;" class="checkValidate" always-float-label  label="{{localize.status_export}}" placeholder="{{localize.select_plz}}" disabled="[[isEnabled]]" required>
               <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.exporter_status}}" name="exporter_status">
                 <paper-item value="{{!type_status}}">เป็นสมาชิก</paper-item>
                 <paper-item value="{{type_status}}">ไม่เป็นสมาชิก</paper-item>
@@ -116,7 +123,7 @@
   <script>
     Polymer({
       is: "member-manage",
-      behaviors: [ReduxBehavior, ValidateFormBehavior],
+      behaviors: [ReduxBehavior, ValidateFormBehavior,MonthBehavior],
       properties: {
         data:{
           statePath : 'exporter.data'

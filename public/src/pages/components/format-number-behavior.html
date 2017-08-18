@@ -17,6 +17,17 @@
             }
            
         },
+        formatNumberNoZero:function(number){
+        //    console.log(number);
+            if(number == null){
+                return "";
+            }
+            else {
+                var num = numeral(number).format(this._defaultFormatNoZero);
+                return num
+            }
+
+        },
         setFormat:function(format){
             if(format == "" || format == "undefined"){
                 format = '0,0';

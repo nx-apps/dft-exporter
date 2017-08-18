@@ -12,52 +12,74 @@
 <link rel="import" href="./../../../bower_components/gl-styles/gl-table.html">
 <link rel="import" href="../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 
+<link rel="import" href="./../components/format-number-behavior.html">
+
 <dom-module id="page-company-edit">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
     * {
       font-family: 'CSChatThaiUI', sans-serif !important;
       -webkit-font-smoothing: antialiased;
     }
-    .head-title{
+
+    .head-title {
       text-align: center;
       font-size: var(--font-size-h3);
-      margin-top:15px;
+      margin-top: 15px;
     }
+
     .title {
       text-align: center;
       font-size: var(--font-size-h3);
     }
+
     .text-table {
       text-align: center;
       font-size: var(--font-size-h5);
     }
+
     .searchBox {
       padding: 5px;
       background-color: var(--gl-gray-lighter-color);
     }
+
     .elevation {
       border-radius: 5px;
       margin: 10px;
       padding: 5px;
     }
+
     .searchBorder {
       border: 1px solid var(--gl-gray-light-color);
       margin: 15px;
       border-radius: 3px;
     }
+
     .gl-table-default {
       border-collapse: collapse;
       width: 100%;
       white-space: nowrap;
     }
+
     paper-material {
       background-color: var(--gl-white-color);
     }
+
     table.gl-table-default>thead.table-head>tr>th:nth-child(1) {
       width: 5%;
     }
+
     table.gl-table-default>thead.table-head>tr>th:nth-child(2) {
       width: 10%;
+    }
+    .searchBox {
+      padding: 5px;
+      background-color: var(--gl-gray-lighter-color);
+    }
+
+    .searchBorder {
+      border: 1px solid var(--gl-gray-light-color);
+      margin: 15px;
+      border-radius: 3px;
     }
   </style>
   <template>
@@ -69,58 +91,75 @@
         <div class="head-title">{{localize.list_name_company}}</div>
         <div>
           <paper-button raised class="gl-btn-primary" style="margin-right:15px;" on-tap="_add" title="{{localize.bt_add_company}}">
-          <iron-icon icon="add"></iron-icon>{{localize.bt_add_company}}</paper-button>
+            <iron-icon icon="add"></iron-icon>{{localize.bt_add_company}}</paper-button>
         </div>
       </div>
 
-      <div class="horizontal center-justified layout">
+      <div class="horizontal center-justified layout searchBox searchBorder">
         <!-- <gl-combo-box label="{{localize.tax_no}}" placeholder="{{localize.insert_taxno}}" items="{{list_search}}" 
         item-label-path="company_name" item-value-path="company_taxno" loading
         on-value-changed="_checkID" style="width:600px; margin-top:10px;">
         <template>[[item.company_name]]</template>
         </gl-combo-box> -->
-      {{searchInput(dataSearch)}}
-       <vaadin-combo-box label="{{localize.tax_no}}" placeholder="{{localize.insert_taxno}}" items="{{list_search}}" 
-        item-label-path="company_name" item-value-path="company_taxno" loading={{checkLoad}} filter={{dataSearch}}
-        on-value-changed="_checkID" style="width:600px; margin-top:10px;">
-        <template>[[item.company_name]]</template>
-      </vaadin-combo-box> 
-      
+        {{searchInput(dataSearch)}}
+        <vaadin-combo-box label="{{localize.tax_no}}" placeholder="{{localize.insert_taxno}}" items="{{list_search}}" item-label-path="company_name"
+          item-value-path="company_taxno" loading={{checkLoad}} filter={{dataSearch}} on-value-changed="_checkID" style="width:600px; margin-top:10px;">
+          <template>[[item.company_name]]</template>
+        </vaadin-combo-box>
+
       </div>
 
       <div class="searchBorder" style="height:600px; overflow-x:auto; overflow-y:auto;">
-          <table class="gl-table-default">
-            <thead class="table-head">
-              <tr>
-                <th><div class="text-table">#</div></th>
-                <th><div>{{localize.tax_no}}</div></th>
-                <th><div>{{localize.name_company}}</div></th>
-                <th><div>{{localize.province}}</div></th>
+        <table class="gl-table-default">
+          <thead class="table-head">
+            <tr>
+              <th>
+                <div class="text-table">#</div>
+              </th>
+              <th>
+                <div>{{localize.tax_no}}</div>
+              </th>
+              <th>
+                <div>{{localize.name_company}}</div>
+              </th>
+              <th>
+                <div>{{localize.province}}</div>
+              </th>
+            </tr>
+          </thead>
+
+          <template is="dom-repeat" items="{{company}}">
+            <tbody>
+              <tr id="detailRegExporter" on-tap="_selectData" data="[[item]]" style="cursor:pointer;">
+                <td>
+                  <div class="text-table">[[toIndex(index)]]</div>
+                </td>
+                <td>
+                  <div>{{item.company_taxno}}</div>
+                </td>
+                <td>
+                  <div style="width:300px;">{{item.company_name_th}}</div>
+                </td>
+                <td>
+                  <div>{{item.company_province_th}}</div>
+                </td>
               </tr>
-            </thead>
-            
-            <template is="dom-repeat" items="{{company}}">
-              <tbody>
-                <tr id="detailRegExporter" on-tap="_selectData" data="[[item]]" style="cursor:pointer;">
-                  <td><div class="text-table">[[toIndex(index)]]</div></td>
-                  <td><div>{{item.company_taxno}}</div></td>
-                  <td><div style="width:300px;">{{item.company_name_th}}</div></td>
-                  <td><div>{{item.company_province_th}}</div></td>
-                </tr>
-              </template>
-              <template is="dom-if" if={{_checkData(company)}}>
-                <tr>
-                    <td colspan="4"><div class="text-table" style="margin:20px">{{localize.not_found}}</div></td>
-                </tr>
-              </template>
-            </tbody>
-          </table>
-        </div>
+          </template>
+          <template is="dom-if" if={{_checkData(company)}}>
+            <tr>
+              <td colspan="4">
+                <div class="text-table" style="margin:20px">{{localize.not_found}}</div>
+              </td>
+            </tr>
+          </template>
+          </tbody>
+        </table>
       </div>
-      
+      </div>
+
       <div class="horizontal justified layout" style="margin:20px;">
         <div>
-          {{localize.company}}{{localize.all}} [[countCompany(list_search)]] {{localize.company}}
+          {{localize.company}}{{localize.all}} [[formatNumberNoZero(company.length)]] {{localize.company}}
         </div>
         <div>
           {{localize.page}}
@@ -128,22 +167,21 @@
               <template is="dom-repeat" items={{pages}}>
                   <option value="{{item}}">{{item}}</option>
               </template>
-          </select>
-          / [[countPage(pages)]] {{localize.page}}
+          </select> / [[pages.length]] {{localize.page}}
         </div>
       </div>
     </paper-material>
 
     <panel-right title="{{titleName}}">
       <company-manage status-action="[[statusAction]]"></company-manage>
-       <!-- hid-button="{{hidButton}}" is-enabled="{{isEnabled}}" -->
+      <!-- hid-button="{{hidButton}}" is-enabled="{{isEnabled}}" -->
     </panel-right>
 
   </template>
   <script>
     Polymer({
       is: "page-company-edit",
-      behaviors: [ReduxBehavior, nylonBehavior, companyAction],
+      behaviors: [ReduxBehavior, nylonBehavior, companyAction, FormatNumberBehavior],
       properties: {
         pages: {
           type: Number,
@@ -154,18 +192,21 @@
           type: Object,
           value: {}
         },
-        localize:{
-          statePath : 'i18n.exporter'
+        localize: {
+          statePath: 'i18n.exporter'
         },
-        company:{
-          statePath : 'company.list'
+        company: {
+          statePath: 'company.list'
         },
-        pages:{
-          statePath : 'company.pages'
+        pages: {
+          statePath: 'company.pages'
         },
-        list_search:{
-          statePath : 'company.list_search',
-          observer : 'checkData'
+        list_search: {
+          statePath: 'company.list_search',
+          observer: 'checkData'
+        },
+        company_count: {
+          statePath: 'company.company_count',
         }
       },
       listeners: {
@@ -174,38 +215,39 @@
       nylonPageActive: function () {
         this.dispatchAction('COMPANY_GET_DATA');
         this.dispatchAction('COMPANY_GET_PAGE');
+        // this.dispatchAction('COMPANY_COUNT')
         // this.dispatchAction('COMPANY_GET_DATA_SEARCH');
       },
-      searchInput:function(val){
+      searchInput: function (val) {
         this.checkLoad = true;
         let reg_num = new RegExp('[0-9]');
         let reg_char_th = new RegExp('[ก-๙]');
         let reg_char_en = new RegExp('[a-zA-Z]');
-        
+
         this.debounce('searchInput', () => {
-          if(typeof val !== 'undefined' && val.length >= 3){
-            if(reg_num.test(val) === true){
+          if (typeof val !== 'undefined' && val.length >= 3) {
+            if (reg_num.test(val) === true) {
               // console.log('ตัวเลข');
-              this.dispatchAction('COMPANY_GET_DATA_SEARCH', {att_name: 'company_taxno',val: val, type:'number'});
-            }else if(reg_char_th.test(val) === true){
+              this.dispatchAction('COMPANY_GET_DATA_SEARCH', { att_name: 'company_taxno', val: val, type: 'number' });
+            } else if (reg_char_th.test(val) === true) {
               // console.log('ไทย');
-              this.dispatchAction('COMPANY_GET_DATA_SEARCH', {att_name: 'company_name_th',val: val, type:'char_th'});
-            }else if(reg_char_en.test(val) === true){
+              this.dispatchAction('COMPANY_GET_DATA_SEARCH', { att_name: 'company_name_th', val: val, type: 'char_th' });
+            } else if (reg_char_en.test(val) === true) {
               // console.log('อังกฤษ')
-              this.dispatchAction('COMPANY_GET_DATA_SEARCH', {att_name: 'company_name_en',val: val, type:'char_en'});
+              this.dispatchAction('COMPANY_GET_DATA_SEARCH', { att_name: 'company_name_en', val: val, type: 'char_en' });
             }
             // this.dispatchAction('COMPANY_GET_DATA_SEARCH', val);
-          }else{
+          } else {
             // console.log('clear');
             this.dispatchAction('COMPANY_CLEAR_LIST_SEARCH');
           }
-        },500)
+        }, 500)
       },
-      checkData(val){
+      checkData(val) {
         this.checkLoad = false;
       },
-      _checkID:function(id){
-        if(id.detail.value !== ''){
+      _checkID: function (id) {
+        if (id.detail.value !== '') {
           // console.log(id.detail.value);
           this.statusAction = 'edit';
           this.$$('panel-right').open();
@@ -213,18 +255,20 @@
           this.titleName = 'แก้ไขข้อมูล';
         }
       },
-      toIndex:function(index){
-        return index+1;
+      toIndex: function (index) {
+        return index + 1;
       },
-      _selectData:function(e){
+      _selectData: function (e) {
         // console.log(e.currentTarget.data);
         var id = e.currentTarget.data.company_taxno;
+        // this.async(() => {
+        // }, 500)
         this.statusAction = 'edit';
         this.$$('panel-right').open();
         this.titleName = 'แก้ไขข้อมูล';
         this.$$('company-manage').clearData(id);
       },
-      _add:function(){
+      _add: function () {
         this.statusAction = 'add';
         // this.hidButton = true;
         // this.isEnabled = false;
@@ -233,26 +277,20 @@
         this.dispatchAction('COMPANY_CLEAR_DATA');
         this.$$('company-manage').resetValidate();
       },
-      _backPage:function(){
+      _backPage: function () {
         this.$$('panel-right').close();
       },
-      _checkData:function(val){
-        if(val.length > 0){
+      _checkData: function (val) {
+        if (val.length > 0) {
           return false
-        }else{
+        } else {
           return true
         }
       },
-      selectPage: function(){
+      selectPage: function () {
         var page = this.$$('#selectedPage').value;
-        this.dispatchAction('COMPANY_GET_DATA', page);      
+        this.dispatchAction('COMPANY_GET_DATA', page);
       },
-      countPage: function(page){
-        return page.length
-      },
-      countCompany: function(c){
-        return numeral(c.length).format('0,0');
-      }
     });
   </script>
 </dom-module>

@@ -96,7 +96,7 @@ export const exporter = {
         bt_delete:"ลบข้อมูล",
 
         ck_select_all:"เลือกทั้งหมด",
-
+        no_data:"ไม่มีข้อมูล",
         rt_eligible:"มีสิทธิ์",
         rt_ineligible:"ไม่มีสิทธิ์"
     },
@@ -197,7 +197,7 @@ export const exporter = {
         bt_delete:"Delete Data",
 
         ck_select_all:"Select all",
-
+        no_data:"No Data",
         rt_eligible:"Eligible",
         rt_ineligible:"Ineligible"
     }

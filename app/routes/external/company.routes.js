@@ -11,4 +11,5 @@ module.exports = function (app) {
     app.get('/page',controller.page);
     app.route('/companyUpdate').get(controller.companyUpdate);
     app.get('/test',controller.test);
+    app.get('/countCompany',controller.countCompany);
 }

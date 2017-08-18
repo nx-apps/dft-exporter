@@ -21,6 +21,8 @@
 <link rel="import" href="../components/validateFormBehaviors.html">
 <link rel="import" href="../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
 
+<link rel="import" href="./../components/month-behavior.html">
+
 
 <dom-module id="page-admin-exporter">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
@@ -187,7 +189,7 @@
                   <td><div>{{item.lic_type.lic_type_name}}</div></td>
                   <td><div class="text-table">{{item.exporter_status_name}}</div></td>
                   <td><div class="text-table">{{item.export_status_name}}</div></td>
-                  <td><div class="text-table">{{item.date_expire}}</div></td>
+                  <td><div class="text-table">{{toThaiDate(item.date_expire)}}</div></td>
                 </tr>
               </template>
 
@@ -259,7 +261,7 @@
           statePath : 'exporter.pages'
         }
       },
-      behaviors: [ReduxBehavior, nylonBehavior, i18nAction, exporterAction, uploadAction, ValidateFormBehavior],
+      behaviors: [ReduxBehavior, nylonBehavior, i18nAction, exporterAction, uploadAction, ValidateFormBehavior,MonthBehavior],
       nylonPageActive: function () {
         this.dispatchAction('EXPORTER_GET_DATA');
         // this.dispatchAction('EXPORTER_GET_DATA_SEARCH');

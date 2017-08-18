@@ -7,8 +7,10 @@
 <!-- <link rel="import" href="./../../../../bower_components/gl-form/gl-form-textarea-my-com.html"> -->
 <link rel="import" href="./../../../../bower_components/gl-form/gl-form-input.html">
 
+<link rel="import" href="./../../../../bower_components/gl-styles/gl-table.html">
+
 <dom-module id="company-manage">
-  <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
+  <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table">
     .title {
       text-align: center;
       font-size: var(--font-size-h4);
@@ -23,6 +25,16 @@
 
     .padding {
       padding: 20px;
+    }
+
+    table {
+      border: 0.16px solid #F1F1F1;
+      margin-bottom: 16px;
+    }
+
+    table.gl-table-default>tbody.table-body>tr>td {
+      /*cursor: pointer;*/
+      padding: 0px 15px;
     }
 
     .text {
@@ -49,7 +61,7 @@
         </gl-grid-col>
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
           <paper-button hidden="{{btnEnabled}}" raised class="gl-btn-info" style="margin-right:15px;" on-tap="_search" title="{{localize.bt_search}}">
-          <iron-icon icon="search"></iron-icon>{{localize.bt_search}}</paper-button>
+            <iron-icon icon="search"></iron-icon>{{localize.bt_search}}</paper-button>
         </gl-grid-col>
       </gl-grid-row>
 
@@ -107,7 +119,7 @@
           <paper-icon-button icon="icons:add-circle" on-tap="_addAgent" title="{{localize.add_board}}"></paper-icon-button>
         </div>
       </div>
-      
+
       <!-- <template is="dom-repeat" items="{{data.company_directors}}">
         <div class="vertical layout">
           <div class="horizontal layout">
@@ -120,26 +132,61 @@
           </div>
         </div>
       </template> -->
-
-        <template is="dom-repeat" items="{{data.company_directors}}">
+      {{localize.name_committee}}
+      <table class="gl-table-default">
+        <thead class="table-head">
+          <tr>
+            <th style="width :20%">{{localize.title_name}}</th>
+            <th style="width :40%">{{localize.first_name}}</th>
+            <th style="width :40%">{{localize.last_name}}</th>
+          </tr>
+        </thead>
+        <tbody class="table-body">
+          <template is="dom-repeat" items="{{data.company_directors}}">
+            <tr>
+              <td>
+                <gl-form-input class="checkValidate" no-label-float auto-validate error-message="{{localize.insert_form}}" required value="{{item.TitleNameTH}}"
+                  disabled="{{isEnabled}}">
+                </gl-form-input>
+              </td>
+              <td>
+                <gl-form-input class="checkValidate" no-label-float auto-validate error-message="{{localize.insert_form}}" required value="{{item.FirstNameTH}}"
+                  disabled="{{isEnabled}}">
+                </gl-form-input>
+              </td>
+              <td>
+                <div hidden="[[isEnabled]]">
+                  <paper-icon-button id="[[index]]" style="margin:0px;" icon="icons:remove-circle" on-tap="_deleteAgent" title="{{localize.del_board}}"></paper-icon-button>
+                </div>
+              </td>
+            </tr>
+          </template>
+          <template is="dom-if" if="[[_isShow(data.company_directors,data.company_directors.*)]]">
+            <tr>
+              <td colspan="3" style="padding: 15px;text-align: center;"> [[localize.no_data]]</td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+      <!--<template is="dom-repeat" items="{{data.company_directors}}">
         <div class="vertical layout">
-          {{localize.name_committee}}
+
           <div class="horizontal layout">
             <gl-form-input class="checkValidate" style="width:100px;" label="{{localize.title_name}}" auto-validate error-message="{{localize.insert_form}}"
               required value="{{item.TitleNameTH}}" disabled="{{isEnabled}}">
             </gl-form-input>
-             <gl-form-input class="checkValidate" style="width:250px; margin-left:15px;" label="{{localize.first_name}}" auto-validate error-message="{{localize.insert_form}}"
-              required value="{{item.FirstNameTH}}" disabled="{{isEnabled}}">
+            <gl-form-input class="checkValidate" style="width:250px; margin-left:15px;" label="{{localize.first_name}}" auto-validate
+              error-message="{{localize.insert_form}}" required value="{{item.FirstNameTH}}" disabled="{{isEnabled}}">
             </gl-form-input>
-            <gl-form-input class="checkValidate" style="width:250px; margin-left:15px;" label="{{localize.last_name}}" auto-validate error-message="{{localize.insert_form}}"
-              required value="{{item.LastNameTH}}" disabled="{{isEnabled}}">
-            </gl-form-input> 
+            <gl-form-input class="checkValidate" style="width:250px; margin-left:15px;" label="{{localize.last_name}}" auto-validate
+              error-message="{{localize.insert_form}}" required value="{{item.LastNameTH}}" disabled="{{isEnabled}}">
+            </gl-form-input>
             <div hidden="[[isEnabled]]">
               <paper-icon-button id="[[index]]" style="margin:0px;" icon="icons:remove-circle" on-tap="_deleteAgent" title="{{localize.del_board}}"></paper-icon-button>
             </div>
           </div>
         </div>
-      </template>  
+      </template>-->
 
     </gl-form-panel>
 
@@ -157,7 +204,7 @@
       behaviors: [ReduxBehavior, nylonBehavior, ValidateFormBehavior],
       properties: {
         data: {
-          statePath : 'company.data'
+          statePath: 'company.data'
         },
         isEnabled: {
           type: Boolean,
@@ -167,8 +214,8 @@
           type: Boolean,
           value: true
         },
-        localize:{
-          statePath : 'i18n.exporter'
+        localize: {
+          statePath: 'i18n.exporter'
         }
       },
       editChange: function () {
@@ -180,6 +227,15 @@
           FirstNameTH: '',
           LastNameTH: ''
         });
+      },
+      _isShow: function (data, dataLoop) {
+        try {
+          let resulte = data.every((item) => item.hidden === true)
+          // console.log(resulte);
+          return resulte
+        } catch (error) {
+
+        }
       },
       _cancel: function () {
         if (this.statusAction == 'edit') {
@@ -219,16 +275,16 @@
           var check = this.validate();
           if (check === true) {
             if (this.statusAction == 'edit') {
-              this.dispatchAction('COMPANY_UPDATE',detail.datas);
+              this.dispatchAction('COMPANY_UPDATE', detail.datas);
               this.resetValidate();
             } else {
-              this.dispatchAction('COMPANY_INSERT',detail.datas);
+              this.dispatchAction('COMPANY_INSERT', detail.datas);
               this.resetValidate();
             }
-          }else{
+          } else {
             this.fire('toast', {
-                status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ',
-                callback: function () {}
+              status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ',
+              callback: function () { }
             })
           }
         }
@@ -259,7 +315,7 @@
         var check = this.validateForm('.checkValidate')
         return check
       },
-      resetValidate: function(){
+      resetValidate: function () {
         this.queryFrom('.checkValidate').map((el) => { el.reset(); });
       },
       _delete: function () {
@@ -269,11 +325,11 @@
           confirmed: (result) => {
             if (result == true) {
               this.dispatchAction('COMPANY_DELETE', this.data.id);
+            }
           }
-        }
         })
       },
-      _search: function(){
+      _search: function () {
         this.dispatchAction('COMPANY_GET_TAXNO', this.data.company_taxno);
       }
     });

@@ -23,16 +23,16 @@ exports.list_search = function (req, res) {
     var table = r.db('external').table('company')
         .pluck('id', 'company_taxno', 'company_name_th', 'company_name_en', 'company_province_th')
         .orderBy('company_taxno');
-        if(req.query.type == 'number'){
-            table = table.filter(r.row('company_taxno').match(req.query.company_taxno));
-        }
-        if(req.query.type == 'char_th'){
-            table = table.filter(r.row('company_name_th').match(req.query.company_name_th));
-        }
-        if(req.query.type == 'char_en'){
-            table = table.filter(r.row('company_name_en').match(req.query.company_name_en));
-        }
-        table.run()
+    if (req.query.type == 'number') {
+        table = table.filter(r.row('company_taxno').match(req.query.company_taxno));
+    }
+    if (req.query.type == 'char_th') {
+        table = table.filter(r.row('company_name_th').match(req.query.company_name_th));
+    }
+    if (req.query.type == 'char_en') {
+        table = table.filter(r.row('company_name_en').match(req.query.company_name_en));
+    }
+    table.run()
         .then(function (result) {
             res.json(result);
         })
@@ -353,6 +353,13 @@ exports.test = function (req, res) {
     //         });
     //     });
 }
+exports.countCompany = function (req, res) {
+    r.db('external').table('company').count()
+        .run()
+        .then(function (datas) {
+            res.json(datas);
+        })
+}
 function setDataCompany(data) {
     var address = data.CompanyAddress;
     var bkk = (address.ProvinceEN.toUpperCase() == "BANGKOK" ? true : false);
@@ -406,3 +413,4 @@ function getCompany(company_taxno, callback) { //['1234567890123',...,'xxxx']
         });
     });
 }
+

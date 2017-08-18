@@ -3,6 +3,7 @@ import { commonAction } from '../config'
 const initialState = {
     list: [],
     list_search: [],
+    company_count:0,
     pages: [],
     data: {}
 }
@@ -12,6 +13,8 @@ export function companyReducer(state = initialState, action) {
             return Object.assign({}, state, { list: action.payload });
         case 'COMPANY_GET_PAGE':
             return Object.assign({}, state, { pages: action.payload });
+        case 'COMPANY_COUNT':
+            return Object.assign({}, state, { company_count: action.payload });
         case 'COMPANY_GET_DATA_SEARCH':
             return Object.assign({}, state, { list_search: action.payload });
         case 'COMPANY_SEARCH':
@@ -68,12 +71,20 @@ export function companyAction(store) {
                     store.dispatch({ type: 'COMPANY_GET_PAGE', payload: pages })
                 })
         },
+        COMPANY_COUNT : function (){
+           axios.get('./external/company/countCompany')
+                .then((response) => {
+                    // console.log(pages);
+                    store.dispatch({ type: 'COMPANY_COUNT', payload: response.data })
+                }) 
+        },
         COMPANY_GET_DATA_SEARCH: function (data) {
             axios.get('./external/company/list_search?' + data.att_name + '=' + data.val + '&type=' + data.type)
                 .then((response) => {
                     response.data.map((item) => {
                         return item.company_name = '(' + item.company_taxno + ') ' + item.company_name_th + ' ' + item.company_name_en;
                     })
+                    console.log(response.data);
                     store.dispatch({ type: 'COMPANY_GET_DATA_SEARCH', payload: response.data })
                 })
                 .catch((error) => {
