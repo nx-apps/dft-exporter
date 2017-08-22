@@ -7,7 +7,7 @@
 	<detail>
 		<band height="20" splitType="Stretch">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="0" y="0" width="190" height="20" uuid="a05a7b8d-bbfd-4fb1-9e25-a34661309af2"/>
+				<reportElement x="0" y="0" width="190" height="20" isPrintInFirstWholeBand="true" uuid="a05a7b8d-bbfd-4fb1-9e25-a34661309af2"/>
 				<box leftPadding="5">
 					<topPen lineWidth="1.0"/>
 					<leftPen lineWidth="1.0"/>
@@ -17,7 +17,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" isBold="false" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{director_name} != null)?$F{director_name}:"-"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{director_name} != null?$F{director_name}:"-")]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

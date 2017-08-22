@@ -51,15 +51,15 @@ exports.report1 = function (req, res) {
         // })
         .filter(d)
         .map(function (m) {
-            return m.pluck('exporter_no', 'id', 'date_approve')
+            return m.pluck('exporter_no', 'id', 'date_load', 'date_expire')
                 .merge({
                     company_name_th: m('company')('company_name_th'),
                     lic_type_name: m('lic_type')('lic_type_name'),
                     company_taxno: m('company')('company_taxno'),
                     exporter_status: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                    date_approve: m('date_approve').inTimezone('+07').toISO8601().split('T')(0),
-                    date_expire: m('date_expire').inTimezone('+07').toISO8601().split('T')(0),
-                    exporter_no: r.branch(
+                    date_load2: m('date_load').inTimezone('+07').toISO8601().split('T')(0),
+                    date_expire2: m('date_expire').inTimezone('+07').toISO8601().split('T')(0),
+                    exporter_no_name: r.branch(
                         m.hasFields('exporter_no').eq(false), null,
                         m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
                         m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
@@ -125,23 +125,26 @@ exports.report2 = function (req, res, next) {
         // })
         .filter(d)
         .map(function (m) {
-            return m.pluck('exporter_no')
+            var directors = m('company')('company_directors').pluck('TitleNameTH', 'FirstNameTH', 'LastNameTH');
+            return m.pluck('exporter_no', 'id', 'date_load', 'date_expire')
                 .merge({
                     company_name_th: m('company')('company_name_th'),
                     lic_type_name: m('lic_type')('lic_type_name'),
                     exporter_status: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                    exporter_no: r.branch(
+                    exporter_no_name: r.branch(
                         m.hasFields('exporter_no').eq(false), null,
                         m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
                         m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
                         r.expr('ห.').add(m('exporter_no').coerceTo('string'))
                     ),
-                    company_directors: m('company')('company_directors').pluck('TitleNameTH', 'FirstNameTH', 'LastNameTH')
-                        .merge(function (m_name) {
-                            return {
-                                director_name: m_name('TitleNameTH').add(' ').add(m_name('FirstNameTH')).add(' ').add(m_name('LastNameTH'))
-                            }
-                        }).without('TitleNameTH', 'FirstNameTH', 'LastNameTH')
+                    company_directors: r.branch(directors.count().eq(0), [
+                        { director_name: null }
+                    ], directors.merge(function (m_name) {
+                        return {
+                            director_name: m_name('TitleNameTH').add(' ').add(m_name('FirstNameTH')).add(' ').add(m_name('LastNameTH'))
+                        }
+                    })
+                    ).without('TitleNameTH', 'FirstNameTH', 'LastNameTH')
                 })
         })
         .orderBy(o)
@@ -199,7 +202,7 @@ exports.report3 = function (req, res, next) {
         // })
         .filter(d)
         .map(function (m) {
-            return m.pluck('exporter_no', 'id', 'date_approve')
+            return m.pluck('exporter_no', 'id', 'date_load','date_expire')
                 .merge({
                     company_name_th: m('company')('company_name_th'),
                     // lic_type_name: m('lic_type')('lic_type_name'),
@@ -207,7 +210,7 @@ exports.report3 = function (req, res, next) {
                     company_phone: m('company')('company_phone'),
                     company_fax: m('company')('company_fax'),
                     // exporter_status: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                    exporter_no: r.branch(
+                    exporter_no_name: r.branch(
                         m.hasFields('exporter_no').eq(false), null,
                         m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
                         m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
