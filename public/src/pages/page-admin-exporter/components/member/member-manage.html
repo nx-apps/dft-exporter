@@ -95,8 +95,8 @@
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,4]]">
             <gl-form-dropdown-menu style="width:100%;" class="checkValidate" always-float-label  label="{{localize.status_export}}" placeholder="{{localize.select_plz}}" disabled="[[isEnabled]]" required>
               <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.exporter_status}}" name="exporter_status">
-                <paper-item value="{{!type_status}}">เป็นสมาชิก</paper-item>
-                <paper-item value="{{type_status}}">ไม่เป็นสมาชิก</paper-item>
+                <paper-item value="{{!type_status}}">{{localize.member}}</paper-item>
+                <paper-item value="{{type_status}}">{{localize.no_member}}</paper-item>
               </paper-menu>
             </gl-form-dropdown-menu>
           </gl-grid-col>

@@ -56,7 +56,7 @@
     "polymer-quill": "^1.2.0",
     "nylon-panel": "^0.0.2",
     "juicy-table-repeat": "Juicy/juicy-table-repeat#^0.0.3",
-    "vaadin-date-picker": "^1.2.2",
+    "vaadin-date-picker": "^2.0.2",
     "vaadin-grid": "^2.0.0"
   }
 }
