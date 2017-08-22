@@ -225,16 +225,16 @@
       },
       attached: function () {
         //set year
-        let thisYear = Number(new Date().toISOString().split('T')[0].split('-')[0]) + 543
-        let listYear = 100
-        let arrDivide = listYear / 2
-        let oldYear = thisYear - arrDivide
-        for (var index = 0; index < listYear; index++) {
-          this.push('year', {
-            value: String(oldYear + index),
-            text: String(oldYear + index)
-          })
-        }
+      //   let thisYear = Number(new Date().toISOString().split('T')[0].split('-')[0]) + 000
+      //   let listYear = 100
+      //   let arrDivide = listYear / 2
+      //   let oldYear = thisYear - arrDivide
+      //   for (var index = 0; index < listYear; index++) {
+      //     this.push('year', {
+      //       value: String(oldYear + index),
+      //       text: String(oldYear + index)
+      //     })
+      //   }
       },
 
       initDate(date) {
@@ -242,13 +242,15 @@
           let dates = new Date().toISOString().split('T')[0]
           this.set('data.day', dates.split('-')[2])
           this.set('data.month', data.split('-')[1])
-          this.set('data.year', String(Number(data.split('-')[0]) + 543))
+          this.set('data.year', String(Number(data.split('-')[0]) + 000))
+          // console.log(111);
         } else {
+          // console.log(Number(date.split('-')[0]) + 543);
           this.set('data.day', date.split('-')[2])
           this.set('data.month', date.split('-')[1])
-          this.set('data.year', String(Number(date.split('-')[0]) + 543))
+          this.set('data.year', String(Number(date.split('-')[0]) + 000))
         }
-        let yearSet = this.data.year - 543
+        let yearSet = this.data.year - 000
         // console.log(yearSet);
         this.set('valueReturn', `${yearSet}-${this.data.month}-${this.data.day}`)
         // console.log(this.valueReturn);
@@ -271,9 +273,10 @@
             }
           }
           if (this.data.month === '02' && (Number(this.data.day) > lastDayOfMonth.getDate())) {
-            this.set('data.day', '')
+            // console.log(lastDayOfMonth.getDate());
+            this.set('data.day', String(lastDayOfMonth.getDate()))
           }
-          let yearSet = this.data.year - 543
+          let yearSet = this.data.year - 000
           this.set('valueReturn', `${yearSet}-${this.data.month}-${this.data.day}`)
         }
       },
