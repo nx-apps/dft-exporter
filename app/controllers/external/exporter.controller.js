@@ -30,9 +30,9 @@ exports.exporter = function (req, res) {
     }
     if (Object.getOwnPropertyNames(d).length !== 0) {
         if (req.query.export_status !== 'undefined' && req.query.export_status == false)
-            d = r.row('date_expire').gt(d.date_start).and(r.row('date_expire').lt(d.date_end));
+            d = r.row('date_expire').ge(d.date_start).and(r.row('date_expire').le(d.date_end));
         else
-            d = r.row('date_approve').gt(d.date_start).and(r.row('date_approve').lt(d.date_end));
+            d = r.row('date_approve').ge(d.date_start).and(r.row('date_approve').le(d.date_end));
     }
     var table = r.db('external').table('exporter')
         .merge(function (m) {
