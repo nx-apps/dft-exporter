@@ -12,7 +12,7 @@ exports.report1 = function (req, res) {
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
-    var q = {}, d = {};
+    var q = {}, d = {}, o = r.desc('exporter_no');
     for (key in req.query) {
 
         if (req.query[key] == "true") {
@@ -33,20 +33,23 @@ exports.report1 = function (req, res) {
     if (Object.getOwnPropertyNames(d).length !== 0) {
         parameters['date_start'] = d['date_start'];
         parameters['date_end'] = d['date_end'];
-        d = r.row('date_approve').gt(d.date_start).and(r.row('date_approve').lt(d.date_end));
-    } else {
-        d = r.row('date_approve').gt(parameters['date_start']).and(r.row('date_approve').lt(parameters['date_end']));
-        parameters['date_start'] = parameters['date_start'];
-        parameters['date_end'] = parameters['date_end'];
+        if (req.query.export_status !== 'undefined' && req.query.export_status == false) {
+            d = r.row('date_expire').ge(r.ISO8601(d.date_start)).and(r.row('date_expire').le(r.ISO8601(d.date_end)));
+            o = r.asc('date_expire');
+        } else {
+            d = r.row('date_load').ge(r.ISO8601(d.date_start)).and(r.row('date_load').le(r.ISO8601(d.date_end)));
+            o = r.asc('date_load');
+        }
     }
     var date_start = parameters['date_start']
     var date_end = parameters['date_end']
     // console.log(parameters);
     r.db('external').table('exporter')
-        .filter(function (f) {
-            return f('date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(),
-                r.ISO8601(date_end).inTimezone('+07').date(), { rightBound: 'closed' })
-        })
+        // .filter(function (f) {
+        //     return f('date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(),
+        //         r.ISO8601(date_end).inTimezone('+07').date(), { rightBound: 'closed' })
+        // })
+        .filter(d)
         .map(function (m) {
             return m.pluck('exporter_no', 'id', 'date_approve')
                 .merge({
@@ -56,10 +59,15 @@ exports.report1 = function (req, res) {
                     exporter_status: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                     date_approve: m('date_approve').inTimezone('+07').toISO8601().split('T')(0),
                     date_expire: m('date_expire').inTimezone('+07').toISO8601().split('T')(0),
-                    exporter_no: r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    exporter_no: r.branch(
+                        m.hasFields('exporter_no').eq(false), null,
+                        m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                        m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
+                        r.expr('ห.').add(m('exporter_no').coerceTo('string'))
+                    )
                 })
         })
-        .orderBy('exporter_no')
+        .orderBy(o)
         .run()
         .then(function (result) {
             // res.json(result);
@@ -77,7 +85,7 @@ exports.report2 = function (req, res, next) {
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
-    var q = {}, d = {};
+    var q = {}, d = {}, o = r.desc('exporter_no');
     for (key in req.query) {
 
         if (req.query[key] == "true") {
@@ -98,28 +106,36 @@ exports.report2 = function (req, res, next) {
     if (Object.getOwnPropertyNames(d).length !== 0) {
         parameters['date_start'] = d['date_start'];
         parameters['date_end'] = d['date_end'];
-        d = r.row('date_approve').gt(d.date_start).and(r.row('date_approve').lt(d.date_end));
-    } else {
-        d = r.row('date_approve').gt(parameters['date_start']).and(r.row('date_approve').lt(parameters['date_end']));
-        parameters['date_start'] = parameters['date_start'];
-        parameters['date_end'] = parameters['date_end'];
+        if (req.query.export_status !== 'undefined' && req.query.export_status == false) {
+            d = r.row('date_expire').ge(r.ISO8601(d.date_start)).and(r.row('date_expire').le(r.ISO8601(d.date_end)));
+            o = r.asc('date_expire');
+        } else {
+            d = r.row('date_load').ge(r.ISO8601(d.date_start)).and(r.row('date_load').le(r.ISO8601(d.date_end)));
+            o = r.asc('date_load');
+        }
     }
     var date_start = parameters['date_start']
     var date_end = parameters['date_end']
     // console.log(parameters);
 
     r.db('external').table('exporter')
-        .filter(function (f) {
-            return f('date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(),
-                r.ISO8601(date_end).inTimezone('+07').date(), { rightBound: 'closed' })
-        })
+        // .filter(function (f) {
+        //     return f('date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(),
+        //         r.ISO8601(date_end).inTimezone('+07').date(), { rightBound: 'closed' })
+        // })
+        .filter(d)
         .map(function (m) {
             return m.pluck('exporter_no')
                 .merge({
                     company_name_th: m('company')('company_name_th'),
                     lic_type_name: m('lic_type')('lic_type_name'),
                     exporter_status: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                    exporter_no: r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                    exporter_no: r.branch(
+                        m.hasFields('exporter_no').eq(false), null,
+                        m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                        m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
+                        r.expr('ห.').add(m('exporter_no').coerceTo('string'))
+                    ),
                     company_directors: m('company')('company_directors').pluck('TitleNameTH', 'FirstNameTH', 'LastNameTH')
                         .merge(function (m_name) {
                             return {
@@ -128,7 +144,7 @@ exports.report2 = function (req, res, next) {
                         }).without('TitleNameTH', 'FirstNameTH', 'LastNameTH')
                 })
         })
-        .orderBy('exporter_no')
+        .orderBy(o)
         .run()
         .then(function (result) {
             // res.json(result);
@@ -143,7 +159,7 @@ exports.report3 = function (req, res, next) {
         date_start: y + "-01-01" + tz,
         date_end: y + "-12-31" + tz
     };
-    var q = {}, d = {};
+    var q = {}, d = {}, o = r.desc('exporter_no');
     for (key in req.query) {
 
         if (req.query[key] == "true") {
@@ -164,21 +180,24 @@ exports.report3 = function (req, res, next) {
     if (Object.getOwnPropertyNames(d).length !== 0) {
         parameters['date_start'] = d['date_start'];
         parameters['date_end'] = d['date_end'];
-        d = r.row('date_approve').gt(d.date_start).and(r.row('date_approve').lt(d.date_end));
-    } else {
-        d = r.row('date_approve').gt(parameters['date_start']).and(r.row('date_approve').lt(parameters['date_end']));
-        parameters['date_start'] = parameters['date_start'];
-        parameters['date_end'] = parameters['date_end'];
+        if (req.query.export_status !== 'undefined' && req.query.export_status == false) {
+            d = r.row('date_expire').ge(r.ISO8601(d.date_start)).and(r.row('date_expire').le(r.ISO8601(d.date_end)));
+            o = r.asc('date_expire');
+        } else {
+            d = r.row('date_load').ge(r.ISO8601(d.date_start)).and(r.row('date_load').le(r.ISO8601(d.date_end)));
+            o = r.asc('date_load');
+        }
     }
     var date_start = parameters['date_start']
     var date_end = parameters['date_end']
     //console.log(parameters);
 
     r.db('external').table('exporter')
-        .filter(function (f) {
-            return f('date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(),
-                r.ISO8601(date_end).inTimezone('+07').date(), { rightBound: 'closed' })
-        })
+        // .filter(function (f) {
+        //     return f('date_approve').date().during(r.ISO8601(date_start).inTimezone('+07').date(),
+        //         r.ISO8601(date_end).inTimezone('+07').date(), { rightBound: 'closed' })
+        // })
+        .filter(d)
         .map(function (m) {
             return m.pluck('exporter_no', 'id', 'date_approve')
                 .merge({
@@ -188,10 +207,15 @@ exports.report3 = function (req, res, next) {
                     company_phone: m('company')('company_phone'),
                     company_fax: m('company')('company_fax'),
                     // exporter_status: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                    exporter_no: r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    exporter_no: r.branch(
+                        m.hasFields('exporter_no').eq(false), null,
+                        m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                        m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
+                        r.expr('ห.').add(m('exporter_no').coerceTo('string'))
+                    )
                 })
         })
-        .orderBy('exporter_no')
+        .orderBy(o)
         .run()
         .then(function (result) {
             // res.json(result);
@@ -218,8 +242,13 @@ exports.exporter_detail = function (req, res) {
                     company_email: m('company')('company_email'),
                     lic_type_name: m('lic_type')('lic_type_name'),
                     exporter_status: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
-                    exporter_no: r.expr('ข.').add(m('exporter_no').coerceTo('string')),
-                    company_directors: r.branch(m('company').hasFields('company_directors').eq(true),m('company')('company_directors').pluck('TitleNameTH', 'FirstNameTH', 'LastNameTH')
+                    exporter_no: r.branch(
+                        m.hasFields('exporter_no').eq(false), null,
+                        m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                        m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
+                        r.expr('ห.').add(m('exporter_no').coerceTo('string'))
+                    ),
+                    company_directors: r.branch(m('company').hasFields('company_directors').eq(true), m('company')('company_directors').pluck('TitleNameTH', 'FirstNameTH', 'LastNameTH')
                         .merge(function (m_name) {
                             return {
                                 director_name: m_name('TitleNameTH').add(' ').add(m_name('FirstNameTH')).add(' ').add(m_name('LastNameTH'))
@@ -248,8 +277,11 @@ exports.approve_general_1 = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
-                    , null),
+                    m.hasFields('exporter_no').eq(false), null,
+                    m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                    m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
+                    r.expr('ห.').add(m('exporter_no').coerceTo('string'))
+                ),
                 date_created: m('date_created').toISO8601().split('T')(0)
             }
         })
@@ -274,8 +306,11 @@ exports.approve_general_2 = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
-                    , null),
+                    m.hasFields('exporter_no').eq(false), null,
+                    m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                    m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
+                    r.expr('ห.').add(m('exporter_no').coerceTo('string'))
+                ),
                 date_created: m('date_created').toISO8601().split('T')(0)
             }
         })
@@ -323,8 +358,11 @@ exports.approve_changtype = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no: r.branch(
-                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
-                    , null),
+                    m.hasFields('exporter_no').eq(false), null,
+                    m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                    m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
+                    r.expr('ห.').add(m('exporter_no').coerceTo('string'))
+                ),
                 // approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่'),
                 date_created: m('date_created').toISO8601().split('T')(0)
             }
@@ -358,8 +396,11 @@ exports.approve_renew_1 = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no: r.branch(
-                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
-                    , null),
+                    m.hasFields('exporter_no').eq(false), null,
+                    m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                    m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
+                    r.expr('ห.').add(m('exporter_no').coerceTo('string'))
+                )
                 // approve_status: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่')
             }
         })
@@ -392,8 +433,11 @@ exports.approve_renew_2 = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
-                    , null)
+                    m.hasFields('exporter_no').eq(false), null,
+                    m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                    m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
+                    r.expr('ห.').add(m('exporter_no').coerceTo('string'))
+                )
             }
         })
         .filter(function (row) {
