@@ -131,7 +131,7 @@ export function exporterAction(store) {
                 // console.log('search');
                 var page = parseInt(page);
                 this.fire('toast', { status: 'load' })
-                axios.get('./external/exporter?page='+page+'&limit=100&' + val.substring(1))
+                axios.get('./external/exporter?page='+page+'&limit=100&' + val)
                     .then(function (response) {
                         response.data.map((item) => {
                             for (var key in item) {

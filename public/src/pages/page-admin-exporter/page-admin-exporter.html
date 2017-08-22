@@ -9,7 +9,7 @@
 <link rel="import" href="./../../../bower_components/gl-form/gl-form-dropdown-menu.html">
 <link rel="import" href="./../../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="./../../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="./../../../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<!--<link rel="import" href="./../../../bower_components/vaadin-date-picker/vaadin-date-picker.html">-->
 <link rel="import" href="./../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="./../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="./../../../bower_components/gl-styles/gl-size.html">
@@ -86,10 +86,6 @@
       background-color: var(--gl-white-color);
     }
 
-    gl-search-input {
-      margin: 30px 0px 0px 0px;
-      width: 60%;
-    }
   </style>
   <template>
     <paper-material elevation="1" class="elevation">
@@ -200,20 +196,23 @@
                 <th>
                   <div class="text-table">{{localize.no_exporter}}</div>
                 </th>
-                <th>
+                <!--<th>
                   <div class="text-table">{{localize.no_tax}}</div>
-                </th>
+                </th>-->
                 <th>
                   <div class="text-table">{{localize.name_company}}</div>
                 </th>
                 <th>
                   <div class="text-table">{{localize.type_license}}</div>
                 </th>
-                <th>
+                <!--<th>
                   <div class="text-table">{{localize.status_export}}</div>
-                </th>
+                </th>-->
                 <th>
                   <div class="text-table">{{localize.status_exporter}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.date_load}}</div>
                 </th>
                 <th>
                   <div class="text-table">{{localize.date_expire}}</div>
@@ -230,23 +229,26 @@
                   <td>
                     <div class="text-table">{{item.exporter_no_name}}</div>
                   </td>
-                  <td>
+                  <!--<td>
                     <div class="text-table">{{item.company_taxno}}</div>
-                  </td>
+                  </td>-->
                   <td>
                     <div>{{item.company.company_name_th}}</div>
                   </td>
                   <td>
                     <div>{{item.lic_type.lic_type_name}}</div>
                   </td>
-                  <td>
+                  <!--<td>
                     <div class="text-table">{{item.exporter_status_name}}</div>
-                  </td>
+                  </td>-->
                   <td>
                     <div class="text-table">{{item.export_status_name}}</div>
                   </td>
                   <td>
-                    <div class="text-table">{{toThaiDate(item.date_expire)}}</div>
+                    <div class="text-table">{{toThaiDate(item.date_load2)}}</div>
+                  </td>
+                  <td>
+                    <div class="text-table">{{toThaiDate(item.date_expire2)}}</div>
                   </td>
                 </tr>
             </template>
@@ -440,11 +442,14 @@
         else if (this.dataSelected.date_end != undefined && this.dataSelected.date_end != '' && (this.dataSelected.date_start == undefined || this.dataSelected.date_start == '')) {
           this.fire('toast', { status: 'connectError', text: 'กรุณาใส่วันที่เริ่มต้นค้นหา' })
         } else {
-          let date = JSON.parse(JSON.stringify(this.dataSelected));
-          date.date_start = (Number(date.date_start.split('-')[0])-543) +'-'+date.date_start.split('-')[1]+'-'+date.date_start.split('-')[2]
-          date.date_end = (Number(date.date_end.split('-')[0])-543) +'-'+date.date_end.split('-')[1]+'-'+date.date_end.split('-')[2]
-          // console.log(date)
-          str = this.genUrl(date)
+          if (this.dataSelected.date_start !== '' & this.dataSelected.date_end != '') {
+            let date = JSON.parse(JSON.stringify(this.dataSelected));
+            date.date_start = (Number(date.date_start.split('-')[0]) - 543) + '-' + date.date_start.split('-')[1] + '-' + date.date_start.split('-')[2]
+            date.date_end = (Number(date.date_end.split('-')[0]) - 543) + '-' + date.date_end.split('-')[1] + '-' + date.date_end.split('-')[2]
+            // console.log(date)
+            str = this.genUrl(date)
+          }
+          // console.log(str);
           // for (key in this.dataSelected) {
           //   if (this.dataSelected[key] != '' && this.dataSelected[key] != null) {
           //     if (str == '') { str += '?' } else { str += '&' }
@@ -452,7 +457,6 @@
           //     // str += '&' + key + '=' + this.dataSelected[key];
           //   }
           // }
-          // console.log(str);
           this.dispatchAction('EXPORTER_SEARCH', str, page, type);
           // console.log(this.queryFrom('.searchForm'));
           this.queryFrom('.searchForm').map((el) => el.reset());

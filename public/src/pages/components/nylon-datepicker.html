@@ -21,10 +21,10 @@
        :host> ::slotted(:not(.iron-selected)) {
         display: none !important;
       }
-      
+
       paper-input {
         margin: 0px 5px;
-            margin-bottom: 6px;
+        margin-bottom: 6px;
       }
     </style>
     <!--<slot></slot>-->
@@ -66,7 +66,7 @@
         <paper-autocomplete-suggestions id="forMonth" for="month" source="[[month]]"></paper-autocomplete-suggestions>
       </div>-->
       <div class="flex " style="margin-top: 7px;">
-        <paper-input id="year" label="ปี" no-label-float value="{{data.year}}" minlength="4" maxlength="4">
+        <paper-input id="year" label="ปี" allowed-pattern="[0-9||,||.]" no-label-float value="{{data.year}}" minlength="4" maxlength="4">
           <!--<iron-icon icon="arrow-drop-down" slot="suffix"></iron-icon>-->
         </paper-input>
         <!--<paper-autocomplete-suggestions id="forYear" for="year" source="[[year]]"></paper-autocomplete-suggestions>-->
@@ -225,24 +225,24 @@
       },
       attached: function () {
         //set year
-      //   let thisYear = Number(new Date().toISOString().split('T')[0].split('-')[0]) + 000
-      //   let listYear = 100
-      //   let arrDivide = listYear / 2
-      //   let oldYear = thisYear - arrDivide
-      //   for (var index = 0; index < listYear; index++) {
-      //     this.push('year', {
-      //       value: String(oldYear + index),
-      //       text: String(oldYear + index)
-      //     })
-      //   }
+        //   let thisYear = Number(new Date().toISOString().split('T')[0].split('-')[0]) + 000
+        //   let listYear = 100
+        //   let arrDivide = listYear / 2
+        //   let oldYear = thisYear - arrDivide
+        //   for (var index = 0; index < listYear; index++) {
+        //     this.push('year', {
+        //       value: String(oldYear + index),
+        //       text: String(oldYear + index)
+        //     })
+        //   }
       },
 
       initDate(date) {
         if (date === '' || date === undefined) {
-          let dates = new Date().toISOString().split('T')[0]
-          this.set('data.day', dates.split('-')[2])
-          this.set('data.month', data.split('-')[1])
-          this.set('data.year', String(Number(data.split('-')[0]) + 000))
+          // let dates = new Date().toISOString().split('T')[0]
+          // this.set('data.day', dates.split('-')[2])
+          // this.set('data.month', data.split('-')[1])
+          // this.set('data.year', String(Number(data.split('-')[0]) + 000))
           // console.log(111);
         } else {
           // console.log(Number(date.split('-')[0]) + 543);
@@ -252,7 +252,12 @@
         }
         let yearSet = this.data.year - 000
         // console.log(yearSet);
-        this.set('valueReturn', `${yearSet}-${this.data.month}-${this.data.day}`)
+        if (this.data.day === '' || this.data.month === '' || this.data.year === '') {
+          this.set('valueReturn', '')
+        } else {
+          let yearSet = this.data.year - 000
+          this.set('valueReturn', `${yearSet}-${this.data.month}-${this.data.day}`)
+        }
         // console.log(this.valueReturn);
       },
       setDate(date) {
@@ -276,8 +281,16 @@
             // console.log(lastDayOfMonth.getDate());
             this.set('data.day', String(lastDayOfMonth.getDate()))
           }
-          let yearSet = this.data.year - 000
-          this.set('valueReturn', `${yearSet}-${this.data.month}-${this.data.day}`)
+
+          if (this.data.day === '' || this.data.month === '' || this.data.year === '') {
+            this.set('valueReturn', '')
+          } else {
+            let yearSet = this.data.year - 000
+            this.set('valueReturn', `${yearSet}-${this.data.month}-${this.data.day}`)
+          }
+
+
+
         }
       },
       idDay(date) {
