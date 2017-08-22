@@ -33,7 +33,7 @@ exports.exporter = function (req, res) {
         if (req.query.export_status !== 'undefined' && req.query.export_status == false) {
             d = r.row('date_expire').ge(r.ISO8601(d.date_start)).and(r.row('date_expire').le(r.ISO8601(d.date_end)));
             o = r.asc('date_expire');
-        }else{
+        } else {
             d = r.row('date_load').ge(r.ISO8601(d.date_start)).and(r.row('date_load').le(r.ISO8601(d.date_end)));
             o = r.asc('date_load');
         }
@@ -50,8 +50,8 @@ exports.exporter = function (req, res) {
                 export_status_name: r.branch(m('date_expire').gt(r.now()), 'ปกติ', 'หมดอายุ'),
                 exporter_status_name: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                 date_approve: m('date_approve').toISO8601().split('T')(0),
-                date_expire: m('date_expire').toISO8601().split('T')(0),
-                date_load: m('date_load').toISO8601().split('T')(0),
+                date_expire2: m('date_expire').toISO8601().split('T')(0),
+                date_load2: m('date_load').toISO8601().split('T')(0),
                 export_status: r.branch(m('date_expire').gt(r.now()), true, false)
             }
         })
