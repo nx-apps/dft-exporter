@@ -35,19 +35,16 @@ exports.exporter = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
-                    ,m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string'))
-                    ,m('lic_type_id').eq('PACKAGE'), r.expr('ห.').add(m('exporter_no').coerceTo('string'))
-                    , null),
+                    m.hasFields('exporter_no').eq(false), null,
+                    m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                    m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
+                    r.expr('ห.').add(m('exporter_no').coerceTo('string'))
+                ),
+                export_status_name: r.branch(m('date_expire').gt(r.now()), 'ปกติ', 'หมดอายุ'),
                 exporter_status_name: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                 date_approve: m('date_approve').toISO8601().split('T')(0),
                 date_expire: m('date_expire').toISO8601().split('T')(0),
                 export_status: r.branch(m('date_expire').gt(r.now()), true, false)
-            }
-        })
-        .merge(function (m) {
-            return {
-                export_status_name: r.branch(m('export_status').eq(true), 'ปกติ', 'หมดอายุ')
             }
         })
         .filter(q)
@@ -109,10 +106,11 @@ exports.exporterId = function (req, res) {
                 .merge(function (m) {
                     return {
                         exporter_no_name: r.branch(
-                            m.hasFields('exporter_no'),m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
-                            ,m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string'))
-                            ,m('lic_type_id').eq('PACKAGE'), r.expr('ห.').add(m('exporter_no').coerceTo('string'))
-                            , null),
+                            m.hasFields('exporter_no').eq(false), null,
+                            m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                            m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
+                            r.expr('ห.').add(m('exporter_no').coerceTo('string'))
+                        ),
                         exporter_status_name: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                         date_approve: m('date_approve').toISO8601().split('T')(0),
                         date_load: m('date_load').toISO8601().split('T')(0),

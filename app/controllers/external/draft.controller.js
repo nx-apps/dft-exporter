@@ -4,10 +4,11 @@ exports.list = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
-                    ,m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string'))
-                    ,m('lic_type_id').eq('PACKAGE'), r.expr('ห.').add(m('exporter_no').coerceTo('string'))
-                    , null),
+                    m.hasFields('exporter_no').eq(false), null,
+                    m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                    m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
+                    r.expr('ห.').add(m('exporter_no').coerceTo('string'))
+                ),
                 status_approve: r.branch(m.hasFields('date_approve'),
                     r.branch(m('draft_status').eq('sign'),
                         true,
@@ -33,10 +34,11 @@ exports.company_id = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'),m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
-                    ,m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string'))
-                    ,m('lic_type_id').eq('PACKAGE'), r.expr('ห.').add(m('exporter_no').coerceTo('string'))
-                    , null),
+                    m.hasFields('exporter_no').eq(false), null,
+                    m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string')),
+                    m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string')),
+                    r.expr('ห.').add(m('exporter_no').coerceTo('string'))
+                ),
                 doc_status_name: r.branch(m('doc_status').eq(true), 'ตรวจสอบเอกสาร',
                     'รอส่งเอกสารใหม่'),
                 status_approve: r.branch(m.hasFields('date_approve'),
