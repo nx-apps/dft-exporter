@@ -10,7 +10,7 @@ exports.exporter = function (req, res) {
     var limit = parseInt(req.query.limit);
     var skip = page * limit;
     var r = req.r;
-    var q = {}, d = {};
+    var q = {}, d = {}, o = r.desc('exporter_no');
     for (key in req.query) {
 
         if (req.query[key] == "true") {
@@ -29,10 +29,12 @@ exports.exporter = function (req, res) {
 
     }
     if (Object.getOwnPropertyNames(d).length !== 0) {
-        if (req.query.export_status !== 'undefined' && req.query.export_status == false)
+        d = r.row('date_load').ge(d.date_start).and(r.row('date_load').le(d.date_end));
+        o = r.asc('date_load');
+        if (req.query.export_status !== 'undefined' && req.query.export_status == false) {
             d = r.row('date_expire').ge(d.date_start).and(r.row('date_expire').le(d.date_end));
-        else
-            d = r.row('date_approve').ge(d.date_start).and(r.row('date_approve').le(d.date_end));
+            o = r.asc('date_expire');
+        }
     }
     var table = r.db('external').table('exporter')
         .merge(function (m) {
@@ -47,12 +49,13 @@ exports.exporter = function (req, res) {
                 exporter_status_name: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                 date_approve: m('date_approve').toISO8601().split('T')(0),
                 date_expire: m('date_expire').toISO8601().split('T')(0),
+                date_load: m('date_load').toISO8601().split('T')(0),
                 export_status: r.branch(m('date_expire').gt(r.now()), true, false)
             }
         })
         .filter(q)
         .filter(d)
-        .orderBy('exporter_no');
+        .orderBy(o);
     if (typeof req.query.pluck !== 'undefined') {
         table = table.pluck(r.args(split(req.query.pluck)));
     }
