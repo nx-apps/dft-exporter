@@ -407,9 +407,13 @@
           this.titleName = 'ข้อมูลผู้ส่งออก';
           this.$$('panel-right').open();
           this.$$('member-page')._backpage();
-          var searchId = this.exporters.filter((item) => {
+
+          // console.log(this.list_search);
+          // console.log(this.exporters);
+          var searchId = this.list_search.filter((item) => {
             return item.id == id
           })
+          // console.log(searchId);
           var companyId = searchId[0].company_id;
           this.dispatchAction('EXPORTER_GET_FILE_DELETE', companyId);
 
@@ -442,6 +446,16 @@
         else if (this.dataSelected.date_end != undefined && this.dataSelected.date_end != '' && (this.dataSelected.date_start == undefined || this.dataSelected.date_start == '')) {
           this.fire('toast', { status: 'connectError', text: 'กรุณาใส่วันที่เริ่มต้นค้นหา' })
         } else {
+          // console.log(this.dataSelected.lic_type_id === null);
+          if (this.dataSelected.lic_type_id === null) {
+            this.dataSelected.lic_type_id = 'all'
+          }
+          if (this.dataSelected.exporter_status === null) {
+            delete this.dataSelected.exporter_status
+          }
+          if (this.dataSelected.export_status === null) {
+            delete this.dataSelected.export_status
+          }
           if (this.dataSelected.date_start !== '' & this.dataSelected.date_end != '') {
             let date = JSON.parse(JSON.stringify(this.dataSelected));
             date.date_start = (Number(date.date_start.split('-')[0]) - 543) + '-' + date.date_start.split('-')[1] + '-' + date.date_start.split('-')[2]
@@ -449,6 +463,7 @@
             // console.log(date)
             str = this.genUrl(date)
           }
+          
           // console.log(str);
           // for (key in this.dataSelected) {
           //   if (this.dataSelected[key] != '' && this.dataSelected[key] != null) {
