@@ -85,7 +85,6 @@
     paper-material {
       background-color: var(--gl-white-color);
     }
-
   </style>
   <template>
     <paper-material elevation="1" class="elevation">
@@ -447,23 +446,8 @@
           this.fire('toast', { status: 'connectError', text: 'กรุณาใส่วันที่เริ่มต้นค้นหา' })
         } else {
           // console.log(this.dataSelected.lic_type_id === null);
-          if (this.dataSelected.lic_type_id === null) {
-            this.dataSelected.lic_type_id = 'all'
-          }
-          if (this.dataSelected.exporter_status === null) {
-            delete this.dataSelected.exporter_status
-          }
-          if (this.dataSelected.export_status === null) {
-            delete this.dataSelected.export_status
-          }
-          if (this.dataSelected.date_start !== '' & this.dataSelected.date_end != '') {
-            let date = JSON.parse(JSON.stringify(this.dataSelected));
-            date.date_start = (Number(date.date_start.split('-')[0]) - 543) + '-' + date.date_start.split('-')[1] + '-' + date.date_start.split('-')[2]
-            date.date_end = (Number(date.date_end.split('-')[0]) - 543) + '-' + date.date_end.split('-')[1] + '-' + date.date_end.split('-')[2]
-            // console.log(date)
-            str = this.genUrl(date)
-          }
-          
+          str= this._retiveData()
+
           // console.log(str);
           // for (key in this.dataSelected) {
           //   if (this.dataSelected[key] != '' && this.dataSelected[key] != null) {
@@ -478,9 +462,30 @@
           return str;
         }
       },
+      _retiveData() {
+        let str = ''
+        if (this.dataSelected.lic_type_id === null) {
+          this.dataSelected.lic_type_id = 'all'
+        }
+        if (this.dataSelected.exporter_status === null) {
+          delete this.dataSelected.exporter_status
+        }
+        if (this.dataSelected.export_status === null) {
+          delete this.dataSelected.export_status
+        }
+        if (this.dataSelected.date_start !== '' & this.dataSelected.date_end != '') {
+          let date = JSON.parse(JSON.stringify(this.dataSelected));
+          date.date_start = (Number(date.date_start.split('-')[0]) - 543) + '-' + date.date_start.split('-')[1] + '-' + date.date_start.split('-')[2]
+          date.date_end = (Number(date.date_end.split('-')[0]) - 543) + '-' + date.date_end.split('-')[1] + '-' + date.date_end.split('-')[2]
+          // console.log(date)
+          str = this.genUrl(date)
+        }
+        return str
+      },
       _report: function (e) {
-        var str = this._search('report');
-        window.open('./api/external/report_exporter/' + e.target.getAttribute('report') + (str != '' ? str : ''), '_blank');
+        var str = this._retiveData();
+        // console.log(str);
+        window.open('./api/external/report_exporter/' + e.target.getAttribute('report') + (str != '' ? '?' + str : ''), '_blank');
       },
       _checkData: function (val) {
         if (val.length > 0) {
