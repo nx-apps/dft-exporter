@@ -35,7 +35,9 @@ exports.exporter = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    m.hasFields('exporter_no'),m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    ,m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string'))
+                    ,m('lic_type_id').eq('PACKAGE'), r.expr('ห.').add(m('exporter_no').coerceTo('string'))
                     , null),
                 exporter_status_name: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                 date_approve: m('date_approve').toISO8601().split('T')(0),
@@ -107,7 +109,9 @@ exports.exporterId = function (req, res) {
                 .merge(function (m) {
                     return {
                         exporter_no_name: r.branch(
-                            m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                            m.hasFields('exporter_no'),m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                            ,m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string'))
+                            ,m('lic_type_id').eq('PACKAGE'), r.expr('ห.').add(m('exporter_no').coerceTo('string'))
                             , null),
                         exporter_status_name: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                         date_approve: m('date_approve').toISO8601().split('T')(0),
@@ -163,7 +167,7 @@ exports.insert = function (req, res) {
     var result = { result: false, message: null, id: null };
     if (valid) {
         if (req.body.id == null) {
-            r.db('external').table('exporter').max('exporter_no').getField('exporter_no').add(1)
+            r.db('external').table('exporter').getAll(req.body.lic_type_id, { index: 'lic_type_id' }).max('exporter_no').getField('exporter_no').add(1)
                 .run()
                 .then(function (response) {
                     if (response > 0) {

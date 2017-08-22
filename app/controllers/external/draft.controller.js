@@ -4,7 +4,9 @@ exports.list = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    m.hasFields('exporter_no'),m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    ,m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string'))
+                    ,m('lic_type_id').eq('PACKAGE'), r.expr('ห.').add(m('exporter_no').coerceTo('string'))
                     , null),
                 status_approve: r.branch(m.hasFields('date_approve'),
                     r.branch(m('draft_status').eq('sign'),
@@ -31,7 +33,9 @@ exports.company_id = function (req, res) {
         .merge(function (m) {
             return {
                 exporter_no_name: r.branch(
-                    m.hasFields('exporter_no'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    m.hasFields('exporter_no'),m('lic_type_id').eq('NORMAL'), r.expr('ข.').add(m('exporter_no').coerceTo('string'))
+                    ,m('lic_type_id').eq('BORDER'), r.expr('ช.').add(m('exporter_no').coerceTo('string'))
+                    ,m('lic_type_id').eq('PACKAGE'), r.expr('ห.').add(m('exporter_no').coerceTo('string'))
                     , null),
                 doc_status_name: r.branch(m('doc_status').eq(true), 'ตรวจสอบเอกสาร',
                     'รอส่งเอกสารใหม่'),
@@ -64,9 +68,10 @@ exports.company_id = function (req, res) {
 }
 exports.insert = function (req, res) {
     var result = { result: false, message: null, id: null };
-    var maxno = r.branch(r.db('external').table('draft').count().eq(0),
+    var draft = r.db('external').table('draft').getAll(req.body.lic_type_id, { index: 'lic_type_id' });
+    var maxno = r.branch(draft.count().eq(0),
         1,
-        r.db('external').table('draft').max('exporter_no').getField('exporter_no').add(1)
+        draft.max('exporter_no').getField('exporter_no').add(1)
     );
     var company = r.db('external').table('company').getAll(req.body.company_taxno, { index: 'company_taxno' }).without('date_created', 'date_updated', 'date_exported')(0);
     var lic_type = r.db('external').table('license_type').get(req.body.lic_type_id)
