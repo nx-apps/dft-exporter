@@ -29,11 +29,13 @@ exports.exporter = function (req, res) {
 
     }
     if (Object.getOwnPropertyNames(d).length !== 0) {
-        d = r.row('date_load').ge(d.date_start).and(r.row('date_load').le(d.date_end));
-        o = r.asc('date_load');
+        // console.log(d.date_start);
         if (req.query.export_status !== 'undefined' && req.query.export_status == false) {
-            d = r.row('date_expire').ge(d.date_start).and(r.row('date_expire').le(d.date_end));
+            d = r.row('date_expire').ge(r.ISO8601(d.date_start)).and(r.row('date_expire').le(r.ISO8601(d.date_end)));
             o = r.asc('date_expire');
+        }else{
+            d = r.row('date_load').ge(r.ISO8601(d.date_start)).and(r.row('date_load').le(r.ISO8601(d.date_end)));
+            o = r.asc('date_load');
         }
     }
     var table = r.db('external').table('exporter')
