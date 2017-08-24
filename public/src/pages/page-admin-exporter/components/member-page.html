@@ -11,45 +11,54 @@
 
 <link rel="import" href="../../../redux-behavior.html">
 
+<link rel="import" href="../../../layout/page-style.html">
+
 <dom-module id="member-page">
-  <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-toast">
+  <style is="custom-style" include="page-style iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-toast">
     * {
       font-family: 'CSChatThaiUI', sans-serif;
       -webkit-font-smoothing: antialiased;
     }
+
     .title {
       text-align: center;
-       font-size: var(--font-size-h3);
-        color: white;
+      font-size: var(--font-size-h3);
+      color: white;
     }
-    .boxNortify{
+
+    .boxNortify {
       border: 2px solid red;
       background-color: red;
       padding: 5px;
     }
-    .boxChange_status{
+
+    .boxChange_status {
       border: 2px solid #6699FF;
       background-color: #6699FF;
       padding: 5px;
     }
-    .tabs{
+
+    .tabs {
       background-color: #f7941e;
-      margin : 0px 15px 0px 15px;
+      margin: 0px 15px 0px 15px;
       color: #F2F2F2;
-      --paper-tabs-selection-bar:{
+      --paper-tabs-selection-bar: {
         height: 5px;
         background-color: var(--gl-info-color);
       }
     }
-    .tab:focus > div.tab-content{
+
+    .tab:focus>div.tab-content {
       background-color: yellow;
       opacity: 1;
       font-weight: 0;
     }
+
     .tab:not(:last-of-type) {
       border-right: 3px solid var(--gl-gray-light-color);
       font-size: var(--font-size-h5);
     }
+
     .tabs .tab.iron-selected {
       font-size: var(--font-size-h5);
       color: var(--gl-white-color);
@@ -61,25 +70,28 @@
     <gl-form-panel set-border="0px">
       <template is="dom-if" if={{data.expire_status}}>
         <div id="titleBg" class="boxNortify">
-          <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize.change_expire}}</div>
+          <div id="titleExporter" class="title">
+            <iron-icon icon="icons:info"></iron-icon> {{localize.change_expire}}</div>
         </div>
       </template>
-      
+
       <template is="dom-if" if={{!data.expire_status}}>
         <template is="dom-if" if={{!data.export_status}}>
           <div id="titleBg" class="boxNortify">
-            <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize.exporter_expire}}</div>
+            <div id="titleExporter" class="title">
+              <iron-icon icon="icons:info"></iron-icon> {{localize.exporter_expire}}</div>
           </div>
           <div class="horizontal end-justified layout">
             <paper-button id="buttomActive" raised class="gl-btn-warning button" on-tap="_dialogRemark" title="{{localize.bt_exporter_extend}}">{{localize.bt_exporter_extend}}</paper-button>
           </div>
         </template>
       </template>
-      
+
       <template is="dom-if" if={{data.export_status}}>
         <template is="dom-if" if={{checkstatus(data.draft_status)}}>
           <div id="titleBg" class="boxChange_status">
-            <div id="titleExporter" class="title"><iron-icon icon="icons:info"></iron-icon>  {{localize.change_status}}</div>
+            <div id="titleExporter" class="title">
+              <iron-icon icon="icons:info"></iron-icon> {{localize.change_status}}</div>
           </div>
         </template>
       </template>
@@ -87,25 +99,29 @@
         <template is="dom-if" if={{data.export_status}}>
           <template is="dom-if" if={{!checkstatus(data.draft_status)}}>
             <div class="horizontal end-justified layout">
-              <div hidden="[[isEnabled]]"><paper-icon-button icon="create" on-tap="editChange" title="{{localize.edit_data}}"></paper-icon-button></div>
-              <div hidden="[[isEnabled]]"><paper-icon-button icon="delete" on-tap="delete" title="{{localize.bt_delete}}"></paper-icon-button></div>
+              <div hidden="[[isEnabled]]">
+                <paper-icon-button icon="create" on-tap="editChange" title="{{localize.edit_data}}"></paper-icon-button>
+              </div>
+              <div hidden="[[isEnabled]]">
+                <paper-icon-button icon="delete" on-tap="delete" title="{{localize.bt_delete}}"></paper-icon-button>
+              </div>
             </div>
           </template>
         </template>
       </template>
-          <div class="bd">
-              <gl-form-panel>
-                <paper-tabs selected="{{pages}}" align-bottom no-slide class="tabs">
-                  <paper-tab class="tab">{{localize.detail}}</paper-tab>
-                  <paper-tab id="tabFile" class="tab" on-tap="refreshFile">{{localize.doc_ev}}</paper-tab>
-                </paper-tabs>
-                <iron-pages selected="{{pages}}">
-                  <member-manage is-enabled="[[!isEnabled]]"></member-manage>
-                  <member-fileup data="{{data}}"></member-fileup>
-                  <member-fileDelete data="{{listFiles}}"></member-fileDelete>
-                </iron-pages>
-              </gl-form-panel>
-          </div>
+      <div class="bd">
+        <gl-form-panel>
+          <paper-tabs selected="{{pages}}" align-bottom no-slide class="tabs">
+            <paper-tab class="tab">{{localize.detail}}</paper-tab>
+            <paper-tab id="tabFile" class="tab" on-tap="refreshFile">{{localize.doc_ev}}</paper-tab>
+          </paper-tabs>
+          <iron-pages selected="{{pages}}">
+            <member-manage is-enabled="[[!isEnabled]]"></member-manage>
+            <member-fileup data="{{data}}"></member-fileup>
+            <member-fileDelete data="{{listFiles}}"></member-fileDelete>
+          </iron-pages>
+        </gl-form-panel>
+      </div>
       <div class="horizontal layout justified">
         <div style="margin-left:20px;">
           <!--{{localize('bt_print_data')}}<paper-icon-button icon="print" on-tap="_print" title="{{localize('bt_print_data')}}"></paper-icon-button>-->
@@ -119,17 +135,22 @@
         </div>
         <div hidden="[[!isEnabled]]">
           <paper-button on-tap="_cancel" raised title="{{localize.cancle_edit}}">{{localize.bt_back}}</paper-button>
-          <paper-button class="gl-btn-success" on-tap="save" raised title="{{localize.save_data}}">{{localize.bt_save}}</paper-button> 
+          <paper-button class="gl-btn-success" on-tap="save" raised title="{{localize.save_data}}">{{localize.bt_save}}</paper-button>
         </div>
       </div>
     </gl-form-panel>
 
     <paper-dialog id="dialog" style="width:60%;">
-      <gl-grid-row width="{{getWidth}}">
+      <div class="horizontal start-justified layout">
+        <div class="flex">
+          <gl-form-textarea label="{{localize.note}} : " always-float-label value="{{exporter_remark}}"></gl-form-textarea>
+        </div>
+      </div>
+      <!--<gl-grid-row width="{{getWidth}}">
         <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,12]]">
           <gl-form-textarea label="{{localize.note}} : " always-float-label value="{{exporter_remark}}"></gl-form-textarea>
         </gl-grid-col>
-      </gl-grid-row>
+      </gl-grid-row>-->
       <div>
         <paper-button class="gl-btn-danger button-size" raised on-tap="_dialogcancle">{{localize.bt_cancel}}</paper-button>
         <paper-button id="active" class="gl-btn-primary button-size" raised on-tap="_active">{{localize.bt_save}}</paper-button>
@@ -141,30 +162,30 @@
       is: "member-page",
       behaviors: [ReduxBehavior],
       properties: {
-        pages:{
-            type:Number,
-            notify:true,
-            value: 0
+        pages: {
+          type: Number,
+          notify: true,
+          value: 0
         },
-        isEnabled:{
-          type:Boolean,
-          value:false
+        isEnabled: {
+          type: Boolean,
+          value: false
         },
-        data:{
-          statePath : 'exporter.data',
-          observer:'updateData'
+        data: {
+          statePath: 'exporter.data',
+          observer: 'updateData'
         },
-        exporters:{
-          statePath : 'exporter.list'
+        exporters: {
+          statePath: 'exporter.list'
         },
-        localize:{
-          statePath : 'i18n.exporter'
+        localize: {
+          statePath: 'i18n.exporter'
         }
       },
-      listeners:{
-        'pageFileDelete' : '_pageFileDelete'
+      listeners: {
+        'pageFileDelete': '_pageFileDelete'
       },
-      updateData(data){
+      updateData(data) {
         // console.log(data);
         // console.log(this.exporters);
         if (this.exporters !== undefined) {
@@ -173,111 +194,112 @@
           // this.set('exporters.'+index+'.date_expire',data.date_expire)
           this.dispatchAction('EXPORTER_GET_DATA');
         }
-        
+
       },
-      cloneDatas:function(val){
+      cloneDatas: function (val) {
         this.cloneData = JSON.parse(JSON.stringify(val));
       },
-      _print:function(e) {
+      _print: function (e) {
         // console.log(this.data);
-        if(e.target.getAttribute('report') == 'report1'){
-          window.open('./api/external/report_exporter/exporter_detail/'+this.data.id,'_blank');
-        }else{
-          window.open('./api/external/report_exporter/approve_general_2/'+this.data.draft_id,'_blank');
+        if (e.target.getAttribute('report') == 'report1') {
+          window.open('./api/external/report_exporter/exporter_detail/' + this.data.id, '_blank');
+        } else {
+          window.open('./api/external/report_exporter/approve_general_2/' + this.data.draft_id, '_blank');
         }
       },
-      refreshFile:function(){
+      refreshFile: function () {
         this.$$('member-fileup').checkFunction();
       },
-      _pageFileDelete: function(){
+      _pageFileDelete: function () {
         this.pages = 2;
       },
-      editChange:function(e){
+      editChange: function (e) {
         this.isEnabled = true;
         this.pages = 0;
       },
-      _backpage:function(e){
+      _backpage: function (e) {
         this.isEnabled = false;
         this.pages = 0;
       },
-      save:function(){
-        this.fire('toast', {status:'openDialog',
-        text:'คุณต้องการแก้ไขข้อมูลใช่หรือไม่ ?',
-        confirmed: (result) => {
-          if(result == true){
-            if(this.data.lic_type_id == this.cloneData.lic_type_id){
-              let{id, exporter_status} = this.data;
-              let newData = {id,exporter_status};
-              this.dispatchAction('EXPORTER_UPDATE', newData);
-              this.pages = 0;
-              this.isEnabled = false;
-              this.$$('member-manage').resetValidate();
-            }else{
-              let{draft_id, lic_type_id} = this.data;
-              let newData = {lic_type_id};
-              newData.exporter_id = this.data.id,
-              newData.id = this.data.draft_id,
-              newData.draft_status = 'type'
-              // newData.change_status = true,
-              // newData.approve_status = 'process'
-              this.dispatchAction('EXPORTER_UPDATE', newData);
-              this.pages = 0;
-              this.isEnabled = false;
-              this.$$('member-manage').resetValidate();
-            }
-          }
-        }
-        });
-      },
-      _cancel:function() {
-        this.isEnabled = false;
-        this.pages = 0;
-        this.dispatchAction('EXPORTER_GET_DATA_ID',this.data.id);
-        this.$$('member-manage').resetValidate();
-      },
-      _dialogRemark: function(){
-        this.$.dialog.toggle();
-      },
-      _active:function(){
+      save: function () {
         this.fire('toast', {
-            status:'openDialog',
-            text:'คุณต้องการจะต่ออายุผู้ส่งออกใช่หรือไม่ ?',
-            confirmed : (result) => {
-              if(result == true){
-                let newData = {};
-                newData.id = this.data.draft_id;
-                newData.draft_status = 'extend'
-                let newData2 = {};
-                newData2.id = this.data.id;
-                newData2.expire_status = true;
-                this.dispatchAction('EXPORTER_ACTIVE_RENEW', newData, newData2);
-                this.$.dialog.toggle();
+          status: 'openDialog',
+          text: 'คุณต้องการแก้ไขข้อมูลใช่หรือไม่ ?',
+          confirmed: (result) => {
+            if (result == true) {
+              if (this.data.lic_type_id == this.cloneData.lic_type_id) {
+                let { id, exporter_status } = this.data;
+                let newData = { id, exporter_status };
+                this.dispatchAction('EXPORTER_UPDATE', newData);
+                this.pages = 0;
+                this.isEnabled = false;
+                this.$$('member-manage').resetValidate();
+              } else {
+                let { draft_id, lic_type_id } = this.data;
+                let newData = { lic_type_id };
+                newData.exporter_id = this.data.id,
+                  newData.id = this.data.draft_id,
+                  newData.draft_status = 'type'
+                // newData.change_status = true,
+                // newData.approve_status = 'process'
+                this.dispatchAction('EXPORTER_UPDATE', newData);
+                this.pages = 0;
+                this.isEnabled = false;
+                this.$$('member-manage').resetValidate();
               }
             }
-          });
+          }
+        });
       },
-      _dialogcancle:function() {
+      _cancel: function () {
+        this.isEnabled = false;
+        this.pages = 0;
+        this.dispatchAction('EXPORTER_GET_DATA_ID', this.data.id);
+        this.$$('member-manage').resetValidate();
+      },
+      _dialogRemark: function () {
+        this.$.dialog.toggle();
+      },
+      _active: function () {
+        this.fire('toast', {
+          status: 'openDialog',
+          text: 'คุณต้องการจะต่ออายุผู้ส่งออกใช่หรือไม่ ?',
+          confirmed: (result) => {
+            if (result == true) {
+              let newData = {};
+              newData.id = this.data.draft_id;
+              newData.draft_status = 'extend'
+              let newData2 = {};
+              newData2.id = this.data.id;
+              newData2.expire_status = true;
+              this.dispatchAction('EXPORTER_ACTIVE_RENEW', newData, newData2);
+              this.$.dialog.toggle();
+            }
+          }
+        });
+      },
+      _dialogcancle: function () {
         this.$.dialog.toggle();
         this.exporter_remark = "";
       },
-      delete:function(){
-        this.fire('toast', {status:'openDialog',
-        text:'คุณต้องการลบผู้ส่งออกใช่หรือไม่ ?',
-        confirmed: (result) => {
-          if(result == true){
-            this.dispatchAction('EXPORTER_DELETE', this.data.id);
+      delete: function () {
+        this.fire('toast', {          
+status: 'openDialog',
+          text: 'คุณต้องการลบผู้ส่งออกใช่หรือไม่ ?',
+          confirmed: (result) => {
+            if (result == true) {
+              this.dispatchAction('EXPORTER_DELETE', this.data.id);
+            }
           }
-        }
         });
       },
-      checkstatus:function(data){
-        if(data == 'type'){
+      checkstatus: function (data) {
+        if (data == 'type') {
           return true
-        }else{
+        } else {
           return false
         }
       }
     });
   </script>
 </dom-module>
-

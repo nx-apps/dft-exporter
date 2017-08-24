@@ -61,10 +61,10 @@ if (process.env.NODE_ENV == "production") {
         return;
     }
 } else {
-    url = `https://${window.location.hostname}:3002`
-    window.console.log = function () {
-        return;
-    }
+    url = `https://${window.location.hostname}:3000`
+    // window.console.log = function () {
+    //     return;
+    // }
 }
 //export const baseURL = `https://${window.location.hostname}:${location.port}`;
 export const baseURL = url

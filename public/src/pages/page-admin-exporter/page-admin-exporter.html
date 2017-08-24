@@ -35,6 +35,11 @@
 
 <link rel="import" href="../../action/exporterAction.html">
 
+<link rel="import" href="../../layout/page-style.html">
+
+<link rel="import" href="../../i18n-behavior.html">
+
+
 <!--<link href="//getbootstrap.com/2.3.2/assets/css/bootstrap.css" rel="stylesheet" media="screen">-->
 <!--<link href="./../../../css/datepicker.css" rel="stylesheet" media="screen">-->
 <!--<link href="//getbootstrap.com/2.3.2/assets/js/google-code-prettify/prettify.css" rel="stylesheet">-->
@@ -48,7 +53,7 @@
 
 
 <dom-module id="page-admin-exporter">
-  <style is="custom-style" include=" iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
+  <style is="custom-style" include="page-style iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
     * {
       font-family: 'CSChatThaiUI', sans-serif !important;
       -webkit-font-smoothing: antialiased;
@@ -109,23 +114,93 @@
           {{localize.title_exporter}}
         </div>
 
+        <div class="horizontal start-justified layout">
+          <div class="flex"></div>
+          <div class="flex flex-padding">
+
+          </div>
+          <div class="flex"></div>
+        </div>
+
+
         <div class="searchBox searchBorder">
-          <gl-grid-row width="{{getWidth}}">
+          <div class="horizontal start-justified layout">
+            <div class="flex-3"></div>
+            <div class="flex-6 flex-padding">
+              {{searchInput(dataSearch)}}
+              <vaadin-combo-box label="{{localize.name_exporter}}" items="{{list_search}}" item-label-path="company_name" item-value-path="id"
+                value="{{dataSelected.id}}" on-value-changed="_checkID" loading={{checkLoad}} filter={{dataSearch}}>
+                <template>[[item.company_name]]</template>
+              </vaadin-combo-box>
+            </div>
+            <div class="flex-3"></div>
+          </div>
+
+          <div class="horizontal start-justified layout">
+            <div class="flex-3"></div>
+            <div class="flex-2 flex-padding">
+              <gl-form-dropdown-menu class="searchForm" label="{{localize.type_license}}" placeholder="{{localize.all}}">
+                <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.lic_type_id}}" name="lic_type_id">
+                  <paper-item>{{localize.all}}</paper-item>
+                  <template is="dom-repeat" items={{licType}}>
+                    <paper-item value="[[item.lic_type_id]]">{{item.lic_type_name}}</paper-item>
+                  </template>
+                </paper-menu>
+              </gl-form-dropdown-menu>
+            </div>
+            <div class="flex-2 flex-padding">
+              <gl-form-dropdown-menu class="searchForm" label="{{localize.status_export}}" placeholder="{{localize.all}}">
+                <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.exporter_status}}" name="exporter_status">
+                  <paper-item>{{localize.all}}</paper-item>
+                  <paper-item value="true">{{localize.member}}</paper-item>
+                  <paper-item value="false">{{localize.no_member}}</paper-item>
+                </paper-menu>
+              </gl-form-dropdown-menu>
+            </div>
+            <div class="flex-2 flex-padding">
+              <gl-form-dropdown-menu class="searchForm" label="{{localize.status_exporter}}" placeholder="{{localize.all}}">
+                <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.export_status}}" name="exporter_active">
+                  <paper-item>{{localize.all}}</paper-item>
+                  <paper-item value="true">{{localize.normally}}</paper-item>
+                  <paper-item value="false">{{localize.expire}}</paper-item>
+                </paper-menu>
+              </gl-form-dropdown-menu>
+            </div>
+            <div class="flex-3"></div>
+          </div>
+
+          <div class="horizontal start-justified layout">
+            <div class="flex-2"></div>
+            <div class="flex flex-padding" style="margin-top:18px; text-align:right;">{{localize.register}}</div>
+            <div class="flex-3 flex-padding" >
+              <nylon-datepicker value="[[dataSelected.date_start]]" value-return="{{dataSelected.date_start}}">
+              </nylon-datepicker>
+            </div>
+            <div class="flex-padding" style="margin-top:18px; text-align:right;">{{localize.to}}</div>
+            <div class="flex-3 flex-padding">
+              <nylon-datepicker value="[[dataSelected.date_end]]" value-return="{{dataSelected.date_end}}">
+              </nylon-datepicker>
+            </div>
+            <div class="flex-2"></div>
+          </div>
+
+          <div class="horizontal layout center-justified">
+            <!--<div class="flex">ๅๅๅ-->
+              <paper-button class="gl-btn-info" style="margin: 30px 0px 10px 50px;" on-tap="_search" title="{{localize.bt_search}}" raised>{{localize.bt_search}}</paper-button>
+            <!--</div>-->
+          </div>
+          <!--<gl-grid-row width="{{getWidth}}">
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,6]]">
-              <!-- <gl-combo-box class="searchForm" label="{{localize.name_exporter}}" items="{{list_search}}" item-label-path="company_name" item-value-path="id"
-                value="{{dataSelected.id}}" on-value-changed="_checkID">
-                <template>[[item.company_name]]</template>
-              </gl-combo-box> -->
               {{searchInput(dataSearch)}}
               <vaadin-combo-box label="{{localize.name_exporter}}" items="{{list_search}}" item-label-path="company_name" item-value-path="id"
                 value="{{dataSelected.id}}" on-value-changed="_checkID" loading={{checkLoad}} filter={{dataSearch}}>
                 <template>[[item.company_name]]</template>
               </vaadin-combo-box>
             </gl-grid-col>
-          </gl-grid-row>
+          </gl-grid-row>-->
 
-          <gl-grid-row>
+          <!--<gl-grid-row>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
               <gl-form-dropdown-menu class="searchForm" label="{{localize.type_license}}" placeholder="{{localize.all}}">
@@ -155,10 +230,10 @@
                 </paper-menu>
               </gl-form-dropdown-menu>
             </gl-grid-col>
-          </gl-grid-row>
+          </gl-grid-row>-->
 
 
-          <gl-grid-row>
+          <!--<gl-grid-row>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]"></gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,1]]">
               <div style="margin-top:18px; text-align:right;">{{localize.register}}</div>
@@ -173,14 +248,14 @@
               </nylon-datepicker>
             </gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]"></gl-grid-col>
-          </gl-grid-row>
+          </gl-grid-row>-->
 
-          <gl-grid-row>
+          <!--<gl-grid-row>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,5]]"></gl-grid-col>
             <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
               <paper-button class="gl-btn-info" style="margin: 30px 0px 10px 50px;" on-tap="_search" title="{{localize.bt_search}}" raised>{{localize.bt_search}}</paper-button>
             </gl-grid-col>
-          </gl-grid-row>
+          </gl-grid-row>-->
         </div>
 
         <div class="horizontal layout end-justified">
@@ -306,6 +381,7 @@
   <script>
     Polymer({
       is: "page-admin-exporter",
+      behaviors: [ReduxBehavior, nylonBehavior, i18nAction, exporterAction, uploadAction, ValidateFormBehavior, MonthBehavior],
       properties: {
         layerContent: {
           type: String,
@@ -332,7 +408,6 @@
           statePath: 'exporter.pages'
         }
       },
-      behaviors: [ReduxBehavior, nylonBehavior, i18nAction, exporterAction, uploadAction, ValidateFormBehavior, MonthBehavior],
       nylonPageActive: function () {
         this.dispatchAction('EXPORTER_GET_DATA');
         // this.dispatchAction('EXPORTER_GET_DATA_SEARCH');
@@ -457,7 +532,7 @@
           this.fire('toast', { status: 'connectError', text: 'กรุณาใส่วันที่เริ่มต้นค้นหา' })
         } else {
           // console.log(this.dataSelected.lic_type_id === null);
-          str= this._retiveData()
+          str = this._retiveData()
 
           // console.log(str);
           // for (key in this.dataSelected) {
@@ -467,6 +542,7 @@
           //     // str += '&' + key + '=' + this.dataSelected[key];
           //   }
           // }
+          // console.log(121212);
           this.dispatchAction('EXPORTER_SEARCH', str, page, type);
           // console.log(this.queryFrom('.searchForm'));
           this.queryFrom('.searchForm').map((el) => el.reset());

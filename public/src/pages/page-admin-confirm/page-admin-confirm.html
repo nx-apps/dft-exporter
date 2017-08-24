@@ -38,8 +38,11 @@
 
 <link rel="import" href="../../action/confirmAction.html">
 
+<link rel="import" href="../../layout/page-style.html">
+
+
 <dom-module id="page-admin-confirm">
-  <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
+  <style is="custom-style" include="page-style iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
     * {
       font-family: 'CSChatThaiUI', sans-serif;
       -webkit-font-smoothing: antialiased;
@@ -385,11 +388,16 @@
         </div>
       </iron-pages>
       <paper-dialog id="dialog" style="width:60%;">
-        <gl-grid-row width="{{getWidth}}">
+        <div class="horizontal start-justified layout">
+          <div class="flex">
+            <gl-form-textarea label="{{localize.note}} : " always-float-label value="{{company_remark}}"></gl-form-textarea>
+          </div>
+        </div>
+        <!--<gl-grid-row width="{{getWidth}}">
           <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,12]]">
             <gl-form-textarea label="{{localize.note}} : " always-float-label value="{{company_remark}}"></gl-form-textarea>
           </gl-grid-col>
-        </gl-grid-row>
+        </gl-grid-row>-->
         <div>
           <paper-button class=" button-size" raised on-tap="_dialogcancle">{{localize.bt_back}}</paper-button>
           <paper-button class="gl-btn-primary button-size" raised on-tap="_reject">{{localize.bt_save}}</paper-button>
@@ -444,6 +452,7 @@
         this.fire('nylon-change-page', { path: '/admin-exporter' })
       },
       nylonPageActive: function () {
+
         this.dispatchAction('CONFIRM_GET_DATA');
         this.dispatchAction('EXPORTER_GET_LIC_TYPE');
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');

@@ -46,6 +46,7 @@ export const exporter = {
         fax:"แฟกซ์",
         email:"อีเมลล์",
         list_board:"รายชื่อคณะกรรมการ",
+        no_list_board:"ไม่มีรายชื่อคณะกรรมการ",
         name_committee:"ชื่อกรรมการ",
         doc_attach:"แนบเอกสาร",
         date_register:"วันที่ลงทะเบียน",
