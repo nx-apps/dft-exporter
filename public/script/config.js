@@ -54,5 +54,17 @@ export function dispatchActionBehavior(){
     }
 }
 
-export const baseURL = `https://${window.location.hostname}:${location.port}`;
-// export const baseURL = `https://${window.location.hostname}:3000`;
+let url = ''
+if (process.env.NODE_ENV == "production") {
+    url = `https://${window.location.hostname}`
+    window.console.log = function () {
+        return;
+    }
+} else {
+    url = `https://${window.location.hostname}:3002`
+    window.console.log = function () {
+        return;
+    }
+}
+//export const baseURL = `https://${window.location.hostname}:${location.port}`;
+export const baseURL = url

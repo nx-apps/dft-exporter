@@ -7,11 +7,16 @@
     "start": "npm-run-all --parallel webpack nylon",
     "dev": "npm-run-all --parallel webpack polymer",
     "build": "cd public && polymer build",
-    "test": "polymer serve ./public/build/bundled --port 8081",
+    "polyserve": "polymer serve ./public/build/default --port 8086",
     "nylon": "nylon-cli serve",
     "bower": "cd ./public && bower install",
     "webpack": "webpack",
-    "polymer": "polymer serve ./public --port 8080"
+    "server:build":"npm-run-all polyserve nylon",
+    "polymer": "polymer serve ./public --port 8080",
+    "build:dev":"npm-run-all webpack:dev build polyserve nylon",
+    "build:dist":"npm-run-all webpack:dist build polyserve nylon",
+    "webpack:dev": "webpack --env=dev",
+    "webpack:dist": "webpack --env=prod"
   },
   "author": "",
   "license": "ISC",
