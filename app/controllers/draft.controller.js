@@ -27,8 +27,32 @@ exports.getInsert = function (req, res) {
     })
 }
 exports.postInsert = function (req, res) {
-    res.json(123)
-    // company.getCompany([req.query.company_taxno], function (companyData) {
-
-    // })
+    if (req.body.hasOwnProperty('company')) {
+        var valid = req.ajv.validate('draft', req.body);
+        if (valid) {
+            var draftSign = r.table('draft').getAll('sign', { index: 'draft_status' });
+            var exporterNo = r.branch(
+                draftSign.count().eq(0), 1, draftSign.max('exporter_no')
+            );
+            var obj = Object.assign(req.body, {
+                date_created: r.now().inTimezone('+07'),
+                date_updated: r.now().inTimezone('+07'),
+                creater: 'admin',
+                updater: 'admin',
+                doc_status: false,
+                approve_status: false,
+                draft_status: 'sign',
+                exporter_no: exporterNo
+            });
+            r.table('draft').insert(obj)
+                .run()
+                .then(function (data) {
+                    res.json(data)
+                })
+        } else {
+            res.json(req.ajv.errorsText());
+        }
+    } else {
+        res.json('error: data want {company} object');
+    }
 }

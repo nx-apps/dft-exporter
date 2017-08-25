@@ -7,11 +7,11 @@
         "approve_status": {
             "type": "boolean"
         },
-        "company_id": {
-            "type": "string"
-        },
         "company_taxno": {
             "type": "string"
+        },
+        "company": {
+            "type": "object"
         },
         "doc_status": {
             "type": "boolean"
@@ -24,15 +24,9 @@
         },
         "lic_type_id": {
             "type": "string"
+        },
+        "lic_type": {
+            "type": "object"
         }
-    },
-    "required": [
-        "approve_status",
-        "company_id",
-        "company_taxno",
-        "doc_status",
-        "draft_status",
-        "exporter_no",
-        "lic_type_id"
-    ]
+    }
 }
