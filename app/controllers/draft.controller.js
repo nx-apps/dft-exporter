@@ -7,12 +7,12 @@ exports.list = function (req, res) {
         })
 }
 exports.getInsert = function (req, res) {
-    company.getCompany([req.query.taxno], function (companyData) {
+    company.getCompany([req.query.company_taxno], function (companyData) {
         // res.json(companyData);
         r.expr(companyData)
             .merge({
                 lic_type: r.table('license_type').filter(function (f) {
-                    return r.table('draft').getAll([req.query.taxno, 'sign'], { index: 'taxnoDraftStatus' })
+                    return r.table('draft').getAll([req.query.company_taxno, 'sign'], { index: 'taxnoDraftStatus' })
                         .getField('lic_type_id')
                         .distinct().contains(f('id')).eq(false)
                 }).coerceTo('array')
