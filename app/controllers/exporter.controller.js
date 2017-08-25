@@ -75,19 +75,9 @@ exports.search = function (req, res) {
         .filter(function (f) {
             return f('company')(r.expr(req.query.field)).match(req.query.value)
         })
-        // .orderBy('company_taxno');
-        // if (req.query.type == 'number') {
-        //     table = table.filter(r.row('company')('company_taxno').match(req.query.company_taxno));
-        // }
-        // if (req.query.type == 'char_th') {
-        //     table = table.filter(r.row('company')('company_name_th').match(req.query.company_name_th));
-        // }
-        // if (req.query.type == 'char_en') {
-        //     table = table.filter(r.row('company')('company_name_en').match(req.query.company_name_en));
-        // }
+        .pluck('exporter_id', 'exporter_no', 'company_taxno', { company: ['company_taxno', 'company_name_th', 'company_name_en'] })
         .run()
         .then(function (result) {
-            // res.setHeader('Access-Control-Allow-Origin', 'https://localhost:3001')
             res.json(result)
         })
         .error(function (err) {
