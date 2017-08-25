@@ -1,3 +1,4 @@
+var tz = "T00:00:00+07:00";
 exports.list = function (req, res) {
     var page = parseInt(req.query.page) - 1;
     var limit = parseInt(req.query.limit);
