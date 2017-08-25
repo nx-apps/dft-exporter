@@ -1,0 +1,55 @@
+{
+    "name": "exporter",
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "exporter_no": {
+            "type": "number"
+        },
+        "company_id": {
+            "type": "string"
+        },
+        "company_taxno": {
+            "type": "string"
+        },
+        "company": {
+            "type": "object"
+        },
+        "draft_id": {
+            "type": "string"
+        },
+        "lic_type_id": {
+            "type": "string"
+        },
+        "lic_type": {
+            "type": "object"
+        },
+        "exporter_status": {
+            "type": "boolean"
+        },
+        "date_approve": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "date_load": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "date_expire": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "date_created": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "date_updated": {
+            "type": "string",
+            "format": "date-time"
+        },
+        "expire_status": {
+            "type": "boolean"
+        }
+    }
+}

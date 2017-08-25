@@ -1,0 +1,38 @@
+{
+    "name": "draft",
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "approve_status": {
+            "type": "boolean"
+        },
+        "company_id": {
+            "type": "string"
+        },
+        "company_taxno": {
+            "type": "string"
+        },
+        "doc_status": {
+            "type": "boolean"
+        },
+        "draft_status": {
+            "type": "string"
+        },
+        "exporter_no": {
+            "type": "number"
+        },
+        "lic_type_id": {
+            "type": "string"
+        }
+    },
+    "required": [
+        "approve_status",
+        "company_id",
+        "company_taxno",
+        "doc_status",
+        "draft_status",
+        "exporter_no",
+        "lic_type_id"
+    ]
+}

@@ -71,7 +71,7 @@ exports.list = function (req, res) {
 }
 exports.search = function (req, res) {
     var r = req.r;
-    r.db('external').table('exporter')
+    r.table('exporter')
         .filter(function (f) {
             return f('company')(r.expr(req.query.field)).match(req.query.value)
         })
