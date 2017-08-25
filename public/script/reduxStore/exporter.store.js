@@ -29,6 +29,7 @@ export function exporterReducer(state = initialState, action) {
             return Object.assign({}, state, { list: action.payload });
         case 'EXPORTER_CLEAR_LIST_SEARCH':
             return Object.assign({}, state, { list_search: action.payload});
+            // -------------------------------------------------------
         default:
             return state
     }
@@ -42,7 +43,7 @@ export function exporterAction(store) {
             } else {
                 page = parseInt(page);
             }
-            axios.get('./external/exporter?page='+page+'&limit=100')
+            axios.get('./exporter?page='+page+'&limit=100')
                 .then(function (response) {
                     response.data.map((item) => {
                         for (var key in item) {
@@ -60,7 +61,7 @@ export function exporterAction(store) {
                 });
         },
         EXPORTER_GET_DATA_SEARCH: function(data){
-            axios.get('./external/exporter/search?' + data.att_name + '=' + data.val + '&type=' + data.type)
+            axios.get('./exporter/search?field=' + data.att_name + '&value=' + data.val )
             .then((response) => {
                 response.data.map((item) => {
                     return item.company_name = '(' + item.company.company_taxno + ') ' + item.company.company_name_th + ' ' + item.company.company_name_en;
@@ -131,7 +132,7 @@ export function exporterAction(store) {
                 // console.log('search');
                 var page = parseInt(page);
                 this.fire('toast', { status: 'load' })
-                axios.get('./external/exporter?page='+page+'&limit=100&' + val)
+                axios.get('./exporter?page='+page+'&limit=100&' + val)
                     .then(function (response) {
                         response.data.map((item) => {
                             for (var key in item) {
@@ -208,6 +209,7 @@ export function exporterAction(store) {
         EXPORTER_CLEAR_LIST_SEARCH:function(){
             store.dispatch({type:'EXPORTER_CLEAR_LIST_SEARCH', payload: []});
         }
+        //-------------------------------------
     }
     ]
 }
