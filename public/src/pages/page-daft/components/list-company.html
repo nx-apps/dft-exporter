@@ -1,0 +1,121 @@
+
+<link rel="import" href="../../../redux-behavior.html">
+
+<dom-module id="list-company">
+    <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
+        * {
+            font-family: 'CSChatThaiUI', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .marginCheckbox {
+            margin: 10px 0px 0px 30px;
+        }
+        .searchBorder {
+            border: 1px solid var(--gl-gray-light-color);
+            margin: 15px;
+            border-radius: 3px;
+            background-color: #fff;
+        }
+        .text-table {
+            text-align: center;
+            font-size: var(--font-size-h5);
+        }
+        .gl-table-default {
+            border-collapse: collapse;
+            width: 100%;
+            white-space: nowrap;
+        }
+        .tabs {
+            background-color: #f7941e;
+            margin: 0px 15px 0px 15px;
+            color: #F2F2F2;
+            --paper-tabs-selection-bar: {
+                height: 5px;
+                background-color: var(--gl-info-color);
+            }
+        }
+        .tab:focus>div.tab-content {
+            background-color: yellow;
+            opacity: 1;
+            font-weight: 0;
+        }
+        .tab:not(:last-of-type) {
+            border-right: 3px solid var(--gl-gray-light-color);
+            font-size: var(--font-size-h5);
+        }
+        .tabs .tab.iron-selected {
+            font-size: var(--font-size-h5);
+            color: var(--gl-white-color);
+            background-color: var(--gl-info-color);
+        }
+        .table-head>tr>th:nth-child(2) {
+            width: 15%;
+        }
+        .btn {
+            margin: 15px 20px 5px 10px;
+        }
+        .btn-bottom {
+            margin: 0px 15px 15px 0px;
+        }
+    </style>
+    
+    <template>
+         <div class="searchBorder" style="overflow-x:auto;">
+            <table class="gl-table-default">
+            <thead class="table-head">
+                <tr>
+                <th><div class="text-table">{{localize.No}}</div></th>
+                <th><div class="text-table">{{localize.no_exporter_fullname}}</div></th>
+                <th><div class="text-table">{{localize.name_company}}</div></th>
+                <th><div class="text-table">{{localize.type_license}}</div></th>
+                <th><div class="text-table">{{localize.date_register}}</div></th>
+                <th><div class="text-table">{{localize.status}}</div></th>
+                </tr>
+            </thead>
+
+            <template is="dom-repeat" items="{{companys}}">
+                <tbody>
+                <tr style="cursor:pointer;">
+                    <td><div class="text-table">[[indexNo(index)]]</div></td>
+                    <td style="text-align:center"><gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]"></gl-form-input></td>
+                    <td on-tap="_selectData" data="[[item]]"><div>{{item.company.company_name_th}}</div></td>
+                    <td on-tap="_selectData" data="[[item]]"><div>{{item.type_lic.type_lic_name}}</div></td>
+                    <td on-tap="_selectData" data="[[item]]"><div class="text-table">{{item.date_created}}</div></td>
+                    <td on-tap="_selectData" data="[[item]]"><div>{{item.approve_status_name}}</div></td>
+                </tr>
+            </template>
+            <template is="dom-if" if={{_checkData(companys)}}>
+                <tr>
+                    <td colspan="6"><div class="text-table" style="margin:20px">{{localize.not_found}}</div></td>
+                </tr>
+            </template>
+                </tbody>
+            </table>
+        </div> 
+    </template>
+    
+    <script>
+        Polymer({
+            is: "list-company",
+            behaviors:[ReduxBehavior],
+            properties:{
+                localize:{
+                    statePath : 'i18n.exporter'
+                },
+                companys:{
+                    statePath : 'confirm.list'
+                }
+            },
+            _checkData:function(val){
+                if(val.length > 0){
+                return false
+                }else{
+                return true
+                }
+            },
+            indexNo:function(val){
+                return val+1
+            },
+        });
+    </script>
+</dom-module>

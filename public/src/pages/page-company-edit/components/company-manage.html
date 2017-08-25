@@ -244,7 +244,7 @@
           </template>
           <template is="dom-if" if="[[_isShow(data.company_directors,data.company_directors.*)]]">
             <tr>
-              <td colspan="3" style="padding: 15px;text-align: center;"> [[localize.no_data]]</td>
+              <td colspan="4" style="padding: 15px;text-align: center;"> [[localize.no_data]]</td>
             </tr>
           </template>
         </tbody>
@@ -356,9 +356,11 @@
           var check = this.validate();
           if (check === true) {
             if (this.statusAction == 'edit') {
+              console.log(1111);
               this.dispatchAction('COMPANY_UPDATE', detail.datas);
               this.resetValidate();
             } else {
+              console.log(2222);
               this.dispatchAction('COMPANY_INSERT', detail.datas);
               this.resetValidate();
             }

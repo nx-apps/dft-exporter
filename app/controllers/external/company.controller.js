@@ -188,6 +188,7 @@ exports.listId = function (req, res) {
     // });
 }
 exports.insert = function (req, res) {
+    console.log(111111);
     var r = req.r;
     req.body = Object.assign(req.body, {
         creater: 'admin',

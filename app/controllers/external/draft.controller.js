@@ -58,6 +58,7 @@ exports.company_id = function (req, res) {
         .run()
         .then(function (result) {
             if (result.length > 0) {
+                console.log(result[0]);
                 res.json(result[0])
             } else {
                 res.json(null)

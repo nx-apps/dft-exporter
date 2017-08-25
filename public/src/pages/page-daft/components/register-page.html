@@ -1,0 +1,298 @@
+<link rel="import" href="detail-company.html">
+<link rel="import" href="fileup-company.html">
+<link rel="import" href="./../../components/validateFormBehaviors.html">
+
+<link rel="import" href="../../../redux-behavior.html">
+
+<dom-module id="register-page">
+  <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
+    .title {
+      text-align: center;
+      font-size: var(--font-size-h4);
+      font-family: 'rsubold', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      margin: 20px 0px 20px 0px;
+    }
+
+    .searchBox {
+      padding: 5px;
+      background-color: var(--gl-gray-lighter-color);
+    }
+
+    .searchBorder {
+      border: 1px solid var(--gl-gray-light-color);
+      margin: 15px;
+      border-radius: 3px
+    }
+
+    paper-tabs {
+      background-color: #f7941e;
+      margin: 15px;
+      color: #F2F2F2;
+      --paper-tabs-selection-bar: {
+        height: 5px;
+        background-color: var(--gl-info-color);
+      }
+    }
+
+    paper-tab:focus>div.tab-content {
+      background-color: yellow;
+      opacity: 1;
+      font-weight: 0;
+    }
+
+    paper-tab:not(:last-of-type) {
+      border-right: 3px solid var(--gl-gray-light-color);
+      font-size: var(--font-size-h5);
+    }
+
+    paper-tabs paper-tab.iron-selected {
+      font-size: var(--font-size-h5);
+      color: var(--gl-white-color);
+      background-color: var(--gl-info-color);
+    }
+
+
+
+    main {
+      padding: 5px;
+      margin: 0 auto;
+    }
+
+    section {
+      display: none;
+      border-top: 1px solid #ddd;
+    }
+
+    input {
+      display: none;
+    }
+
+    label {
+      display: inline-block;
+      margin: 0 0 -1px;
+      padding: 15px 25px;
+      font-weight: 600;
+      text-align: center;
+      color: #bbb;
+      border: 1px solid transparent;
+      background: #D5D8DC;
+    }
+
+    label:before {
+      font-family: fontawesome;
+      font-weight: normal;
+      margin-right: 10px;
+    }
+
+    label:hover {
+      color: #888;
+      cursor: pointer;
+    }
+
+    input:checked+label {
+      color: #555;
+      border: 1px solid #ddd;
+      border-top: 3px solid orange;
+      border-bottom: 1px solid #fff;
+      background: #fff;
+    }
+
+    #tab1:checked~#content1,
+    #tab2:checked~#content2 {
+      display: block;
+    }
+
+    detail-company,
+    fileup-company {
+      margin-top: 15px;
+      width: 98%;
+    }
+
+    .container {
+      display: inline-block;
+      margin-left: 30px;
+      margin-right: 30px;
+    }
+    /* Need to position the badge to look like a text superscript */
+  </style>
+  <template>
+    <div class="horizontal layout center center-justified searchBox searchBorder" style="margin-top:10px;">
+      {{localize.tax_no}} :
+      <gl-form-input type="search" class="searchForm"style="width:300px;"  value="{{companyId}}"
+        no-label-float allowed-pattern="[0-9]" maxlength="13">
+        <!--<iron-icon icon="search" prefix style="width:20px;height:30px;"></iron-icon>-->
+        <!--<paper-icon-button suffix on-tap="clearData" icon="clear" title="clear" style="height:30px;">-->
+      </gl-form-input>
+      <paper-button class="gl-btn-info btn" raised on-tap="_search">{{localize.bt_search}}</paper-button>
+    </div>
+
+    <template is="dom-if" if={{isShow}}>
+      <main>
+        <input id="tab1" type="radio" name="tabs" checked>
+        <label for="tab1">
+          <div class="container" tabindex="0">
+            <span>1.{{localize.detail}}</span>
+          </div>
+        </label>
+
+        <input id="tab2" type="radio" name="tabs">
+        <label for="tab2">
+        <div class="container" tabindex="0">
+          <span>2.{{localize.doc_ev}}</span>
+          </div>
+        </label>
+
+
+        <section id="content1">
+          <gl-form-panel>
+            <detail-company></detail-company>
+          </gl-form-panel>
+        </section>
+
+        <section id="content2">
+          <gl-form-panel>
+            <fileup-company></fileup-company>
+          </gl-form-panel>
+        </section>
+
+      </main>
+    </template>
+
+
+
+
+    <!--<div>
+      <paper-tabs selected="{{pages}}" align-bottom no-slide>
+        <paper-tab>{{localize.detail}}</paper-tab>
+        <paper-tab id="tabFile">{{localize.doc_ev}}</paper-tab>
+      </paper-tabs>
+      <gl-form-panel>
+        <iron-pages selected="{{pages}}">
+          <detail-company></detail-company>
+          <fileup-company></fileup-company>
+        </iron-pages>
+      </gl-form-panel>
+    </div>-->
+
+    <div class="horizontal end-justified layout" style="margin:10px">
+
+      <template is="dom-if" if={{data.register_status}}>
+        <paper-button raised class="gl-btn-primary" on-tap="_register">
+          <iron-icon icon="add"></iron-icon>{{localize.bt_register}}</paper-button>
+      </template>
+
+
+      <template is="dom-if" if={{_checkData(data)}}>
+        <template is="dom-if" if={{!data.register_status}}>
+          <template is="dom-if" if={{!data.doc_status}}>
+            <paper-button raised class="gl-btn-primary" on-tap="_reject">
+              <iron-icon icon="add"></iron-icon>{{localize.bt_sent_new}}</paper-button>
+          </template>
+        </template>
+      </template>
+
+
+    </div>
+  </template>
+  <script>
+    Polymer({
+      is: "register-page",
+      behaviors: [ReduxBehavior, ValidateFormBehavior],
+      properties: {
+        pages: {
+          type: Number,
+          notify: true,
+          value: 0
+        },
+        data: {
+          statePath: 'confirm.data',
+          observer: 'checkHaveData'
+        },
+        localize: {
+          statePath: 'i18n.exporter'
+        },
+        companyId: {
+          type: Number,
+        },
+        isShow: {
+          type: Boolean,
+          value: false
+        }
+      },
+      listeners: {
+        'refresh-exporterTrader': 'getExporterTrader'
+      },
+      checkHaveData(data) {
+        // console.log(data.doc_status_name);
+        if (data.doc_status_name !== undefined && data.doc_status_name !== '') {
+          this.set('isShow', true)
+        } else {
+          this.set('isShow', false)
+        }
+      },
+      _register: function () {
+        var data = {
+          approve_status: false,
+          company_id: this.data.company.id,
+          company_taxno: this.data.company.company_taxno,
+          doc_status: true,
+          draft_status: 'sign',
+          lic_type_id: this.data.lic_type_id
+        }
+        this.fire('toast', {
+          status: 'openDialog',
+          text: 'คุณต้องการจะสมัครผู้ส่งออกใช่หรือไม่ ?',
+          confirmed: (result) => {
+            if (result == true) {
+              var check = this.$$('detail-company').validate();
+              if (check == true) {
+                this.dispatchAction('CONFIRM_REGISTER', data);
+                this.$$('detail-company').resetValidate();
+              } else {
+                this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' });
+              }
+            }
+          }
+        });
+      },
+      _reject: function () {
+        var data = {
+          id: this.data.id,
+          company_taxno: this.data.company_taxno,
+          doc_status: true
+        }
+        this.fire('toast', {
+          status: 'openDialog',
+          text: 'คุณต้องการจะส่งเอกสารใหม่ใช่หรือไม่ ?',
+          confirmed: (result) => {
+            if (result == true) {
+              this.dispatchAction('CONFIRM_COMPANY_REJECT', data);
+            }
+          }
+        });
+      },
+      _checkData: function (data) {
+        if (typeof data !== 'undefined') {
+          if (Object.keys(data).length > 0) {
+            return true
+          } else {
+            return false
+          }
+        }
+      },
+      //--------------------------------------------------------------------------------
+
+      _search: function () {
+        if (this.companyId != '') {
+          this.dispatchAction('CONFIRM_SEARCH', this.companyId);
+
+          this.queryFrom('.searchForm').map((el) => { el.reset(); });
+        }
+        else {
+          this.fire('toast', { status: 'connectError', text: 'กรุณากรอกเลขประจำตัวผู้ส่งออก' })
+        }
+      },
+    });
+  </script>
+</dom-module>

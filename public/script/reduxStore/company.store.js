@@ -128,25 +128,28 @@ export function companyAction(store) {
         COMPANY_INSERT: function (data) {
             axios.get('./external/check/duplicate?table=company&field=company_taxno&value=' + data.company_taxno)
                 .then((response) => {
+                    console.log(response.data);
                     if (response.data < 1) {
-                        axios.get('./external/check/duplicate?table=company&field=company_name_th&value=' + data.company_name_th)
-                            .then((response2) => {
-                                if (response2.data < 1) {
-                                    axios.post('./external/company/insert', data)
-                                        .then((response3) => {
-                                            this.fire('toast', {
-                                                status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-                                                    this.COMPANY_GET_DATA(1);
-                                                    this.COMPANY_CLEAR_DATA();
-                                                    this.COMPANY_GET_DATA_SEARCH();
-                                                }
-                                            });
-                                        })
-                                } else {
-                                    this.fire('toast', { status: 'connectError', text: 'ชื่อบริษัทนี้มีอยู่แล้ว', callback: () => { } })
-                                }
-                            })
+                        console.log('true');
+                        // axios.get('./external/check/duplicate?table=company&field=company_name_th&value=' + data.company_name_th)
+                        //     .then((response2) => {
+                        //         if (response2.data < 1) {
+                        //             axios.post('./external/company/insert', data)
+                        //                 .then((response3) => {
+                        //                     this.fire('toast', {
+                        //                         status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
+                        //                             this.COMPANY_GET_DATA(1);
+                        //                             this.COMPANY_CLEAR_DATA();
+                        //                             this.COMPANY_GET_DATA_SEARCH();
+                        //                         }
+                        //                     });
+                        //                 })
+                        //         } else {
+                        //             this.fire('toast', { status: 'connectError', text: 'ชื่อบริษัทนี้มีอยู่แล้ว', callback: () => { } })
+                        //         }
+                        //     })
                     } else {
+                        console.log('false');
                         this.fire('toast', { status: 'connectError', text: 'เลขประจำตัวผู้เสียภาษีนี้มีอยู่แล้ว', callback: () => { } })
                     }
                 })

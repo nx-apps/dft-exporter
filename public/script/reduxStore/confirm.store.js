@@ -43,6 +43,7 @@ export function confirmAction(store) {
                 if(data.length > 0){
                     axios.get('./external/draft/companyId/'+ data[0].id)
                     .then((response2) => {
+                        // console.log(data[0]);
                         var data2 = response2.data;
                         if(data2 !== null){
                             for (var key in data2) {
