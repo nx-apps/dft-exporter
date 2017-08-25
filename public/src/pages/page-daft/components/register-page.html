@@ -120,9 +120,7 @@
     <div class="horizontal layout center center-justified searchBox searchBorder" style="margin-top:10px;">
       {{localize.tax_no}} :
       <gl-form-input type="search" class="searchForm"style="width:300px;"  value="{{companyId}}"
-        no-label-float allowed-pattern="[0-9]" maxlength="13">
-        <!--<iron-icon icon="search" prefix style="width:20px;height:30px;"></iron-icon>-->
-        <!--<paper-icon-button suffix on-tap="clearData" icon="clear" title="clear" style="height:30px;">-->
+        no-label-float allowed-pattern="[0-9]" maxlength="13" on-search="_search">
       </gl-form-input>
       <paper-button class="gl-btn-info btn" raised on-tap="_search">{{localize.bt_search}}</paper-button>
     </div>
