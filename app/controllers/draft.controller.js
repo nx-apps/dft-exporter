@@ -6,6 +6,13 @@ exports.list = function (req, res) {
             res.json(data)
         })
 }
+exports.getId = function (req, res) {
+    r.table('draft').get(req.query.id)
+        .run()
+        .then(function (data) {
+            res.json(data);
+        })
+}
 exports.getInsert = function (req, res) {
     company.getCompany([req.query.company_taxno], function (companyData) {
         if (companyData.length > 0 && companyData[0].hasOwnProperty('company_name_th')) {
@@ -43,10 +50,11 @@ exports.postInsert = function (req, res) {
                 date_updated: r.now().inTimezone('+07'),
                 creater: 'admin',
                 updater: 'admin',
-                doc_status: false,
+                doc_status: null,
                 approve_status: false,
                 draft_status: 'sign',
-                exporter_no: exporterNo
+                exporter_no: exporterNo,
+                remark: []
             });
             r.table('draft').insert(obj)
                 .run()
@@ -61,14 +69,25 @@ exports.postInsert = function (req, res) {
     }
 }
 exports.putInsert = function (req, res) {
-    if (req.body.id !== 'undefined') {
+    if (typeof req.body.id !== 'undefined') {
         r.branch(r.table('draft').get(req.body.id).eq(null),
             { error: 'This "id" is null.' },
-            r.table('draft').get(req.body.id).update(req.body)
+            r.table('draft').get(req.body.id).update(function (u) {
+                return r.expr(req.body).merge({
+                    remark: r.branch(r.expr(req.body).hasFields('remark'),
+                        u('remark').merge(function (m) {
+                            return {
+                                date: r.ISO8601(m('date'))
+                            }
+                        }),
+                        []
+                    )
+                })
+            })
         )
             .run()
             .then(function (data) {
-                if (req.body.approve_status !== 'undefined' && req.body.approve_status === true && !data.hasOwnProperty('error')) {
+                if (typeof req.body.approve_status !== 'undefined' && req.body.approve_status === true && !data.hasOwnProperty('error')) {
                     r.table('exporter').insert(
                         r.table('draft').get(req.body.id).merge(function (m) {
                             var dateNow = r.now().inTimezone('+07');
