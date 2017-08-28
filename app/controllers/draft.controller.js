@@ -1,6 +1,7 @@
 var company = require('../global/company');
 exports.list = function (req, res) {
     r.table('draft').getAll(false, { index: 'approve_status' })
+        .without('remark')
         .run()
         .then(function (data) {
             res.json(data)
@@ -77,9 +78,12 @@ exports.putInsert = function (req, res) {
                     remark: r.branch(r.expr(req.body).hasFields('remark'),
                         u('remark').merge(function (m) {
                             return {
-                                date: r.ISO8601(m('date'))
+                                date: r.branch(m.hasFields('date'),
+                                    r.ISO8601(m('date')).inTimezone('+07'),
+                                    r.now().inTimezone('+07')
+                                )
                             }
-                        }),
+                        }).orderBy('date'),
                         []
                     )
                 })
