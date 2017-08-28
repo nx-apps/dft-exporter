@@ -30,7 +30,11 @@ exports.postInsert = function (req, res) {
     if (req.body.hasOwnProperty('company')) {
         var valid = req.ajv.validate('draft', req.body);
         if (valid) {
-            var draftSign = r.table('draft').getAll('sign', { index: 'draft_status' });
+            var draftSign = (
+                req.body.lic_type_id != "BORDER"
+                    ? r.table('draft').getAll(['NORMAL', 'sign'], ['PACKAGE', 'sign'], { index: 'licTypeIdAndDraftStatus' })
+                    : r.table('draft').getAll(['BORDER', 'sign'], { index: 'licTypeIdAndDraftStatus' })
+            );
             var exporterNo = r.branch(
                 draftSign.count().eq(0), 1, draftSign.max('exporter_no')
             );
@@ -54,5 +58,41 @@ exports.postInsert = function (req, res) {
         }
     } else {
         res.json('error: data want {company} object');
+    }
+}
+exports.putInsert = function (req, res) {
+    if (req.body.id !== 'undefined') {
+        r.branch(r.table('draft').get(req.body.id).eq(null),
+            { error: 'This "id" is null.' },
+            r.table('draft').get(req.body.id).update(req.body)
+        )
+            .run()
+            .then(function (data) {
+                if (req.body.approve_status !== 'undefined' && req.body.approve_status === true && !data.hasOwnProperty('error')) {
+                    r.table('exporter').insert(
+                        r.table('draft').get(req.body.id).merge(function (m) {
+                            var dateNow = r.now().inTimezone('+07');
+                            return {
+                                draft_id: m('id'),
+                                date_approve: dateNow.date(),
+                                date_load: dateNow.date(),
+                                date_expire: r.time(dateNow.year().add(1), dateNow.month(), dateNow.day(), '+07:00'),
+                                export_status: true,
+                                date_created: dateNow,
+                                date_updated: dateNow,
+                                close_status: false,
+                                creater: 'admin',
+                                updater: 'admin'
+                            }
+                        }).without('id', 'approve_status', 'doc_status')
+                    )
+                        .run()
+                        .then(function (data) {
+                            res.json(data)
+                        })
+                } else res.json(data);
+            })
+    } else {
+        res.json('error: "id" is empty!');
     }
 }
