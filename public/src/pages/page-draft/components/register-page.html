@@ -155,12 +155,12 @@
         </section>
 
       </main>
-    </template>
 
 
 
 
-    <!--<div>
+
+      <!--<div>
       <paper-tabs selected="{{pages}}" align-bottom no-slide>
         <paper-tab>{{localize.detail}}</paper-tab>
         <paper-tab id="tabFile">{{localize.doc_ev}}</paper-tab>
@@ -173,15 +173,19 @@
       </gl-form-panel>
     </div>-->
 
-    <div class="horizontal end-justified layout" style="margin:10px">
+      <div class="horizontal end-justified layout" style="margin:10px">
 
-      <!--<template is="dom-if" if={{data.register_status}}>-->
-      <paper-button raised class="gl-btn-primary" on-tap="_register">
-        <iron-icon icon="add"></iron-icon>{{localize.bt_register}}</paper-button>
-      <!--</template>-->
+        <!--<template is="dom-if" if={{data.register_status}}>-->
+        <paper-button raised class="gl-btn-primary" on-tap="_register">
+          <iron-icon icon="add"></iron-icon>{{localize.bt_register}}</paper-button>
+        <!--</template>-->
+        <paper-button raised class="gl-btn-primary" on-tap="waitDoc">
+          <iron-icon icon="add"></iron-icon>รอตรวจเอกสาร</paper-button>
 
+        <paper-button raised class="gl-btn-primary" on-tap="waitaApprove">
+          <iron-icon icon="add"></iron-icon>รออนุมัติ</paper-button>
 
-      <!--<template is="dom-if" if={{_checkData(data)}}>
+        <!--<template is="dom-if" if={{_checkData(data)}}>
         <template is="dom-if" if={{!data.register_status}}>
           <template is="dom-if" if={{!data.doc_status}}>
             <paper-button raised class="gl-btn-primary" on-tap="_reject">
@@ -191,7 +195,8 @@
       </template>-->
 
 
-    </div>
+      </div>
+    </template>
   </template>
   <script>
     Polymer({
@@ -203,9 +208,16 @@
           notify: true,
           value: 0
         },
-        data: {
+        dataRegister: {
           statePath: 'confirm.data',
           observer: 'checkHaveData'
+        },
+        dataRenew: {
+          statePath: 'confirm.dataRenew',
+          observer: 'checkHaveData'
+        },
+        dataTypeSet: {
+          statePath: 'confirm.confirmType',
         },
         localize: {
           statePath: 'i18n.exporter'
@@ -219,7 +231,7 @@
         },
         resultCompany: {
           type: Object,
-          observer: 'checkSelectType'
+          // observer: 'checkSelectType'
         },
         // btnInsertStatus:{
         //   type: Boolean,
@@ -230,12 +242,21 @@
         'refresh-exporterTrader': 'getExporterTrader'
       },
       checkHaveData(data) {
-        // console.log(data.doc_status_name);
-        // if (data.doc_status_name !== undefined && data.doc_status_name !== '') {
-        this.set('isShow', true)
-        // } else {
-        // this.set('isShow', false)
-        // }
+
+        // console.log(data.hasOwnProperty('company_taxno'));
+        if (data.hasOwnProperty('company_taxno')) {
+          this.set('isShow', true)
+          // if (this.dataTypeSet === 'registerdraft') {
+          //   console.log(this.dataTypeSet);
+            this.set('resultCompany', data)
+          // } else if (this.dataTypeSet === 'renewdraft') {
+          //   console.log(this.dataTypeSet);
+          //   this.set('resultCompany', data)
+          // }
+
+        } else {
+          this.set('isShow', false)
+        }
       },
       // checkSelectType(data){
       //   console.log(data);
@@ -265,7 +286,7 @@
                       }
                     });
                     console.log(res);
-                    
+
                   })
                   .catch((err) => {
                     this.fire('toast', { status: 'connectError', text: 'ไม่สามารถลงทะเบียนได้' });
@@ -279,22 +300,22 @@
           }
         });
       },
-      _reject: function () {
-        var data = {
-          id: this.data.id,
-          company_taxno: this.data.company_taxno,
-          doc_status: true
-        }
-        this.fire('toast', {
-          status: 'openDialog',
-          text: 'คุณต้องการจะส่งเอกสารใหม่ใช่หรือไม่ ?',
-          confirmed: (result) => {
-            if (result == true) {
-              this.dispatchAction('CONFIRM_COMPANY_REJECT', data);
-            }
-          }
-        });
-      },
+      // _reject: function () {
+      //   var data = {
+      //     id: this.data.id,
+      //     company_taxno: this.data.company_taxno,
+      //     doc_status: true
+      //   }
+      //   this.fire('toast', {
+      //     status: 'openDialog',
+      //     text: 'คุณต้องการจะส่งเอกสารใหม่ใช่หรือไม่ ?',
+      //     confirmed: (result) => {
+      //       if (result == true) {
+      //         this.dispatchAction('CONFIRM_COMPANY_REJECT', data);
+      //       }
+      //     }
+      //   });
+      // },
       _checkData: function (data) {
         if (typeof data !== 'undefined') {
           if (Object.keys(data).length > 0) {
@@ -307,8 +328,18 @@
       //--------------------------------------------------------------------------------
 
       _search: function () {
+        console.log(this.dataTypeSet);
         if (this.company_taxno != '') {
-          this.dispatchAction('CONFIRM_SEARCH', this.company_taxno);
+          if (this.dataTypeSet.data === 'registerdraft') {
+            console.log(1);
+            this.dispatchAction('CONFIRM_SEARCH', this.company_taxno);
+          } else if (this.dataTypeSet.data === 'renewdraft') {
+            console.log(2);
+            this.dispatchAction('CONFIRM_RENEW', this.company_taxno);
+          } else {
+            console.log(3);
+          }
+          
 
           this.queryFrom('.searchForm').map((el) => { el.reset(); });
         }
@@ -316,6 +347,22 @@
           this.fire('toast', { status: 'connectError', text: 'กรุณากรอกเลขประจำตัวผู้ส่งออก' })
         }
       },
+      waitDoc() {
+        let idLic_type = this.resultCompany.lic_type_id
+        let data = JSON.parse(JSON.stringify(this.resultCompany))
+        // console.log(this.resultCompany);
+        let lic_type = data.lic_type.find((item) => item.id === idLic_type)
+        data.lic_type = lic_type
+        console.log(data);
+      },
+      waitaApprove() {
+        let idLic_type = this.resultCompany.lic_type_id
+        let data = JSON.parse(JSON.stringify(this.resultCompany))
+        // console.log(this.resultCompany);
+        let lic_type = data.lic_type.find((item) => item.id === idLic_type)
+        data.lic_type = lic_type
+        console.log(data);
+      }
     });
   </script>
 </dom-module>

@@ -173,8 +173,10 @@
       behaviors: [ReduxBehavior, ValidateFormBehavior],
       properties: {
         data: {
-          statePath: 'confirm.data',
-          notify:true
+          // statePath: 'confirm.data',
+          // notify:true
+          type:Object,
+          value:{}
         },
         localize: {
           statePath: 'i18n.exporter'

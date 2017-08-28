@@ -554,33 +554,30 @@
         }
       },
       obDraftStatus: function (data, doc_status, approve_status) {
-        console.log(data, doc_status, approve_status);
         if (data == 'type') {
           return 'เปลี่ยนประเภทใบอนุญาต (รออนุมัติ)'
         }
-        if (data == 'extend') {
+        if (data == 'renew') {
           return 'ต่ออายุผู้ส่งออก (รออนุมัติ)'
         }
         if (data == 'sign') {
-          if (doc_status === true && approve_status === false) {
+          if (doc_status === false && approve_status === false) {
             return 'ลงทะเบียนผู้ส่งออก (ตรวจสอบเอกสาร)'
           }
-          else if (doc_status === true && approve_status === true) {
+          else if (doc_status === true && approve_status === false) {
             return 'ลงทะเบียนผู้ส่งออก (รออนุมัติ)'
-          } else {
-            return 'ลงทะเบียนผู้ส่งออก (รอตรวจสอบเอกสาร)'
           }
         }
       },
-      _disabledType: function (val) {
-        if (val == 'sign') {
-          return false
-        } else {
-          return true
-        }
-      },
+      // _disabledType: function (val) {
+      //   if (val == 'sign') {
+      //     return false
+      //   } else {
+      //     return true
+      //   }
+      // },
       checkStatusExtend: function (val) {
-        if (val == 'extend') {
+        if (val == 'renew') {
           return true
         } else {
           return false
@@ -588,6 +585,8 @@
       },
       // --------------------------------------------------------------------------------------
       registerdraft: function (e) {
+        this.dispatchAction('CONFIRM_SEARCH_RESET')
+        this.dispatchAction('CONFIRM_TYPE','registerdraft')
         console.log(1);
         this.$$('panel-right').open();
         this.set('titleName', 'สมัคร')
@@ -595,12 +594,16 @@
       renewdraft: function (e) {
         console.log(2);
         this.$$('panel-right').open();
+        this.dispatchAction('CONFIRM_SEARCH_RESET')
+        this.dispatchAction('CONFIRM_TYPE','renewdraft')
         this.set('titleName', 'ต่ออายุ')
       },
       changedraft: function (e) {
         console.log(3);
         this.$$('panel-right').open();
-        this.set('titleName', 'เปลี่ยนประเภท_')
+        this.dispatchAction('CONFIRM_SEARCH_RESET')
+        this.dispatchAction('CONFIRM_TYPE','changedraft')
+        this.set('titleName', 'เปลี่ยนประเภท')
       },
       changeDate(date) {
         let time = new Date(date)
