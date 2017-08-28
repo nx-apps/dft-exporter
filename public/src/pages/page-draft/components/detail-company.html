@@ -52,7 +52,7 @@
   </style>
   <template>
 
-    <template is="dom-if" if={{checkStatusExtend(data.draft_status)}}>
+    <!--<template is="dom-if" if={{checkStatusExtend(data.draft_status)}}>
       <div id="titleBg" class="boxNortify">
         <div id="titleExporter" class="title-head">
           <iron-icon icon="icons:info"></iron-icon> {{localize.request_change_expire}}</div>
@@ -63,7 +63,8 @@
         <div id="titleExporter" class="title-head">
           <iron-icon icon="icons:info"></iron-icon> {{localize.request_change_status}}</div>
       </div>
-    </template>
+    </template>-->
+<!--
     <div class="horizontal end-justified layout">
       <div class="text" style="text-align: right;">{{localize.status}} :
         <template is="dom-if" if={{!data.approve_status}}>
@@ -78,30 +79,22 @@
           </template>
         </template>
       </div>
-    </div>
-
-    <div class="horizontal start-justified layout">
-      <div class="flex"></div>
-      <div class="flex flex-padding">
-
-      </div>
-      <div class="flex"></div>
-    </div>
+    </div>-->
 
 
     <div class="title">{{localize.detail_data}}</div>
-    <gl-form-panel set-border="0">
+    <!--<gl-form-panel set-border="0">
       <div class="horizontal start-justified layout">
         <div class="flex">
           <template is="dom-if" if={{data.approve_status}}>
             <gl-form-input always-float-label label="{{localize.no_exporter_fullname}} :" value="{{data.exporter_no_name}}" disabled></gl-form-input>
           </template>
         </div>
-      </div>
+      </div>-->
 
       <div class="horizontal start-justified layout">
         <div class="flex flex-padding">
-          <gl-form-input always-float-label label="{{localize.tax_no}} :" value="{{data.company.company_taxno}}" disabled></gl-form-input>
+          <gl-form-input always-float-label label="{{localize.tax_no}} :" value="{{data.company_taxno}}" disabled></gl-form-input>
         </div>
         <div class="flex flex-padding">
           <gl-form-textarea always-float-label label="{{localize.name_company}} :" value="{{data.company.company_name_th}}" disabled></gl-form-textarea>
@@ -142,8 +135,8 @@
           <gl-form-dropdown-menu always-float-label style="width:60%;" class="checkValidate" label="{{localize.type_license}}" placeholder="{{localize.select_type}}"
             disabled="[[obItem(data.company_id)]]" required>
             <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.lic_type_id}}" name="lic_type_id">
-              <template is="dom-repeat" items={{licType}}>
-                <paper-item value="[[item.lic_type_id]]">{{item.lic_type_name}}</paper-item>
+              <template is="dom-repeat" items={{data.lic_type}}>
+                <paper-item value="[[item.id]]">{{item.lic_type_name}}</paper-item>
               </template>
             </paper-menu>
           </gl-form-dropdown-menu>
@@ -158,18 +151,18 @@
         <template is="dom-repeat" items="{{data.company.company_directors}}">
           <li>{{item.TitleNameTH}} {{item.FirstNameTH}} {{item.LastNameTH}}</li>
         </template>
-        <template is="dom-if" if={{data.company.company_directors}}>
+        <!--<template is="dom-if" if={{data.company_directors}}>
             <li>{{localize.no_list_board}}</li>
-        </template>
+        </template>-->
       </ol>
 
       <div class="horizontal end-justified layout">
         <div class="flex">
-          <template is="dom-if" if={{!data.register_status}}>
-            <template is="dom-if" if={{!data.doc_status}}>
+          <!--<template is="dom-if" if={{!data.register_status}}>-->
+            <!--<template is="dom-if" if={{!data.doc_status}}>-->
               <gl-form-input always-float-label always-float-label label="{{localize.note}} : " value="{{data.company_remark}}" disabled></gl-form-input>
-            </template>
-          </template>
+            <!--</template>-->
+          <!--</template>-->
         </div>
       </div>
     </gl-form-panel>
@@ -180,7 +173,8 @@
       behaviors: [ReduxBehavior, ValidateFormBehavior],
       properties: {
         data: {
-          statePath: 'confirm.data'
+          statePath: 'confirm.data',
+          notify:true
         },
         localize: {
           statePath: 'i18n.exporter'
@@ -188,6 +182,9 @@
         licType: {
           statePath: 'exporter.licType'
         }
+      },
+      __retiveData(){
+        return this.data
       },
       backPage: function () {
         this.fire('backPage');

@@ -41,7 +41,7 @@
 <link rel="import" href="../../layout/page-style.html">
 
 
-<dom-module id="page-daft">
+<dom-module id="page-draft">
   <style is="custom-style" include="page-style iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
     * {
       font-family: 'CSChatThaiUI', sans-serif;
@@ -168,13 +168,13 @@
 
       <div class="horizontal end-justified layout">
         <div>
-          <paper-button class="button-top gl-btn-success" raised on-tap="registerDaft"> สมัคร</paper-button>
+          <paper-button class="button-top gl-btn-success" raised on-tap="registerdraft"> สมัคร</paper-button>
         </div>
         <div>
-          <paper-button class="button-top gl-btn-primary" raised on-tap="renewDaft"> ต่ออายุ</paper-button>
+          <paper-button class="button-top gl-btn-primary" raised on-tap="renewdraft"> ต่ออายุ</paper-button>
         </div>
         <div>
-          <paper-button class="button-top gl-btn-warning" raised on-tap="changeDaft"> เปลี่ยนประเภท</paper-button>
+          <paper-button class="button-top gl-btn-warning" raised on-tap="changedraft"> เปลี่ยนประเภท</paper-button>
         </div>
       </div>
       </div>
@@ -222,7 +222,8 @@
                       <div class="text-table">[[indexNo(index)]]</div>
                     </td>
                     <td style="text-align:center">
-                      <gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]" disabled="{{_disabledType(item.draft_status)}}"></gl-form-input>
+                      {{item.exporter_no}}
+                      <!--<gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]" disabled="{{_disabledType(item.draft_status)}}"></gl-form-input>-->
                     </td>
                     <td on-tap="_selectData" data="[[item]]">
                       <div>{{item.company.company_name_th}}</div>
@@ -231,7 +232,7 @@
                       <div>{{item.lic_type.lic_type_name}}</div>
                     </td>
                     <td on-tap="_selectData" data="[[item]]">
-                      <div class="text-table">{{item.date_created}}</div>
+                      <div class="text-table">{{changeDate(item.date_created)}}</div>
                     </td>
                     <td on-tap="_selectData" data="[[item]]">
                       <div>{{obDraftStatus(item.draft_status, item.doc_status, item.approve_status)}}</div>
@@ -345,7 +346,7 @@
   </template>
   <script>
     Polymer({
-      is: "page-daft",
+      is: "page-draft",
       properties: {
         pages: {
           type: String,
@@ -523,7 +524,7 @@
         if (this.companyId != '') {
           this.dispatchAction('CONFIRM_SEARCH', this.companyId);
           this.pageSelected = "register";
-          
+
           this.queryFrom('.searchForm').map((el) => { el.reset(); });
         }
         else {
@@ -553,6 +554,7 @@
         }
       },
       obDraftStatus: function (data, doc_status, approve_status) {
+        console.log(data, doc_status, approve_status);
         if (data == 'type') {
           return 'เปลี่ยนประเภทใบอนุญาต (รออนุมัติ)'
         }
@@ -565,6 +567,8 @@
           }
           else if (doc_status === true && approve_status === true) {
             return 'ลงทะเบียนผู้ส่งออก (รออนุมัติ)'
+          } else {
+            return 'ลงทะเบียนผู้ส่งออก (รอตรวจสอบเอกสาร)'
           }
         }
       },
@@ -583,21 +587,27 @@
         }
       },
       // --------------------------------------------------------------------------------------
-      registerDaft: function (e) {
+      registerdraft: function (e) {
         console.log(1);
         this.$$('panel-right').open();
-        this.set('titleName','สมัคร')
+        this.set('titleName', 'สมัคร')
       },
-      renewDaft: function (e) {
+      renewdraft: function (e) {
         console.log(2);
         this.$$('panel-right').open();
-        this.set('titleName','ต่ออายุ')
+        this.set('titleName', 'ต่ออายุ')
       },
-      changeDaft: function (e) {
+      changedraft: function (e) {
         console.log(3);
         this.$$('panel-right').open();
-        this.set('titleName','เปลี่ยนประเภท_')
+        this.set('titleName', 'เปลี่ยนประเภท_')
       },
+      changeDate(date) {
+        let time = new Date(date)
+        date = new Date(time.setHours(time.getHours() + 7)).toISOString()
+        date = date.split("T")[0]
+        return date
+      }
       // obData: function(val){
       //   // console.log(val)
       //   this.dispatchAction('CONFIRM_OB_DATA', val.id)

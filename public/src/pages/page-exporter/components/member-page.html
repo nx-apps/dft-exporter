@@ -68,14 +68,14 @@
   <template>
     [[cloneDatas(data)]]
     <gl-form-panel set-border="0px">
-      <template is="dom-if" if={{data.expire_status}}>
+      <template is="dom-if" if={{data.export_status}}>
         <div id="titleBg" class="boxNortify">
           <div id="titleExporter" class="title">
             <iron-icon icon="icons:info"></iron-icon> {{localize.change_expire}}</div>
         </div>
       </template>
 
-      <template is="dom-if" if={{!data.expire_status}}>
+      <!--<template is="dom-if" if={{!data.expire_status}}>-->
         <template is="dom-if" if={{!data.export_status}}>
           <div id="titleBg" class="boxNortify">
             <div id="titleExporter" class="title">
@@ -85,7 +85,7 @@
             <paper-button id="buttomActive" raised class="gl-btn-warning button" on-tap="_dialogRemark" title="{{localize.bt_exporter_extend}}">{{localize.bt_exporter_extend}}</paper-button>
           </div>
         </template>
-      </template>
+      <!--</template>-->
 
       <template is="dom-if" if={{data.export_status}}>
         <template is="dom-if" if={{checkstatus(data.draft_status)}}>
@@ -95,7 +95,7 @@
           </div>
         </template>
       </template>
-      <template is="dom-if" if={{!data.expire_status}}>
+      <!--<template is="dom-if" if={{!data.expire_status}}>-->
         <template is="dom-if" if={{data.export_status}}>
           <template is="dom-if" if={{!checkstatus(data.draft_status)}}>
             <div class="horizontal end-justified layout">
@@ -108,7 +108,7 @@
             </div>
           </template>
         </template>
-      </template>
+      <!--</template>-->
       <div class="bd">
         <gl-form-panel>
           <paper-tabs selected="{{pages}}" align-bottom no-slide class="tabs">
@@ -271,7 +271,8 @@
               newData.draft_status = 'extend'
               let newData2 = {};
               newData2.id = this.data.id;
-              newData2.expire_status = true;
+              // newData2.export_status = true;
+              // newData2.expire_status = true;
               this.dispatchAction('EXPORTER_ACTIVE_RENEW', newData, newData2);
               this.$.dialog.toggle();
             }

@@ -119,8 +119,8 @@
   <template>
     <div class="horizontal layout center center-justified searchBox searchBorder" style="margin-top:10px;">
       {{localize.tax_no}} :
-      <gl-form-input type="search" class="searchForm"style="width:300px;"  value="{{companyId}}"
-        no-label-float allowed-pattern="[0-9]" maxlength="13" on-search="_search">
+      <gl-form-input type="search" class="searchForm" style="width:300px;" value="{{company_taxno}}" no-label-float allowed-pattern="[0-9]"
+        maxlength="13" on-search="_search">
       </gl-form-input>
       <paper-button class="gl-btn-info btn" raised on-tap="_search">{{localize.bt_search}}</paper-button>
     </div>
@@ -144,7 +144,7 @@
 
         <section id="content1">
           <gl-form-panel>
-            <detail-company></detail-company>
+            <detail-company id="detailCompany" data={{resultCompany}}></detail-company>
           </gl-form-panel>
         </section>
 
@@ -175,20 +175,20 @@
 
     <div class="horizontal end-justified layout" style="margin:10px">
 
-      <template is="dom-if" if={{data.register_status}}>
-        <paper-button raised class="gl-btn-primary" on-tap="_register">
-          <iron-icon icon="add"></iron-icon>{{localize.bt_register}}</paper-button>
-      </template>
+      <!--<template is="dom-if" if={{data.register_status}}>-->
+      <paper-button raised class="gl-btn-primary" on-tap="_register">
+        <iron-icon icon="add"></iron-icon>{{localize.bt_register}}</paper-button>
+      <!--</template>-->
 
 
-      <template is="dom-if" if={{_checkData(data)}}>
+      <!--<template is="dom-if" if={{_checkData(data)}}>
         <template is="dom-if" if={{!data.register_status}}>
           <template is="dom-if" if={{!data.doc_status}}>
             <paper-button raised class="gl-btn-primary" on-tap="_reject">
               <iron-icon icon="add"></iron-icon>{{localize.bt_sent_new}}</paper-button>
           </template>
         </template>
-      </template>
+      </template>-->
 
 
     </div>
@@ -210,43 +210,68 @@
         localize: {
           statePath: 'i18n.exporter'
         },
-        companyId: {
+        company_taxno: {
           type: Number,
         },
         isShow: {
           type: Boolean,
           value: false
-        }
+        },
+        resultCompany: {
+          type: Object,
+          observer: 'checkSelectType'
+        },
+        // btnInsertStatus:{
+        //   type: Boolean,
+        //   value: true
+        // }
       },
       listeners: {
         'refresh-exporterTrader': 'getExporterTrader'
       },
       checkHaveData(data) {
         // console.log(data.doc_status_name);
-        if (data.doc_status_name !== undefined && data.doc_status_name !== '') {
-          this.set('isShow', true)
-        } else {
-          this.set('isShow', false)
-        }
+        // if (data.doc_status_name !== undefined && data.doc_status_name !== '') {
+        this.set('isShow', true)
+        // } else {
+        // this.set('isShow', false)
+        // }
       },
+      // checkSelectType(data){
+      //   console.log(data);
+      // },
       _register: function () {
-        var data = {
-          approve_status: false,
-          company_id: this.data.company.id,
-          company_taxno: this.data.company.company_taxno,
-          doc_status: true,
-          draft_status: 'sign',
-          lic_type_id: this.data.lic_type_id
-        }
+        // console.log(this.$.detailCompany)
+
+        // // this.set('result.lic_type',lic_type)
+
         this.fire('toast', {
           status: 'openDialog',
           text: 'คุณต้องการจะสมัครผู้ส่งออกใช่หรือไม่ ?',
           confirmed: (result) => {
             if (result == true) {
+              let idLic_type = this.resultCompany.lic_type_id
+              let data = JSON.parse(JSON.stringify(this.resultCompany))
+              // console.log(this.resultCompany);
+              let lic_type = data.lic_type.find((item) => item.id === idLic_type)
+              data.lic_type = lic_type
               var check = this.$$('detail-company').validate();
               if (check == true) {
-                this.dispatchAction('CONFIRM_REGISTER', data);
-                this.$$('detail-company').resetValidate();
+                this.dispatchAction('CONFIRM_REGISTER', data)
+                  .then((res) => {
+                    this.fire('toast', {
+                      status: 'success', text: 'ลงทะเบียนสำเร็จ', callback: () => {
+                        this.dispatchAction('CONFIRM_GET_DATA');
+                      }
+                    });
+                    console.log(res);
+                    
+                  })
+                  .catch((err) => {
+                    this.fire('toast', { status: 'connectError', text: 'ไม่สามารถลงทะเบียนได้' });
+                    console.log(err);
+                  })
+                //   this.$$('detail-company').resetValidate();
               } else {
                 this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' });
               }
@@ -282,8 +307,8 @@
       //--------------------------------------------------------------------------------
 
       _search: function () {
-        if (this.companyId != '') {
-          this.dispatchAction('CONFIRM_SEARCH', this.companyId);
+        if (this.company_taxno != '') {
+          this.dispatchAction('CONFIRM_SEARCH', this.company_taxno);
 
           this.queryFrom('.searchForm').map((el) => { el.reset(); });
         }
