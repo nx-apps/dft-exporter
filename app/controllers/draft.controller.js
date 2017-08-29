@@ -133,5 +133,21 @@ function insertExporter(id) {
         })
 }
 exports.getRenew = function (req, res) {
-
+    company.getCompany([req.query.company_taxno], function (companyData) {
+        if (companyData.length > 0 && companyData[0].hasOwnProperty('company_name_th')) {
+            r.expr({ company: companyData[0], company_taxno: req.query.company_taxno })
+                .merge({
+                    lic_type: r.table('exporter')
+                        .getAll([req.query.company_taxno, false, false], { index: 'taxNoAndExportStatusAndCloseStatus' })
+                        .getField('lic_type')
+                        .coerceTo('array')
+                })
+                .run()
+                .then(function (data) {
+                    res.json(data)
+                })
+        } else {
+            res.json({});
+        }
+    })
 }
