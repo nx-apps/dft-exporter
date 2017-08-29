@@ -51,8 +51,8 @@ exports.postInsert = function (req, res) {
                 date_updated: r.now().inTimezone('+07'),
                 creater: 'admin',
                 updater: 'admin',
-                doc_status: null,
-                approve_status: false,
+                doc_status: (req.body.lic_type_id != "BORDER" ? null : true),
+                approve_status: (req.body.lic_type_id != "BORDER" ? false : true),
                 draft_status: 'sign',
                 exporter_no: exporterNo,
                 remark: []
@@ -60,7 +60,12 @@ exports.postInsert = function (req, res) {
             r.table('draft').insert(obj)
                 .run()
                 .then(function (data) {
-                    res.json(data)
+                    if (req.body.lic_type_id == "BORDER") {
+                        res.json(insertExporter(data.generated_keys[0]));
+                    } else {
+                        res.json(data)
+                    }
+
                 })
         } else {
             res.json(req.ajv.errorsText());
@@ -91,31 +96,42 @@ exports.putInsert = function (req, res) {
         )
             .run()
             .then(function (data) {
-                if (typeof req.body.approve_status !== 'undefined' && req.body.approve_status === true && !data.hasOwnProperty('error')) {
-                    r.table('exporter').insert(
-                        r.table('draft').get(req.body.id).merge(function (m) {
-                            var dateNow = r.now().inTimezone('+07');
-                            return {
-                                draft_id: m('id'),
-                                date_approve: dateNow.date(),
-                                date_load: dateNow.date(),
-                                date_expire: r.time(dateNow.year().add(1), dateNow.month(), dateNow.day(), '+07:00'),
-                                export_status: true,
-                                date_created: dateNow,
-                                date_updated: dateNow,
-                                close_status: false,
-                                creater: 'admin',
-                                updater: 'admin'
-                            }
-                        }).without('id', 'approve_status', 'doc_status')
-                    )
-                        .run()
-                        .then(function (data) {
-                            res.json(data)
-                        })
-                } else res.json(data);
+                if (typeof req.body.approve_status !== 'undefined' && req.body.approve_status === true && !data.hasOwnProperty('error'))
+                    res.json(insertExporter(req.body.id));
+                else
+                    res.json(data);
             })
     } else {
         res.json('error: "id" is empty!');
     }
+}
+function insertExporter(id) {
+    r.table('exporter').insert(
+        r.table('draft').get(id).merge(function (m) {
+            var dateNow = r.now().inTimezone('+07');
+            return {
+                draft_id: m('id'),
+                date_approve: dateNow.date(),
+                date_load: dateNow.date(),
+                date_expire: r.branch(
+                    m('lic_type_id').eq('BORDER'),
+                    r.ISO8601('9999-12-31T00:00:00+07:00'),
+                    r.time(dateNow.year().add(1), dateNow.month(), dateNow.day(), '+07:00')
+                ),
+                export_status: true,
+                date_created: dateNow,
+                date_updated: dateNow,
+                close_status: false,
+                creater: 'admin',
+                updater: 'admin'
+            }
+        }).without('id', 'approve_status', 'doc_status')
+    )
+        .run()
+        .then(function (data) {
+            return data
+        })
+}
+exports.getRenew = function (req, res) {
+
 }

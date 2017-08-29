@@ -6,6 +6,6 @@ module.exports = function (app) {
         .get(controller.getInsert)
         .post(controller.postInsert)
         .put(controller.putInsert);
-    // app.route('/renew')
-    //     .get(controller.getRenew);
+    app.route('/renew')
+        .get(controller.getRenew);
 }
