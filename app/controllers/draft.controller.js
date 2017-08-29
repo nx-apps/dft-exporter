@@ -44,7 +44,7 @@ exports.postInsert = function (req, res) {
                     : r.table('draft').getAll(['BORDER', 'sign'], { index: 'licTypeIdAndDraftStatus' })
             );
             var exporterNo = r.branch(
-                draftSign.count().eq(0), 1, draftSign.max('exporter_no')
+                draftSign.count().eq(0), 1, draftSign.max('exporter_no')('exporter_no')
             );
             var obj = Object.assign(req.body, {
                 date_created: r.now().inTimezone('+07'),
