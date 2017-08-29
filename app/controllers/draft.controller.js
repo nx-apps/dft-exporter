@@ -46,7 +46,6 @@ exports.postInsert = function (req, res) {
             var exporterNo = r.branch(
                 draftSign.count().eq(0), 1, draftSign.max('exporter_no')
             );
-            console.log(req.body)
             var obj = Object.assign(req.body, {
                 date_created: r.now().inTimezone('+07'),
                 date_updated: r.now().inTimezone('+07'),
