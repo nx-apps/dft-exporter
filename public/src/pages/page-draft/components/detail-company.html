@@ -134,12 +134,12 @@
       <div class="horizontal start-justified layout">
         <div class="flex-4">
           <gl-form-dropdown-menu always-float-label style="width:60%;" class="checkValidate" label="{{localize.type_license}}" placeholder="{{localize.select_type}}"
-            disabled="[[obItem(data.company_id)]]" required>
+            disabled="[[obItem(data.company_id)]]" required >
             <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.lic_type_id}}" name="lic_type_id">
-              <template is="dom-repeat" items={{data.lic_type}}>
+              <template is="dom-repeat" items={{lic_type_array}}>
                 <paper-item value="[[item.id]]">{{item.lic_type_name}}</paper-item>
               </template>
-            </paper-menu>
+            </paper-menu> 
           </gl-form-dropdown-menu>
         </div>
         <div class="flex-8"> </div>
@@ -184,14 +184,31 @@
           // statePath: 'confirm.data',
           // notify:true
           type: Object,
-          value: {}
+          value: {},
+          observer:'checkIsArray'
         },
         localize: {
           statePath: 'i18n.exporter'
         },
+        lic_type_object:{
+          type: Object,
+          value: {},
+        },
+        lic_type_array:{
+          type: Array,
+          value: [],
+        }
         // licType: {
         //   statePath: 'exporter.licType'
         // }
+      },
+      checkIsArray(data){
+        if (Array.isArray(data.lic_type)) {
+          this.set('lic_type_array',data.lic_type)
+        }else {
+          this.set('lic_type_object',data.lic_type)
+        }
+        console.log();
       },
       __retiveData() {
         return this.data

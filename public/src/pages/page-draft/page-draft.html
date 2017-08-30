@@ -295,7 +295,7 @@
                     <div class="text-table">[[indexNo(index)]]</div>
                   </td>
                   <td style="text-align:center">
-                    {{item.lic_type.lic_type_prefix}}{{item.exporter_no.exporter_no}}
+                    {{item.lic_type.lic_type_prefix}}{{item.exporter_no}}
                   </td>
                   <td on-tap="_selectData" data="[[item]]">
                     <div>{{item.company.company_name_th}}</div>
@@ -406,6 +406,10 @@
           </div>
           <div name="renew">
             <register-page></register-page>
+          </div>
+          <div name="changedraft">
+            ๅๅๅ
+              <register-page></register-page>
           </div>
         </iron-pages>
       </div>
@@ -695,6 +699,8 @@
       },
       changedraft: function (e) {
         console.log(3);
+        this.set('layerContent', 'changedraft')
+        
         this.$$('panel-right').open();
         this.dispatchAction('CONFIRM_SEARCH_RESET')
         this.dispatchAction('CONFIRM_TYPE', 'changedraft')
