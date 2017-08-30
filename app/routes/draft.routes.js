@@ -1,7 +1,7 @@
 module.exports = function (app) {
     var controller = require('../controllers/draft.controller');
     app.get(['/', '/list'], controller.list);
-    app.get('/get',controller.getId);
+    app.get('/get', controller.getId);
     app.route('/insert')
         .get(controller.getInsert)
         .post(controller.postInsert)
@@ -10,5 +10,6 @@ module.exports = function (app) {
         .get(controller.getRenew)
         .put(controller.putRenew);
     app.route('/change')
-        .get(controller.getChange);
+        .get(controller.getChange)
+        .put(controller.putChange);
 }

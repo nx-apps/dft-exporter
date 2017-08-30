@@ -233,36 +233,48 @@ exports.getChange = function (req, res) {
             res.json(data)
         })
 }
-
-   // company.getCompany([company_taxno], function (companyData) {
-        //     if (companyData.length > 0 && companyData[0].hasOwnProperty('company_name_th')) {
-        //         r.expr({ company: companyData[0], company_taxno: company_taxno })
-        //             .merge({
-        //                 // date_created: r.now().inTimezone('+07'),
-        //                 // date_updated: r.now().inTimezone('+07'),
-        //                 // creater: 'admin',
-        //                 // updater: 'admin',
-        //                 lic_type: r.table('license_type').get('NORMAL'),
-        //                 lic_type_id: 'NORMAL',
-        //                 draft_status: 'change',
-        //                 // doc_status: null,
-        //                 // approve_status: false,
-        //                 exporter_no: exporterPack(0)('exporter_no'),
-        //                 remark: []
-        //             })
-        //             // exporterPack.update({
-        //             //     close_status: true,
-        //             //     export_status: false,
-        //             //     date_updated: r.now().inTimezone('+07'),
-        //             //     updater: 'admin'
-        //             // }).do(function (d) {
-        //             //     return r.table('draft').insert(draftInsert)
-        //             // })
-        //             .run()
-        //             .then(function (data) {
-        //                 res.json(data)
-        //             })
-        //     } else {
-        //         res.json({});
-        //     }
-        // })
+exports.putChange = function (req, res) {
+    var companyTaxno = req.body.company_taxno;
+    var exporter = r.table('exporter').get(req.body.exporter_id);
+    r.branch(
+        exporter.eq(null), "ไม่พบข้อมูลกรุณาติดต่อเจ้าหน้าที่ {id:null}", "ok"
+    ).run()
+        .then(function (data) {
+            if (data == "ok") {
+                company.getCompany([companyTaxno], function (companyData) {
+                    if (companyData.length > 0 && companyData[0].hasOwnProperty('company_name_th')) {
+                        var draftInsert = r.expr({ company: companyData[0], company_taxno: companyTaxno })
+                            .merge({
+                                date_created: r.now().inTimezone('+07'),
+                                date_updated: r.now().inTimezone('+07'),
+                                creater: 'admin',
+                                updater: 'admin',
+                                lic_type: r.table('license_type').get('NORMAL'),
+                                lic_type_id: 'NORMAL',
+                                draft_status: 'change',
+                                doc_status: null,
+                                approve_status: false,
+                                exporter_no: exporter('exporter_no'),
+                                remark: req.body.remark
+                            });
+                        exporter.update({
+                            close_status: true,
+                            export_status: false,
+                            date_updated: r.now().inTimezone('+07'),
+                            updater: 'admin'
+                        }).do(function (d) {
+                            return r.table('draft').insert(draftInsert)
+                        })
+                            .run()
+                            .then(function (data) {
+                                res.json(data)
+                            })
+                    } else {
+                        res.json("ไม่มีข้อมูลบริษัทกรุณาติดต่อเจ้าหน้าที่ {company_taxno:null}");
+                    }
+                })
+            } else {
+                res.json(data);
+            }
+        })
+}
