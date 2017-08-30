@@ -27,7 +27,6 @@
 <link rel="import" href="./../../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="./../../../bower_components/paper-item/paper-item.html">
 
-<link rel="import" href="./../../../bower_components/paper-dialog/paper-dialog.html">
 
 <link rel="import" href="../components/validateFormBehaviors.html">
 
@@ -224,9 +223,7 @@
       margin-right: 30px;
     }
 
-    table.gl-table-default {
-      
-    }
+    table.gl-table-default {}
 
     table.gl-table-default>tbody.table-body>tr>td {
       /*cursor: pointer;*/
@@ -379,6 +376,12 @@
                           <td>[[changeDate(item.date)]]</td>
                         </tr>
                       </template>
+
+                      <template is="dom-if" if={{checkArrayEmpty(resultCompany.remark)}}>
+                        <tr>
+                          <td colspan=3 style="text-align:center">ไม่มีข้อมูล</td>
+                        </tr>
+                      </template>
                     </tbody>
                   </table>
                   <div class="horizontal end-justified layout" style="margin:10px">
@@ -408,8 +411,7 @@
             <register-page></register-page>
           </div>
           <div name="changedraft">
-            ๅๅๅ
-              <register-page></register-page>
+            <register-page></register-page>
           </div>
         </iron-pages>
       </div>
@@ -494,6 +496,17 @@
         // this.pageSelected = 'listCompany';
         this.pages = 0;
         this.isHidden = false;
+      },
+      checkArrayEmpty(arr) {
+        // console.log(arr);
+        if (arr === undefined || arr.length === 0) {
+          // console.log(1);
+          return true
+        } else {
+          // console.log(2);
+          return false
+        }
+        // console.log(arr);
       },
       // _pass: function () {
       //   var data = {
@@ -647,21 +660,21 @@
         }
       },
       obDraftStatus: function (data, doc_status, approve_status) {
-        if (data == 'type') {
+        if (data == 'change') {
           return 'เปลี่ยนประเภทใบอนุญาต (รออนุมัติ)'
         }
         if (data == 'renew') {
-          return 'ต่ออายุผู้ส่งออก (รออนุมัติ)'
+          return 'ต่ออายุ (รออนุมัติ)'
         }
         if (data == 'sign') {
           if (doc_status === false) {
             return 'เอกสารไม่ผ่าน'
           }
           if (doc_status === null && approve_status === false) {
-            return 'ลงทะเบียนผู้ส่งออก (ตรวจสอบเอกสาร)'
+            return 'ลงทะเบียน (ตรวจสอบเอกสาร)'
           }
           else if (doc_status === true && approve_status === false) {
-            return 'ลงทะเบียนผู้ส่งออก (รออนุมัติ)'
+            return 'ลงทะเบียน (รออนุมัติ)'
           }
         }
       },
@@ -700,7 +713,7 @@
       changedraft: function (e) {
         console.log(3);
         this.set('layerContent', 'changedraft')
-        
+
         this.$$('panel-right').open();
         this.dispatchAction('CONFIRM_SEARCH_RESET')
         this.dispatchAction('CONFIRM_TYPE', 'changedraft')
@@ -713,6 +726,12 @@
         return date
       },
       _docAndApproce(remarkText, diaText, isDoc) {
+        this.draftById.remark.map((item) => {
+          let time = new Date(item.date)
+          let date = new Date(time.setHours(time.getHours() + 7)).toISOString()
+          item.date = date.split("T")[0] + 'T00:00:00+07:00'
+          return item
+        })
         let remark = {
           msg: remarkText,
           date: new Date().toISOString().split('T')[0] + 'T00:00:00+07:00'

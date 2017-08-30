@@ -78,7 +78,7 @@ export function confirmAction(store) {
         },
         CONFIRM_CHANGE_DRAFT: function (company_taxno) {
             this.fire('toast', { status: 'load', text: 'กำลังค้นหาข้อมูล...' })
-            axios.get('./draft/renew?company_taxno=' + company_taxno)
+            axios.get('./draft/change?company_taxno=' + company_taxno)
                 .then((response) => {
                     // console.log(response.data)
                     if (response.data.hasOwnProperty('company_taxno')) {
@@ -215,8 +215,12 @@ export function confirmAction(store) {
             return axios.post('./draft/insert?company_taxno=' + company.company_taxno, company)
         },
         CONFIRM_RENEW_UPDATE: function (company) {
-            console.log(company);
+            // console.log(company);
             return axios.put('./draft/renew', company)
+        },
+        CONFIRM_CHANGE_DRAFT_UPDATE: function (company) {
+            // console.log(company);
+            return axios.put('./draft/change', company)
         },
         CONFIRM_REGISTER_APPROVE: (data) => {
             console.log(data);

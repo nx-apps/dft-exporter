@@ -1,7 +1,7 @@
 <link rel="import" href="detail-company.html">
 <link rel="import" href="fileup-company.html">
 <link rel="import" href="./../../components/validateFormBehaviors.html">
-
+<link rel="import" href="./../../../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../../redux-behavior.html">
 
 <dom-module id="register-page">
@@ -181,7 +181,7 @@
         <paper-button raised class="gl-btn-primary" on-tap="_renew">
           <iron-icon icon="add"></iron-icon>ต่ออายุ</paper-button>
 
-        <paper-button raised class="gl-btn-primary" on-tap="_draftChange">
+        <paper-button raised class="gl-btn-primary" on-tap="draftChangeFn">
           <iron-icon icon="add"></iron-icon>เปลี่ยนประเภท</paper-button>
         <!--<template is="dom-if" if={{_checkData(data)}}>
         <template is="dom-if" if={{!data.register_status}}>
@@ -195,6 +195,18 @@
 
       </div>
     </template>
+    <paper-dialog id="changeDraft">
+      <h2>เหตุผล</h2>
+      <paper-dialog-scrollable>
+        <div style="margin:10px 30px;">
+          <gl-form-input label="เหตุผล" value="{{docReason}}"></gl-form-input>
+        </div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss raised class="gl-btn-defalse">ปิด</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="_draftChange" raised class="gl-btn-primary">ตกลง</paper-button>
+      </div>
+    </paper-dialog>
   </template>
   <script>
     Polymer({
@@ -235,6 +247,10 @@
           type: Object,
           // observer: 'checkSelectType'
         },
+        docReason: {
+          type: String,
+          value: 'ขอเปลี่ยนประเภท'
+        }
         // btnInsertStatus:{
         //   type: Boolean,
         //   value: true
@@ -250,8 +266,13 @@
 
           if (data.lic_type.length === 0) {
             this.set('isShow', false)
-            // console.log(111);
-            this.fire('toast', { status: 'connectError', text: 'สมัครครบแล้ว', callback: () => { } })
+            if (this.dataTypeSet === 'registerdraft') {
+              this.fire('toast', { status: 'connectError', text: 'สมัครครบแล้ว', callback: () => { } })
+            } else if (this.dataTypeSet === 'renewdraft') {
+              this.fire('toast', { status: 'connectError', text: 'ยังไม่รายการที่หมดอายุ', callback: () => { } })
+            } else {
+              this.fire('toast', { status: 'connectError', text: 'ไม่มีข้อมูล', callback: () => { } })
+            }
           } else {
             this.set('isShow', true)
             this.set('resultCompany', data)
@@ -329,7 +350,7 @@
                   lic_type: lic_type,
                   company_taxno: this.resultCompany.company_taxno
                 }
-                console.log(1111);
+                console.log();
                 this.dispatchAction('CONFIRM_RENEW_UPDATE', newData)
                   .then((res) => {
                     this.fire('toast', {
@@ -352,42 +373,55 @@
           }
         });
       },
+      draftChangeFn() {
+        this.$.changeDraft.open()
+      },
       _draftChange() {
         this.fire('toast', {
           status: 'openDialog',
           text: 'คุณต้องการจะเปลี่ยนประเภท ใช่หรือไม่ ?',
           confirmed: (result) => {
             if (result == true) {
+              this.resultCompany.remark.map((item) => {
+                let time = new Date(item.date)
+                let date = new Date(time.setHours(time.getHours() + 7)).toISOString()
+                item.date = date.split("T")[0] + 'T00:00:00+07:00'
+                return item
+              })
+              let remark = {
+                msg: this.docReason,
+                date: new Date().toISOString().split('T')[0] + 'T00:00:00+07:00'
+              }
+              this.push('resultCompany.remark', remark)
               console.log(this.resultCompany);
 
-              // var check = this.$$('detail-company').validate();
-              // if (check == true) {
-              //   let idLic_type = this.resultCompany.lic_type_id
-              //   let data = JSON.parse(JSON.stringify(this.resultCompany))
-              //   let lic_type = data.lic_type.find((item) => item.id === idLic_type)
-              //   // console.log(lic_type);
-              //   let newData = {
-              //     lic_type: lic_type,
-              //     company_taxno: this.resultCompany.company_taxno
-              //   }
-              //   this.dispatchAction('CONFIRM_RENEW_UPDATE', newData)
-              //     .then((res) => {
-              //       this.fire('toast', {
-              //         status: 'success', text: 'ต่ออายุสำเร็จ', callback: () => {
-              //           this.dispatchAction('CONFIRM_GET_DATA');
-              //         }
-              //       });
-              //       // console.log(res);
+              var check = this.$$('detail-company').validate();
+              if (check == true) {
 
-              //     })
-              //     .catch((err) => {
-              //       this.fire('toast', { status: 'connectError', text: 'ไม่สามารถต่ออายุได้' });
-              //       console.log(err);
-              //     })
-              //   //   this.$$('detail-company').resetValidate();
-              // } else {
-              //   this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' });
-              // }
+                let newData = {
+                  id: this.resultCompany.id,
+                  company_taxno: this.resultCompany.company_taxno,
+                  remark: this.resultCompany.remark
+                }
+                // console.log(newData);
+                this.dispatchAction('CONFIRM_CHANGE_DRAFT_UPDATE', newData)
+                  .then((res) => {
+                    this.fire('toast', {
+                      status: 'success', text: 'ขอเปลี่ยนสำเร็จ', callback: () => {
+                        this.dispatchAction('CONFIRM_GET_DATA');
+                      }
+                    });
+                    // console.log(res);
+
+                  })
+                  .catch((err) => {
+                    this.fire('toast', { status: 'connectError', text: 'ไม่สามารถขอเปลี่ยนได้' });
+                    console.log(err);
+                  })
+                  this.$$('detail-company').resetValidate();
+              } else {
+                this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' });
+              }
             }
           }
         });
@@ -430,6 +464,7 @@
             this.dispatchAction('CONFIRM_RENEW', this.company_taxno);
           } else {
             console.log(3);
+            this.dispatchAction('CONFIRM_CHANGE_DRAFT', this.company_taxno);
           }
 
 
