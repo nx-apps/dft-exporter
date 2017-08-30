@@ -79,19 +79,22 @@ exports.putInsert = function (req, res) {
         r.branch(r.table('draft').get(req.body.id).eq(null),
             { error: 'This "id" is null.' },
             r.table('draft').get(req.body.id).update(function (u) {
-                return r.expr(req.body).merge({
-                    remark: r.branch(r.expr(req.body).hasFields('remark'),
-                        u('remark').merge(function (m) {
-                            return {
-                                date: r.branch(m.hasFields('date'),
-                                    r.ISO8601(m('date')).inTimezone('+07'),
-                                    r.now().inTimezone('+07')
-                                )
-                            }
-                        }).orderBy('date'),
-                        []
-                    )
-                })
+                return r.expr(req.body)
+                    .merge(function (m) {
+                        return {
+                            remark: r.branch(r.expr(req.body).hasFields('remark'),
+                                m('remark').merge(function (m2) {
+                                    return {
+                                        date: r.branch(m2.hasFields('date'),
+                                            r.ISO8601(m2('date')).inTimezone('+07'),
+                                            r.now().inTimezone('+07')
+                                        )
+                                    }
+                                }).orderBy('date'),
+                                []
+                            )
+                        }
+                    })
             })
         )
             .run()
