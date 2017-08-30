@@ -235,7 +235,7 @@ exports.getChange = function (req, res) {
 }
 exports.putChange = function (req, res) {
     var companyTaxno = req.body.company_taxno;
-    var exporter = r.table('exporter').get(req.body.exporter_id);
+    var exporter = r.table('exporter').get(req.body.id);
     r.branch(
         exporter.eq(null), "ไม่พบข้อมูลกรุณาติดต่อเจ้าหน้าที่ {id:null}", "ok"
     ).run()
