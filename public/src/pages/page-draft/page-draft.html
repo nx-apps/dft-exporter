@@ -223,6 +223,15 @@
       margin-left: 30px;
       margin-right: 30px;
     }
+
+    table.gl-table-default {
+      
+    }
+
+    table.gl-table-default>tbody.table-body>tr>td {
+      /*cursor: pointer;*/
+      padding: 10px 15px;
+    }
   </style>
   <template>
     <paper-material elevation="1" class="elevation">
@@ -354,7 +363,7 @@
               <section id="content1">
                 <gl-form-panel>
                   <detail-company id="detailCompany" data={{resultCompany}}></detail-company>
-                  <table class="gl-table-default">
+                  <table class="gl-table-default" style="width: 100%;border: 1px solid #ddd; margin: 20px 0px 10px 0px;">
                     <thead class="table-head">
                       <tr>
                         <th style="width :20%">ลำดับที่</th>
@@ -365,9 +374,9 @@
                     <tbody class="table-body">
                       <template is="dom-repeat" items="{{resultCompany.remark}}">
                         <tr>
-                          <td>[[index]]</td>
+                          <td>[[indexNo(index)]]</td>
                           <td>[[item.msg]]</td>
-                          <td>[[item.date]]</td>
+                          <td>[[changeDate(item.date)]]</td>
                         </tr>
                       </template>
                     </tbody>
@@ -396,7 +405,7 @@
             </main>
           </div>
           <div name="renew">
-              <register-page></register-page>
+            <register-page></register-page>
           </div>
         </iron-pages>
       </div>
@@ -422,10 +431,10 @@
           type: String,
           value: 0
         },
-        // pageSelected: {
-        //   type: String,
-        //   value: 'listCompany'
-        // },
+        layerContent: {
+          type: String,
+          value: 'register'
+        },
         selectDataAll: {
           type: Boolean,
           value: false,
@@ -678,7 +687,7 @@
       renewdraft: function (e) {
         console.log(2);
         this.set('layerContent', 'renew')
-        
+
         this.$$('panel-right').open();
         this.dispatchAction('CONFIRM_SEARCH_RESET')
         this.dispatchAction('CONFIRM_TYPE', 'renewdraft')
@@ -752,7 +761,7 @@
 
       },
       approveDoc() {
-        this._docAndApproce(this.docReason || '', 'เอกสารผ่านใช่รึไหม ?', { doc_status: true })
+        this._docAndApproce('เอกสารผ่าน' || '', 'เอกสารผ่านใช่รึไหม ?', { doc_status: true })
 
       },
       rejectApprove() {

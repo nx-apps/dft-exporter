@@ -317,7 +317,11 @@
                 let idLic_type = this.resultCompany.lic_type_id
                 let data = JSON.parse(JSON.stringify(this.resultCompany))
                 let lic_type = data.lic_type.find((item) => item.id === idLic_type)
-                let newData = { exporter_id: lic_type.exporter_id }
+                // console.log(lic_type);
+                let newData = { 
+                  lic_type: lic_type ,
+                  company_taxno: this.resultCompany.company_taxno
+                }
                 this.dispatchAction('CONFIRM_RENEW_UPDATE', newData)
                   .then((res) => {
                     this.fire('toast', {

@@ -193,7 +193,7 @@ export function confirmAction(store) {
         },
         CONFIRM_RENEW_UPDATE: function (company) {
             console.log(company);
-            // return axios.put('./draft/renew', company)
+            return axios.put('./draft/renew', company)
         },
         CONFIRM_REGISTER_APPROVE: (data) =>{
             console.log(data);
