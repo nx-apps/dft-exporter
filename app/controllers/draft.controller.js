@@ -215,8 +215,9 @@ exports.putRenew = function (req, res) {
     }
 }
 exports.getChange = function (req, res) {
-    var exporterPack = r.table('exporter').getAll([req.query.company_taxno, 'PACKAGE', true], { index: 'taxNoLicIdExportStatus' });
-    var draftNormal = r.table('draft').getAll([req.query.company_taxno, 'NORMAL'], { index: 'taxNoLicId' })
+    var company_taxno = req.query.company_taxno;
+    var exporterPack = r.table('exporter').getAll([company_taxno, 'PACKAGE', true], { index: 'taxNoLicIdExportStatus' });
+    var draftNormal = r.table('draft').getAll([company_taxno, 'NORMAL'], { index: 'taxNoLicId' })
     var checkDraft = r.branch(
         draftNormal.count().gt(0),
         { error: "มีการสมัครหรือเปลี่ยนประเภทเป็นทั่วไปแล้ว" },
