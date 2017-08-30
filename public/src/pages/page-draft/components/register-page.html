@@ -266,7 +266,7 @@
             } else if (this.dataTypeSet.data === 'renewdraft') {
               this.fire('toast', { status: 'connectError', text: 'ยังไม่รายการที่หมดอายุ', callback: () => { } })
             } else {
-              this.fire('toast', { status: 'connectError', text: 'ไม่มีข้อมูล', callback: () => { } })
+              this.fire('toast', { status: 'connectError', text: 'ไม่สามารถเปลี่ยนได้', callback: () => { } })
             }
           } else {
             if (this.dataTypeSet.data === 'registerdraft') {
