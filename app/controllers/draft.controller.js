@@ -232,8 +232,8 @@ exports.getChange = function (req, res) {
                         lic_type: r.table('license_type').get('NORMAL'),
                         lic_type_id: 'NORMAL',
                         draft_status: 'change',
-                        doc_status: null,
-                        approve_status: false,
+                        // doc_status: null,
+                        // approve_status: false,
                         exporter_no: exporterPack(0)('exporter_no'),
                         remark: []
                     })
