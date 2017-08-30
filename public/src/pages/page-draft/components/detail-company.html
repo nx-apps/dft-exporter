@@ -64,7 +64,7 @@
           <iron-icon icon="icons:info"></iron-icon> {{localize.request_change_status}}</div>
       </div>
     </template>-->
-<!--
+    <!--
     <div class="horizontal end-justified layout">
       <div class="text" style="text-align: right;">{{localize.status}} :
         <template is="dom-if" if={{!data.approve_status}}>
@@ -92,44 +92,45 @@
         </div>
       </div>-->
 
-      <div class="horizontal start-justified layout">
-        <div class="flex flex-padding">
-          <gl-form-input always-float-label label="{{localize.tax_no}} :" value="{{data.company_taxno}}" disabled></gl-form-input>
-        </div>
-        <div class="flex flex-padding">
-          <gl-form-textarea always-float-label label="{{localize.name_company}} :" value="{{data.company.company_name_th}}" disabled></gl-form-textarea>
-        </div>
-        <div class="flex">
-          <gl-form-textarea always-float-label label="{{localize.name_company}} ({{localize.eng}}) :" value="{{data.company.company_name_en}}"
-            disabled></gl-form-textarea>
-        </div>
+    <div class="horizontal start-justified layout">
+      <div class="flex flex-padding">
+        <gl-form-input always-float-label label="{{localize.tax_no}} :" value="{{data.company_taxno}}" disabled></gl-form-input>
       </div>
-
-      <div class="horizontal start-justified layout">
-        <div class="flex">
-          <gl-form-textarea always-float-label label="{{localize.address}} :" value="{{data.company.company_address_th}}" disabled></gl-form-textarea>
-        </div>
+      <div class="flex flex-padding">
+        <gl-form-textarea always-float-label label="{{localize.name_company}} :" value="{{data.company.company_name_th}}" disabled></gl-form-textarea>
       </div>
-
-      <div class="horizontal start-justified layout">
-        <div class="flex">
-          <gl-form-textarea always-float-label label="{{localize.address}} ({{localize.eng}}) :" value="{{data.company.company_address_en}}"
-            disabled></gl-form-textarea>
-        </div>
+      <div class="flex">
+        <gl-form-textarea always-float-label label="{{localize.name_company}} ({{localize.eng}}) :" value="{{data.company.company_name_en}}"
+          disabled></gl-form-textarea>
       </div>
+    </div>
 
-      <div class="horizontal start-justified layout">
-        <div class="flex flex-padding">
-          <gl-form-textarea always-float-label label="{{localize.email}} :" value="{{data.company.company_email}}" disabled></gl-form-textarea>
-        </div>
-        <div class="flex flex-padding">
-          <gl-form-textarea always-float-label label="{{localize.tel}} :" value="{{data.company.company_phone}}" disabled></gl-form-textarea>
-        </div>
-        <div class="flex">
-          <gl-form-input always-float-label label="{{localize.fax}} :" value="{{data.company.company_fax}}" disabled></gl-form-input>
-        </div>
+    <div class="horizontal start-justified layout">
+      <div class="flex">
+        <gl-form-textarea always-float-label label="{{localize.address}} :" value="{{data.company.company_address_th}}" disabled></gl-form-textarea>
       </div>
+    </div>
 
+    <div class="horizontal start-justified layout">
+      <div class="flex">
+        <gl-form-textarea always-float-label label="{{localize.address}} ({{localize.eng}}) :" value="{{data.company.company_address_en}}"
+          disabled></gl-form-textarea>
+      </div>
+    </div>
+
+    <div class="horizontal start-justified layout">
+      <div class="flex flex-padding">
+        <gl-form-textarea always-float-label label="{{localize.email}} :" value="{{data.company.company_email}}" disabled></gl-form-textarea>
+      </div>
+      <div class="flex flex-padding">
+        <gl-form-textarea always-float-label label="{{localize.tel}} :" value="{{data.company.company_phone}}" disabled></gl-form-textarea>
+      </div>
+      <div class="flex">
+        <gl-form-input always-float-label label="{{localize.fax}} :" value="{{data.company.company_fax}}" disabled></gl-form-input>
+      </div>
+    </div>
+    <!-- {{isObject(item)}} -->
+    <template is="dom-if" if={{isObject(data.lic_type)}}>
       <div class="horizontal start-justified layout">
         <div class="flex-4">
           <gl-form-dropdown-menu always-float-label style="width:60%;" class="checkValidate" label="{{localize.type_license}}" placeholder="{{localize.select_type}}"
@@ -143,28 +144,35 @@
         </div>
         <div class="flex-8"> </div>
       </div>
+    </template>
 
-      <div class="horizontal layout">
-        <div class="text">{{localize.list_board}}</div>
-      </div>
-      <ol> [[checkData(data)]]
-        <template is="dom-repeat" items="{{data.company.company_directors}}">
-          <li>{{item.TitleNameTH}} {{item.FirstNameTH}} {{item.LastNameTH}}</li>
-        </template>
-        <!--<template is="dom-if" if={{data.company_directors}}>
+    <template is="dom-if" if={{!isObject(data.lic_type)}}>
+      <gl-form-textarea always-float-label label="{{localize.type_license}} :" value="{{data.lic_type.lic_type_name}}" disabled></gl-form-textarea>
+    </template>
+
+
+
+    <div class="horizontal layout">
+      <div class="text">{{localize.list_board}}</div>
+    </div>
+    <ol>
+      <template is="dom-repeat" items="{{data.company.company_directors}}">
+        <li>{{item.TitleNameTH}} {{item.FirstNameTH}} {{item.LastNameTH}}</li>
+      </template>
+      <!--<template is="dom-if" if={{data.company_directors}}>
             <li>{{localize.no_list_board}}</li>
         </template>-->
-      </ol>
+    </ol>
 
-      <div class="horizontal end-justified layout">
-        <div class="flex">
-          <!--<template is="dom-if" if={{!data.register_status}}>-->
-            <!--<template is="dom-if" if={{!data.doc_status}}>-->
-              <gl-form-input always-float-label always-float-label label="{{localize.note}} : " value="{{data.company_remark}}" disabled></gl-form-input>
-            <!--</template>-->
-          <!--</template>-->
-        </div>
+    <div class="horizontal end-justified layout">
+      <div class="flex">
+        <!--<template is="dom-if" if={{!data.register_status}}>-->
+        <!--<template is="dom-if" if={{!data.doc_status}}>-->
+        <gl-form-input always-float-label always-float-label label="{{localize.note}} : " value="{{data.company_remark}}" disabled></gl-form-input>
+        <!--</template>-->
+        <!--</template>-->
       </div>
+    </div>
     </gl-form-panel>
   </template>
   <script>
@@ -175,21 +183,26 @@
         data: {
           // statePath: 'confirm.data',
           // notify:true
-          type:Object,
-          value:{}
+          type: Object,
+          value: {}
         },
         localize: {
           statePath: 'i18n.exporter'
         },
-        licType: {
-          statePath: 'exporter.licType'
-        }
+        // licType: {
+        //   statePath: 'exporter.licType'
+        // }
       },
-      __retiveData(){
+      __retiveData() {
         return this.data
       },
       backPage: function () {
         this.fire('backPage');
+      },
+      isObject(data) {
+        if (Array.isArray(data)) {
+          return true
+        }
       },
       obItem: function (val) {
         if (typeof val != 'undefined' && val != undefined) {

@@ -142,6 +142,13 @@ exports.getRenew = function (req, res) {
                 .merge({
                     lic_type: r.table('exporter')
                         .getAll([req.query.company_taxno, false, false], { index: 'taxNoAndExportStatusAndCloseStatus' })
+                        .merge(function (m) {
+                            return {
+                                lic_type: m('lic_type').merge(function (m2) {
+                                    return { exporter_id: m('id') }
+                                })
+                            }
+                        })
                         .getField('lic_type')
                         .coerceTo('array')
                 })

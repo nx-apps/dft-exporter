@@ -5,7 +5,8 @@ const initialState = {
     data: {},
     dataRenew: {},
     dataChange:{},
-    confirmType: {}
+    confirmType: {},
+    draftById:{}
 }
 export function confirmReducer(state = initialState, action) {
     switch (action.type) {
@@ -19,6 +20,8 @@ export function confirmReducer(state = initialState, action) {
             return Object.assign({}, state, { dataRenew: action.payload });
         case 'CONFIRM_CHANGE':
             return Object.assign({}, state, { dataChange: action.payload });
+        case 'CONFIRM_SEARCH_DRAFT':
+        return Object.assign({}, state, { draftById: action.payload });
         case 'CONFIRM_TYPE':
             return Object.assign({}, state, { confirmType: action.payload });
         default:
@@ -52,7 +55,7 @@ export function confirmAction(store) {
         },
         CONFIRM_RENEW: function (company_taxno) {
             this.fire('toast', { status: 'load', text: 'กำลังค้นหาข้อมูล...' })
-            axios.get('./draft/insert?company_taxno=' + company_taxno)
+            axios.get('./draft/renew?company_taxno=' + company_taxno)
                 .then((response) => {
                     // console.log(response.data)
                     if (response.data.hasOwnProperty('company_taxno')) {
@@ -69,6 +72,11 @@ export function confirmAction(store) {
                 .catch((err) => {
                     console.log(err)
                 })
+        },
+        // ใช้สำหรับยกเลิก ยืนยัน กับพวก  doc และ app
+        CONFIRM_DOC_AND_APPROVE: function(draft){
+            // console.log(draft);
+            return axios.put('./draft/insert',draft)
         },
         CONFIRM_CHANGE: function (company_taxno) {
             this.fire('toast', { status: 'load', text: 'กำลังค้นหาข้อมูล...' })
@@ -90,6 +98,21 @@ export function confirmAction(store) {
                     console.log(err)
                 })
         },
+        CONFIRM_SEARCH_DRAFT:function (idDraft){
+            this.fire('toast', { status: 'load', text: 'กำลังค้นหาข้อมูล...' })
+            axios.get('./draft/get?id=' + idDraft)
+            .then((response) => {
+                this.fire('toast', {
+                    status: 'success', text: 'โหลดข้อมูลสำเร็จ', callback: () => {
+                        store.dispatch({ type: 'CONFIRM_SEARCH', payload: response.data })
+                    }
+                })
+                store.dispatch({ type: 'CONFIRM_SEARCH_DRAFT', payload: response.data })
+            })
+            .catch((err) => {
+                console.log(err)
+            })    
+        },
         CONFIRM_SEARCH: function (company_taxno) {
             this.fire('toast', { status: 'load', text: 'กำลังค้นหาข้อมูล...' })
             axios.get('./draft/insert?company_taxno=' + company_taxno)
@@ -100,7 +123,7 @@ export function confirmAction(store) {
                             status: 'success', text: 'โหลดข้อมูลสำเร็จ', callback: () => {
                                 store.dispatch({ type: 'CONFIRM_SEARCH', payload: response.data })
                             }
-                        });
+                        })
                     } else {
                         this.fire('toast', { status: 'connectError', text: 'ไม่มีข้อมูลในระบบ' })
                         store.dispatch({ type: 'CONFIRM_SEARCH', payload: {} })
@@ -166,20 +189,14 @@ export function confirmAction(store) {
             // })
         },
         CONFIRM_REGISTER: function (company) {
-            // console.log(data);
-            // this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
             return axios.post('./draft/insert?company_taxno=' + company.company_taxno, company)
-            // axios.post('./external/confirm_exporter/register', data)
-            // .then((response) => {
-            //     this.fire('toast', {
-            //         status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-            //             this.CONFIRM_GET_DATA();
-            //             this.CONFIRM_SEARCH(data.company_taxno);
-            //             this.fire('back_page');
-            //             this.fire('clearData');
-            //         }
-            //     });
-            // });
+        },
+        CONFIRM_RENEW_UPDATE: function (company) {
+            console.log(company);
+            // return axios.put('./draft/renew', company)
+        },
+        CONFIRM_REGISTER_APPROVE: (data) =>{
+            console.log(data);
         },
         CONFIRM_ADMIN_REJECT: function (data) {
             // console.log(data);

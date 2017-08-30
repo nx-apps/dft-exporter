@@ -175,16 +175,11 @@
 
       <div class="horizontal end-justified layout" style="margin:10px">
 
-        <!--<template is="dom-if" if={{data.register_status}}>-->
         <paper-button raised class="gl-btn-primary" on-tap="_register">
           <iron-icon icon="add"></iron-icon>{{localize.bt_register}}</paper-button>
-        <!--</template>-->
-        <paper-button raised class="gl-btn-primary" on-tap="waitDoc">
-          <iron-icon icon="add"></iron-icon>รอตรวจเอกสาร</paper-button>
 
-        <paper-button raised class="gl-btn-primary" on-tap="waitaApprove">
-          <iron-icon icon="add"></iron-icon>รออนุมัติ</paper-button>
-
+        <paper-button raised class="gl-btn-primary" on-tap="_renew">
+          <iron-icon icon="add"></iron-icon>ต่ออายุ</paper-button>
         <!--<template is="dom-if" if={{_checkData(data)}}>
         <template is="dom-if" if={{!data.register_status}}>
           <template is="dom-if" if={{!data.doc_status}}>
@@ -245,10 +240,18 @@
 
         // console.log(data.hasOwnProperty('company_taxno'));
         if (data.hasOwnProperty('company_taxno')) {
-          this.set('isShow', true)
+
+          if (data.lic_type.length === 0) {
+            this.set('isShow', false)
+            // console.log(111);
+            this.fire('toast', { status: 'connectError', text: 'สมัครครบแล้ว', callback: () => { } })
+          } else {
+            this.set('isShow', true)
+            this.set('resultCompany', data)
+          }
           // if (this.dataTypeSet === 'registerdraft') {
           //   console.log(this.dataTypeSet);
-            this.set('resultCompany', data)
+
           // } else if (this.dataTypeSet === 'renewdraft') {
           //   console.log(this.dataTypeSet);
           //   this.set('resultCompany', data)
@@ -271,13 +274,14 @@
           text: 'คุณต้องการจะสมัครผู้ส่งออกใช่หรือไม่ ?',
           confirmed: (result) => {
             if (result == true) {
-              let idLic_type = this.resultCompany.lic_type_id
-              let data = JSON.parse(JSON.stringify(this.resultCompany))
-              // console.log(this.resultCompany);
-              let lic_type = data.lic_type.find((item) => item.id === idLic_type)
-              data.lic_type = lic_type
+
               var check = this.$$('detail-company').validate();
               if (check == true) {
+                let idLic_type = this.resultCompany.lic_type_id
+                let data = JSON.parse(JSON.stringify(this.resultCompany))
+                // console.log(this.resultCompany);
+                let lic_type = data.lic_type.find((item) => item.id === idLic_type)
+                data.lic_type = lic_type
                 this.dispatchAction('CONFIRM_REGISTER', data)
                   .then((res) => {
                     this.fire('toast', {
@@ -285,11 +289,47 @@
                         this.dispatchAction('CONFIRM_GET_DATA');
                       }
                     });
-                    console.log(res);
+                    // console.log(res);
 
                   })
                   .catch((err) => {
                     this.fire('toast', { status: 'connectError', text: 'ไม่สามารถลงทะเบียนได้' });
+                    console.log(err);
+                  })
+                //   this.$$('detail-company').resetValidate();
+              } else {
+                this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' });
+              }
+            }
+          }
+        });
+      },
+      _renew: function (data) {
+        this.fire('toast', {
+          status: 'openDialog',
+          text: 'คุณต้องการจะสมัครผู้ส่งออกใช่หรือไม่ ?',
+          confirmed: (result) => {
+            if (result == true) {
+              // console.log(this.resultCompany);
+
+              var check = this.$$('detail-company').validate();
+              if (check == true) {
+                let idLic_type = this.resultCompany.lic_type_id
+                let data = JSON.parse(JSON.stringify(this.resultCompany))
+                let lic_type = data.lic_type.find((item) => item.id === idLic_type)
+                let newData = { exporter_id: lic_type.exporter_id }
+                this.dispatchAction('CONFIRM_RENEW_UPDATE', newData)
+                  .then((res) => {
+                    this.fire('toast', {
+                      status: 'success', text: 'ต่ออายุสำเร็จ', callback: () => {
+                        this.dispatchAction('CONFIRM_GET_DATA');
+                      }
+                    });
+                    // console.log(res);
+
+                  })
+                  .catch((err) => {
+                    this.fire('toast', { status: 'connectError', text: 'ไม่สามารถต่ออายุได้' });
                     console.log(err);
                   })
                 //   this.$$('detail-company').resetValidate();
@@ -328,7 +368,7 @@
       //--------------------------------------------------------------------------------
 
       _search: function () {
-        console.log(this.dataTypeSet);
+        // console.log(this.dataTypeSet);
         if (this.company_taxno != '') {
           if (this.dataTypeSet.data === 'registerdraft') {
             console.log(1);
@@ -339,7 +379,7 @@
           } else {
             console.log(3);
           }
-          
+
 
           this.queryFrom('.searchForm').map((el) => { el.reset(); });
         }
@@ -354,6 +394,7 @@
         let lic_type = data.lic_type.find((item) => item.id === idLic_type)
         data.lic_type = lic_type
         console.log(data);
+        this.dispatchAction('CONFIRM_REGISTER_APPROVE', data)
       },
       waitaApprove() {
         let idLic_type = this.resultCompany.lic_type_id

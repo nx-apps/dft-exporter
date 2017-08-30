@@ -26,7 +26,12 @@
 <link rel="import" href="./../../../bower_components/gl-form/gl-form-input.html">
 <link rel="import" href="./../../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="./../../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="./../../../bower_components/paper-dialog/paper-dialog.html">
+
 <link rel="import" href="../components/validateFormBehaviors.html">
+
+<link rel="import" href="./components/detail-company.html">
 
 <link rel="import" href="../../redux-behavior.html">
 
@@ -157,6 +162,67 @@
       margin: 15px;
       border-radius: 3px;
     }
+
+    main {
+      padding: 5px;
+      margin: 0 auto;
+    }
+
+    section {
+      display: none;
+      border-top: 1px solid #ddd;
+    }
+
+    input {
+      display: none;
+    }
+
+    label {
+      display: inline-block;
+      margin: 0 0 -1px;
+      padding: 15px 25px;
+      font-weight: 600;
+      text-align: center;
+      color: #bbb;
+      border: 1px solid transparent;
+      background: #D5D8DC;
+    }
+
+    label:before {
+      font-family: fontawesome;
+      font-weight: normal;
+      margin-right: 10px;
+    }
+
+    label:hover {
+      color: #888;
+      cursor: pointer;
+    }
+
+    input:checked+label {
+      color: #555;
+      border: 1px solid #ddd;
+      border-top: 3px solid orange;
+      border-bottom: 1px solid #fff;
+      background: #fff;
+    }
+
+    #tab1:checked~#content1,
+    #tab2:checked~#content2 {
+      display: block;
+    }
+
+    detail-company,
+    fileup-company {
+      margin-top: 15px;
+      width: 98%;
+    }
+
+    .container {
+      display: inline-block;
+      margin-left: 30px;
+      margin-right: 30px;
+    }
   </style>
   <template>
     <paper-material elevation="1" class="elevation">
@@ -187,139 +253,67 @@
         </gl-form-input>
         <paper-button hidden="{{isHidden}}" class="gl-btn-info btn" raised on-tap="_search">{{localize.bt_search}}</paper-button>
       </div>
-      <iron-pages selected="{{pageSelected}}" attr-for-selected="name">
-        <div name="listCompany">
-          1
-          <div class="searchBorder" style="overflow-x:auto;">
-            <table class="gl-table-default">
-              <thead class="table-head">
-                <tr>
-                  <th>
-                    <div class="text-table">{{localize.No}}</div>
-                  </th>
-                  <th>
-                    <div class="text-table">{{localize.no_exporter_fullname}}</div>
-                  </th>
-                  <th>
-                    <div class="text-table">{{localize.name_company}}</div>
-                  </th>
-                  <th>
-                    <div class="text-table">{{localize.type_license}}</div>
-                  </th>
-                  <th>
-                    <div class="text-table">{{localize.date_register}}</div>
-                  </th>
-                  <th>
-                    <div class="text-table">{{localize.status}}</div>
-                  </th>
-                </tr>
-              </thead>
+      <div name="listCompany">
+        <div class="searchBorder" style="overflow-x:auto;">
+          <table class="gl-table-default">
+            <thead class="table-head">
+              <tr>
+                <th>
+                  <div class="text-table">{{localize.No}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.no_exporter_fullname}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.name_company}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.type_license}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.date_register}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.status}}</div>
+                </th>
+              </tr>
+            </thead>
 
-              <template is="dom-repeat" items="{{companys}}">
-                <tbody>
-                  <tr style="cursor:pointer;">
-                    <td>
-                      <div class="text-table">[[indexNo(index)]]</div>
-                    </td>
-                    <td style="text-align:center">
-                      {{item.exporter_no}}
-                      <!--<gl-form-input value="{{item.exporter_no}}" on-blur="changeNo" data="[[item]]" allowed-pattern="[0-9]" disabled="{{_disabledType(item.draft_status)}}"></gl-form-input>-->
-                    </td>
-                    <td on-tap="_selectData" data="[[item]]">
-                      <div>{{item.company.company_name_th}}</div>
-                    </td>
-                    <td on-tap="_selectData" data="[[item]]">
-                      <div>{{item.lic_type.lic_type_name}}</div>
-                    </td>
-                    <td on-tap="_selectData" data="[[item]]">
-                      <div class="text-table">{{changeDate(item.date_created)}}</div>
-                    </td>
-                    <td on-tap="_selectData" data="[[item]]">
-                      <div>{{obDraftStatus(item.draft_status, item.doc_status, item.approve_status)}}</div>
-                    </td>
-                  </tr>
-              </template>
-              <template is="dom-if" if={{_checkData(companys)}}>
-                <tr>
-                  <td colspan="6">
-                    <div class="text-table" style="margin:20px">{{localize.not_found}}</div>
+            <template is="dom-repeat" items="{{companys}}">
+              <tbody>
+                <tr style="cursor:pointer;">
+                  <td>
+                    <div class="text-table">[[indexNo(index)]]</div>
+                  </td>
+                  <td style="text-align:center">
+                    {{item.lic_type.lic_type_prefix}}{{item.exporter_no.exporter_no}}
+                  </td>
+                  <td on-tap="_selectData" data="[[item]]">
+                    <div>{{item.company.company_name_th}}</div>
+                  </td>
+                  <td on-tap="_selectData" data="[[item]]">
+                    <div>{{item.lic_type.lic_type_name}}</div>
+                  </td>
+                  <td on-tap="_selectData" data="[[item]]">
+                    <div class="text-table">{{changeDate(item.date_created)}}</div>
+                  </td>
+                  <td on-tap="_selectData" data="[[item]]">
+                    <div>{{obDraftStatus(item.draft_status, item.doc_status, item.approve_status)}}</div>
                   </td>
                 </tr>
-              </template>
-              </tbody>
-            </table>
-          </div>
+            </template>
+            <template is="dom-if" if={{_checkData(companys)}}>
+              <tr>
+                <td colspan="6">
+                  <div class="text-table" style="margin:20px">{{localize.not_found}}</div>
+                </td>
+              </tr>
+            </template>
+            </tbody>
+          </table>
         </div>
+      </div>
 
-        <div name="detailCompany">
-          2
-          <paper-tabs selected="{{pages}}" align-bottom no-slide class="tabs">
-            <paper-tab class="tab">{{localize.detail}}</paper-tab>
-            <paper-tab id="tabFile" class="tab">{{localize.doc_ev}}</paper-tab>
-          </paper-tabs>
-          <gl-form-panel>
-            <iron-pages selected="{{pages}}">
-              <detail-company></detail-company>
-              <fileup-company></fileup-company>
-            </iron-pages>
-          </gl-form-panel>
-
-          <div class="horizontal layout justified">
-            <div>
-              <template is="dom-if" if={{!data.approve_status}}>
-                <template is="dom-if" if={{data.doc_status}}>
-                  <paper-button class="gl-btn-warning" style="margin-left:15px;" on-tap="_dialogRemark" raised>{{localize.bt_no_pass}}</paper-button>
-                </template>
-              </template>
-
-              <template is="dom-if" if={{data.approve_status}}>
-                <div class="btn-bottom">
-                  <iron-icon icon="print"></iron-icon>
-                  <paper-dropdown-menu style="width:300px" placeholder="{{localize.select_report}}" no-label-float name="report">
-                    <paper-tabs class="dropdown-content" attr-for-selected="report" selected="{{report}}">
-                      <paper-tab on-tap="_print" report="report1">{{localize.memorandum}}</paper-tab>
-                      <paper-tab on-tap="_print" report="report2">{{localize.confirmation}}</paper-tab>
-                    </paper-tabs>
-                  </paper-dropdown-menu>
-                </div>
-              </template>
-            </div>
-
-            <div>
-              <paper-button on-tap="_backPage" raised>{{localize.bt_back}}</paper-button>
-              <template is="dom-if" if={{!data.approve_status}}>
-                <template is="dom-if" if={{data.doc_status}}>
-                  <paper-button class="gl-btn-success btn-bottom" on-tap="_pass" raised>{{localize.bt_pass}}</paper-button>
-                </template>
-              </template>
-
-
-              <template is="dom-if" if={{!data.status_approve}}>
-                <template is="dom-if" if={{!checkStatusExtend(data.draft_status)}}>
-                  <template is="dom-if" if={{!checkStatusType(data.draft_status)}}>
-                    <template is="dom-if" if={{data.approve_status}}>
-                      <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
-                    </template>
-                  </template>
-                </template>
-
-                <template is="dom-if" if={{checkStatusExtend(data.draft_status)}}>
-                  <paper-button class="gl-btn-warning btn-bottom" on-tap="_extend" raised>{{localize.bt_exporter_extend}}</paper-button>
-                </template>
-                <template is="dom-if" if={{checkStatusType(data.draft_status)}}>
-                  <paper-button class="gl-btn-success btn-bottom" on-tap="approve" raised>{{localize.bt_approve}}</paper-button>
-                </template>
-              </template>
-
-            </div>
-          </div>
-        </div>
-
-        <div name="register">
-          3
-          <register-page></register-page>
-        </div>
-      </iron-pages>
       <paper-dialog id="dialog" style="width:60%;">
         <div class="horizontal start-justified layout">
           <div class="flex">
@@ -335,14 +329,90 @@
 
     <panel-right title="{{titleName}}">
       <div class="left">
-        <register-page></register-page>
-        <!--<iron-pages selected="{{layerContent}}" attr-for-selected="name">
-          <div name="detailRegExporter">
-            <member-page></member-page>
+
+        <iron-pages selected="{{layerContent}}" attr-for-selected="name">
+          <div name="register">
+            <register-page></register-page>
           </div>
-        </iron-pages>-->
+          <div name="approve">
+            <main>
+              <input id="tab1" type="radio" name="tabs" checked>
+              <label for="tab1">
+                    <div class="container" tabindex="0">
+                      <span>1.{{localize.detail}}</span>
+                    </div>
+                  </label>
+
+              <input id="tab2" type="radio" name="tabs">
+              <label for="tab2">
+                  <div class="container" tabindex="0">
+                    <span>2.{{localize.doc_ev}}</span>
+                    </div>
+                  </label>
+
+
+              <section id="content1">
+                <gl-form-panel>
+                  <detail-company id="detailCompany" data={{resultCompany}}></detail-company>
+                  <table class="gl-table-default">
+                    <thead class="table-head">
+                      <tr>
+                        <th style="width :20%">ลำดับที่</th>
+                        <th style="width :30%">สถานะการดำเนินงาน</th>
+                        <th style="width : 30%">วันที่</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-body">
+                      <template is="dom-repeat" items="{{resultCompany.remark}}">
+                        <tr>
+                          <td>[[index]]</td>
+                          <td>[[item.msg]]</td>
+                          <td>[[item.date]]</td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                  <div class="horizontal end-justified layout" style="margin:10px">
+                    <paper-button raised class="gl-btn-primary" on-tap="reSendDoc" hidden="[[_BtnShowReSend(resultCompany)]]">
+                      <iron-icon icon="add"></iron-icon>ส่งเอกสารใหม่</paper-button>
+                    <paper-button raised class="gl-btn-danger" on-tap="rejectDoc" hidden="[[_BtnShowDoc(resultCompany)]]">
+                      <iron-icon icon="add"></iron-icon>รอตรวจเอกสาร (ไม่ผ่าน)</paper-button>
+                    <paper-button raised class="gl-btn-primary" on-tap="approveDoc" hidden="[[_BtnShowDoc(resultCompany)]]">
+                      <iron-icon icon="add"></iron-icon>รอตรวจเอกสาร (ผ่าน)</paper-button>
+                    <paper-button raised class="gl-btn-danger" on-tap="rejectApprove" hidden="[[_BtnShowApprove(resultCompany)]]">
+                      <iron-icon icon="add"></iron-icon>รออนุมัติ (ไม่ผ่าน)</paper-button>
+                    <paper-button raised class="gl-btn-primary" on-tap="waitaApprove" hidden="[[_BtnShowApprove(resultCompany)]]">
+                      <iron-icon icon="add"></iron-icon>รออนุมัติ (ผ่าน)</paper-button>
+                  </div>
+                </gl-form-panel>
+              </section>
+
+              <section id="content2">
+                <gl-form-panel>
+                  <fileup-company></fileup-company>
+                </gl-form-panel>
+              </section>
+
+            </main>
+          </div>
+          <div name="renew">
+              <register-page></register-page>
+          </div>
+        </iron-pages>
       </div>
     </panel-right>
+    <paper-dialog id="rejectDoc">
+      <h2>เหตุผล</h2>
+      <paper-dialog-scrollable>
+        <div style="margin:10px 30px;">
+          <gl-form-input label="เหตุผลที่ไม่ผ่าน" value="{{docReason}}"></gl-form-input>
+        </div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss raised class="gl-btn-defalse">ปิด</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="__rejectDocDia" raised class="gl-btn-primary">ตกลง</paper-button>
+      </div>
+    </paper-dialog>
   </template>
   <script>
     Polymer({
@@ -352,10 +422,10 @@
           type: String,
           value: 0
         },
-        pageSelected: {
-          type: String,
-          value: 'listCompany'
-        },
+        // pageSelected: {
+        //   type: String,
+        //   value: 'listCompany'
+        // },
         selectDataAll: {
           type: Boolean,
           value: false,
@@ -373,6 +443,10 @@
         },
         companys: {
           statePath: 'confirm.list'
+        },
+        draftById: {
+          statePath: 'confirm.draftById',
+          observer: 'setDataDraft'
         }
       },
       behaviors: [ReduxBehavior, nylonBehavior, i18nAction, confirmAction, exporterAction, ValidateFormBehavior],
@@ -383,42 +457,48 @@
       goBack() {
         this.fire('nylon-change-page', { path: '/admin-exporter' })
       },
+      setDataDraft(data) {
+        // console.log(data.lic_type);
+        this.set('resultCompany', data)
+        // console.log(this.resultCompany);
+      },
       nylonPageActive: function () {
 
         this.dispatchAction('CONFIRM_GET_DATA');
-        this.dispatchAction('EXPORTER_GET_LIC_TYPE');
-        this.dispatchAction('EXPORTER_GET_DOC_TYPE');
+        // this.dispatchAction('EXPORTER_GET_LIC_TYPE');
+        // this.dispatchAction('EXPORTER_GET_DOC_TYPE');
       },
       _selectData: function (e) {
-        this.isHidden = true;
-        this.pageSelected = "detailCompany";
-        // this.dataSelect = e.currentTarget.data;
-        // console.log(e.currentTarget.data);
-        var companyId = e.currentTarget.data.company_taxno;
-        this.dispatchAction('CONFIRM_SEARCH', companyId);
+        let data = e.currentTarget.data
+        this.dispatchAction('CONFIRM_SEARCH_DRAFT', data.id)
+        this.set('layerContent', 'approve')
+
+        this.$$('panel-right')
+
+        this.$$('panel-right').open();
       },
       _backPage: function (data) {
-        this.pageSelected = 'listCompany';
+        // this.pageSelected = 'listCompany';
         this.pages = 0;
         this.isHidden = false;
       },
-      _pass: function () {
-        var data = {
-          id: this.data.id,
-          company_id: this.data.company_id,
-          exporter_no: this.data.exporter_no,
-          approve_status: true
-        };
-        this.fire('toast', {
-          status: 'openDialog',
-          text: 'เอกสารครบถ้วนแล้วใช่หรือไม่ ?',
-          confirmed: (result) => {
-            if (result == true) {
-              this.dispatchAction('CONFIRM_ACCEPT_PASS', data);
-            }
-          }
-        });
-      },
+      // _pass: function () {
+      //   var data = {
+      //     id: this.data.id,
+      //     company_id: this.data.company_id,
+      //     exporter_no: this.data.exporter_no,
+      //     approve_status: true
+      //   };
+      //   this.fire('toast', {
+      //     status: 'openDialog',
+      //     text: 'เอกสารครบถ้วนแล้วใช่หรือไม่ ?',
+      //     confirmed: (result) => {
+      //       if (result == true) {
+      //         this.dispatchAction('CONFIRM_ACCEPT_PASS', data);
+      //       }
+      //     }
+      //   });
+      // },
       approve: function () {
         this.fire('toast', {
           status: 'openDialog',
@@ -451,45 +531,45 @@
         this.$.dialog.toggle();
         this.company_remark = "";
       },
-      _reject: function () {
-        if (this.company_remark === undefined) {
-          this.company_remark = '';
-        }
-        var data = {
-          id: this.data.id,
-          company_id: this.data.company_id,
-          doc_status: false,
-          company_remark: this.company_remark
-        }
-        this.fire('toast', {
-          status: 'openDialog',
-          text: 'คุณต้องการจะให้ผู้ส่งออกส่งเอกสารเพิ่มเติมใช่หรือไม่ ?',
-          confirmed: (result) => {
-            if (result == true) {
-              this.dispatchAction('CONFIRM_ADMIN_REJECT', data);
-              this.$.dialog.toggle()
-              this.company_remark = "";
-              this._backPage();
-            }
-          }
-        });
-      },
-      _extend: function () {
-        var data = {
-          id: this.data.exporter_id,
-          draft_id: this.data.id
-        };
-        this.fire('toast', {
-          status: 'openDialog',
-          text: 'คุณต้องการจะต่ออายุผู้ส่งออกใช่หรือไม่ ?',
-          confirmed: (result) => {
-            if (result == true) {
-              this.dispatchAction('CONFIRM_ADMIN_EXTEND', data);
-              this.pageSelected = 'listCompany';
-            }
-          }
-        });
-      },
+      // _reject: function () {
+      //   if (this.company_remark === undefined) {
+      //     this.company_remark = '';
+      //   }
+      //   var data = {
+      //     id: this.data.id,
+      //     company_id: this.data.company_id,
+      //     doc_status: false,
+      //     company_remark: this.company_remark
+      //   }
+      //   this.fire('toast', {
+      //     status: 'openDialog',
+      //     text: 'คุณต้องการจะให้ผู้ส่งออกส่งเอกสารเพิ่มเติมใช่หรือไม่ ?',
+      //     confirmed: (result) => {
+      //       if (result == true) {
+      //         this.dispatchAction('CONFIRM_ADMIN_REJECT', data);
+      //         this.$.dialog.toggle()
+      //         this.company_remark = "";
+      //         this._backPage();
+      //       }
+      //     }
+      //   });
+      // },
+      // _extend: function () {
+      //   var data = {
+      //     id: this.data.exporter_id,
+      //     draft_id: this.data.id
+      //   };
+      //   this.fire('toast', {
+      //     status: 'openDialog',
+      //     text: 'คุณต้องการจะต่ออายุผู้ส่งออกใช่หรือไม่ ?',
+      //     confirmed: (result) => {
+      //       if (result == true) {
+      //         this.dispatchAction('CONFIRM_ADMIN_EXTEND', data);
+      //         this.pageSelected = 'listCompany';
+      //       }
+      //     }
+      //   });
+      // },
       changeNo: function (e) {
         var company = e.currentTarget.data;
         var datas = {
@@ -523,7 +603,7 @@
       _search: function () {
         if (this.companyId != '') {
           this.dispatchAction('CONFIRM_SEARCH', this.companyId);
-          this.pageSelected = "register";
+          // this.pageSelected = "register";
 
           this.queryFrom('.searchForm').map((el) => { el.reset(); });
         }
@@ -561,7 +641,10 @@
           return 'ต่ออายุผู้ส่งออก (รออนุมัติ)'
         }
         if (data == 'sign') {
-          if (doc_status === false && approve_status === false) {
+          if (doc_status === false) {
+            return 'เอกสารไม่ผ่าน'
+          }
+          if (doc_status === null && approve_status === false) {
             return 'ลงทะเบียนผู้ส่งออก (ตรวจสอบเอกสาร)'
           }
           else if (doc_status === true && approve_status === false) {
@@ -585,24 +668,27 @@
       },
       // --------------------------------------------------------------------------------------
       registerdraft: function (e) {
+        this.set('layerContent', 'register')
         this.dispatchAction('CONFIRM_SEARCH_RESET')
-        this.dispatchAction('CONFIRM_TYPE','registerdraft')
+        this.dispatchAction('CONFIRM_TYPE', 'registerdraft')
         console.log(1);
         this.$$('panel-right').open();
         this.set('titleName', 'สมัคร')
       },
       renewdraft: function (e) {
         console.log(2);
+        this.set('layerContent', 'renew')
+        
         this.$$('panel-right').open();
         this.dispatchAction('CONFIRM_SEARCH_RESET')
-        this.dispatchAction('CONFIRM_TYPE','renewdraft')
+        this.dispatchAction('CONFIRM_TYPE', 'renewdraft')
         this.set('titleName', 'ต่ออายุ')
       },
       changedraft: function (e) {
         console.log(3);
         this.$$('panel-right').open();
         this.dispatchAction('CONFIRM_SEARCH_RESET')
-        this.dispatchAction('CONFIRM_TYPE','changedraft')
+        this.dispatchAction('CONFIRM_TYPE', 'changedraft')
         this.set('titleName', 'เปลี่ยนประเภท')
       },
       changeDate(date) {
@@ -610,6 +696,86 @@
         date = new Date(time.setHours(time.getHours() + 7)).toISOString()
         date = date.split("T")[0]
         return date
+      },
+      _docAndApproce(remarkText, diaText, isDoc) {
+        let remark = {
+          msg: remarkText,
+          date: new Date().toISOString().split('T')[0] + 'T00:00:00+07:00'
+        }
+        this.push('draftById.remark', remark)
+        let newData = {}
+
+        if (isDoc.hasOwnProperty('doc_status')) {
+          // console.log(isDoc);
+          newData = {
+            id: this.draftById.id,
+            remark: this.draftById.remark,
+            doc_status: isDoc.doc_status
+          }
+          // console.log(1);
+        } else {
+          newData = {
+            id: this.draftById.id,
+            remark: this.draftById.remark,
+            approve_status: isDoc.approve_status
+          }
+          // console.log(2);
+        }
+        // console.log(newData);
+        this.fire('toast', {
+          status: 'openDialog',
+          text: diaText,
+          confirmed: (result) => {
+            if (result == true) {
+              this.dispatchAction('CONFIRM_DOC_AND_APPROVE', newData)
+                .then((res) => {
+                  this.dispatchAction('CONFIRM_SEARCH_DRAFT', newData.id);
+                  this.nylonPageActive()
+                })
+                .catch((err) => {
+                  console.log(err);
+                })
+            }
+          }
+        })
+        // console.log(remark, diaText, isDoc);
+      },
+      reSendDoc() {
+        this._docAndApproce('ส่งเอกสารใหม่', 'ยื่นยัการส่งอีกรอบ ใช่รึไหม ?', { doc_status: null })
+
+      },
+      rejectDoc() {
+        this.$.rejectDoc.open()
+      },
+      __rejectDocDia() {
+        this._docAndApproce(this.docReason || '', 'ไม่ผ่านใช่รึไหม ?', { doc_status: false })
+
+      },
+      approveDoc() {
+        this._docAndApproce(this.docReason || '', 'เอกสารผ่านใช่รึไหม ?', { doc_status: true })
+
+      },
+      rejectApprove() {
+        this.rejectDoc()
+        // console.log(this.draftById);
+      },
+      waitaApprove() {
+        this._docAndApproce('อนุมัติแล้ว' || '', 'ต้องการอนุมัติ ใช่รึไม่ ?', { approve_status: true })
+      },
+      _BtnShowReSend(resultCompany) {
+        if (resultCompany.doc_status === false && resultCompany.approve_status === false)
+          return false
+        return true
+      },
+      _BtnShowDoc(resultCompany) {
+        if (resultCompany.doc_status === null && resultCompany.approve_status === false)
+          return false
+        return true
+      },
+      _BtnShowApprove(resultCompany) {
+        if (resultCompany.doc_status === true && resultCompany.approve_status === false)
+          return false
+        return true
       }
       // obData: function(val){
       //   // console.log(val)
