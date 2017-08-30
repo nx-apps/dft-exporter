@@ -189,7 +189,8 @@ exports.putRenew = function (req, res) {
                                     draft_status: 'renew',
                                     doc_status: null,
                                     approve_status: false,
-                                    exporter_no: getExporter.getField('exporter_no')
+                                    exporter_no: getExporter.getField('exporter_no'),
+                                    remark: []
                                 });
                             r.table('draft').insert(draftInsert)
                                 .run()
@@ -205,4 +206,7 @@ exports.putRenew = function (req, res) {
     } else {
         res.json('error: "exporter_id" is empty!');
     }
+}
+exports.getChange = function (req, res) {
+    // r.table('draft').getAll()
 }

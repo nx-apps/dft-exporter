@@ -9,4 +9,6 @@ module.exports = function (app) {
     app.route('/renew')
         .get(controller.getRenew)
         .put(controller.putRenew);
+    app.route('/change')
+        .get(controller.getChange);
 }
