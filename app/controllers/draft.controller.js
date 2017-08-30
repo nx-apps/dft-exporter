@@ -161,3 +161,48 @@ exports.getRenew = function (req, res) {
         }
     })
 }
+exports.putRenew = function (req, res) {
+    var lic_type = req.body.lic_type;
+    var exporter_id = lic_type.exporter_id;
+    var company_taxno = req.body.company_taxno;
+    if (typeof exporter_id !== 'undefined') {
+        var getExporter = r.table('exporter').get(exporter_id);
+        r.branch(getExporter.eq(null),
+            { error: 'This { id : ' + exporter_id + ' } is null.' },
+            getExporter.update({ close_status: true })
+        )
+            .run()
+            .then(function (data) {
+                if (data.hasOwnProperty('error')) {
+                    res.json(data.error);
+                } else {
+                    company.getCompany([company_taxno], function (companyData) {
+                        if (companyData.length > 0 && companyData[0].hasOwnProperty('company_name_th')) {
+                            var draftInsert = r.expr({ company: companyData[0], company_taxno: company_taxno })
+                                .merge({
+                                    date_created: r.now().inTimezone('+07'),
+                                    date_updated: r.now().inTimezone('+07'),
+                                    creater: 'admin',
+                                    updater: 'admin',
+                                    lic_type: r.table('license_type').get(lic_type.id),
+                                    lic_type_id: lic_type.id,
+                                    draft_status: 'change',
+                                    doc_status: null,
+                                    approve_status: false,
+                                    exporter_no: getExporter.getField('exporter_no')
+                                });
+                            r.table('draft').insert(draftInsert)
+                                .run()
+                                .then(function (data) {
+                                    res.json(data)
+                                })
+                        } else {
+                            res.json({});
+                        }
+                    })
+                }
+            })
+    } else {
+        res.json('error: "exporter_id" is empty!');
+    }
+}
