@@ -181,8 +181,6 @@
       behaviors: [ReduxBehavior, ValidateFormBehavior],
       properties: {
         data: {
-          // statePath: 'confirm.data',
-          // notify:true
           type: Object,
           value: {},
           observer:'checkIsArray'
@@ -198,9 +196,6 @@
           type: Array,
           value: [],
         }
-        // licType: {
-        //   statePath: 'exporter.licType'
-        // }
       },
       checkIsArray(data){
         if (Array.isArray(data.lic_type)) {
@@ -208,7 +203,6 @@
         }else {
           this.set('lic_type_object',data.lic_type)
         }
-        console.log();
       },
       __retiveData() {
         return this.data

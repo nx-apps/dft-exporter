@@ -320,17 +320,6 @@
         </div>
       </div>
 
-      <paper-dialog id="dialog" style="width:60%;">
-        <div class="horizontal start-justified layout">
-          <div class="flex">
-            <gl-form-textarea label="{{localize.note}} : " always-float-label value="{{company_remark}}"></gl-form-textarea>
-          </div>
-        </div>
-        <div>
-          <paper-button class=" button-size" raised on-tap="_dialogcancle">{{localize.bt_back}}</paper-button>
-          <paper-button class="gl-btn-primary button-size" raised on-tap="_reject">{{localize.bt_save}}</paper-button>
-        </div>
-      </paper-dialog>
     </paper-material>
 
     <panel-right title="{{titleName}}">
@@ -441,11 +430,6 @@
           type: String,
           value: 'register'
         },
-        selectDataAll: {
-          type: Boolean,
-          value: false,
-          observer: '_changeselectDataAll'
-        },
         isHidden: {
           type: Boolean,
           value: false
@@ -508,104 +492,8 @@
         }
         // console.log(arr);
       },
-      // _pass: function () {
-      //   var data = {
-      //     id: this.data.id,
-      //     company_id: this.data.company_id,
-      //     exporter_no: this.data.exporter_no,
-      //     approve_status: true
-      //   };
-      //   this.fire('toast', {
-      //     status: 'openDialog',
-      //     text: 'เอกสารครบถ้วนแล้วใช่หรือไม่ ?',
-      //     confirmed: (result) => {
-      //       if (result == true) {
-      //         this.dispatchAction('CONFIRM_ACCEPT_PASS', data);
-      //       }
-      //     }
-      //   });
-      // },
-      approve: function () {
-        this.fire('toast', {
-          status: 'openDialog',
-          text: 'คุณต้องการจะอนุมัติใช่หรือไม่ ?',
-          confirmed: (result) => {
-            if (result == true) {
-              this.dispatchAction('CONFIRM_ADMIN_APPROVE', this.data);
-            }
-          }
-        });
-      },
-      _changeselectDataAll: function (val) {
-        // console.log(val);
-        if (typeof this.companys != 'undefined') {
-          this.companys.map((item, index) => {
-            // if (item.approve_status == "process") {
-            this.set('companys.' + index + '.check', val);
-            // }
-          });
-        }
-      },
-      _close: function () {
-        this.fire('close-toggle');
-      },
-      _dialogRemark: function () {
-        this.$.dialog.toggle();
-        // console.log(this.dataSelect);
-      },
-      _dialogcancle: function () {
-        this.$.dialog.toggle();
-        this.company_remark = "";
-      },
-      // _reject: function () {
-      //   if (this.company_remark === undefined) {
-      //     this.company_remark = '';
-      //   }
-      //   var data = {
-      //     id: this.data.id,
-      //     company_id: this.data.company_id,
-      //     doc_status: false,
-      //     company_remark: this.company_remark
-      //   }
-      //   this.fire('toast', {
-      //     status: 'openDialog',
-      //     text: 'คุณต้องการจะให้ผู้ส่งออกส่งเอกสารเพิ่มเติมใช่หรือไม่ ?',
-      //     confirmed: (result) => {
-      //       if (result == true) {
-      //         this.dispatchAction('CONFIRM_ADMIN_REJECT', data);
-      //         this.$.dialog.toggle()
-      //         this.company_remark = "";
-      //         this._backPage();
-      //       }
-      //     }
-      //   });
-      // },
-      // _extend: function () {
-      //   var data = {
-      //     id: this.data.exporter_id,
-      //     draft_id: this.data.id
-      //   };
-      //   this.fire('toast', {
-      //     status: 'openDialog',
-      //     text: 'คุณต้องการจะต่ออายุผู้ส่งออกใช่หรือไม่ ?',
-      //     confirmed: (result) => {
-      //       if (result == true) {
-      //         this.dispatchAction('CONFIRM_ADMIN_EXTEND', data);
-      //         this.pageSelected = 'listCompany';
-      //       }
-      //     }
-      //   });
-      // },
-      changeNo: function (e) {
-        var company = e.currentTarget.data;
-        var datas = {
-          id: company.id,
-          exporter_no: parseInt(company.exporter_no),
-          company_id: company.company_id
-        }
-        // console.log(datas);
-        this.dispatchAction('CONFIRM_CHANGE_EXPORTER_NO', datas);
-      },
+     
+     
       _print: function (e) {
         // console.log(e.target.getAttribute('report'));
         if (e.target.getAttribute('report') == 'report1') {
@@ -652,13 +540,6 @@
           return true
         }
       },
-      checkStatusType: function (val) {
-        if (val == 'type') {
-          return true
-        } else {
-          return false
-        }
-      },
       obDraftStatus: function (data, doc_status, approve_status) {
         if (data == 'change') {
           return 'เปลี่ยนประเภทใบอนุญาต (รออนุมัติ)'
@@ -678,13 +559,6 @@
           }
         }
       },
-      // _disabledType: function (val) {
-      //   if (val == 'sign') {
-      //     return false
-      //   } else {
-      //     return true
-      //   }
-      // },
       checkStatusExtend: function (val) {
         if (val == 'renew') {
           return true
@@ -811,70 +685,6 @@
           return false
         return true
       }
-      // obData: function(val){
-      //   // console.log(val)
-      //   this.dispatchAction('CONFIRM_OB_DATA', val.id)
-      //   .then((response) => {
-      //     // console.log(response.data);
-      //     this.exporter_data = response.data[0];
-      //     if(typeof this.exporter_data === 'undefined'){
-      //       this.isEnabled = true;
-      //     }else{
-      //       this.isEnabled = false;
-      //     }
-      //   })
-      // },
-      // obExporter:function(val){
-      //   if(typeof val === 'undefined' && val == undefined){
-      //     return true
-      //   }else if(val === true){
-      //     return true
-      //   }else{
-      //     return false
-      //   }
-      // },
-      // _approveAll: function () {
-      //   const check = (item) => {
-      //     return item.check == true;
-      //   }
-      //   this.companys.filter(check).map((datas) => {
-      //     // console.log(datas);
-      //     let { exporter_no, company_id, id, exporter_status, type_lic_id} = datas;
-      //     let newData = { exporter_no, company_id, exporter_status, type_lic_id};
-      //     newData.confirm_id = datas.id
-      //     // console.log(newData);
-      //     this.data.push(newData);
-      //   });
-      //   this.fire('toast', {
-      //     status: 'openDialog',
-      //     text: 'คุณต้องการจะอนุมัติใช่หรือไม่ ?',
-      //     confirmed: this._confirm.bind(this)
-      //   });
-      // },
-      // _confirm: function (result, detail) {
-      //   this.data.map((datas) => {
-      //     datas = {
-      //       confirm_id: datas.id,
-      //       company_id: datas.company_id,
-      //       exporter_no: datas.exporter_no
-      //     }
-      //     if (result == true) {
-      //       // console.log(datas);
-      //       this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-      //       this.insert('./external/confirm_exporter/insert', datas, () => {
-      //         this.fire('toast', {
-      //           status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-      //             this.fire('refresh-company');
-      //             this.fire('refresh-exporter');
-      //             this.fire('refresh-listcompany');
-      //             this.selectDataAll = false;
-      //             // console.log('success');
-      //           }
-      //         });
-      //       });
-      //     }
-      //   });
-      // }
     });
   </script>
 </dom-module>
