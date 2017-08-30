@@ -186,7 +186,7 @@ exports.putRenew = function (req, res) {
                                     updater: 'admin',
                                     lic_type: r.table('license_type').get(lic_type.id),
                                     lic_type_id: lic_type.id,
-                                    draft_status: 'change',
+                                    draft_status: 'renew',
                                     doc_status: null,
                                     approve_status: false,
                                     exporter_no: getExporter.getField('exporter_no')
