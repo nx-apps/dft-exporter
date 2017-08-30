@@ -221,38 +221,7 @@ exports.getChange = function (req, res) {
     var checkDraft = r.branch(
         draftNormal.count().gt(0),
         { error: "มีการสมัครหรือเปลี่ยนประเภทเป็นทั่วไปแล้ว" },
-        company.getCompany([company_taxno], function (companyData) {
-            if (companyData.length > 0 && companyData[0].hasOwnProperty('company_name_th')) {
-                r.expr({ company: companyData[0], company_taxno: company_taxno })
-                    .merge({
-                        // date_created: r.now().inTimezone('+07'),
-                        // date_updated: r.now().inTimezone('+07'),
-                        // creater: 'admin',
-                        // updater: 'admin',
-                        lic_type: r.table('license_type').get('NORMAL'),
-                        lic_type_id: 'NORMAL',
-                        draft_status: 'change',
-                        // doc_status: null,
-                        // approve_status: false,
-                        exporter_no: exporterPack(0)('exporter_no'),
-                        remark: []
-                    })
-                    // exporterPack.update({
-                    //     close_status: true,
-                    //     export_status: false,
-                    //     date_updated: r.now().inTimezone('+07'),
-                    //     updater: 'admin'
-                    // }).do(function (d) {
-                    //     return r.table('draft').insert(draftInsert)
-                    // })
-                    .run()
-                    .then(function (data) {
-                        res.json(data)
-                    })
-            } else {
-                res.json({});
-            }
-        })
+        exporterPack(0)
     )
     r.branch(
         exporterPack.count().eq(0),
@@ -264,3 +233,36 @@ exports.getChange = function (req, res) {
             res.json(data)
         })
 }
+
+   // company.getCompany([company_taxno], function (companyData) {
+        //     if (companyData.length > 0 && companyData[0].hasOwnProperty('company_name_th')) {
+        //         r.expr({ company: companyData[0], company_taxno: company_taxno })
+        //             .merge({
+        //                 // date_created: r.now().inTimezone('+07'),
+        //                 // date_updated: r.now().inTimezone('+07'),
+        //                 // creater: 'admin',
+        //                 // updater: 'admin',
+        //                 lic_type: r.table('license_type').get('NORMAL'),
+        //                 lic_type_id: 'NORMAL',
+        //                 draft_status: 'change',
+        //                 // doc_status: null,
+        //                 // approve_status: false,
+        //                 exporter_no: exporterPack(0)('exporter_no'),
+        //                 remark: []
+        //             })
+        //             // exporterPack.update({
+        //             //     close_status: true,
+        //             //     export_status: false,
+        //             //     date_updated: r.now().inTimezone('+07'),
+        //             //     updater: 'admin'
+        //             // }).do(function (d) {
+        //             //     return r.table('draft').insert(draftInsert)
+        //             // })
+        //             .run()
+        //             .then(function (data) {
+        //                 res.json(data)
+        //             })
+        //     } else {
+        //         res.json({});
+        //     }
+        // })
