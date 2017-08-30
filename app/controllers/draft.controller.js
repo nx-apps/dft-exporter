@@ -169,7 +169,7 @@ exports.putRenew = function (req, res) {
         var getExporter = r.table('exporter').get(exporter_id);
         r.branch(getExporter.eq(null),
             { error: 'This { id : ' + exporter_id + ' } is null.' },
-            getExporter.update({ close_status: true })
+            getExporter.update({ close_status: true, export_status: false })
         )
             .run()
             .then(function (data) {
