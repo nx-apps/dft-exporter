@@ -61,13 +61,13 @@ exports.postInsert = function (req, res) {
                 .run()
                 .then(function (data) {
                     insertDraftIdDoc(data.generated_keys[0], function () {
-                        console.log(data);
-                        console.log(req.body);
-                        // if (req.body.lic_type_id == "BORDER") {
-                        //     res.json(insertExporter(data.generated_keys[0]));
-                        // } else {
-                        //     res.json(data)
-                        // }
+                        // console.log(data);
+                        // console.log(req.body);
+                        if (req.body.lic_type_id == "BORDER") {
+                            res.json(insertExporter(data.generated_keys[0]));
+                        } else {
+                            res.json(data)
+                        }
                     });
 
 
