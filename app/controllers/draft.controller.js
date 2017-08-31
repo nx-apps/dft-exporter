@@ -61,8 +61,6 @@ exports.postInsert = function (req, res) {
                 .run()
                 .then(function (data) {
                     insertDraftIdDoc(data.generated_keys[0], function () {
-                        // console.log(data);
-                        // console.log(req.body);
                         if (req.body.lic_type_id == "BORDER") {
                             res.json(insertExporter(data.generated_keys[0]));
                         } else {
@@ -207,7 +205,9 @@ exports.putRenew = function (req, res) {
                             r.table('draft').insert(draftInsert)
                                 .run()
                                 .then(function (data) {
-                                    res.json(data)
+                                    insertDraftIdDoc(data.generated_keys[0], function () {
+                                        res.json(data)
+                                    });
                                 })
                         } else {
                             res.json({});
@@ -272,7 +272,9 @@ exports.putChange = function (req, res) {
                         })
                             .run()
                             .then(function (data) {
-                                res.json(data)
+                                insertDraftIdDoc(data.generated_keys[0], function () {
+                                    res.json(data)
+                                });
                             })
                     } else {
                         res.json("ไม่มีข้อมูลบริษัทกรุณาติดต่อเจ้าหน้าที่ {company_taxno:null}");
