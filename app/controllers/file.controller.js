@@ -73,13 +73,13 @@ exports.download = function (req, res) {
         })
 }
 exports.recovery = function (req, res) {
-    var recovery = req.query.recovery;
-    if (typeof recovery === 'undefined') {
+    var file_status = req.body.file_status;
+    if (typeof file_status === 'undefined') {
         res.json('recovery is null');
     } else {
-        recovery = (recovery == 'true' ? true : false);
-        r.table('doc_draft').getAll(req.query.id, { index: 'file_id' })
-            .update({ file_status: recovery })
+        // recovery = (recovery == 'true' ? true : false);
+        r.table('doc_draft').getAll(req.body.file_id, { index: 'file_id' })
+            .update({ file_status: file_status })
             .run()
             .then(function (data) {
                 res.json(data)
