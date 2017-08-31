@@ -30,13 +30,14 @@
   <template>
     <div class="title-head">{{localize.doc_attach}}</div>
     <template is="dom-repeat" items="[[docType]]">
-      <div class="title">[[item.doc_name_th]]</div>
+      <div class="title">[[item.doc_type_th]]</div>
       <upload-file
-        target="/api/external/upload/exporter/file/[[companyId]]"
+        target="/api/file/upload/"
         accept="application/pdf"
         ref-path="exporter.document.[[item.doc_code]]"
-        doc-type-id="[[item.doc_type_id]]"
-        company-id="[[companyId]]"
+        doc-type-id="[[item.id]]"
+        data-type = "[[dataTypeSet.data]]"
+        company-taxno = "[[companyTaxno]]"
         >
       </upload-file>
     </template>
@@ -55,7 +56,10 @@
         },
         docType: {
           statePath : 'exporter.docType'
-        }
+        },
+        dataTypeSet: {
+          statePath: 'confirm.confirmType',
+        },
       },
       observers: [
         '_dataInput(data)'

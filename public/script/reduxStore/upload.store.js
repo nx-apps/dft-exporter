@@ -15,6 +15,7 @@ export function uploadAction(store) {
     return [commonAction(),
     {
         UPLOAD_GET_LIST: function (ref, com) {
+            console.log(ref, com);
             return axios.get('/external/upload/list/' + ref + '/' + com)
         },
         UPLOAD_FILE_CHANGE: function (key) {

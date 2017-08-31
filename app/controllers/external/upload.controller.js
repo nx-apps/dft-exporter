@@ -84,35 +84,38 @@ exports.uploadFileExporter = function (req, res) {
     form.parse(req, function (err, fields, files) {
 
         var prefile = files.file[0];
-        // var doc_code = req.headers['ref-path'].split(".")[2];
+        var doc_code = req.headers['ref-path'].split(".")[2];
         var doc_type_id = req.headers['doc-type-id'];
-        // console.log(doc_type_id);
+        var data_type = req.headers['data-type']
+        console.log(doc_code);
+        console.log(doc_type_id);
+        console.log(data_type);
 
-        fs.readFile(prefile.path, function (err, data) {
-            // console.log(r);
-            r.db('external').table('files').insert({
-                name: prefile.originalFilename.split('.')[0] + '_' + new Date().getTime() + "." + prefile.originalFilename.split('.')[1],
-                type: prefile.headers['content-type'],
-                contents: data,
-                timestamp: r.now().inTimezone('+07'),
-                ref_path: req.headers['ref-path']
-            })('generated_keys')(0)
-                .do(function (file_id) {
-                    return r.db('external').table('document_file').insert({
-                        file_id: file_id,
-                        file_status: true,
-                        doc_type_id: doc_type_id,
-                        company_id: params.company_id,
-                        date_created: r.now().inTimezone('+07'),
-                        date_updated: r.now().inTimezone('+07')
-                    })
-                })
-                .run().then(function (result) {
-                    res.json(result);
-                }).catch(function (err) {
-                    res.json(err);
-                })
-        });
+        // fs.readFile(prefile.path, function (err, data) {
+        //     // console.log(r);
+        //     r.db('external').table('files').insert({
+        //         name: prefile.originalFilename.split('.')[0] + '_' + new Date().getTime() + "." + prefile.originalFilename.split('.')[1],
+        //         type: prefile.headers['content-type'],
+        //         contents: data,
+        //         timestamp: r.now().inTimezone('+07'),
+        //         ref_path: req.headers['ref-path']
+        //     })('generated_keys')(0)
+        //         .do(function (file_id) {
+        //             return r.db('external').table('document_file').insert({
+        //                 file_id: file_id,
+        //                 file_status: true,
+        //                 doc_type_id: doc_type_id,
+        //                 company_id: params.company_id,
+        //                 date_created: r.now().inTimezone('+07'),
+        //                 date_updated: r.now().inTimezone('+07')
+        //             })
+        //         })
+        //         .run().then(function (result) {
+        //             res.json(result);
+        //         }).catch(function (err) {
+        //             res.json(err);
+        //         })
+        // });
     });
 
     // res.json({ec:'01252'});

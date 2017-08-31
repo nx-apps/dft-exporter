@@ -99,6 +99,7 @@ export function exporterAction(store) {
                 });
         },
         EXPORTER_GET_FILE_DELETE: function (id) {
+            console.log(id);
             axios.get('./external/upload/list/' + id)
                 .then(function (response) {
                     // console.log(response.data);
@@ -119,7 +120,7 @@ export function exporterAction(store) {
                 })
         },
         EXPORTER_GET_DOC_TYPE: function () {
-            axios.get('./external/document_type')
+            axios.get('./doctype')
                 .then(function (response) {
                     store.dispatch({ type: 'EXPORTER_GET_DOC_TYPE', payload: response.data })
                 })

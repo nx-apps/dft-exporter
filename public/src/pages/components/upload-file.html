@@ -82,6 +82,12 @@
                 docTypeId:{
                     type:String
                 },
+                dataType:{
+                    type:String
+                },
+                companyTaxno:{
+                    type:String,
+                },
                 companyId:{
                   type:String,
                   value:"",
@@ -116,8 +122,11 @@
               }
             },
             _addHeader:function(e){
-                event.detail.xhr.setRequestHeader('ref-path', this.refPath);
+                // event.detail.xhr.setRequestHeader('ref-path', this.refPath);
                 event.detail.xhr.setRequestHeader('doc-type-id', this.docTypeId);
+                event.detail.xhr.setRequestHeader('draft-status',this.dataType)
+                event.detail.xhr.setRequestHeader('company-taxno',this.companyTaxno)
+                
             },
             downloadFile:function(e){
                 //console.log(e.target.getAttribute('class'));
