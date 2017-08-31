@@ -3,7 +3,7 @@
     /**
      *MonthBehavior
     * @polymerBehavior
-    */ 
+    */
     MonthBehavior = {
         properties: {
             month: {
@@ -109,6 +109,21 @@
             }
 
         },
+        genUrl(url) {
+            let data = new String()
+            let url_length = Object.getOwnPropertyNames(url).length
+            let count = new Number()
+            // //console.log(url);
+            for (var variable in url) {
+                // if (url[variable] != '') {
+                    data = data + variable + "=" + url[variable];
+                    (count < url_length - 1) ? data += '&' : '';
+                // }
+                count++
+            }
+            // //console.log(data);
+            return data
+        }
     }
 
 </script>

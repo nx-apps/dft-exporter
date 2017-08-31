@@ -4,6 +4,8 @@
 
 <link rel="import" href="../../action/uploadAction.html">
 
+<link rel="import" href="./month-behavior.html">
+
 <dom-module id="upload-file">
     <style>
         .borderDrop {
@@ -21,41 +23,74 @@
             background: #eee;
             border-radius: 0;
         }
+
+        OL {
+            counter-reset: item
+        }
+
+        LI {
+            display: block;
+        }
+
+        LI:before {
+            content: counters(item, ".") " ";
+            counter-increment: item
+        }
     </style>
     <template>
         <template is="dom-if" if="[[checkRefPath(refPath)]]">
-            <vaadin-upload class="thick-border" id="preFill" target="[[target]]" files="{{listFiles}}" method="POST" timeout="300000"
-                accept="[[accept]]" on-upload-request="_addHeader" on-upload-success="getList" disabled>
+            <vaadin-upload class="thick-border" id="preFill" target="[[target]]" method="POST" timeout="300000" accept="[[accept]]" on-upload-success="fileChanged"
+                on-upload-request="_addHeader" disabled>
                 <div class="drop-label">
                     <iron-icon icon="description"></iron-icon>
                     [[dropName]]
-                </div>
-                <div id="fileList" class="file-list">
-                    <div id="fileList">
-                        <template is="dom-repeat" items="[[listFiles]]" as="file">
-                            <vaadin-upload-file file="[[file]]" on-tap="downloadFile" style="cursor:pointer" file-id-upload="[[fileChanged(file.*)]]"
-                                file-id="[[file.file_id]]" on-file-abort="_deleteFile"></vaadin-upload-file>
-                        </template>
-                    </div>
                 </div>
             </vaadin-upload>
         </template>
         <template is="dom-if" if="[[!checkRefPath(refPath)]]">
             <div class="borderDrop">
-                <iron-icon icon="description"></iron-icon>&nbsp;&nbsp;Upload Disabled.</div>
+                <iron-icon icon="description"></iron-icon>&nbsp;&nbsp;Upload Disabled.
+            </div>
         </template>
 
+        <div id="fileList" class="file-list">
+            <div id="fileList">
+                <h4>Files</h4>
+                <ol>
+                    <template is="dom-repeat" items="[[listFiles]]" as="files">
+                        <li style="margin-bottom:10px;">[[files.group]]
+                            <ol>
+                                <template is="dom-repeat" items={{files.reduction}} as="file">
+                                    <li style="margin-bottom:10px;" data="{{file}}" on-tap="downloadFile" style="cursor:pointer">[[file.filename]] </li>
+                                    <button type="submit" on-tap="_deleteFile" data="{{file}}"> ลบไฟล์</button>
+                                </template>
+                            </ol>
+                        </li>
+                </ol>
+                </template>
+                <!-- <template is="dom-repeat" items="[[listFiles]]" as="files">
+                    [[files.group]]<br/>
+                    <template is="dom-repeat" items={{files.reduction}} as="file">
+                        [[file.filename]] <br/>
+                        <vaadin-upload-file file="[[file]]" on-tap="downloadFile" style="cursor:pointer" file-id-upload="[[fileChanged(file.*)]]"
+                            file-id="[[file.file_id]]" on-file-abort="_deleteFile"></vaadin-upload-file>
+                    </template>
+                </template> -->
+            </div>
+        </div>
     </template>
     <script>
         Polymer({
             is: 'upload-file',
-            behaviors: [ReduxBehavior, uploadAction],
+            behaviors: [ReduxBehavior, uploadAction, MonthBehavior],
             properties: {
                 target: {
-                    type: String
+                    type: String,
+                    value: "",
                 },
                 accept: {
-                    type: String
+                    type: String,
+                    value: "",
                 },
                 dropName: {
                     type: String,
@@ -67,13 +102,16 @@
                     observer: 'getList'
                 },
                 docTypeId: {
-                    type: String
+                    type: String,
+                    value: "",
                 },
                 dataType: {
-                    type: String
+                    type: String,
+                    value: "",
                 },
                 companyTaxno: {
                     type: String,
+                    value: "",
                 },
                 draftId: {
                     type: String,
@@ -83,35 +121,62 @@
                     type: String,
                     value: "",
                     observer: 'getList'
+                },
+                listFiles: {
+                    statePath: 'upload.fileList',
                 }
+
             },
             checkRefPath: function (refPath) {
                 return (refPath != "")
             },
             fileChanged: function (fileChange) {
-                if (fileChange.path == 'file.complete') {
-                    if (fileChange.base.xhr) {
-                        console.log(fileChange.base.xhr);
-                        //   var res = JSON.parse(fileChange.base.xhr.response);
-                        //   this.dispatchAction('UPLOAD_FILE_CHANGE',res.generated_keys[0])
-                        //   .then((response)=>{
-                        //     this.fileIdUpload = response.data.file_id;
-                        //     // console.log(response.data.file_id);
-                        //   })
-                        //   return res.generated_keys[0];
-                    }
+
+                if (fileChange.type === 'upload-success') {
+                    let file = fileChange.detail.file
+                    this.getList();
+                    this.fire('toast', { status: 'success', text: `อัพโหลดไฟล์ ${file.name} สำเร็จ`, callback: () => { } })
                 }
             },
             getList: function () {
-                if (this.refPath != {} && this.companyId != '' && this.companyId != undefined) {
-                    this.dispatchAction('UPLOAD_GET_LIST', this.refPath, this.companyId)
-                        .then((response) => {
-                            this.listFiles = response.data;
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
+                let draft = 'sign'
+                // console.log(this.dataType);
+                if (this.dataType === 'registerdraft') {
+                    draft = 'sign'
+                } else if (this.dataType === 'renewdraft') {
+                    draft = 'renew'
+                } else if (this.dataType === 'changedraft') {
+                    draft = 'change'
+                } else {
+                    draft = ''
                 }
+                if (this.companyTaxno === '' || this.companyTaxno === undefined) {
+                    this.companyTaxno = ''
+                }
+                if (this.draftId === '' || this.draftId === undefined) {
+                    this.draftId = ''
+                }
+                // console.log(draft);
+                // console.log(this.companyTaxno);
+                // console.log(this.draftId);
+                let url = {
+                    draft_status: draft,
+                    company_taxno: this.companyTaxno,
+                    draft_id: this.draftId || '',
+                    file_status: true,
+                }
+                // console.log(this.genUrl(url).length);
+                if (this.genUrl(url).length > 0) {
+                    this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
+                    // .then((response) => {
+                    //     this.listFiles = response.data;
+                    //     // console.log(this.listFiles);
+                    // })
+                    // .catch(function (error) {
+                    //     console.log(error);
+                    // });
+                }
+
             },
             _addHeader: function (e) {
                 let draft = 'sign'
@@ -121,43 +186,55 @@
                     draft = 'sign'
                 } else if (this.dataType === 'renewdraft') {
                     draft = 'renew'
-                } else {
+                } else if (this.dataType === 'changedraft') {
                     draft = 'change'
                 }
                 event.detail.xhr.setRequestHeader('draft-status', draft)
                 event.detail.xhr.setRequestHeader('company-taxno', this.companyTaxno)
-                console.log(this.draftId);
+                // console.log(this.companyTaxno);
                 event.detail.xhr.setRequestHeader('draft-id', this.draftId)
             },
             downloadFile: function (e) {
-                //console.log(e.target.getAttribute('class'));
-                if (e.target.getAttribute('class') === null) {
-                    var idFile;
-                    if (typeof e.currentTarget.fileId == "undefined") {
-                        // idFile = e.currentTarget.fileIdUpload
-                        idFile = this.fileIdUpload
-                    } else {
-                        idFile = e.currentTarget.fileId
-                    }
-                    // window.location = '/api/external/upload/file/'+idFile;
-                    window.open('/api/external/upload/file/' + idFile);
+                try {
+                    // console.log(e.currentTarget.data);
+                    window.open('/api/file/download?file_id=' + e.currentTarget.data.file_id);
+                } catch (error) {
+
                 }
             },
             _deleteFile: function (e) {
-                var idFile;
-                if (typeof e.target.fileId == "undefined") {
-                    // console.log(e.target.fileIdUpload);
-                    idFile = this.fileIdUpload
-                } else {
-                    idFile = e.target.fileId
-                    //   console.log("ID File = "+idFile);
-                }
-                this.fire('toast', {                    
-status: 'openDialog',
+                let file = e.currentTarget.data
+                console.log(e.currentTarget.data);
+                // var idFile;
+                // if (typeof e.target.fileId == "undefined") {
+                //     // console.log(e.target.fileIdUpload);
+                //     idFile = this.fileIdUpload
+                // } else {
+                //     idFile = e.target.fileId
+                //     //   console.log("ID File = "+idFile);
+                // }
+                this.fire('toast', {
+                    status: 'openDialog',
                     text: 'คุณต้องการจะลบไฟล์ใช่หรือไม่ ?',
                     confirmed: (result) => {
+                        let data = {
+                            file_id: file.file_id,
+                            file_status: false
+                        }
                         if (result == true) {
-                            this.dispatchAction('UPLOAD_DELETE', idFile, this.companyId)
+                            this.dispatchAction('UPLOAD_DELETE_RECOVERY', data)
+                                .then((response) => {
+                                    console.log(response);
+                                    // this.fire('toast', {
+                                    //     status: 'success', text: 'ลบไฟล์สำเร็จ', callback: () => {
+                                    //         this.dispatchAction('EXPORTER_GET_FILE_DELETE', com_id);
+                                    //         // console.log('success');
+                                    //     }
+                                    // });
+                                })
+                                .catch(function (error) {
+                                    console.log(error);
+                                });
                         } else {
                             this.getList();
                         }

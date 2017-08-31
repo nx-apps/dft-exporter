@@ -2,23 +2,31 @@
 
 <link rel="import" href="../../../redux-behavior.html">
 
+<link rel="import" href="../../../layout/page-style.html">
+
+<link rel="import" href="../../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+
 <dom-module id="fileup-company">
   <style include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
-    .title{
+    .title {
       font-size: 17px;
       font-family: 'rsubold', sans-serif;
       -webkit-font-smoothing: antialiased;
       /*text-decoration:underline;*/
       margin: 10px 0px 10px 5px;
     }
-    upload-file{
+
+    upload-file {
       --divider-color: white;
       --primary-color: #339933;
       --vaadin-upload-drag-ripple: {
         border: 2px solid #ddd;
       }
     }
-    .title-head{
+
+    .title-head {
       text-align: center;
       font-size: var(--font-size-h4);
       font-family: 'rsubold', sans-serif;
@@ -29,7 +37,23 @@
   </style>
   <template>
     <div class="title-head">{{localize.doc_attach}}</div>
-    <template is="dom-repeat" items="[[docType]]">
+    <div class="title">[[item.doc_type_th]]</div>
+    <div class="start-justified layout">
+      <div class="flex">
+        <vaadin-combo-box label="ประเภทเอกสาร" always-float-label item-label-path="doc_type_th" item-value-path="id" items='{{docType}}' on-selected-item-changed="_getData">
+          <template>
+            [[index]]: [[item.doc_type_th]]
+          </template>
+        </vaadin-combo-box>
+      </div>
+      <div class="flex-3">
+        <upload-file target="/api/file/upload/" accept="application/pdf" ref-path="[[selectDoctype]]" doc-type-id="[[selectDoctype]]"
+          data-type="[[dataTypeSet.data]]" company-taxno="[[companyTaxno]]" draft-id="[[draftId]]">
+        </upload-file>
+      </div>
+    </div>
+
+    <!-- <template is="dom-repeat" items="[[docType]]">
       <div class="title">[[item.doc_type_th]]</div>
       <upload-file
         target="/api/file/upload/"
@@ -41,35 +65,59 @@
         draft-id = "[[draftId]]"
         >
       </upload-file>
-    </template>
+    </template> -->
     <div style="margin-bottom:20px;"></div>
   </template>
   <script>
     Polymer({
       is: "fileup-company",
       behaviors: [ReduxBehavior],
-      properties:{
-        localize:{
-          statePath : 'i18n.exporter'
+      properties: {
+        localize: {
+          statePath: 'i18n.exporter'
         },
         data: {
-          statePath : 'confirm.data'
+          statePath: 'confirm.data'
         },
         docType: {
-          statePath : 'exporter.docType'
+          statePath: 'exporter.docType',
+          observer:'setTypeDoc'
         },
         dataTypeSet: {
           statePath: 'confirm.confirmType',
+          
         },
+        selectDoctype: {
+          type: String,
+          value: ''
+        }
       },
       observers: [
         '_dataInput(data)'
       ],
-      _dataInput:function(data) {
+      // setTypeDoc(data){
+      //   if(Array.isArray(data)){
+      //     if(data.length >0){
+      //       this.set('selectDoctype', data[0].id)
+      //     }
+      //     // console.log(data)
+      //   }
+        
+      // },
+      _getData(data) {
+        // console.log(data.detail.value === null);
+        if (data.detail.value !== null) {
+          this.set('selectDoctype', data.detail.value.id)
+        }else {
+          this.set('selectDoctype', '')
+        }
+
+      },
+      _dataInput: function (data) {
         // console.log(data);
-        if(data.company_id === undefined){
+        if (data.company_id === undefined) {
           this.companyId = data.id;
-        }else{
+        } else {
           this.companyId = data.company_id;
         }
         // console.log(this.companyId);

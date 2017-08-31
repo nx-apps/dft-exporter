@@ -73,6 +73,7 @@ exports.download = function (req, res) {
         })
 }
 exports.recovery = function (req, res) {
+    console.log(11111111111111111);
     var file_status = req.body.file_status;
     if (typeof file_status === 'undefined') {
         res.json('recovery is null');

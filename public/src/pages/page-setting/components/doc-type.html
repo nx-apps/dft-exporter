@@ -1,12 +1,32 @@
+<link rel="import" href="../../../layout/page-style.html">
+
+<link rel="import" href="../../../layout/shared-styles.html">
 
 <dom-module id="doc-type">
     <template>
-        <style>
-            :host {
+        <style include="shared-styles">
+             :host {
                 display: block;
             }
+            /* width: 100%;border: 1px solid #ddd; margin: 20px 0px 10px 0px; */
         </style>
-        doc-type
+        <table class="gl-table-default">
+            <thead class="table-head">
+                <tr>
+                    <th>1</th>
+                </tr>
+            </thead>
+            <tfoot class="table-foot">
+                <tr>
+                    <td></td>
+                </tr>
+            </tfoot>
+            <tbody class="table-body">
+                <tr>
+                    <td>1</td>
+                </tr>
+            </tbody>
+        </table>
     </template>
     <script>
         Polymer({

@@ -3,7 +3,7 @@
 <link rel="import" href="./../../components/validateFormBehaviors.html">
 <link rel="import" href="./../../../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../../redux-behavior.html">
-
+<link rel="import" href="../../components/month-behavior.html">
 <dom-module id="register-page">
   <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
     .title {
@@ -203,7 +203,7 @@
   <script>
     Polymer({
       is: "register-page",
-      behaviors: [ReduxBehavior, ValidateFormBehavior],
+      behaviors: [ReduxBehavior, ValidateFormBehavior, MonthBehavior, uploadAction],
       properties: {
         pages: {
           type: Number,
@@ -426,17 +426,29 @@
       _search: function () {
         // console.log(this.dataTypeSet);
         if (this.company_taxno != '') {
+          let draft = ''
+          
           if (this.dataTypeSet.data === 'registerdraft') {
             console.log(1);
+            draft = 'sign'
             this.dispatchAction('CONFIRM_SEARCH', this.company_taxno);
           } else if (this.dataTypeSet.data === 'renewdraft') {
             console.log(2);
+            draft = 'renew'
             this.dispatchAction('CONFIRM_RENEW', this.company_taxno);
           } else {
             console.log(3);
+            draft = 'change'
             this.dispatchAction('CONFIRM_CHANGE_DRAFT', this.company_taxno);
           }
-
+          this.draftId = this.draftId || ''
+          let url = {
+            draft_status: draft,
+            company_taxno: this.company_taxno,
+            draft_id: this.draftId,
+            file_status: true,
+          }
+          this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
 
           this.queryFrom('.searchForm').map((el) => { el.reset(); });
         }

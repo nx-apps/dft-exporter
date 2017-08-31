@@ -27,6 +27,7 @@
 <link rel="import" href="./../../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="./../../../bower_components/paper-item/paper-item.html">
 
+<link rel="import" href="../components/month-behavior.html">
 
 <link rel="import" href="../components/validateFormBehaviors.html">
 
@@ -234,7 +235,7 @@
   </style>
   <template>
     <paper-material elevation="1" class="elevation">
-        <!-- <test-eml id="a"></test-eml>ddd
+      <!-- <test-eml id="a"></test-eml>ddd
         <hr>
         <test-eml id="b"></test-eml>ddd -->
 
@@ -394,7 +395,7 @@
 
               <section id="content2">
                 <gl-form-panel>
-                  <fileup-company></fileup-company>
+                  <fileup-company company-taxno="{{resultCompany.company_taxno}}" draft-id="{{resultCompany.id}}"></fileup-company>
                 </gl-form-panel>
               </section>
 
@@ -452,7 +453,7 @@
           observer: 'setDataDraft'
         }
       },
-      behaviors: [ReduxBehavior, nylonBehavior, i18nAction, confirmAction, exporterAction, ValidateFormBehavior],
+      behaviors: [ReduxBehavior, nylonBehavior, uploadAction, MonthBehavior, i18nAction, confirmAction, exporterAction, ValidateFormBehavior],
       listeners: {
         'back_page': '_backPage',
         'clearData': 'clearData'
@@ -461,8 +462,18 @@
         this.fire('nylon-change-page', { path: '/admin-exporter' })
       },
       setDataDraft(data) {
-        // console.log(data.lic_type);
-        this.set('resultCompany', data)
+        console.log(data);
+        if (data.hasOwnProperty('id')) {
+          let url = {
+            draft_id: data.id,
+            file_status: true,
+            draft_status: data.draft_status,
+            company_taxno: data.company_taxno
+          }
+          this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
+          this.set('resultCompany', data)
+        }
+
         // console.log(this.resultCompany);
       },
       nylonPageActive: function () {
@@ -476,8 +487,6 @@
         let data = e.currentTarget.data
         this.dispatchAction('CONFIRM_SEARCH_DRAFT', data.id)
         this.set('layerContent', 'approve')
-
-        this.$$('panel-right')
 
         this.$$('panel-right').open();
       },
@@ -497,8 +506,8 @@
         }
         // console.log(arr);
       },
-     
-     
+
+
       _print: function (e) {
         // console.log(e.target.getAttribute('report'));
         if (e.target.getAttribute('report') == 'report1') {

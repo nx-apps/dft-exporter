@@ -14,13 +14,13 @@
 
 <dom-module id="page-setting">
     <template>
-        <style include="page-style shared-styles gl-size">
+        <style include=" gl-size">
              :host {
                 display: block;
             }
 
             paper-material {
-                background-color: var(--gl-white-color);
+                background-color: #FFF;
                 padding: 15px;
                 margin-top: 15px;
                 /*height: */
@@ -81,8 +81,8 @@
                 display: block;
             }
 
-            detail-company,
-            fileup-company {
+            exporter-type,
+            doc-type {
                 margin-top: 15px;
                 width: 98%;
             }
@@ -106,15 +106,11 @@
 
 
                 <section id="content1">
-                    <gl-form-panel>
-                        <exporter-type></exporter-type>
-                    </gl-form-panel>
+                    <exporter-type></exporter-type>
                 </section>
 
                 <section id="content2">
-                    <gl-form-panel>
-                        <doc-type></doc-type>
-                    </gl-form-panel>
+                    <doc-type></doc-type>
                 </section>
 
             </main>
