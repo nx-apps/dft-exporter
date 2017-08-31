@@ -30,7 +30,7 @@ exports.upload = function (req, res) {
                         date_updated: r.now().inTimezone('+07')
                     });
                     var tbName;
-                    if (draft_id == '')
+                    if (draft_id == '' || typeof draft_id === 'undefined')
                         tbName = 'doc_temp'
                     else {
                         tbName = 'doc_draft';
