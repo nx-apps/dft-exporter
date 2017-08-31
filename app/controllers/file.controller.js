@@ -28,18 +28,10 @@ exports.upload = function (req, res) {
                         company_taxno: company_taxno,
                         draft_status: draft_status,
                         date_created: r.now().inTimezone('+07'),
-                        date_updated: r.now().inTimezone('+07')
+                        date_updated: r.now().inTimezone('+07'),
+                        draft_id: r.branch(r.expr(draft_id).eq(''), null, r.expr(draft_id))
                     });
-                    var tbName;
-                    if (draft_id == '' || typeof draft_id === 'undefined')
-                        tbName = 'doc_temp'
-                    else {
-                        tbName = 'doc_draft';
-                        doc = doc.merge({
-                            draft_id: draft_id
-                        })
-                    }
-                    r.table(tbName).insert(doc)
+                    r.table('doc_draft').insert(doc)
                         .run()
                         .then(function (ins) {
                             res.json(ins)
@@ -51,13 +43,12 @@ exports.upload = function (req, res) {
 
 }
 exports.list = function (req, res) {
-    var q;
-    if (req.query.draft_id == '' || typeof req.query.draft_id === 'undefined')
-        q = r.table('doc_temp').getAll([req.query.company_taxno, req.query.draft_status], { index: 'taxNoDraftStatus' })
-    else
-        q = r.table('doc_draft').getAll(req.query.draft_id, { index: 'draft_id' })
-
-    q.eqJoin('doc_type_id', r.table('doc_type')).without({ right: 'id' }).zip()
+    var draft_id = (req.query.draft_id == '' || typeof req.query.draft_id === 'undefined' ? null : req.query.draft_id);
+    var file_status = (req.query.file_status == 'false' ? false : true);
+    r.table('doc_draft')
+        .getAll([req.query.company_taxno, req.query.draft_status, draft_id, file_status],
+        { index: 'taxNoDraftStatusDraftIdFileStatus' })
+        .eqJoin('doc_type_id', r.table('doc_type')).without({ right: 'id' }).zip()
         .pluck('doc_type_id', 'doc_type_th', 'file_id', 'filename', 'filetype', 'date_upload')
         .group('doc_type_th')
         .run()
