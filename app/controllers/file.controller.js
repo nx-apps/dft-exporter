@@ -1,5 +1,6 @@
 var fs = require('fs');
 var multiparty = require('multiparty');
+var stream = require('stream');
 exports.upload = function (req, res) {
     var r = req.r;
     var params = req.params;
@@ -11,7 +12,7 @@ exports.upload = function (req, res) {
         var draft_status = req.headers['draft-status'];
         var draft_id = req.headers['draft-id'];
         fs.readFile(prefile.path, function (err, data) {
-            r.db('external').table('file').insert({
+            r.table('file').insert({
                 filename: prefile.originalFilename.split('.')[0] + "." + prefile.originalFilename.split('.')[1],
                 filetype: prefile.headers['content-type'],
                 contents: data,
@@ -38,7 +39,7 @@ exports.upload = function (req, res) {
                             draft_id: draft_id
                         })
                     }
-                    r.db('external').table(tbName).insert(doc)
+                    r.table(tbName).insert(doc)
                         .run()
                         .then(function (ins) {
                             res.json(ins)
@@ -48,4 +49,35 @@ exports.upload = function (req, res) {
         });
     });
 
+}
+exports.list = function (req, res) {
+    var q;
+    if (req.query.draft_id == '' || typeof req.query.draft_id === 'undefined')
+        q = r.table('doc_temp').getAll([req.query.company_taxno, req.query.draft_status], { index: 'taxNoDraftStatus' })
+    else
+        q = r.table('doc_draft').getAll(req.query.draft_id, { index: 'draft_id' })
+
+    q.eqJoin('doc_type_id', r.table('doc_type')).without({ right: 'id' }).zip()
+        .pluck('doc_type_id', 'doc_type_th', 'file_id', 'filename', 'filetype', 'date_upload')
+        .group('doc_type_id')
+        .run()
+        .then(function (data) {
+            res.json(data)
+        })
+}
+exports.download = function (req, res) {
+    r.table('file').get(req.query.file_id)
+        .run()
+        .then(function (result) {
+            res.writeHead(200, {
+                'Content-Type': result.filetype,
+                'Content-Length': result.contents.length,
+                'Content-Disposition': 'attachment; filename=' + result.filename
+            });
+            var bufferStream = new stream.PassThrough();
+            bufferStream.end(result.contents);
+            bufferStream.pipe(res);
+        }).catch(function (err) {
+            res.json(err);
+        })
 }
