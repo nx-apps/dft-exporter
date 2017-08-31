@@ -60,11 +60,14 @@ exports.postInsert = function (req, res) {
             r.table('draft').insert(obj)
                 .run()
                 .then(function (data) {
-                    if (req.body.lic_type_id == "BORDER") {
-                        res.json(insertExporter(data.generated_keys[0]));
-                    } else {
-                        res.json(data)
-                    }
+                    insertDraftIdDoc(data.generated_keys[0], function () {
+                        if (req.body.lic_type_id == "BORDER") {
+                            res.json(insertExporter(data.generated_keys[0]));
+                        } else {
+                            res.json(data)
+                        }
+                    });
+
 
                 })
         } else {
@@ -276,5 +279,16 @@ exports.putChange = function (req, res) {
             } else {
                 res.json(data);
             }
+        })
+}
+function insertDraftIdDoc(draftId, callback) {
+    r.table('draft').get(draftId)
+        .do(function (d) {
+            return r.table('doc_draft').getAll([d('company_taxno'), d('draft_status'), ''], { index: 'taxNoDraftStatusDraftId' })
+                .update({ draft_id: d('id') })
+        })
+        .run()
+        .then(function (data) {
+            callback;
         })
 }
