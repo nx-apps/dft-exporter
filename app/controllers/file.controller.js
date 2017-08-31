@@ -72,3 +72,18 @@ exports.download = function (req, res) {
             res.json(err);
         })
 }
+exports.recovery = function (req, res) {
+    var recovery = req.query.recovery;
+    if (typeof recovery === 'undefined') {
+        res.json('recovery is null');
+    } else {
+        recovery = (recovery == 'true' ? true : false);
+        r.table('doc_draft').getAll(req.query.id, { index: 'file_id' })
+            .update({ file_status: recovery })
+            .run()
+            .then(function (data) {
+                res.json(data)
+            })
+    }
+
+}
