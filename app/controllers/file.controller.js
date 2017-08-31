@@ -29,7 +29,7 @@ exports.upload = function (req, res) {
                         draft_status: draft_status,
                         date_created: r.now().inTimezone('+07'),
                         date_updated: r.now().inTimezone('+07'),
-                        draft_id: r.branch(r.expr(draft_id).eq(''), null, r.expr(draft_id))
+                        draft_id: r.branch(r.expr(draft_id).eq(''), '', draft_id)
                     });
                     r.table('doc_draft').insert(doc)
                         .run()
@@ -43,10 +43,10 @@ exports.upload = function (req, res) {
 
 }
 exports.list = function (req, res) {
-    var draft_id = (req.query.draft_id == '' || typeof req.query.draft_id === 'undefined' ? null : req.query.draft_id);
+    var draft_id = (req.query.draft_id == '' || typeof req.query.draft_id === 'undefined' ? '' : req.query.draft_id);
     var file_status = (req.query.file_status == 'false' ? false : true);
     r.table('doc_draft')
-        .getAll([req.query.company_taxno, req.query.draft_status, draft_id, file_status],
+        .getAll(r.agrs([req.query.company_taxno, req.query.draft_status, draft_id, file_status]),
         { index: 'taxNoDraftStatusDraftIdFileStatus' })
         .eqJoin('doc_type_id', r.table('doc_type')).without({ right: 'id' }).zip()
         .pluck('doc_type_id', 'doc_type_th', 'file_id', 'filename', 'filetype', 'date_upload')
