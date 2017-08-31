@@ -59,7 +59,7 @@ exports.list = function (req, res) {
 
     q.eqJoin('doc_type_id', r.table('doc_type')).without({ right: 'id' }).zip()
         .pluck('doc_type_id', 'doc_type_th', 'file_id', 'filename', 'filetype', 'date_upload')
-        .group('doc_type_id')
+        .group('doc_type_th')
         .run()
         .then(function (data) {
             res.json(data)
