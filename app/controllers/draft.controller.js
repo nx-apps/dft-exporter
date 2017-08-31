@@ -20,7 +20,7 @@ exports.getInsert = function (req, res) {
             r.expr({ company: companyData[0], company_taxno: req.query.company_taxno })
                 .merge({
                     lic_type: r.table('license_type').filter(function (f) {
-                        return r.table('draft').getAll([req.query.company_taxno, 'sign'], { index: 'taxnoDraftStatus' })
+                        return r.table('draft').getAll([req.query.company_taxno, 'sign'], [req.query.company_taxno, 'change'], { index: 'taxnoDraftStatus' })
                             .getField('lic_type_id')
                             .distinct().contains(f('id')).eq(false)
                     }).coerceTo('array')
