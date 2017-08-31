@@ -1,0 +1,14 @@
+{
+    "name": "doctype",
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "doc_type_th": {
+            "type": "string"
+        },
+        "doc_type_en": {
+            "type": "string"
+        }
+    }
+}

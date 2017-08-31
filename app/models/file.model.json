@@ -1,0 +1,21 @@
+{
+    "name": "file",
+    "properties": {
+        "id": {
+            "type": "string"
+        },
+        "filename": {
+            "type": "string"
+        },
+        "contents": {
+            "type": "string"
+        },
+        "file_type": {
+            "type": "string"
+        },
+        "date_upload": {
+            "type": "string",
+            "format": "date-time"
+        }
+    }
+}
