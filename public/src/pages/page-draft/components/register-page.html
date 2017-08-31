@@ -149,11 +149,10 @@
         </section>
 
         <section id="content2">
-          <gl-form-panel>
-            <fileup-company company-taxno="{{company_taxno}}" draft-id="{{resultCompany.id}}"></fileup-company>
+          <gl-form-panel>{{resultCompany.id}}
+            <fileup-company company-taxno="{{company_taxno}}" ></fileup-company>
           </gl-form-panel>
         </section>
-
       </main>
 
 
@@ -390,8 +389,8 @@
               }
               this.push('resultCompany.remark', remark)
 
-              var check = this.$$('detail-company').validate();
-              if (check == true) {
+              // var check = this.$$('detail-company').validate();
+              // if (check == true) {
 
                 let newData = {
                   id: this.resultCompany.id,
@@ -414,9 +413,9 @@
                     console.log(err);
                   })
                 this.$$('detail-company').resetValidate();
-              } else {
-                this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' });
-              }
+              // } else {
+              //   this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' });
+              // }
             }
           }
         });
@@ -448,7 +447,8 @@
             draft_id: this.draftId,
             file_status: true,
           }
-          this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
+          console.log(6666);
+          // this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
 
           this.queryFrom('.searchForm').map((el) => { el.reset(); });
         }
