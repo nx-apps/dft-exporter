@@ -1,7 +1,7 @@
 var tz = "T00:00:00+07:00";
 exports.list = function (req, res) {
-    var page = parseInt(req.query.page) - 1;
-    var limit = parseInt(req.query.limit);
+    var page = (typeof req.query.page !== 'undefined' ? parseInt(req.query.page) - 1 : 0);
+    var limit = (typeof req.query.limit !== 'undefined' ? parseInt(req.query.limit) : 100);;
     var skip = page * limit;
     var r = req.r;
     var q = {}, d = {}, o = r.desc('exporter_no');
