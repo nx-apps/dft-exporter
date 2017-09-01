@@ -39,8 +39,9 @@
     </style>
     <template>
         <template is="dom-if" if="[[checkRefPath(refPath)]]">
-            <vaadin-upload class="thick-border" id="preFill" target="[[target]]" method="POST" timeout="300000" accept="[[accept]]" on-upload-success="fileChanged"
-                on-upload-request="_addHeader" disabled>
+            <vaadin-upload class="thick-border" id="preFill" target="[[target]]" method="POST" timeout="300000" accept="[[accept]]" 
+            on-upload-success="fileChanged"
+                on-upload-request="_addHeader">
                 <div class="drop-label">
                     <iron-icon icon="description"></iron-icon>
                     [[dropName]]
@@ -99,7 +100,7 @@
                 refPath: {
                     type: String,
                     value: "",
-                    observer: 'getList'
+                    // observer: 'getList'
                 },
                 docTypeId: {
                     type: String,
@@ -120,7 +121,7 @@
                 companyId: {
                     type: String,
                     value: "",
-                    observer: 'getList'
+                    // observer: 'getList'
                 },
                 listFiles: {
                     statePath: 'upload.fileList',
@@ -134,48 +135,51 @@
 
                 if (fileChange.type === 'upload-success') {
                     let file = fileChange.detail.file
+                    // console.log(this.draftId);
                     this.getList();
+                    // console.log(1121212);
                     this.fire('toast', { status: 'success', text: `อัพโหลดไฟล์ ${file.name} สำเร็จ`, callback: () => { } })
                 }
             },
             getList: function () {
-                let draft = 'sign'
-                // console.log(this.dataType);
-                if (this.dataType === 'registerdraft') {
-                    draft = 'sign'
-                } else if (this.dataType === 'renewdraft') {
-                    draft = 'renew'
-                } else if (this.dataType === 'changedraft') {
-                    draft = 'change'
-                } else {
-                    draft = ''
+                
+                if (this.dataType !== undefined) {
+                    // console.log(this.dataType);
+                    let draft = 'sign'
+                    // console.log(1111);
+                    switch (this.dataType) {
+                        case 'registerdraft':
+                            draft = 'sign'
+                            break;
+                        case 'renewdraft':
+                            draft = 'renew'
+                            break;
+                        case 'changedraft':
+                            draft = 'change'
+                            break;
+                        default:
+                            draft = ''
+                            break;
+                    }
+                    if (this.companyTaxno === '' || this.companyTaxno === undefined) {
+                        this.companyTaxno = ''
+                    }
+                    if (this.draftId === '' || this.draftId === undefined) {
+                        this.draftId = ''
+                    }
+                    let url = {
+                        draft_status: draft,
+                        company_taxno: this.companyTaxno,
+                        draft_id: this.draftId || '',
+                        file_status: true,
+                    }
+                    // console.log(this.genUrl(url).length);
+                    if (this.genUrl(url).length > 0) {
+                        console.log(5555);
+                        this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
+                    }
                 }
-                if (this.companyTaxno === '' || this.companyTaxno === undefined) {
-                    this.companyTaxno = ''
-                }
-                if (this.draftId === '' || this.draftId === undefined) {
-                    this.draftId = ''
-                }
-                // console.log(draft);
-                // console.log(this.companyTaxno);
-                // console.log(this.draftId);
-                let url = {
-                    draft_status: draft,
-                    company_taxno: this.companyTaxno,
-                    draft_id: this.draftId || '',
-                    file_status: true,
-                }
-                // console.log(this.genUrl(url).length);
-                if (this.genUrl(url).length > 0) {
-                    this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
-                    // .then((response) => {
-                    //     this.listFiles = response.data;
-                    //     // console.log(this.listFiles);
-                    // })
-                    // .catch(function (error) {
-                    //     console.log(error);
-                    // });
-                }
+
 
             },
             _addHeader: function (e) {
@@ -192,6 +196,7 @@
                 event.detail.xhr.setRequestHeader('draft-status', draft)
                 event.detail.xhr.setRequestHeader('company-taxno', this.companyTaxno)
                 // console.log(this.companyTaxno);
+                console.log(this.draftId);
                 event.detail.xhr.setRequestHeader('draft-id', this.draftId)
             },
             downloadFile: function (e) {
@@ -225,12 +230,13 @@
                             this.dispatchAction('UPLOAD_DELETE_RECOVERY', data)
                                 .then((response) => {
                                     console.log(response);
-                                    // this.fire('toast', {
-                                    //     status: 'success', text: 'ลบไฟล์สำเร็จ', callback: () => {
-                                    //         this.dispatchAction('EXPORTER_GET_FILE_DELETE', com_id);
-                                    //         // console.log('success');
-                                    //     }
-                                    // });
+
+                                    this.fire('toast', {
+                                        status: 'success', text: 'ลบไฟล์สำเร็จ', callback: () => {
+                                            this.getList()
+                                            // console.log('success');
+                                        }
+                                    });
                                 })
                                 .catch(function (error) {
                                     console.log(error);

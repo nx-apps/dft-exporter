@@ -462,7 +462,7 @@
         this.fire('nylon-change-page', { path: '/admin-exporter' })
       },
       setDataDraft(data) {
-        console.log(data);
+        // console.log(data);
         if (data.hasOwnProperty('id')) {
           let url = {
             draft_id: data.id,
@@ -470,6 +470,7 @@
             draft_status: data.draft_status,
             company_taxno: data.company_taxno
           }
+          console.log(777);
           this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
           this.set('resultCompany', data)
         }

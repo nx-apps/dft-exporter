@@ -17,9 +17,10 @@ export function uploadAction(store) {
     {
         UPLOAD_GET_LIST: function (link) {
         console.log(4444);
+        console.log(link);
+        console.log(121212);
             axios.get('/file/list/?' + link)
             .then((response) => {
-                console.log(1111);
                 store.dispatch({ type: 'UPLOAD_GET_LIST', payload: response.data })
             })
             .catch(function (error) {
