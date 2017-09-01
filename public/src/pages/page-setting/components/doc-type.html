@@ -1,36 +1,102 @@
 <link rel="import" href="../../../layout/page-style.html">
 
-<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../../../../bower_components/iron-icon/iron-icon.html">
+
+<!-- <link rel="import" href="../../../layout/shared-styles.html"> -->
+
+<link rel="import" href="../../../redux-behavior.html">
+
+<link rel="import" href="../../../../bower_components/gl-styles/gl-color.html">
 
 <dom-module id="doc-type">
     <template>
-        <style include="shared-styles">
-             :host {
-                display: block;
+        <style include="page-style gl-color">
+            paper-icon-button.crud:hover {
+                background-color: var(--paper-grey-200);
+                border-radius: 5px;
+                box-shadow: inset 0 0 3px 3px rgba(0, 0, 0, .2);
             }
-            /* width: 100%;border: 1px solid #ddd; margin: 20px 0px 10px 0px; */
+
+            table.gl-table-default>tbody.table-body>tr>td {
+                /*cursor: pointer;*/
+                padding: 5px 15px;
+            }
         </style>
+
+        <div class="horizontal end-justified layout">
+            <div>
+                <paper-button class="button-top gl-btn-primary" raised on-tap="addDocType">
+                    <iron-icon icon="add"></iron-icon>&nbsp;&nbsp; เพิ่ม</paper-button>
+            </div>
+        </div>
         <table class="gl-table-default">
             <thead class="table-head">
                 <tr>
-                    <th>1</th>
+                    <th style="width:15%; text-align: center;">ลำดับ</th>
+                    <!-- <th style="width:20%;">CODE</th> -->
+                    <th style="width:60%;">ชื่อประเภท</th>
+                    <th style="width:15%; text-align: center;">จัดการ</th>
                 </tr>
             </thead>
-            <tfoot class="table-foot">
-                <tr>
-                    <td></td>
-                </tr>
-            </tfoot>
             <tbody class="table-body">
-                <tr>
-                    <td>1</td>
-                </tr>
+
+                <template is="dom-repeat" items={{data}}>
+                    <tr>
+                        <td style="text-align: center;">[[indexNo(index)]]</td>
+                        <!-- <td>[[item.doc_type_en]]</td> -->
+                        <td>[[item.doc_type_th]]</td>
+                        <td style="text-align: center;">
+                            <paper-icon-button class="crud" data="{{item}}" on-tap="editDocType" icon="create"></paper-icon-button>
+                            <!-- <paper-icon-button class="crud" data="{{item}}" on-tap="deleteDocType" icon="delete"></paper-icon-button> -->
+                        </td>
+                    </tr>
+                </template>
             </tbody>
         </table>
     </template>
     <script>
         Polymer({
-            is: 'doc-type'
+            is: 'doc-type',
+            behaviors: [ReduxBehavior],
+            properties: {
+                data: {
+                    statePath: 'setting.listDocType'
+                },
+            },
+            indexNo: function (val) {
+                return val + 1
+            },
+            addDocType() {
+                this.dispatchAction('SETTING_CLEAR_DOC_LIC')
+                this.dispatchAction('SETTING_BTN', {
+                    typeIsInsert: true,
+                    btnShow: false,
+                    status: false
+                })
+                this.fire('openDocLic', { page: 0, name: 'เพิ่มประเภทเอกสาร' })
+            },
+            editDocType(e) {
+                this.dispatchAction('SETTING_BTN', {
+                    typeIsInsert: false,
+                    btnShow: true,
+                    status: true
+                })
+                // console.log(e.currentTarget.data);
+                this.fire('editPanel', {
+                    page: 0,
+                    name: 'เรียกดูประเภทเอกสาร',
+                    action: 'SETTING_GET_ID_DOC',
+                    id: e.currentTarget.data.id
+                })
+            },
+            // deleteDocType(e) {
+            //     this.dispatchAction('SETTING_DELETE_DOC', e.currentTarget.data.id)
+            // }
+
         });
     </script>
 </dom-module>
