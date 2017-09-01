@@ -1,0 +1,57 @@
+<link rel="import" href="../../../layout/page-style.html">
+
+<link rel="import" href="../../../redux-behavior.html">
+
+<dom-module id="list-file-delete">
+    <template>
+        <style include="page-style">
+             :host {
+                display: block;
+            }
+        </style>
+        <h4>Files</h4>
+        <table class="gl-table-default">
+            <thead class="table-head">
+                <tr>
+                    <!-- <th>ลำดับ</th> -->
+                    <th style="width:25%;">ประเภทไฟล์</th>
+                    <th style="width:60%;">ชื่อไฟล์</th>
+                    <th style="text-align: center;width:15%;">จัดการ</th>
+                </tr>
+            </thead>
+            <tbody class="table-body">
+                <template is="dom-repeat" items={{listFilesDelete}} as="files">
+                    <template is="dom-repeat" items={{files.reduction}} as="file">
+                        <tr>
+                            <!-- <td>ๅ</td> -->
+                            <td>[[files.group]]</td>
+                            <td>[[file.filename]]</td>
+                            <td style="text-align: center;">
+                                <paper-icon-button class="crud" data="{{file}}" on-tap="downloadFile" icon="cloud-download"></paper-icon-button>
+                                <paper-icon-button class="crud" data="{{file}}" on-tap="_deleteFile" icon="delete"></paper-icon-button>
+                            </td>
+                        </tr>
+
+                    </template>
+                </template>
+
+            </tbody>
+        </table>
+    </template>
+    <script>
+        Polymer({
+            is: 'list-file-delete',
+            behaviors: [ReduxBehavior],
+            properties: {
+                listFilesDelete: {
+                    statePath: 'upload.fileListDelete',
+                    observer:'seteeeeee'
+                }
+            },
+            seteeeeee(data){
+                console.log(data);
+            }
+            // fileListFalse
+        });
+    </script>
+</dom-module>

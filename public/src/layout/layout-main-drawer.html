@@ -36,6 +36,7 @@
                 top: 4px;
                 right: 10px;
             }
+
             paper-icon-item[selected] {
                 background-color: #DDD;
             }
@@ -70,8 +71,8 @@
             is: 'layout-main-drawer',
             behaviors: [ReduxBehavior],
             properties: {
-                localize:{
-                    statePath : 'i18n.common'
+                localize: {
+                    statePath: 'i18n.common'
                 },
                 user: {
                     statePath: 'auth.user'
@@ -79,19 +80,24 @@
                 listMenu: {
                     type: Array,
                     value: [
+                        // {
+                        //     name: 'รายชื่อบริษัท',
+                        //     path: '/company-edit',
+                        //     role: ''
+                        // },
+                        {
+                            name: 'จัดการทะเบียนผู้ส่งออกข้าว',
+                            path: '/draft',
+                            role: ''
+                        },
                         {
                             name: 'รายชื่อผู้ส่งออก',
                             path: '/admin-exporter',
                             role: ''
                         },
                         {
-                            name: 'รายชื่อบริษัท',
-                            path: '/company-edit',
-                            role: ''
-                        },
-                        {
-                            name: 'draft',
-                            path: '/draft',
+                            name: 'ตั่งค่าระบบ',
+                            path: '/setting',
                             role: ''
                         }
                     ]
@@ -133,7 +139,7 @@
                 }
 
                 this.async(
-                    function() {
+                    function () {
                         this.fire('close-drawer');
                         this._loaded();
                     }
@@ -141,8 +147,8 @@
 
             },
             _loaded: function () {
-                this.async(function(){
-                    this.listMenu.map(function(item, i){
+                this.async(function () {
+                    this.listMenu.map(function (item, i) {
                         this.set('listMenu.' + i + '.loading', false);
                     }.bind(this));
                     this.fire('close-drawer');

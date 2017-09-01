@@ -70,7 +70,7 @@ export function exporterAction(store) {
             })
         },
         EXPORTER_GET_PAGE: function () {
-            axios.get('./external/exporter/page?limit=100')
+            axios.get('./exporter/page?limit=100')
                 .then((response) => {
                     var pages = [];
                     for (var i = 1; i <= response.data; i++) {
@@ -80,19 +80,12 @@ export function exporterAction(store) {
                     store.dispatch({ type: 'EXPORTER_GET_PAGE', payload: pages })
                 })
         },
-        EXPORTER_GET_DATA_ID: function (id,company_taxno = 0) {
+        EXPORTER_GET_DATA_ID: function (url) {
             // console.log(company_taxno);
-            axios.get('./external/exporter/id/' + id+'?company_taxno='+company_taxno)
+            axios.get('./exporter/get/?'+url)
                 .then(function (response) {
-                    response.data.map((item) => {
-                        for (var key in item) {
-                            if (item[key] === "") {
-                                item[key] = '-';
-                            }
-                        }
-                    })
-                    // console.log(response.data);
-                    store.dispatch({ type: 'EXPORTER_GET_DATA_ID', payload: response.data[0] })
+                    console.log(response.data);
+                    store.dispatch({ type: 'EXPORTER_GET_DATA_ID', payload: response.data})
                 })
                 .catch(function (error) {
                     console.log(error);
@@ -100,7 +93,7 @@ export function exporterAction(store) {
         },
         EXPORTER_GET_FILE_DELETE: function (id) {
             console.log(id);
-            axios.get('./external/upload/list/' + id)
+            axios.get('./upload/list/' + id)
                 .then(function (response) {
                     // console.log(response.data);
                     store.dispatch({ type: 'EXPORTER_GET_FILE_DELETE', payload: response.data })
@@ -110,7 +103,7 @@ export function exporterAction(store) {
                 });
         },
         EXPORTER_GET_LIC_TYPE: function () {
-            axios.get('./external/license_type')
+            axios.get('./license_type')
                 .then(function (response) {
                     // console.log(response.data);
                     store.dispatch({ type: 'EXPORTER_GET_LIC_TYPE', payload: response.data })
@@ -148,7 +141,7 @@ export function exporterAction(store) {
                 this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback: function () { } })
             }else{
                 // console.log('report');
-                axios.get('./external/exporter'+val)
+                axios.get('./exporter'+val)
                     .then(function (response) {});
             }
         },
@@ -156,7 +149,7 @@ export function exporterAction(store) {
             if (data.lic_type_id === undefined) {
                 // console.log('ตัวเดิม');
                 this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-                axios.put('./external/exporter/update', data)
+                axios.put('./exporter/update', data)
                     .then((result) => {
                         this.fire('toast', {
                             status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
@@ -168,7 +161,7 @@ export function exporterAction(store) {
             } else {
                 // console.log('เปลี่ยน');
                 this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-                axios.put('./external/draft/update', data)
+                axios.put('./draft/update', data)
                     .then((result) => {
                         this.fire('toast', {
                             status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
@@ -182,9 +175,9 @@ export function exporterAction(store) {
         EXPORTER_ACTIVE_RENEW: function (data, data2) {
             // console.log(data,date);
             this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-            axios.put('./external/draft/update', data)
+            axios.put('./draft/update', data)
                 .then((result) => {
-                    axios.put('./external/exporter/update', data2)
+                    axios.put('./exporter/update', data2)
                         .then((result2) => {
                             this.fire('toast', {
                                 status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
@@ -197,7 +190,7 @@ export function exporterAction(store) {
         },
         EXPORTER_DELETE: function(id){
             this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-            axios.delete('./external/exporter/delete/id/'+id)
+            axios.delete('./exporter/delete/id/'+id)
             .then((response) =>{
                 this.fire('toast', {
                     status: 'success', text: 'ลบข้อมูลสำเร็จ', callback: () => {

@@ -1,8 +1,11 @@
 <link rel="import" href="./../../components/validateFormBehaviors.html">
-
+<link rel="import" href="../../components/gl-form-textarea-my-com.html">
+<link rel="import" href="../../../../bower_components/gl-form/gl-form-textarea.html">
+<link rel="import" href="../../../../bower_components/gl-form/gl-form-input.html">
 <link rel="import" href="../../../redux-behavior.html">
-
 <link rel="import" href="../../../layout/page-style.html">
+<link rel="import" href="../../../../bower_components/gl-form/gl-form-dropdown-menu.html">
+<link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
 
 <dom-module id="detail-company">
   <style is="custom-style" include="page-style iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
@@ -66,7 +69,6 @@
           disabled></gl-form-textarea>
       </div>
     </div>
-
     <div class="horizontal start-justified layout">
       <div class="flex">
         <gl-form-textarea always-float-label label="{{localize.address}} :" value="{{data.company.company_address_th}}" disabled></gl-form-textarea>
@@ -79,7 +81,6 @@
           disabled></gl-form-textarea>
       </div>
     </div>
-
     <div class="horizontal start-justified layout">
       <div class="flex flex-padding">
         <gl-form-textarea always-float-label label="{{localize.email}} :" value="{{data.company.company_email}}" disabled></gl-form-textarea>

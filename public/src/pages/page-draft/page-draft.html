@@ -441,6 +441,10 @@
         draftById: {
           statePath: 'confirm.draftById',
           observer: 'setDataDraft'
+        },
+        resultCompany:{
+          type:Object,
+          value:{}
         }
       },
       behaviors: [ReduxBehavior, nylonBehavior, uploadAction, MonthBehavior, i18nAction, confirmAction, exporterAction, ValidateFormBehavior],
@@ -469,7 +473,7 @@
       nylonPageActive: function () {
 
         this.dispatchAction('CONFIRM_GET_DATA');
-        // this.dispatchAction('EXPORTER_GET_LIC_TYPE');
+        // this.dispatchAction('//EXPORTER_GET_LIC_TYPE');
         // ดึงประเภทเอกสารที่จะอัพโหลด
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');
       },

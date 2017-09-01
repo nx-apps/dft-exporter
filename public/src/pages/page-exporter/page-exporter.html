@@ -334,7 +334,7 @@
       nylonPageActive: function () {
         this.dispatchAction('EXPORTER_GET_DATA');
         // this.dispatchAction('EXPORTER_GET_DATA_SEARCH');
-        this.dispatchAction('EXPORTER_GET_LIC_TYPE');
+        // this.dispatchAction('//EXPORTER_GET_LIC_TYPE');
         this.dispatchAction('EXPORTER_GET_PAGE');
       },
       attached() {
@@ -347,13 +347,7 @@
         let month = today.getMonth() + 1
         if (month < 10)
           month = '0' + month
-        // console.log(month);
-        // console.log(today.toISOString());
-        // dateStart = today.toISOString().split('T')[0]
         dateStart = today.getFullYear() + 543 + '-' + month + "-" + today.getDate()
-        // console.log(dateStart.toISOString())
-        // console.log(dateStart);
-        // console.log(today.getDate());
         let nextDay = dateEnd = new Date(today.setDate(today.getDate() + 7)).toISOString().split('T')[0]
         // console.log(nextDay.split('-')[2]);
         dateEnd = today.getFullYear() + 543 + '-' + month + "-" + nextDay.split('-')[2]
@@ -398,7 +392,7 @@
         var id = e.currentTarget.data.id;
         let company_taxno = e.currentTarget.data.company_taxno
         this.dispatchAction('EXPORTER_GET_DATA_ID', id, company_taxno);
-        this.dispatchAction('EXPORTER_GET_LIC_TYPE');
+        // this.dispatchAction('//EXPORTER_GET_LIC_TYPE');
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');
         this.layerContent = "detailRegExporter";
         this.titleName = 'ข้อมูลผู้ส่งออก';
@@ -409,7 +403,7 @@
         if (id.detail.value !== "" && typeof id.detail.value !== 'undefined') {
           var id = id.detail.value;
           this.dispatchAction('EXPORTER_GET_DATA_ID', id);
-          this.dispatchAction('EXPORTER_GET_LIC_TYPE');
+          // this.dispatchAction('//EXPORTER_GET_LIC_TYPE');
           this.dispatchAction('EXPORTER_GET_DOC_TYPE');
           this.layerContent = "detailRegExporter";
           this.titleName = 'ข้อมูลผู้ส่งออก';

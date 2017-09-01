@@ -141,14 +141,11 @@
 
                 if (fileChange.type === 'upload-success') {
                     let file = fileChange.detail.file
-                    // console.log(this.draftId);
                     this.getList();
-                    // console.log(1121212);
                     this.fire('toast', { status: 'success', text: `อัพโหลดไฟล์ ${file.name} สำเร็จ`, callback: () => { } })
                 }
             },
             getList: function () {
-
                 if (this.dataType !== undefined) {
                     // console.log(this.dataType);
                     let draft = 'sign'
@@ -235,11 +232,11 @@
                         if (result == true) {
                             this.dispatchAction('UPLOAD_DELETE_RECOVERY', data)
                                 .then((response) => {
-                                    // console.log(response);
-
+                                    console.log(response);
+                                    this.getList()
                                     this.fire('toast', {
                                         status: 'success', text: 'ลบไฟล์สำเร็จ', callback: () => {
-                                            this.getList()
+                                            
                                             // console.log('success');
                                         }
                                     });

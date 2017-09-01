@@ -1,4 +1,4 @@
-<link rel="import" href="components/member-page.html">
+<!-- <link rel="import" href="components/member-page.html"> -->
 <link rel="import" href="./../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../components/panel-right/panel-right.html">
 <link rel="import" href="../../nylon-behavior.html">
@@ -9,7 +9,6 @@
 <link rel="import" href="./../../../bower_components/gl-form/gl-form-dropdown-menu.html">
 <link rel="import" href="./../../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="./../../../bower_components/paper-item/paper-item.html">
-<!--<link rel="import" href="./../../../bower_components/vaadin-date-picker/vaadin-date-picker.html">-->
 <link rel="import" href="./../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="./../../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="./../../../bower_components/gl-styles/gl-size.html">
@@ -20,37 +19,24 @@
 <link rel="import" href="./../../layout/nylon-toast.html">
 <link rel="import" href="../components/validateFormBehaviors.html">
 <link rel="import" href="../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
-
 <link rel="import" href="./../components/nylon-datepicker.html">
-
 <link rel="import" href="../../redux-behavior.html">
-
 <link rel="import" href="../../nylon-behavior.html">
-
 <link rel="import" href="../../i18n-behavior.html">
-
 <link rel="import" href="./../components/month-behavior.html">
-
 <link rel="import" href="../../action/uploadAction.html">
-
 <link rel="import" href="../../action/exporterAction.html">
-
 <link rel="import" href="../../layout/page-style.html">
-
 <link rel="import" href="../../i18n-behavior.html">
+<link rel="import" href="../../action/confirmAction.html">
 
+<link rel="import" href="../../../bower_components/gl-form/gl-form-panel.html">
 
-<!--<link href="//getbootstrap.com/2.3.2/assets/css/bootstrap.css" rel="stylesheet" media="screen">-->
-<!--<link href="./../../../css/datepicker.css" rel="stylesheet" media="screen">-->
-<!--<link href="//getbootstrap.com/2.3.2/assets/js/google-code-prettify/prettify.css" rel="stylesheet">-->
-<!--<link href="//getbootstrap.com/2.3.2/assets/css/bootstrap-responsive.css" rel="stylesheet">-->
-<!--<script src="//getbootstrap.com/2.3.2/assets/js/jquery.js"></script>-->
-<!--<script src="//getbootstrap.com/2.3.2/assets/js/google-code-prettify/prettify.js"></script>-->
-<!--<script src="./../../../js/bootstrap-datepicker-thai.js"></script>-->
-<!--<script src="./../../../js/locales/bootstrap-datepicker.th.js"></script>-->
+<link rel="import" href="./components/list-file-delete.html">
 
-<!--<link rel="import" href="./../components/date-picker.html">-->
-
+<link rel="import" href="../page-draft/components/detail-company.html">
+<link rel="import" href="../../action/settingAction.html">
+<link rel="import" href="../page-draft/components/fileup-company.html">
 
 <dom-module id="page-admin-exporter">
   <style is="custom-style" include="page-style iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
@@ -101,25 +87,81 @@
     paper-material {
       background-color: var(--gl-white-color);
     }
+
+    main {
+      padding: 5px;
+      margin: 0 auto;
+    }
+
+    section {
+      display: none;
+      border-top: 1px solid #ddd;
+    }
+
+    input {
+      display: none;
+    }
+
+    label {
+      display: inline-block;
+      margin: 0 0 -1px;
+      padding: 15px 25px;
+      font-weight: 600;
+      text-align: center;
+      color: #bbb;
+      border: 1px solid transparent;
+      background: #D5D8DC;
+    }
+
+    label:before {
+      font-family: fontawesome;
+      font-weight: normal;
+      margin-right: 10px;
+    }
+
+    label:hover {
+      color: #888;
+      cursor: pointer;
+    }
+
+    input:checked+label {
+      color: #555;
+      border: 1px solid #ddd;
+      border-top: 3px solid orange;
+      border-bottom: 1px solid #fff;
+      background: #fff;
+    }
+
+    #tab1:checked~#content1,
+    #tab2:checked~#content2,
+    #tab3:checked~#content3 {
+      display: block;
+    }
+
+    detail-company,
+    fileup-company,
+    list-file-delete {
+      margin-top: 15px;
+      width: 98%;
+    }
+
+    .container {
+      display: inline-block;
+      margin-left: 30px;
+      margin-right: 30px;
+    }
+
+    table.gl-table-default>tbody.table-body>tr>td {
+      /*cursor: pointer;*/
+      padding: 10px 15px;
+    }
   </style>
   <template>
     <paper-material elevation="1" class="elevation">
       <div class="layout vertical" style="margin: 20px 20px 10px 20px;">
-        <div class="layout horizontal end-justified">
-          <paper-button raised class="gl-btn-primary" on-tap="_register" title="{{localize.add_exporter}}">
-            <iron-icon icon="add"></iron-icon>{{localize.add_exporter}}</paper-button>
-        </div>
 
         <div class="flex title">
           {{localize.title_exporter}}
-        </div>
-
-        <div class="horizontal start-justified layout">
-          <div class="flex"></div>
-          <div class="flex flex-padding">
-
-          </div>
-          <div class="flex"></div>
         </div>
 
 
@@ -143,7 +185,7 @@
                 <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.lic_type_id}}" name="lic_type_id">
                   <paper-item>{{localize.all}}</paper-item>
                   <template is="dom-repeat" items={{licType}}>
-                    <paper-item value="[[item.lic_type_id]]">{{item.lic_type_name}}</paper-item>
+                    <paper-item value="[[item.id]]">{{item.lic_type_name}}</paper-item>
                   </template>
                 </paper-menu>
               </gl-form-dropdown-menu>
@@ -172,7 +214,7 @@
           <div class="horizontal start-justified layout">
             <div class="flex-2"></div>
             <div class="flex flex-padding" style="margin-top:18px; text-align:right;">{{localize.register}}</div>
-            <div class="flex-3 flex-padding" >
+            <div class="flex-3 flex-padding">
               <nylon-datepicker value="[[dataSelected.date_start]]" value-return="{{dataSelected.date_start}}">
               </nylon-datepicker>
             </div>
@@ -186,76 +228,9 @@
 
           <div class="horizontal layout center-justified">
             <!--<div class="flex">ๅๅๅ-->
-              <paper-button class="gl-btn-info" style="margin: 30px 0px 10px 50px;" on-tap="_search" title="{{localize.bt_search}}" raised>{{localize.bt_search}}</paper-button>
+            <paper-button class="gl-btn-info" style="margin: 30px 0px 10px 50px;" on-tap="_search" title="{{localize.bt_search}}" raised>{{localize.bt_search}}</paper-button>
             <!--</div>-->
           </div>
-          <!--<gl-grid-row width="{{getWidth}}">
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,6]]">
-              {{searchInput(dataSearch)}}
-              <vaadin-combo-box label="{{localize.name_exporter}}" items="{{list_search}}" item-label-path="company_name" item-value-path="id"
-                value="{{dataSelected.id}}" on-value-changed="_checkID" loading={{checkLoad}} filter={{dataSearch}}>
-                <template>[[item.company_name]]</template>
-              </vaadin-combo-box>
-            </gl-grid-col>
-          </gl-grid-row>-->
-
-          <!--<gl-grid-row>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <gl-form-dropdown-menu class="searchForm" label="{{localize.type_license}}" placeholder="{{localize.all}}">
-                <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.lic_type_id}}" name="lic_type_id">
-                  <paper-item>{{localize.all}}</paper-item>
-                  <template is="dom-repeat" items={{licType}}>
-                    <paper-item value="[[item.lic_type_id]]">{{item.lic_type_name}}</paper-item>
-                  </template>
-                </paper-menu>
-              </gl-form-dropdown-menu>
-            </gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <gl-form-dropdown-menu class="searchForm" label="{{localize.status_export}}" placeholder="{{localize.all}}">
-                <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.exporter_status}}" name="exporter_status">
-                  <paper-item>{{localize.all}}</paper-item>
-                  <paper-item value="true">{{localize.member}}</paper-item>
-                  <paper-item value="false">{{localize.no_member}}</paper-item>
-                </paper-menu>
-              </gl-form-dropdown-menu>
-            </gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <gl-form-dropdown-menu class="searchForm" label="{{localize.status_exporter}}" placeholder="{{localize.all}}">
-                <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.export_status}}" name="exporter_active">
-                  <paper-item>{{localize.all}}</paper-item>
-                  <paper-item value="true">{{localize.normally}}</paper-item>
-                  <paper-item value="false">{{localize.expire}}</paper-item>
-                </paper-menu>
-              </gl-form-dropdown-menu>
-            </gl-grid-col>
-          </gl-grid-row>-->
-
-
-          <!--<gl-grid-row>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]"></gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,1]]">
-              <div style="margin-top:18px; text-align:right;">{{localize.register}}</div>
-            </gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
-              <nylon-datepicker value="[[dataSelected.date_start]]" value-return="{{dataSelected.date_start}}">
-              </nylon-datepicker>
-            </gl-grid-col>
-            <div style="margin-top:18px;"> {{localize.to}} </div>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
-              <nylon-datepicker value="[[dataSelected.date_end]]" value-return="{{dataSelected.date_end}}">
-              </nylon-datepicker>
-            </gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]"></gl-grid-col>
-          </gl-grid-row>-->
-
-          <!--<gl-grid-row>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,5]]"></gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
-              <paper-button class="gl-btn-info" style="margin: 30px 0px 10px 50px;" on-tap="_search" title="{{localize.bt_search}}" raised>{{localize.bt_search}}</paper-button>
-            </gl-grid-col>
-          </gl-grid-row>-->
         </div>
 
         <div class="horizontal layout end-justified">
@@ -312,7 +287,7 @@
                     <div class="text-table">[[toIndex(index)]]</div>
                   </td>
                   <td>
-                    <div class="text-table">{{item.exporter_no_name}}</div>
+                    <div class="text-table">{{item.lic_type.lic_type_prefix}} {{item.exporter_no}}</div>
                   </td>
                   <!--<td>
                     <div class="text-table">{{item.company_taxno}}</div>
@@ -327,13 +302,13 @@
                     <div class="text-table">{{item.exporter_status_name}}</div>
                   </td>-->
                   <td>
-                    <div class="text-table">{{item.export_status_name}}</div>
+                    <div class="text-table">{{exprieDate(item.export_status)}}</div>
                   </td>
                   <td>
-                    <div class="text-table">{{toThaiDate(item.date_load2)}}</div>
+                    <div class="text-table">{{changeDate(item.date_load)}}</div>
                   </td>
                   <td>
-                    <div class="text-table">{{toThaiDate(item.date_expire2)}}</div>
+                    <div class="text-table">{{changeDate(item.date_expire)}}</div>
                   </td>
                 </tr>
             </template>
@@ -368,12 +343,72 @@
 
     <panel-right title="{{titleName}}">
       <div class="left">
-        <iron-pages selected="{{layerContent}}" attr-for-selected="name">
-          <div name="detailRegExporter">
-            <member-page></member-page>
-            <!--<member-page data="{{dataSelect}}" doc-type="[[docType]]" list-files="{{listFiles}}" type-lic="{{licType}}"></member-page>-->
-          </div>
-        </iron-pages>
+        <main>
+          <input id="tab1" type="radio" name="tabs" checked>
+          <label for="tab1">
+                <div class="container" tabindex="0">
+                  <span>1.{{localize.detail}}</span>
+                </div>
+              </label>
+
+          <input id="tab2" type="radio" name="tabs">
+          <label for="tab2">
+              <div class="container" tabindex="0">
+                <span>2.{{localize.doc_ev}}</span>
+                </div>
+              </label>
+
+          <input id="tab3" type="radio" name="tabs">
+          <label for="tab3">
+                  <div class="container" tabindex="0">
+                    <span>3.เอกสารที่ถูกลบ</span>
+                    </div>
+                  </label>
+
+
+          <section id="content1">
+            <gl-form-panel>
+              <detail-company id="detailCompany" data={{resultCompany}}></detail-company>
+              <table class="gl-table-default" style="width: 100%;border: 1px solid #ddd; margin: 20px 0px 10px 0px;">
+                <thead class="table-head">
+                  <tr>
+                    <th style="width :20%">ลำดับที่</th>
+                    <th style="width :30%">สถานะการดำเนินงาน</th>
+                    <th style="width : 30%">วันที่</th>
+                  </tr>
+                </thead>
+                <tbody class="table-body">
+                  <template is="dom-repeat" items="{{resultCompany.remark}}">
+                    <tr>
+                      <td>[[indexNo(index)]]</td>
+                      <td>[[item.msg]]</td>
+                      <td>[[changeDate(item.date)]]</td>
+                    </tr>
+                  </template>
+
+                  <template is="dom-if" if={{checkArrayEmpty(resultCompany.remark)}}>
+                    <tr>
+                      <td colspan=3 style="text-align:center">ไม่มีข้อมูล</td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </gl-form-panel>
+          </section>
+
+          <section id="content2">
+            <gl-form-panel>
+              <fileup-company company-taxno="{{resultCompany.company_taxno}}" draft-id="{{resultCompany.id}}"></fileup-company>
+            </gl-form-panel>
+          </section>
+          <section id="content3">
+            <gl-form-panel>
+              <list-file-delete company-taxno="{{resultCompany.company_taxno}}" draft-id="{{resultCompany.id}}"></list-file-delete>
+            </gl-form-panel>
+          </section>
+
+
+        </main>
       </div>
     </panel-right>
 
@@ -381,7 +416,7 @@
   <script>
     Polymer({
       is: "page-admin-exporter",
-      behaviors: [ReduxBehavior, nylonBehavior, i18nAction, exporterAction, uploadAction, ValidateFormBehavior, MonthBehavior],
+      behaviors: [ReduxBehavior, nylonBehavior, settingAction, i18nAction, confirmAction, exporterAction, uploadAction, ValidateFormBehavior, MonthBehavior],
       properties: {
         layerContent: {
           type: String,
@@ -402,43 +437,85 @@
           observer: 'checkDataSearch'
         },
         licType: {
-          statePath: 'exporter.licType'
+          statePath: 'setting.listLictype'
         },
         pages: {
           statePath: 'exporter.pages'
+        },
+        draftById: {
+          statePath: 'exporter.data',
+          observer: 'setExporter'
+        },
+        resultCompany: {
+          type: Object,
+          value: {}
         }
+
       },
       nylonPageActive: function () {
         this.dispatchAction('EXPORTER_GET_DATA');
         // this.dispatchAction('EXPORTER_GET_DATA_SEARCH');
-        this.dispatchAction('EXPORTER_GET_LIC_TYPE');
+        this.dispatchAction('SETTING_GET_LIST_LIC');
         this.dispatchAction('EXPORTER_GET_PAGE');
+        this.dispatchAction('EXPORTER_GET_DOC_TYPE');
+      },
+      setExporter: function (data) {
+        if (data.hasOwnProperty('draft_id')) {
+
+          let url = {
+            draft_id: data.draft_id,
+            file_status: true,
+            draft_status: data.draft_status,
+            company_taxno: data.company_taxno
+          }
+          this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
+          let urlFalse = {
+            draft_status: data.draft_status,
+            company_taxno: data.company_taxno,
+            draft_id: data.draft_id,
+            file_status: false,
+          }
+          this.dispatchAction('UPLOAD_GET_LIST_DELETE', this.genUrl(urlFalse))
+          this.set('resultCompany', data)
+          this.dispatchAction('CONFIRM_TYPE', 'registerdraft')
+          this.fire('toast', {
+            status: 'success', text: 'โหลดข้อมูลสำเร็จ', callback: () => {
+              this.$$('panel-right').open();
+            }
+          })
+
+        }
+      },
+      indexNo: function (val) {
+        return val + 1
+      },
+      changeDate(date) {
+        let time = new Date(date)
+        date = new Date(time.setHours(time.getHours() + 7)).toISOString()
+        date = date.split("T")[0]
+        return date
       },
       attached() {
-        this.async(() => {
-          // console.log(this.$$('.datepicker'));
-        }, 2500)
         let date = new Object()
         let today = new Date(new Date().setFullYear(new Date().getFullYear()))
         ////console.log(today);
         let month = today.getMonth() + 1
         if (month < 10)
           month = '0' + month
-        // console.log(month);
-        // console.log(today.toISOString());
-        // dateStart = today.toISOString().split('T')[0]
         dateStart = today.getFullYear() + 543 + '-' + month + "-" + today.getDate()
-        // console.log(dateStart.toISOString())
-        // console.log(dateStart);
-        // console.log(today.getDate());
         let nextDay = dateEnd = new Date(today.setDate(today.getDate() + 7)).toISOString().split('T')[0]
         // console.log(nextDay.split('-')[2]);
         dateEnd = today.getFullYear() + 543 + '-' + month + "-" + nextDay.split('-')[2]
-
+        // console.log(dateStart);
+        // console.log(dateEnd);
         this.set('dataSelected.date_start', dateStart)
         this.set('dataSelected.date_end', dateEnd)
-        // dataSelected.date_end}
-        //         console.log(dateStart,dateEnd);
+      },
+      exprieDate(date) {
+        if (date) {
+          return 'ยังไม่หมดอายุ'
+        }
+        return 'หมดอายุ'
       },
       searchInput: function (val) {
         this.checkLoad = true;
@@ -464,43 +541,31 @@
       checkDataSearch(val) {
         this.checkLoad = false;
       },
-      _register: function (e) {
-        window.open('./admin-confirm');
-      },
       _selectData: function (e) {
-        // console.log(e.currentTarget.data.company_taxno);
-        // company_taxno
-        var companyId = e.currentTarget.data.company_id;
-        this.dispatchAction('EXPORTER_GET_FILE_DELETE', companyId);
-        var id = e.currentTarget.data.id;
-        let company_taxno = e.currentTarget.data.company_taxno
-        this.dispatchAction('EXPORTER_GET_DATA_ID', id, company_taxno);
-        this.dispatchAction('EXPORTER_GET_LIC_TYPE');
-        this.dispatchAction('EXPORTER_GET_DOC_TYPE');
+        let newUrl = {
+          id: e.currentTarget.data.id
+        }
+        this.fire('toast', { status: 'load', text: 'กำลังดึงข้อมูล...' })
+        this.dispatchAction('EXPORTER_GET_DATA_ID', this.genUrl(newUrl));
         this.layerContent = "detailRegExporter";
         this.titleName = 'ข้อมูลผู้ส่งออก';
-        this.$$('panel-right').open();
-        this.$$('member-page')._backpage();
       },
       _checkID: function (id) {
         if (id.detail.value !== "" && typeof id.detail.value !== 'undefined') {
           var id = id.detail.value;
-          this.dispatchAction('EXPORTER_GET_DATA_ID', id);
-          this.dispatchAction('EXPORTER_GET_LIC_TYPE');
+          let newUrl = {
+            id: id
+          }
+          // --------------------------------------------------------------------
+          this.fire('toast', { status: 'load', text: 'กำลังดึงข้อมูล...' })
+          this.dispatchAction('EXPORTER_GET_DATA_ID', this.genUrl(newUrl));
+          // this.dispatchAction('EXPORTER_GET_LIC_TYPE');
           this.dispatchAction('EXPORTER_GET_DOC_TYPE');
           this.layerContent = "detailRegExporter";
           this.titleName = 'ข้อมูลผู้ส่งออก';
-          this.$$('panel-right').open();
-          this.$$('member-page')._backpage();
-
-          // console.log(this.list_search);
-          // console.log(this.exporters);
           var searchId = this.list_search.filter((item) => {
             return item.id == id
           })
-          // console.log(searchId);
-          var companyId = searchId[0].company_id;
-          this.dispatchAction('EXPORTER_GET_FILE_DELETE', companyId);
 
         }
       },
