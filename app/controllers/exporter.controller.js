@@ -53,13 +53,21 @@ exports.list = function (req, res) {
             res.json(err)
         })
 }
+exports.get = function (req, res) {
+    r.table('exporter')
+        .get(req.query.id)
+        .run()
+        .then(function (data) {
+            res.json(data)
+        })
+}
 exports.search = function (req, res) {
     var r = req.r;
     r.table('exporter')
         .filter(function (f) {
             return f('company')(r.expr(req.query.field)).match(req.query.value)
         })
-        .pluck('id', 'exporter_no', 'company_taxno', { company: ['company_taxno', 'company_name_th', 'company_name_en'] })
+        .pluck('id', 'draft_id', 'exporter_no', 'company_taxno', { company: ['company_taxno', 'company_name_th', 'company_name_en'] })
         .run()
         .then(function (result) {
             res.json(result)
