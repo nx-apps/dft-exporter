@@ -68,3 +68,15 @@ exports.search = function (req, res) {
             res.json(err)
         })
 }
+exports.page = function (req, res) {
+    var limit = parseInt(req.query.limit);
+    req.r.db('external').table('exporter').count()
+        .run()
+        .then(function (data) {
+            var countPage = Math.ceil(data / limit);
+            res.json(countPage);
+        })
+        .catch(function (err) {
+            res.json(err);
+        })
+}
