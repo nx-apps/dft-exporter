@@ -173,29 +173,28 @@
     </div>-->
 
       <div class="horizontal end-justified layout" style="margin:10px">
-        {{btnCheck.register}}
         <paper-button raised class="gl-btn-primary" on-tap="_register" hidden="{{btnCheck.register}}">
           <iron-icon icon="add"></iron-icon>{{localize.bt_register}}</paper-button>
 
         <paper-button raised class="gl-btn-primary" on-tap="_renew" hidden="{{btnCheck.renew}}">
-          <iron-icon icon="add"></iron-icon>ต่ออายุ</paper-button>
+          <iron-icon icon="add"></iron-icon>{{localize.bt_exporter_extend}}</paper-button>
 
         <paper-button raised class="gl-btn-primary" on-tap="draftChangeFn" hidden="{{btnCheck.checge}}">
-          <iron-icon icon="add"></iron-icon>เปลี่ยนประเภท</paper-button>
+          <iron-icon icon="add"></iron-icon>{{localize.bt_change}}</paper-button>
 
 
       </div>
     </template>
     <paper-dialog id="changeDraft">
-      <h2>เหตุผล</h2>
+      <h2>{{localize.reason}}</h2>
       <paper-dialog-scrollable>
         <div style="margin:10px 30px;">
-          <gl-form-input label="เหตุผล" value="{{docReason}}"></gl-form-input>
+          <gl-form-input label="{{localize.reason}}" value="{{docReason}}"></gl-form-input>
         </div>
       </paper-dialog-scrollable>
       <div class="buttons">
-        <paper-button dialog-dismiss raised class="gl-btn-defalse">ปิด</paper-button>
-        <paper-button dialog-confirm autofocus on-tap="_draftChange" raised class="gl-btn-primary">ตกลง</paper-button>
+        <paper-button dialog-dismiss raised class="gl-btn-defalse">{{localize.bt_close}}</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="_draftChange" raised class="gl-btn-primary">{{localize.bt_ok}}</paper-button>
       </div>
     </paper-dialog>
   </template>
@@ -260,6 +259,7 @@
 
           if (data.lic_type.length === 0) {
             this.set('isShow', false)
+            // this.localize
             if (this.dataTypeSet.data === 'registerdraft') {
               this.fire('toast', { status: 'connectError', text: 'สมัครครบแล้ว', callback: () => { } })
             } else if (this.dataTypeSet.data === 'renewdraft') {
@@ -428,15 +428,15 @@
           let draft = ''
           
           if (this.dataTypeSet.data === 'registerdraft') {
-            console.log(1);
+            // console.log(1);
             draft = 'sign'
             this.dispatchAction('CONFIRM_SEARCH', this.company_taxno);
           } else if (this.dataTypeSet.data === 'renewdraft') {
-            console.log(2);
+            // console.log(2);
             draft = 'renew'
             this.dispatchAction('CONFIRM_RENEW', this.company_taxno);
           } else {
-            console.log(3);
+            // console.log(3);
             draft = 'change'
             this.dispatchAction('CONFIRM_CHANGE_DRAFT', this.company_taxno);
           }
@@ -447,7 +447,7 @@
             draft_id: this.draftId,
             file_status: true,
           }
-          console.log(6666);
+          // console.log(6666);
           this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
 
           this.queryFrom('.searchForm').map((el) => { el.reset(); });

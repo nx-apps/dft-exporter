@@ -226,8 +226,6 @@
       margin-right: 30px;
     }
 
-    table.gl-table-default {}
-
     table.gl-table-default>tbody.table-body>tr>td {
       /*cursor: pointer;*/
       padding: 10px 15px;
@@ -235,14 +233,6 @@
   </style>
   <template>
     <paper-material elevation="1" class="elevation">
-      <!-- <test-eml id="a"></test-eml>ddd
-        <hr>
-        <test-eml id="b"></test-eml>ddd -->
-
-      <!--<div class="horizontal end-justified layout btn-back">
-        <paper-button class="button-top gl-btn-defalse" raised on-tap="goBack"> ย้อนกลับ </paper-button>
-      </div>-->
-
       <div class="horizontal end-justified layout">
         <div>
           <paper-button class="button-top gl-btn-success" raised on-tap="registerdraft"> สมัคร</paper-button>
@@ -470,7 +460,6 @@
             draft_status: data.draft_status,
             company_taxno: data.company_taxno
           }
-          console.log(777);
           this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
           this.set('resultCompany', data)
         }
@@ -485,6 +474,7 @@
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');
       },
       _selectData: function (e) {
+        this.set('titleName', 'ข้อมูลผู้สมัคร')
         let data = e.currentTarget.data
         this.dispatchAction('CONFIRM_SEARCH_DRAFT', data.id)
         this.set('layerContent', 'approve')
@@ -586,12 +576,12 @@
         this.set('layerContent', 'register')
         this.dispatchAction('CONFIRM_SEARCH_RESET')
         this.dispatchAction('CONFIRM_TYPE', 'registerdraft')
-        console.log(1);
+        // console.log(1);
         this.$$('panel-right').open();
         this.set('titleName', 'สมัคร')
       },
       renewdraft: function (e) {
-        console.log(2);
+        // console.log(2);
         this.set('layerContent', 'renew')
 
         this.$$('panel-right').open();
