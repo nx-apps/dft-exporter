@@ -67,7 +67,7 @@ exports.search = function (req, res) {
         .filter(function (f) {
             return f('company')(r.expr(req.query.field)).match(req.query.value)
         })
-        .pluck('id', 'draft_id', 'exporter_no', 'company_taxno', { company: ['company_taxno', 'company_name_th', 'company_name_en'] })
+        .pluck('id', 'draft_id', 'draft_status', 'exporter_no', 'company_taxno', { company: ['company_taxno', 'company_name_th', 'company_name_en'] })
         .run()
         .then(function (result) {
             res.json(result)
