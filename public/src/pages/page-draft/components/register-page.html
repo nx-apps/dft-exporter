@@ -202,7 +202,7 @@
   <script>
     Polymer({
       is: "register-page",
-      behaviors: [ReduxBehavior, ValidateFormBehavior, MonthBehavior, uploadAction],
+      behaviors: [ReduxBehavior, ValidateFormBehavior, MonthBehavior],
       properties: {
         pages: {
           type: Number,
@@ -448,7 +448,7 @@
             file_status: true,
           }
           console.log(6666);
-          // this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
+          this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
 
           this.queryFrom('.searchForm').map((el) => { el.reset(); });
         }

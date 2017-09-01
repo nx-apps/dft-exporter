@@ -39,7 +39,8 @@
     </style>
     <template>
         <template is="dom-if" if="[[checkRefPath(refPath)]]">
-            <vaadin-upload class="thick-border" id="preFill" target="[[target]]" method="POST" timeout="300000" accept="[[accept]]" on-upload-success="fileChanged"
+            <vaadin-upload class="thick-border" id="preFill" target="[[target]]" method="POST" timeout="300000" accept="[[accept]]" 
+            on-upload-success="fileChanged"
                 on-upload-request="_addHeader">
                 <div class="drop-label">
                     <iron-icon icon="description"></iron-icon>
@@ -99,7 +100,7 @@
                 refPath: {
                     type: String,
                     value: "",
-                    observer: 'getList'
+                    // observer: 'getList'
                 },
                 docTypeId: {
                     type: String,
@@ -120,7 +121,7 @@
                 companyId: {
                     type: String,
                     value: "",
-                    observer: 'getList'
+                    // observer: 'getList'
                 },
                 listFiles: {
                     statePath: 'upload.fileList',
@@ -134,16 +135,18 @@
 
                 if (fileChange.type === 'upload-success') {
                     let file = fileChange.detail.file
+                    // console.log(this.draftId);
                     this.getList();
+                    // console.log(1121212);
                     this.fire('toast', { status: 'success', text: `อัพโหลดไฟล์ ${file.name} สำเร็จ`, callback: () => { } })
                 }
             },
             getList: function () {
                 
                 if (this.dataType !== undefined) {
-                    console.log(this.dataType);
+                    // console.log(this.dataType);
                     let draft = 'sign'
-                    console.log(1111);
+                    // console.log(1111);
                     switch (this.dataType) {
                         case 'registerdraft':
                             draft = 'sign'
@@ -172,7 +175,7 @@
                     }
                     // console.log(this.genUrl(url).length);
                     if (this.genUrl(url).length > 0) {
-                        // console.log(5555);
+                        console.log(5555);
                         this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
                     }
                 }
