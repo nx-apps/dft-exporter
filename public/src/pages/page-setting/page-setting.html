@@ -1,22 +1,34 @@
 <link rel="import" href="../../layout/page-style.html">
-
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
-
 <link rel="import" href="../../../bower_components/gl-styles/gl-size.html">
-
-<link rel="import" href="../../layout/shared-styles.html">
-
+<!-- <link rel="import" href="../../layout/shared-styles.html"> -->
 <link rel="import" href="./components/exporter-type.html">
-
 <link rel="import" href="./components/doc-type.html">
-
 <link rel="import" href="../../../bower_components/gl-form/gl-form-panel.html">
+
+<link rel="import" href="../components/panel-right/panel-right.html">
+
+<link rel="import" href="../../redux-behavior.html">
+
+<link rel="import" href="../../nylon-behavior.html">
+
+<link rel="import" href="../../i18n-behavior.html">
+
+<link rel="import" href="../../action/settingAction.html">
+
+<link rel="import" href="./components/manage-doc-type.html">
+
+<link rel="import" href="./components/manage-lic-type.html">
+
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../../bower_components/gl-font/gl-cschatthai-font.html">
 
 <dom-module id="page-setting">
     <template>
         <style include=" gl-size">
-             :host {
-                display: block;
+            * {
+                font-family: 'CSChatThaiUI', sans-serif;
+                -webkit-font-smoothing: antialiased;
             }
 
             paper-material {
@@ -90,38 +102,85 @@
         <paper-material elevation="1">
             <div class="head-title">ตั้งค่าระบบ</div>
             <main>
-                <input id="tab1" type="radio" name="tabs" checked>
+                <input id="tab1" type="radio" name="tabs" >
                 <label for="tab1">
                       <div class="container" tabindex="0">
-                        <span>1.ประเภทผู้ส่งออก</span>
+                        <span>1.ประเภทเอกสาร</span>
                       </div>
                     </label>
 
-                <input id="tab2" type="radio" name="tabs">
+                <input id="tab2" type="radio" name="tabs" checked>
                 <label for="tab2">
                     <div class="container" tabindex="0">
-                      <span>2.ประเภทเอกสาร</span>
+                      <span>2.ประเภทผู้ส่งออก</span>
                       </div>
                     </label>
-
-
                 <section id="content1">
-                    <exporter-type></exporter-type>
+                    <doc-type></doc-type>
                 </section>
 
                 <section id="content2">
-                    <doc-type></doc-type>
+                    <exporter-type></exporter-type>
                 </section>
 
             </main>
 
 
         </paper-material>
+
+        <panel-right title="{{titleName}}">
+            <div class="left">
+                <iron-pages selected="{{page}}">
+                    <manage-doc-type></manage-doc-type>
+                    <manage-lic-type></manage-lic-type>
+                </iron-pages>
+            </div>
+        </panel-right>
     </template>
     <script>
         Polymer({
             is: 'page-setting',
-            behaviors: [ReduxBehavior, nylonBehavior,]
+            behaviors: [ReduxBehavior, nylonBehavior, settingAction],
+            properties: {
+                titleName: {
+                    type: String,
+                    value: ''
+                },
+                page: {
+                    type: Number,
+                    value: 0
+                }
+            },
+            listeners: {
+                'editPanel': '_editPanel',
+                'openPanel': '_openPanel',
+                'openDocLic': '_openDocLic',
+                'closePanel': '_closePanel'
+            },
+            nylonPageActive: function () {
+                this.dispatchAction('SETTING_GET_LIST_DOC');
+                // ดึงประเภทเอกสารที่จะอัพโหลด
+                this.dispatchAction('SETTING_GET_LIST_LIC');
+            },
+            _editPanel(e) {
+                let data = e.detail
+                this.dispatchAction(data.action, data.id)
+                this._openPanel(data.name)
+                this.set('page', data.page)
+            },
+            _openDocLic(e) {
+                let data = e.detail
+                this.set('page', data.page)
+                this._openPanel(data.name)
+            },
+            _openPanel(name) {
+                this.set('titleName', name)
+                // console.log(this.$$('panel-right'));
+                this.$$('panel-right').open();
+            },
+            _closePanel(e) {
+                this.$$('panel-right').close();
+            }
         });
     </script>
 </dom-module>
