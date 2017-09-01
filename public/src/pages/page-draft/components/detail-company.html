@@ -52,45 +52,7 @@
   </style>
   <template>
 
-    <!--<template is="dom-if" if={{checkStatusExtend(data.draft_status)}}>
-      <div id="titleBg" class="boxNortify">
-        <div id="titleExporter" class="title-head">
-          <iron-icon icon="icons:info"></iron-icon> {{localize.request_change_expire}}</div>
-      </div>
-    </template>
-    <template is="dom-if" if={{checkStatusType(data.draft_status)}}>
-      <div id="titleBg" class="boxChange_status">
-        <div id="titleExporter" class="title-head">
-          <iron-icon icon="icons:info"></iron-icon> {{localize.request_change_status}}</div>
-      </div>
-    </template>-->
-    <!--
-    <div class="horizontal end-justified layout">
-      <div class="text" style="text-align: right;">{{localize.status}} :
-        <template is="dom-if" if={{!data.approve_status}}>
-          {{data.doc_status_name}}
-        </template>
-        <template is="dom-if" if={{data.approve_status}}>
-          <template is="dom-if" if={{!data.status_approve}}>
-            {{data.approve_status_name}}
-          </template>
-          <template is="dom-if" if={{data.status_approve}}>
-            {{data.status_approve_name}}
-          </template>
-        </template>
-      </div>
-    </div>-->
-
-
     <div class="title">{{localize.detail_data}}</div>
-    <!--<gl-form-panel set-border="0">
-      <div class="horizontal start-justified layout">
-        <div class="flex">
-          <template is="dom-if" if={{data.approve_status}}>
-            <gl-form-input always-float-label label="{{localize.no_exporter_fullname}} :" value="{{data.exporter_no_name}}" disabled></gl-form-input>
-          </template>
-        </div>
-      </div>-->
 
     <div class="horizontal start-justified layout">
       <div class="flex flex-padding">
@@ -129,7 +91,6 @@
         <gl-form-input always-float-label label="{{localize.fax}} :" value="{{data.company.company_fax}}" disabled></gl-form-input>
       </div>
     </div>
-    <!-- {{isObject(item)}} -->
     <template is="dom-if" if={{isObject(data.lic_type)}}>
       <div class="horizontal start-justified layout">
         <div class="flex-4">
@@ -159,18 +120,12 @@
       <template is="dom-repeat" items="{{data.company.company_directors}}">
         <li>{{item.TitleNameTH}} {{item.FirstNameTH}} {{item.LastNameTH}}</li>
       </template>
-      <!--<template is="dom-if" if={{data.company_directors}}>
-            <li>{{localize.no_list_board}}</li>
-        </template>-->
     </ol>
 
     <div class="horizontal end-justified layout">
       <div class="flex">
-        <!--<template is="dom-if" if={{!data.register_status}}>-->
-        <!--<template is="dom-if" if={{!data.doc_status}}>-->
         <gl-form-input label="{{localize.note}} : " value="{{data.company_remark}}" disabled></gl-form-input>
-        <!--</template>-->
-        <!--</template>-->
+ 
       </div>
     </div>
     </gl-form-panel>

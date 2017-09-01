@@ -16,9 +16,6 @@ export function uploadAction(store) {
     return [commonAction(),
     {
         UPLOAD_GET_LIST: function (link) {
-        console.log(4444);
-        console.log(link);
-        console.log(121212);
             axios.get('/file/list/?' + link)
             .then((response) => {
                 store.dispatch({ type: 'UPLOAD_GET_LIST', payload: response.data })

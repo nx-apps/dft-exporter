@@ -40,9 +40,9 @@
     <div class="title">[[item.doc_type_th]]</div>
     <div class="start-justified layout">
       <div class="flex">
-        <vaadin-combo-box label="ประเภทเอกสาร" always-float-label item-label-path="doc_type_th" item-value-path="id" items='{{docType}}' on-selected-item-changed="_getData">
+        <vaadin-combo-box label="{{localize.doc_type}}" always-float-label item-label-path="doc_type_th" item-value-path="id" items='{{docType}}' on-selected-item-changed="_getData">
           <template>
-            [[index]]: [[item.doc_type_th]]
+            [[item.doc_type_th]]
           </template>
         </vaadin-combo-box>
       </div>
@@ -52,20 +52,6 @@
         </upload-file>
       </div>
     </div>
-
-    <!-- <template is="dom-repeat" items="[[docType]]">
-      <div class="title">[[item.doc_type_th]]</div>
-      <upload-file
-        target="/api/file/upload/"
-        accept="application/pdf"
-        ref-path="exporter.document.[[item.doc_code]]"
-        doc-type-id="[[item.id]]"
-        data-type = "[[dataTypeSet.data]]"
-        company-taxno = "[[companyTaxno]]"
-        draft-id = "[[draftId]]"
-        >
-      </upload-file>
-    </template> -->
     <div style="margin-bottom:20px;"></div>
   </template>
   <script>
@@ -95,15 +81,6 @@
       observers: [
         '_dataInput(data)'
       ],
-      // setTypeDoc(data){
-      //   if(Array.isArray(data)){
-      //     if(data.length >0){
-      //       this.set('selectDoctype', data[0].id)
-      //     }
-      //     // console.log(data)
-      //   }
-        
-      // },
       _getData(data) {
         // console.log(data.detail.value === null);
         if (data.detail.value !== null) {
