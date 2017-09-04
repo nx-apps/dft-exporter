@@ -398,12 +398,12 @@
 
           <section id="content2">
             <gl-form-panel>
-              <fileup-company company-taxno="{{resultCompany.company_taxno}}" draft-id="{{resultCompany.id}}"></fileup-company>
+              <fileup-company company-taxno="{{resultCompany.company_taxno}}" draft-id="{{resultCompany.draft_id}}" list-files="{{listFiles}}"></fileup-company>
             </gl-form-panel>
           </section>
           <section id="content3">
             <gl-form-panel>
-              <list-file-delete company-taxno="{{resultCompany.company_taxno}}" draft-id="{{resultCompany.id}}"></list-file-delete>
+              <list-file-delete draft-byid="{{draftById}}"></list-file-delete>
             </gl-form-panel>
           </section>
 
@@ -449,6 +449,24 @@
         resultCompany: {
           type: Object,
           value: {}
+        },
+        listFiles: {
+          type: Array,
+          observer: 'checkFile'
+        }
+
+      },
+      checkFile(file) {
+        let data = this.draftById
+        if (data !== undefined) {
+          let urlFalse = {
+            draft_status: data.draft_status,
+            company_taxno: data.company_taxno,
+            draft_id: data.draft_id,
+            file_status: false,
+          }
+          let newurlFalse = this.genUrl(urlFalse) + `file_status=false`
+          this.dispatchAction('UPLOAD_GET_LIST_DELETE', newurlFalse)
         }
 
       },
@@ -475,7 +493,9 @@
             draft_id: data.draft_id,
             file_status: false,
           }
-          this.dispatchAction('UPLOAD_GET_LIST_DELETE', this.genUrl(urlFalse))
+          let newurlFalse = this.genUrl(urlFalse) + `file_status=false`
+          // console.log(newurlFalse);
+          this.dispatchAction('UPLOAD_GET_LIST_DELETE', newurlFalse)
           this.set('resultCompany', data)
           this.dispatchAction('CONFIRM_TYPE', 'registerdraft')
           this.fire('toast', {

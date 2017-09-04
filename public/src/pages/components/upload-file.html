@@ -15,7 +15,6 @@
 
 <dom-module id="upload-file">
     <style include="page-style">
-
         paper-icon-button.crud:hover {
             background-color: var(--paper-grey-200);
             border-radius: 5px;
@@ -62,14 +61,17 @@
                                     <!-- <td>ๅ</td> -->
                                     <td>[[files.group]]</td>
                                     <td>[[file.filename]]</td>
-                                    <td  style="text-align: center;">
+                                    <td style="text-align: center;">
                                         <paper-icon-button class="crud" data="{{file}}" on-tap="downloadFile" icon="cloud-download"></paper-icon-button>
                                         <paper-icon-button class="crud" data="{{file}}" on-tap="_deleteFile" icon="delete"></paper-icon-button>
                                     </td>
                                 </tr>
-
                             </template>
-
+                        </template>
+                        <template is="dom-if" if={{checkArrayEmpty(listFiles)}}>
+                            <tr>
+                                <td colspan=4 style="text-align:center">ไม่มีข้อมูล</td>
+                            </tr>
                         </template>
 
 
@@ -89,7 +91,7 @@
     <script>
         Polymer({
             is: 'upload-file',
-            behaviors: [ReduxBehavior, uploadAction, MonthBehavior],
+            behaviors: [ReduxBehavior, MonthBehavior],
             properties: {
                 target: {
                     type: String,
@@ -131,6 +133,7 @@
                 },
                 listFiles: {
                     statePath: 'upload.fileList',
+                    notify: true
                 }
 
             },
@@ -176,10 +179,11 @@
                         draft_id: this.draftId || '',
                         file_status: true,
                     }
+                    let newUrl = this.genUrl(url)
                     // console.log(this.genUrl(url).length);
-                    if (this.genUrl(url).length > 0) {
-                        // console.log(5555);
-                        this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
+                    if (newUrl.length > 0) {
+                        console.log(newUrl);
+                        this.dispatchAction('UPLOAD_GET_LIST', newUrl)
                     }
                 }
 
@@ -236,7 +240,7 @@
                                     this.getList()
                                     this.fire('toast', {
                                         status: 'success', text: 'ลบไฟล์สำเร็จ', callback: () => {
-                                            
+
                                             // console.log('success');
                                         }
                                     });

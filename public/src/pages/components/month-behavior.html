@@ -116,14 +116,25 @@
             // //console.log(url);
             for (var variable in url) {
                 // if (url[variable] != '') {
-                    data = data + variable + "=" + url[variable];
-                    (count < url_length - 1) ? data += '&' : '';
+                data = data + variable + "=" + url[variable];
+                (count < url_length - 1) ? data += '&' : '';
                 // }
                 count++
             }
             // //console.log(data);
             return data
-        }
+        },
+        checkArrayEmpty(arr) {
+            // console.log(arr);
+            if (arr === undefined || arr.length === 0) {
+                // console.log(1);
+                return true
+            } else {
+                // console.log(2);
+                return false
+            }
+            // console.log(arr);
+        },
     }
 
 </script>

@@ -48,7 +48,7 @@
       </div>
       <div class="flex-3">
         <upload-file target="/api/file/upload/" accept="application/pdf" ref-path="[[selectDoctype]]" doc-type-id="[[selectDoctype]]"
-          data-type="[[dataTypeSet.data]]" company-taxno="[[companyTaxno]]" draft-id="[[draftId]]">
+          data-type="[[dataTypeSet.data]]" company-taxno="[[companyTaxno]]" draft-id="[[draftId]]" list-files="{{listFiles}}">
         </upload-file>
       </div>
     </div>
@@ -76,6 +76,11 @@
         selectDoctype: {
           type: String,
           value: ''
+        },
+        listFiles:{
+          type:Array,
+          notify:true
+
         }
       },
       observers: [
