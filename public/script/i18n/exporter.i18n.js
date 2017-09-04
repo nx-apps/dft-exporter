@@ -104,7 +104,23 @@ export const exporter = {
         ck_select_all:"เลือกทั้งหมด",
         no_data:"ไม่มีข้อมูล",
         rt_eligible:"มีสิทธิ์",
-        rt_ineligible:"ไม่มีสิทธิ์"
+        rt_ineligible:"ไม่มีสิทธิ์",
+
+        wait_approve_dov:'รอตรวจสอบเอกสาร',
+        doc_reject:'เอกสารไม่ผ่าน',
+        wait_approve:'รออนุมัติ',
+
+        file_type:'ประเภทไฟล์',
+        put_file:'วางไฟล์ที่นี่',
+        upload_disabled:'ปิดการอัพโหลด',
+        manage:'จัดการ',
+
+        want_delete_file:'คุณต้องการจะลบไฟล์ใช่หรือไม่ ?',
+        delete_success:'ลบไฟล์สำเร็จ',
+
+        upload_file:'อัพโหลดไฟล์',
+        success:'สำเร็จ',
+
     },
     en:{
         Meg:"EN",
@@ -210,6 +226,14 @@ export const exporter = {
         ck_select_all:"Select all",
         no_data:"No Data",
         rt_eligible:"Eligible",
-        rt_ineligible:"Ineligible"
+        rt_ineligible:"Ineligible",
+
+        wait_approve:'Wait approve',
+        wait_approve_dov:'Wait approve document',
+        doc_reject:'Document reject',
+        wait_approve:'Wait approve',
+
+        file_type:'File type',
+        manage:'Manage'
     }
 };

@@ -1,25 +1,16 @@
 <link rel="import" href="../../layout/page-style.html">
 <link rel="import" href="../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="../../../bower_components/gl-styles/gl-size.html">
-<!-- <link rel="import" href="../../layout/shared-styles.html"> -->
 <link rel="import" href="./components/exporter-type.html">
 <link rel="import" href="./components/doc-type.html">
 <link rel="import" href="../../../bower_components/gl-form/gl-form-panel.html">
-
 <link rel="import" href="../components/panel-right/panel-right.html">
-
 <link rel="import" href="../../redux-behavior.html">
-
 <link rel="import" href="../../nylon-behavior.html">
-
 <link rel="import" href="../../i18n-behavior.html">
-
 <link rel="import" href="../../action/settingAction.html">
-
 <link rel="import" href="./components/manage-doc-type.html">
-
 <link rel="import" href="./components/manage-lic-type.html">
-
 <link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../../bower_components/gl-font/gl-cschatthai-font.html">
 
@@ -100,19 +91,19 @@
             }
         </style>
         <paper-material elevation="1">
-            <div class="head-title">ตั้งค่าระบบ</div>
+            <div class="head-title">{{localize.setting}}</div>
             <main>
-                <input id="tab1" type="radio" name="tabs" >
+                <input id="tab1" type="radio" name="tabs" checked>
                 <label for="tab1">
                       <div class="container" tabindex="0">
-                        <span>1.ประเภทเอกสาร</span>
+                        <span>1.{{localize.doc_type}}</span>
                       </div>
                     </label>
 
-                <input id="tab2" type="radio" name="tabs" checked>
+                <input id="tab2" type="radio" name="tabs" >
                 <label for="tab2">
                     <div class="container" tabindex="0">
-                      <span>2.ประเภทผู้ส่งออก</span>
+                      <span>2.{{localize.exporter_type}}</span>
                       </div>
                     </label>
                 <section id="content1">
@@ -140,7 +131,7 @@
     <script>
         Polymer({
             is: 'page-setting',
-            behaviors: [ReduxBehavior, nylonBehavior, settingAction],
+            behaviors: [ReduxBehavior,i18nAction, nylonBehavior, settingAction],
             properties: {
                 titleName: {
                     type: String,
@@ -149,7 +140,10 @@
                 page: {
                     type: Number,
                     value: 0
-                }
+                },
+                localize: {
+                    statePath: 'i18n.setting'
+                },
             },
             listeners: {
                 'editPanel': '_editPanel',

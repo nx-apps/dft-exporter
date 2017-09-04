@@ -36,7 +36,7 @@
                 </div>
                 <div class="flex-2 flex-padding" style="text-align: center">
                     <div class="header-manage">
-                        ประเภทเอกสาร
+                        {{localize.doc_type}}
                     </div>
                 </div>
                 <div class="flex">
@@ -46,7 +46,7 @@
                 <div class="flex">
                 </div>
                 <div class="flex-2 flex-padding">
-                    <gl-form-input class="required" required always-float-label label="ชื่อประเภท :" value="{{data.doc_type_th}}" disabled="{{btnSetting.status}}"></gl-form-input>
+                    <gl-form-input class="required" required always-float-label label=" {{localize.type_name}} :" value="{{data.doc_type_th}}" disabled="{{btnSetting.status}}"></gl-form-input>
                 </div>
                 <div class="flex">
                 </div>
@@ -56,17 +56,17 @@
                     <template is="dom-if" if={{!btnSetting.typeIsInsert}}>
                         <div>
                             <paper-button class="button-top gl-btn-default" raised on-tap="cancelDocType" hidden="{{btnSetting.status}}">
-                                <iron-icon icon="cached"></iron-icon>&nbsp;&nbsp;คืนค่า</paper-button>
+                                <iron-icon icon="cached"></iron-icon>&nbsp;&nbsp;{{localize.restore_data}} </paper-button>
                         </div>
                         <div>
                             <paper-button class="button-top gl-btn-success" raised on-tap="saveDocType" hidden="{{btnSetting.status}}">
-                                <iron-icon icon="save"></iron-icon>&nbsp;&nbsp;บันทึก</paper-button>
+                                <iron-icon icon="save"></iron-icon>&nbsp;&nbsp;{{localize.save_data}} </paper-button>
                         </div>
                     </template>
                     <template is="dom-if" if={{btnSetting.typeIsInsert}}>
                         <div>
                             <paper-button class="button-top gl-btn-primary" raised on-tap="addDocType">
-                                <iron-icon icon="add"></iron-icon>&nbsp;&nbsp; เพิ่ม</paper-button>
+                                <iron-icon icon="add"></iron-icon>&nbsp;&nbsp; {{localize.add}}</paper-button>
                         </div>
                     </template>
                 </div>
@@ -83,7 +83,10 @@
                 },
                 btnSetting: {
                     statePath: 'setting.btn'
-                }
+                },
+                localize: {
+                    statePath: 'i18n.setting'
+                },
             },
             editStatus() {
                 this.dispatchAction('SETTING_BTN', {
@@ -95,7 +98,7 @@
             cancelDocType() {
                 this.fire('toast', {
                     status: 'openDialog',
-                    text: 'คุณต้องการจะยกเลิกการแก้ไข ใช่หรือไม่ ?',
+                    text: this.localize.cancel_edit,
                     confirmed: (result) => {
                         if (result == true) {
                             this.queryFrom('.required').map(el => el.reset())
@@ -114,7 +117,7 @@
                 if (this.validateForm('.required')) {
                     this.fire('toast', {
                         status: 'openDialog',
-                        text: 'คุณต้องการจะแก้ไข ใช่หรือไม่ ?',
+                        text: this.localize.want_edit,
                         confirmed: (result) => {
                             if (result == true) {
                                 this.queryFrom('.required').map(el => el.reset())
@@ -122,7 +125,7 @@
                                 this.dispatchAction('SETTING_PUT_DOC', this.data)
                                     .then((res) => {
                                         this.fire('toast', {
-                                            status: 'success', text: 'แก้ไขข้อมูลสำเร็จ', callback: () => {
+                                            status: 'success', text: this.localize.edit_success, callback: () => {
                                                 this.dispatchAction('SETTING_GET_LIST_DOC')
 
                                                 this.fire('closePanel')
@@ -131,13 +134,13 @@
 
                                     })
                                     .catch((error) => {
-                                        this.fire('toast', { status: 'connectError', text: 'ไม่สามารถแก้ไขได้', callback: () => { } })
+                                        this.fire('toast', { status: 'connectError', text: this.localize.cannot_edit, callback: () => { } })
                                     })
                             }
                         }
                     })
                 } else {
-                    this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลใหครบทุกช่อง', callback: () => { } })
+                    this.fire('toast', { status: 'connectError', text: this.localize.please_full_fied, callback: () => { } })
                 }
             },
             addDocType() {
@@ -146,34 +149,34 @@
                     .then((res) => {
                         this.queryFrom('.required').map(el => el.reset())
                         this.fire('toast', {
-                            status: 'success', text: 'เพิ่มข้อมูลสำเร็จ', callback: () => {
+                            status: 'success', text: this.localize.add_sucess, callback: () => {
                                 this.dispatchAction('SETTING_GET_LIST_DOC')
                                 this.fire('closePanel')
                             }
                         })
                     })
                     .catch((error) => {
-                        this.fire('toast', { status: 'connectError', text: 'ไม่สามารถเพิ่มได้', callback: () => { } })
+                        this.fire('toast', { status: 'connectError', text: this.localize.can_not_add, callback: () => { } })
                     })
             },
             deleteDocType(e) {
                 this.fire('toast', {
                     status: 'openDialog',
-                    text: 'คุณต้องการจะลบ ใช่หรือไม่ ?',
+                    text: this.localize.want_delete,
                     confirmed: (result) => {
                         if (result == true) {
                             this.queryFrom('.required').map(el => el.reset())
-                            this.fire('toast', { status: 'connectError', text: 'ไม่สามารถลบได้', callback: () => { } })
+                            this.fire('toast', { status: 'connectError', text: this.localize.cannot_delete, callback: () => { } })
                             // this.dispatchAction('SETTING_DELETE_DOC', this.data.id)
                             //     .then((res) => {
                             //         this.fire('toast', {
-                            //             status: 'success', text: 'ลบข้อมูลสำเร็จ', callback: () => {
+                            //             status: 'success', text: this.localize.delete_success, callback: () => {
                             //                 this.dispatchAction('SETTING_GET_LIST_DOC')
                             //                 this.fire('closePanel')
                             //             }
                             //         })
                             //     }).catch((error) => {
-                            //         this.fire('toast', { status: 'connectError', text: 'ไม่สามารถลบได้', callback: () => { } })
+                            //         this.fire('toast', { status: 'connectError', text: this.localize.cannot_delete, callback: () => { } })
                             //     })
                         }
                     }

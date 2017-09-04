@@ -81,8 +81,7 @@
       observers: [
         '_dataInput(data)'
       ],
-      _getData(data) {
-        // console.log(data.detail.value === null);
+      _getData: function(data) {
         if (data.detail.value !== null) {
           this.set('selectDoctype', data.detail.value.id)
         }else {
@@ -91,13 +90,11 @@
 
       },
       _dataInput: function (data) {
-        // console.log(data);
         if (data.company_id === undefined) {
           this.companyId = data.id;
         } else {
           this.companyId = data.company_id;
         }
-        // console.log(this.companyId);
       }
     });
   </script>

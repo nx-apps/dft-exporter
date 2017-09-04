@@ -457,7 +457,7 @@
       },
       checkFile(file) {
         let data = this.draftById
-        if (data !== undefined) {
+        if (data !== undefined && data.draft_status !== undefined) {
           let urlFalse = {
             draft_status: data.draft_status,
             company_taxno: data.company_taxno,

@@ -32,13 +32,13 @@
                 on-upload-request="_addHeader">
                 <div class="drop-label">
                     <iron-icon icon="description"></iron-icon>
-                    [[dropName]]
+                    {{localize.put_file}}
                 </div>
             </vaadin-upload>
         </template>
         <template is="dom-if" if="[[!checkRefPath(refPath)]]">
             <div class="borderDrop">
-                <iron-icon icon="description"></iron-icon>&nbsp;&nbsp;Upload Disabled.
+                <iron-icon icon="description"></iron-icon>&nbsp;&nbsp;{{localize.upload_disabled}}
             </div>
         </template>
 
@@ -49,9 +49,9 @@
                     <thead class="table-head">
                         <tr>
                             <!-- <th>ลำดับ</th> -->
-                            <th style="width:25%;">ประเภทไฟล์</th>
-                            <th style="width:60%;">ชื่อไฟล์</th>
-                            <th style="text-align: center;width:15%;">จัดการ</th>
+                            <th style="width:25%;">{{localize.file_type}}</th>
+                            <th style="width:60%;">{{localize.file_name}}</th>
+                            <th style="text-align: center;width:15%;">{{localize.manage}}</th>
                         </tr>
                     </thead>
                     <tbody class="table-body">
@@ -70,21 +70,11 @@
                         </template>
                         <template is="dom-if" if={{checkArrayEmpty(listFiles)}}>
                             <tr>
-                                <td colspan=4 style="text-align:center">ไม่มีข้อมูล</td>
+                                <td colspan=4 style="text-align:center">{{localize.not_found}}</td>
                             </tr>
                         </template>
-
-
                     </tbody>
                 </table>
-                <!-- <template is="dom-repeat" items="[[listFiles]]" as="files">
-                    [[files.group]]<br/>
-                    <template is="dom-repeat" items={{files.reduction}} as="file">
-                        [[file.filename]] <br/>
-                        <vaadin-upload-file file="[[file]]" on-tap="downloadFile" style="cursor:pointer" file-id-upload="[[fileChanged(file.*)]]"
-                            file-id="[[file.file_id]]" on-file-abort="_deleteFile"></vaadin-upload-file>
-                    </template>
-                </template> -->
             </div>
         </div>
     </template>
@@ -100,10 +90,6 @@
                 accept: {
                     type: String,
                     value: "",
-                },
-                dropName: {
-                    type: String,
-                    value: "วางไฟล์ที่นี่"
                 },
                 refPath: {
                     type: String,
@@ -134,7 +120,10 @@
                 listFiles: {
                     statePath: 'upload.fileList',
                     // notify: true
-                }
+                },
+                localize: {
+                    statePath: 'i18n.exporter'
+                },
 
             },
             checkRefPath: function (refPath) {
@@ -145,7 +134,7 @@
                 if (fileChange.type === 'upload-success') {
                     let file = fileChange.detail.file
                     this.getList();
-                    this.fire('toast', { status: 'success', text: `อัพโหลดไฟล์ ${file.name} สำเร็จ`, callback: () => { } })
+                    this.fire('toast', { status: 'success', text: `${this.localize.upload_file} ${file.name} ${this.localize.success}`, callback: () => { } })
                 }
             },
             getList: function () {
@@ -216,18 +205,9 @@
             },
             _deleteFile: function (e) {
                 let file = e.currentTarget.data
-                // console.log(e.currentTarget.data);
-                // var idFile;
-                // if (typeof e.target.fileId == "undefined") {
-                //     // console.log(e.target.fileIdUpload);
-                //     idFile = this.fileIdUpload
-                // } else {
-                //     idFile = e.target.fileId
-                //     //   console.log("ID File = "+idFile);
-                // }
                 this.fire('toast', {
                     status: 'openDialog',
-                    text: 'คุณต้องการจะลบไฟล์ใช่หรือไม่ ?',
+                    text: this.localize.want_delete_file,
                     confirmed: (result) => {
                         let data = {
                             file_id: file.file_id,
@@ -239,7 +219,7 @@
                                     // console.log(response);
                                     this.getList()
                                     this.fire('toast', {
-                                        status: 'success', text: 'ลบไฟล์สำเร็จ', callback: () => {
+                                        status: 'success', text: this.localize.delete_success, callback: () => {
 
                                             // console.log('success');
                                         }

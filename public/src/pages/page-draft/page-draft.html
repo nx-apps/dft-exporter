@@ -235,17 +235,17 @@
     <paper-material elevation="1" class="elevation">
       <div class="horizontal end-justified layout">
         <div>
-          <paper-button class="button-top gl-btn-success" raised on-tap="registerdraft"> สมัคร</paper-button>
+          <paper-button class="button-top gl-btn-success" raised on-tap="registerdraft"> {{localize.register}}</paper-button>
         </div>
         <div>
-          <paper-button class="button-top gl-btn-primary" raised on-tap="renewdraft"> ต่ออายุ</paper-button>
+          <paper-button class="button-top gl-btn-primary" raised on-tap="renewdraft"> {{localize.bt_exporter_extend}}</paper-button>
         </div>
         <div>
-          <paper-button class="button-top gl-btn-warning" raised on-tap="changedraft"> เปลี่ยนประเภท</paper-button>
+          <paper-button class="button-top gl-btn-warning" raised on-tap="changedraft"> {{localize.bt_change}}</paper-button>
         </div>
       </div>
       </div>
-      <div class="head-title">จัดการทะเบียนผู้ส่งออกข้าว</div>
+      <div class="head-title">{{localize.add_exporter}}</div>
       <!-- <div class="horizontal layout center-justified searchBox searchBorder" style="margin-top:10px;">
         <gl-form-input class="searchForm" hidden="{{isHidden}}" style="width:300px;" label="{{localize.tax_no}} :" value="{{companyId}}"
           always-float-label allowed-pattern="[0-9]" maxlength="13">
@@ -551,20 +551,20 @@
       },
       obDraftStatus: function (data, doc_status, approve_status) {
         if (data == 'change') {
-          return 'เปลี่ยนประเภทใบอนุญาต (รออนุมัติ)'
+          return this.localize.bt_change+' ('+this.localize.wait_approve+')'
         }
         if (data == 'renew') {
-          return 'ต่ออายุ (รออนุมัติ)'
+          return this.localize.bt_exporter_extend+' ('+this.localize.wait_approve+')'
         }
         if (data == 'sign') {
           if (doc_status === false) {
-            return 'เอกสารไม่ผ่าน'
+            return this.localize.doc_reject
           }
           if (doc_status === null && approve_status === false) {
-            return 'ลงทะเบียน (ตรวจสอบเอกสาร)'
+            return this.localize.register+' ('+this.localize.wait_approve_dov+')'
           }
           else if (doc_status === true && approve_status === false) {
-            return 'ลงทะเบียน (รออนุมัติ)'
+            return this.localize.register+' ('+this.localize.wait_approve+')'
           }
         }
       },
@@ -582,7 +582,7 @@
         this.dispatchAction('CONFIRM_TYPE', 'registerdraft')
         // console.log(1);
         this.$$('panel-right').open();
-        this.set('titleName', 'สมัคร')
+        this.set('titleName', this.localize.register)
       },
       renewdraft: function (e) {
         // console.log(2);
@@ -591,7 +591,7 @@
         this.$$('panel-right').open();
         this.dispatchAction('CONFIRM_SEARCH_RESET')
         this.dispatchAction('CONFIRM_TYPE', 'renewdraft')
-        this.set('titleName', 'ต่ออายุ')
+        this.set('titleName',this.localize.bt_exporter_extend)
       },
       changedraft: function (e) {
         console.log(3);
