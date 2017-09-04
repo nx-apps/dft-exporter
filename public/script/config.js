@@ -56,7 +56,7 @@ export function dispatchActionBehavior(){
 
 let url = ''
 if (process.env.NODE_ENV == "production") {
-    url = `https://${window.location.hostname}`
+    url = `https://${window.location.hostname}:3000`
     window.console.log = function () {
         return;
     }
