@@ -21,14 +21,14 @@
                 padding: 5px 15px;
             }
         </style>
-        <h4>Files</h4>
+        <h4>{{localize.files}}</h4>
         <table class="gl-table-default">
             <thead class="table-head">
                 <tr>
                     <!-- <th>ลำดับ</th> -->
-                    <th style="width:25%;">ประเภทไฟล์</th>
-                    <th style="width:60%;">ชื่อไฟล์</th>
-                    <th style="text-align: center;width:15%;">จัดการ</th>
+                    <th style="width:25%;">{{localize.file_type}}</th>
+                    <th style="width:60%;">{{localize.file_name}}</th>
+                    <th style="text-align: center;width:15%;">{{localize.manage}}</th>
                 </tr>
             </thead>
             <tbody class="table-body">
@@ -47,7 +47,7 @@
                 </template>
                 <template is="dom-if" if={{checkArrayEmpty(listFilesDelete)}}>
                     <tr>
-                        <td colspan=4 style="text-align:center">ไม่มีข้อมูล</td>
+                        <td colspan=4 style="text-align:center">{{localize.not_found}}</td>
                     </tr>
                 </template>
 
@@ -61,7 +61,10 @@
             properties: {
                 listFilesDelete: {
                     statePath: 'upload.fileListDelete',
-                }
+                },
+                localize: {
+                    statePath: 'i18n.exporter'
+                },
             },
             _recoveFile: function (e) {
                 let dataDraft = this.draftByid
@@ -69,7 +72,7 @@
 
                 this.fire('toast', {
                     status: 'openDialog',
-                    text: 'คุณต้องการจะที่จะกู้ไฟล์ ใช่หรือไม่  ?',
+                    text: this.localize.want_recove_file,
                     confirmed: (result) => {
                         let data = {
                             file_id: file.file_id,
@@ -95,7 +98,7 @@
                                     // console.log(newurlFalse);
                                     this.dispatchAction('UPLOAD_GET_LIST_DELETE', newurlFalse)
                                     this.fire('toast', {
-                                        status: 'success', text: 'กู้ไฟล์สำเร็จ', callback: () => {
+                                        status: 'success', text: this.localize.recove_success, callback: () => {
 
                                             // console.log('success');
                                         }

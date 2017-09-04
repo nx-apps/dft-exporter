@@ -347,9 +347,9 @@
                   <table class="gl-table-default" style="width: 100%;border: 1px solid #ddd; margin: 20px 0px 10px 0px;">
                     <thead class="table-head">
                       <tr>
-                        <th style="width :20%">ลำดับที่</th>
-                        <th style="width :30%">สถานะการดำเนินงาน</th>
-                        <th style="width : 30%">วันที่</th>
+                        <th style="width :20%">{{localize.No}}</th>
+                        <th style="width :30%">{{localize.work_status}}</th>
+                        <th style="width : 30%">{{localize.date}}</th>
                       </tr>
                     </thead>
                     <tbody class="table-body">
@@ -363,22 +363,22 @@
 
                       <template is="dom-if" if={{checkArrayEmpty(resultCompany.remark)}}>
                         <tr>
-                          <td colspan=3 style="text-align:center">ไม่มีข้อมูล</td>
+                          <td colspan=3 style="text-align:center">{{localize.not_found}}</td>
                         </tr>
                       </template>
                     </tbody>
                   </table>
                   <div class="horizontal end-justified layout" style="margin:10px">
                     <paper-button raised class="gl-btn-primary" on-tap="reSendDoc" hidden="[[_BtnShowReSend(resultCompany)]]">
-                      <iron-icon icon="add"></iron-icon>ส่งเอกสารใหม่</paper-button>
+                      <iron-icon icon="add"></iron-icon>{{localize.send_doc}}</paper-button>
                     <paper-button raised class="gl-btn-danger" on-tap="rejectDoc" hidden="[[_BtnShowDoc(resultCompany)]]">
-                      <iron-icon icon="add"></iron-icon>รอตรวจเอกสาร (ไม่ผ่าน)</paper-button>
+                      <iron-icon icon="add"></iron-icon>{{localize.doc_cannot_approve}}</paper-button>
                     <paper-button raised class="gl-btn-primary" on-tap="approveDoc" hidden="[[_BtnShowDoc(resultCompany)]]">
-                      <iron-icon icon="add"></iron-icon>รอตรวจเอกสาร (ผ่าน)</paper-button>
+                      <iron-icon icon="add"></iron-icon>{{localize.doc_approve}}</paper-button>
                     <paper-button raised class="gl-btn-danger" on-tap="rejectApprove" hidden="[[_BtnShowApprove(resultCompany)]]">
-                      <iron-icon icon="add"></iron-icon>รออนุมัติ (ไม่ผ่าน)</paper-button>
+                      <iron-icon icon="add"></iron-icon>{{localize.exporter_cannot_approve}}</paper-button>
                     <paper-button raised class="gl-btn-primary" on-tap="waitaApprove" hidden="[[_BtnShowApprove(resultCompany)]]">
-                      <iron-icon icon="add"></iron-icon>รออนุมัติ (ผ่าน)</paper-button>
+                      <iron-icon icon="add"></iron-icon>{{localize.exporter_approve}}</paper-button>
                   </div>
                 </gl-form-panel>
               </section>
@@ -401,15 +401,15 @@
       </div>
     </panel-right>
     <paper-dialog id="rejectDoc">
-      <h2>เหตุผล</h2>
+      <h2>{{localize.reason}}</h2>
       <paper-dialog-scrollable>
         <div style="margin:10px 30px;">
-          <gl-form-input label="เหตุผลที่ไม่ผ่าน" value="{{docReason}}"></gl-form-input>
+          <gl-form-input label="{{localize.reason}}" value="{{docReason}}"></gl-form-input>
         </div>
       </paper-dialog-scrollable>
       <div class="buttons">
-        <paper-button dialog-dismiss raised class="gl-btn-defalse">ปิด</paper-button>
-        <paper-button dialog-confirm autofocus on-tap="__rejectDocDia" raised class="gl-btn-primary">ตกลง</paper-button>
+        <paper-button dialog-dismiss raised class="gl-btn-defalse">{{localize.bt_close}}</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="__rejectDocDia" raised class="gl-btn-primary">{{localize.bt_ok}}</paper-button>
       </div>
     </paper-dialog>
   </template>
@@ -442,9 +442,9 @@
           statePath: 'confirm.draftById',
           observer: 'setDataDraft'
         },
-        resultCompany:{
-          type:Object,
-          value:{}
+        resultCompany: {
+          type: Object,
+          value: {}
         }
       },
       behaviors: [ReduxBehavior, nylonBehavior, uploadAction, MonthBehavior, i18nAction, confirmAction, exporterAction, ValidateFormBehavior],
@@ -478,7 +478,7 @@
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');
       },
       _selectData: function (e) {
-        this.set('titleName', 'ข้อมูลผู้สมัคร')
+        this.set('titleName', this.localize.title_exporter)
         let data = e.currentTarget.data
         this.dispatchAction('CONFIRM_SEARCH_DRAFT', data.id)
         this.set('layerContent', 'approve')
@@ -486,23 +486,16 @@
         this.$$('panel-right').open();
       },
       _backPage: function (data) {
-        // this.pageSelected = 'listCompany';
         this.pages = 0;
         this.isHidden = false;
       },
       checkArrayEmpty(arr) {
-        // console.log(arr);
         if (arr === undefined || arr.length === 0) {
-          // console.log(1);
           return true
         } else {
-          // console.log(2);
           return false
         }
-        // console.log(arr);
       },
-
-
       _print: function (e) {
         // console.log(e.target.getAttribute('report'));
         if (e.target.getAttribute('report') == 'report1') {
@@ -531,7 +524,7 @@
           this.queryFrom('.searchForm').map((el) => { el.reset(); });
         }
         else {
-          this.fire('toast', { status: 'connectError', text: 'กรุณากรอกเลขประจำตัวผู้ส่งออก' })
+          this.fire('toast', { status: 'connectError', text: this.localize.please_fill + this.localize.tax_no })
         }
       },
       clearData: function () {
@@ -551,28 +544,21 @@
       },
       obDraftStatus: function (data, doc_status, approve_status) {
         if (data == 'change') {
-          return this.localize.bt_change+' ('+this.localize.wait_approve+')'
+          return this.localize.bt_change + ' (' + this.localize.wait_approve + ')'
         }
         if (data == 'renew') {
-          return this.localize.bt_exporter_extend+' ('+this.localize.wait_approve+')'
+          return this.localize.bt_exporter_extend + ' (' + this.localize.wait_approve + ')'
         }
         if (data == 'sign') {
           if (doc_status === false) {
             return this.localize.doc_reject
           }
           if (doc_status === null && approve_status === false) {
-            return this.localize.register+' ('+this.localize.wait_approve_dov+')'
+            return this.localize.register + ' (' + this.localize.wait_approve_dov + ')'
           }
           else if (doc_status === true && approve_status === false) {
-            return this.localize.register+' ('+this.localize.wait_approve+')'
+            return this.localize.register + ' (' + this.localize.wait_approve + ')'
           }
-        }
-      },
-      checkStatusExtend: function (val) {
-        if (val == 'renew') {
-          return true
-        } else {
-          return false
         }
       },
       // --------------------------------------------------------------------------------------
@@ -580,27 +566,23 @@
         this.set('layerContent', 'register')
         this.dispatchAction('CONFIRM_SEARCH_RESET')
         this.dispatchAction('CONFIRM_TYPE', 'registerdraft')
-        // console.log(1);
         this.$$('panel-right').open();
         this.set('titleName', this.localize.register)
       },
       renewdraft: function (e) {
-        // console.log(2);
         this.set('layerContent', 'renew')
 
         this.$$('panel-right').open();
         this.dispatchAction('CONFIRM_SEARCH_RESET')
         this.dispatchAction('CONFIRM_TYPE', 'renewdraft')
-        this.set('titleName',this.localize.bt_exporter_extend)
+        this.set('titleName', this.localize.bt_exporter_extend)
       },
       changedraft: function (e) {
-        console.log(3);
         this.set('layerContent', 'changedraft')
-
         this.$$('panel-right').open();
         this.dispatchAction('CONFIRM_SEARCH_RESET')
         this.dispatchAction('CONFIRM_TYPE', 'changedraft')
-        this.set('titleName', 'เปลี่ยนประเภท')
+        this.set('titleName', this.localize.bt_change)
       },
       changeDate(date) {
         let time = new Date(date)
@@ -658,18 +640,18 @@
         // console.log(remark, diaText, isDoc);
       },
       reSendDoc() {
-        this._docAndApproce('ส่งเอกสารใหม่', 'ยื่นยัการส่งอีกรอบ ใช่รึไหม ?', { doc_status: null })
+        this._docAndApproce('ส่งเอกสารใหม่', this, localize.resend_doc, { doc_status: null })
 
       },
       rejectDoc() {
         this.$.rejectDoc.open()
       },
       __rejectDocDia() {
-        this._docAndApproce(this.docReason || '', 'ไม่ผ่านใช่รึไหม ?', { doc_status: false })
+        this._docAndApproce(this.docReason || '', this.localize.reject, { doc_status: false })
 
       },
       approveDoc() {
-        this._docAndApproce('เอกสารผ่าน' || '', 'เอกสารผ่านใช่รึไหม ?', { doc_status: true })
+        this._docAndApproce('เอกสารผ่าน' || '', this.localize.doc_approve, { doc_status: true })
 
       },
       rejectApprove() {
@@ -677,7 +659,7 @@
         // console.log(this.draftById);
       },
       waitaApprove() {
-        this._docAndApproce('อนุมัติแล้ว' || '', 'ต้องการอนุมัติ ใช่รึไม่ ?', { approve_status: true })
+        this._docAndApproce('อนุมัติแล้ว' || '', this.localize.approve_exporter, { approve_status: true })
       },
       _BtnShowReSend(resultCompany) {
         if (resultCompany.doc_status === false && resultCompany.approve_status === false)

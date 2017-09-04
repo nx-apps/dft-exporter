@@ -256,18 +256,12 @@
                 <th>
                   <div class="text-table">{{localize.no_exporter}}</div>
                 </th>
-                <!--<th>
-                  <div class="text-table">{{localize.no_tax}}</div>
-                </th>-->
                 <th>
                   <div class="text-table">{{localize.name_company}}</div>
                 </th>
                 <th>
                   <div class="text-table">{{localize.type_license}}</div>
                 </th>
-                <!--<th>
-                  <div class="text-table">{{localize.status_export}}</div>
-                </th>-->
                 <th>
                   <div class="text-table">{{localize.status_exporter}}</div>
                 </th>
@@ -289,18 +283,12 @@
                   <td>
                     <div class="text-table">{{item.lic_type.lic_type_prefix}} {{item.exporter_no}}</div>
                   </td>
-                  <!--<td>
-                    <div class="text-table">{{item.company_taxno}}</div>
-                  </td>-->
                   <td>
                     <div>{{item.company.company_name_th}}</div>
                   </td>
                   <td>
                     <div>{{item.lic_type.lic_type_name}}</div>
                   </td>
-                  <!--<td>
-                    <div class="text-table">{{item.exporter_status_name}}</div>
-                  </td>-->
                   <td>
                     <div class="text-table">{{exprieDate(item.export_status)}}</div>
                   </td>
@@ -360,10 +348,10 @@
 
           <input id="tab3" type="radio" name="tabs">
           <label for="tab3">
-                  <div class="container" tabindex="0">
-                    <span>3.เอกสารที่ถูกลบ</span>
-                    </div>
-                  </label>
+            <div class="container" tabindex="0">
+              <span>3.{{localize.bt_del_file}}</span>
+            </div>
+          </label>
 
 
           <section id="content1">
@@ -372,9 +360,9 @@
               <table class="gl-table-default" style="width: 100%;border: 1px solid #ddd; margin: 20px 0px 10px 0px;">
                 <thead class="table-head">
                   <tr>
-                    <th style="width :20%">ลำดับที่</th>
-                    <th style="width :30%">สถานะการดำเนินงาน</th>
-                    <th style="width : 30%">วันที่</th>
+                    <th style="width :20%">{{localize.No}}</th>
+                    <th style="width :30%">{{localize.work_status}}</th>
+                    <th style="width : 30%">{{localize.date}}</th>
                   </tr>
                 </thead>
                 <tbody class="table-body">
@@ -388,7 +376,7 @@
 
                   <template is="dom-if" if={{checkArrayEmpty(resultCompany.remark)}}>
                     <tr>
-                      <td colspan=3 style="text-align:center">ไม่มีข้อมูล</td>
+                      <td colspan=3 style="text-align:center">{{localize.not_found}}</td>
                     </tr>
                   </template>
                 </tbody>
@@ -398,7 +386,7 @@
 
           <section id="content2">
             <gl-form-panel>
-              <fileup-company company-taxno="{{resultCompany.company_taxno}}" draft-id="{{resultCompany.draft_id}}" ></fileup-company>
+              <fileup-company company-taxno="{{resultCompany.company_taxno}}" draft-id="{{resultCompany.draft_id}}"></fileup-company>
             </gl-form-panel>
           </section>
           <section id="content3">
@@ -416,7 +404,8 @@
   <script>
     Polymer({
       is: "page-admin-exporter",
-      behaviors: [ReduxBehavior, nylonBehavior, settingAction, i18nAction, confirmAction, exporterAction, uploadAction, ValidateFormBehavior, MonthBehavior],
+      behaviors: [ReduxBehavior, nylonBehavior, settingAction, i18nAction, confirmAction,
+        exporterAction, uploadAction, ValidateFormBehavior, MonthBehavior],
       properties: {
         layerContent: {
           type: String,
@@ -478,7 +467,6 @@
       },
       setExporter: function (data) {
         if (data.hasOwnProperty('draft_id')) {
-
           let url = {
             draft_id: data.draft_id,
             file_status: true,
@@ -498,7 +486,7 @@
           this.set('resultCompany', data)
           this.dispatchAction('CONFIRM_TYPE', 'registerdraft')
           this.fire('toast', {
-            status: 'success', text: 'โหลดข้อมูลสำเร็จ', callback: () => {
+            status: 'success', text: this.localize.download_success, callback: () => {
               this.$$('panel-right').open();
             }
           })
@@ -521,9 +509,11 @@
         let month = today.getMonth() + 1
         if (month < 10)
           month = '0' + month
-        dateStart = today.getFullYear() + 543 + '-' + month + "-" + today.getDate()
+        let day 
+        if (today.getDate() <= 9) 
+          day = '0'+today.getDate()
+        dateStart = today.getFullYear() + 543 + '-' + month + "-" + day
         let nextDay = dateEnd = new Date(today.setDate(today.getDate() + 7)).toISOString().split('T')[0]
-        // console.log(nextDay.split('-')[2]);
         dateEnd = today.getFullYear() + 543 + '-' + month + "-" + nextDay.split('-')[2]
         // console.log(dateStart);
         // console.log(dateEnd);
@@ -532,9 +522,9 @@
       },
       exprieDate(date) {
         if (date) {
-          return 'ยังไม่หมดอายุ'
+          return this.localize.no_expire
         }
-        return 'หมดอายุ'
+        return this.localize.expire
       },
       searchInput: function (val) {
         this.checkLoad = true;
@@ -564,10 +554,10 @@
         let newUrl = {
           id: e.currentTarget.data.id
         }
-        this.fire('toast', { status: 'load', text: 'กำลังดึงข้อมูล...' })
+        this.fire('toast', { status: 'load', text: this.localize.download_data+'...' })
         this.dispatchAction('EXPORTER_GET_DATA_ID', this.genUrl(newUrl));
         this.layerContent = "detailRegExporter";
-        this.titleName = 'ข้อมูลผู้ส่งออก';
+        this.titleName = this.localize.exporter_data
       },
       _checkID: function (id) {
         if (id.detail.value !== "" && typeof id.detail.value !== 'undefined') {
@@ -576,12 +566,12 @@
             id: id
           }
           // --------------------------------------------------------------------
-          this.fire('toast', { status: 'load', text: 'กำลังดึงข้อมูล...' })
+          this.fire('toast', { status: 'load', text: this.localize.download_data+'...' })
           this.dispatchAction('EXPORTER_GET_DATA_ID', this.genUrl(newUrl));
           // this.dispatchAction('EXPORTER_GET_LIC_TYPE');
-          this.dispatchAction('EXPORTER_GET_DOC_TYPE');
-          this.layerContent = "detailRegExporter";
-          this.titleName = 'ข้อมูลผู้ส่งออก';
+          this.dispatchAction('EXPORTER_GET_DOC_TYPE')
+          this.layerContent = "detailRegExporter"
+          this.titleName = this.localize.exporter_data
           var searchId = this.list_search.filter((item) => {
             return item.id == id
           })
@@ -610,10 +600,10 @@
         var str = '';
 
         if (this.dataSelected.date_start != undefined && this.dataSelected.date_start != '' && (this.dataSelected.date_end == undefined || this.dataSelected.date_end == '')) {
-          this.fire('toast', { status: 'connectError', text: 'กรุณาใส่วันที่สิ้นสุดค้นหา' })
+          this.fire('toast', { status: 'connectError', text: this.localize.field_date+this.localize.end_date })
         }
         else if (this.dataSelected.date_end != undefined && this.dataSelected.date_end != '' && (this.dataSelected.date_start == undefined || this.dataSelected.date_start == '')) {
-          this.fire('toast', { status: 'connectError', text: 'กรุณาใส่วันที่เริ่มต้นค้นหา' })
+          this.fire('toast', { status: 'connectError', text: this.localize.field_date+this.localize.start_date })
         } else {
           // console.log(this.dataSelected.lic_type_id === null);
           str = this._retiveData()
