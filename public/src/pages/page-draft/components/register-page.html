@@ -339,7 +339,8 @@
                       status: 'success', text: 'ต่ออายุสำเร็จ', callback: () => {
                         this.dispatchAction('CONFIRM_GET_DATA');
                       }
-                    });
+                    })
+                    this.fire('back_page','reload')
 
                   })
                   .catch((err) => {
@@ -390,9 +391,9 @@
                       status: 'success', text: 'ขอเปลี่ยนสำเร็จ', callback: () => {
                         this.dispatchAction('CONFIRM_GET_DATA');
                       }
-                    });
+                    })
+                    this.fire('back_page','reload')
                     // console.log(res);
-
                   })
                   .catch((err) => {
                     this.fire('toast', { status: 'connectError', text: 'ไม่สามารถขอเปลี่ยนได้' });

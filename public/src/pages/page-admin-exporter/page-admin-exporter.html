@@ -500,12 +500,13 @@
         let time = new Date(date)
         date = new Date(time.setHours(time.getHours() + 7)).toISOString()
         date = date.split("T")[0]
+        if(date.split('-')[0] !== '9999')
+          return `${Number(date.split('-')[0])+543}-${date.split('-')[1]}-${date.split('-')[2]}`
         return date
       },
       attached() {
         let date = new Object()
         let today = new Date(new Date().setFullYear(new Date().getFullYear()))
-        ////console.log(today);
         let month = today.getMonth() + 1
         if (month < 10)
           month = '0' + month

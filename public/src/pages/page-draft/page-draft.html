@@ -370,15 +370,15 @@
                   </table>
                   <div class="horizontal end-justified layout" style="margin:10px">
                     <paper-button raised class="gl-btn-primary" on-tap="reSendDoc" hidden="[[_BtnShowReSend(resultCompany)]]">
-                      <iron-icon icon="add"></iron-icon>{{localize.send_doc}}</paper-button>
+                      <iron-icon icon="check"></iron-icon>{{localize.send_doc}}</paper-button>
                     <paper-button raised class="gl-btn-danger" on-tap="rejectDoc" hidden="[[_BtnShowDoc(resultCompany)]]">
-                      <iron-icon icon="add"></iron-icon>{{localize.doc_cannot_approve}}</paper-button>
+                      <iron-icon icon="close"></iron-icon>{{localize.doc_cannot_approve}}</paper-button>
                     <paper-button raised class="gl-btn-primary" on-tap="approveDoc" hidden="[[_BtnShowDoc(resultCompany)]]">
-                      <iron-icon icon="add"></iron-icon>{{localize.doc_approve}}</paper-button>
+                      <iron-icon icon="check"></iron-icon>{{localize.doc_approve}}</paper-button>
                     <paper-button raised class="gl-btn-danger" on-tap="rejectApprove" hidden="[[_BtnShowApprove(resultCompany)]]">
-                      <iron-icon icon="add"></iron-icon>{{localize.exporter_cannot_approve}}</paper-button>
+                      <iron-icon icon="close"></iron-icon>{{localize.exporter_cannot_approve}}</paper-button>
                     <paper-button raised class="gl-btn-primary" on-tap="waitaApprove" hidden="[[_BtnShowApprove(resultCompany)]]">
-                      <iron-icon icon="add"></iron-icon>{{localize.exporter_approve}}</paper-button>
+                      <iron-icon icon="check"></iron-icon>{{localize.exporter_approve}}</paper-button>
                   </div>
                 </gl-form-panel>
               </section>
@@ -448,7 +448,7 @@
         }
       },
       behaviors: [ReduxBehavior, nylonBehavior, uploadAction, MonthBehavior, i18nAction, confirmAction,
-       exporterAction, ValidateFormBehavior],
+        exporterAction, ValidateFormBehavior],
       listeners: {
         'back_page': '_backPage',
         'clearData': 'clearData'
@@ -487,8 +487,9 @@
         this.$$('panel-right').open();
       },
       _backPage: function (data) {
-        this.pages = 0;
-        this.isHidden = false;
+        this.$$('panel-right').close();
+        // this.pages = 0;
+        // this.isHidden = false;
       },
       checkArrayEmpty(arr) {
         if (arr === undefined || arr.length === 0) {
@@ -521,7 +522,6 @@
         if (this.companyId != '') {
           this.dispatchAction('CONFIRM_SEARCH', this.companyId);
           // this.pageSelected = "register";
-
           this.queryFrom('.searchForm').map((el) => { el.reset(); });
         }
         else {
@@ -589,6 +589,8 @@
         let time = new Date(date)
         date = new Date(time.setHours(time.getHours() + 7)).toISOString()
         date = date.split("T")[0]
+        if (date.split('-')[0] !== '9999')
+          return `${Number(date.split('-')[0]) + 543}-${date.split('-')[1]}-${date.split('-')[2]}`
         return date
       },
       _docAndApproce(remarkText, diaText, isDoc) {
@@ -641,7 +643,7 @@
         // console.log(remark, diaText, isDoc);
       },
       reSendDoc() {
-        this._docAndApproce('ส่งเอกสารใหม่', this, localize.resend_doc, { doc_status: null })
+        this._docAndApproce('ส่งเอกสารใหม่', this.localize.resend_doc, { doc_status: null })
 
       },
       rejectDoc() {

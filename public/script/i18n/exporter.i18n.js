@@ -255,19 +255,18 @@ export const exporter = {
 
         send_doc:'Submit New Document',
         doc_approve:'Document Approve',
-        doc_cannot_approve:'Document Reject',
-        exporter_approve:'Approve',
+        doc_cannot_approve:'The document does not pass ?',
+        exporter_approve:'Approved',
         exporter_cannot_approve:'Not approved',
         wait_approve:'Wait approve',
         wait_approve_dov:'Wait approve document',
-        doc_reject:'Document reject',
+        doc_reject:'The document does not pass',
         wait_approve:'Wait approve',
 
         files:'Files',
         file_type:'File type',
         manage:'Manage',
         upload_disabled:'Disabled upload',
-        manage:'Manage',
 
         want_delete_file:'You want to delete file ?',
         want_recove_file:'You want to recover file ?',
