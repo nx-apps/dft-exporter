@@ -10,7 +10,6 @@ export function uploadReducer(state = initialState, action) {
         case 'UPLOAD_GET_LIST':
             return Object.assign({}, state, { fileList: action.payload });
         case 'UPLOAD_GET_LIST_DELETE':
-        console.log(action.payload);
             return Object.assign({}, state, { fileListDelete: action.payload });
             
         default:
@@ -32,7 +31,7 @@ export function uploadAction(store) {
         UPLOAD_GET_LIST_DELETE: function (link) {
             axios.get('/file/list/?' + link)
                 .then((response) => {
-                    console.log(response.data);
+                    // console.log(response.data);
                     store.dispatch({ type: 'UPLOAD_GET_LIST_DELETE', payload: response.data })
                 })
                 .catch(function (error) {

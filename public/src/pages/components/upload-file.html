@@ -133,7 +133,7 @@
                 },
                 listFiles: {
                     statePath: 'upload.fileList',
-                    notify: true
+                    // notify: true
                 }
 
             },
@@ -182,7 +182,7 @@
                     let newUrl = this.genUrl(url)
                     // console.log(this.genUrl(url).length);
                     if (newUrl.length > 0) {
-                        console.log(newUrl);
+                        // console.log(newUrl);
                         this.dispatchAction('UPLOAD_GET_LIST', newUrl)
                     }
                 }
@@ -236,7 +236,7 @@
                         if (result == true) {
                             this.dispatchAction('UPLOAD_DELETE_RECOVERY', data)
                                 .then((response) => {
-                                    console.log(response);
+                                    // console.log(response);
                                     this.getList()
                                     this.fire('toast', {
                                         status: 'success', text: 'ลบไฟล์สำเร็จ', callback: () => {

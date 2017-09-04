@@ -84,7 +84,6 @@ export function exporterAction(store) {
             // console.log(company_taxno);
             axios.get('./exporter/get/?'+url)
                 .then(function (response) {
-                    console.log(response.data);
                     store.dispatch({ type: 'EXPORTER_GET_DATA_ID', payload: response.data})
                 })
                 .catch(function (error) {

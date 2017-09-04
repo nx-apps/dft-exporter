@@ -4,10 +4,9 @@
   "fragments": [
     "src/pages/page-401/page-401.html",
     "src/pages/page-404/page-404.html",
-    "src/pages/page-admin-confirm/page-admin-confirm.html",
+    "src/pages/page-draft/page-draft.html",
     "src/pages/page-admin-exporter/page-admin-exporter.html",
-    "src/pages/page-company/page-company.html",
-    "src/pages/page-company-edit/page-company-edit.html"
+    "src/pages/page-setting/page-setting.html"
   ],
   "sources": [
     "src/**/*",

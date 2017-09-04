@@ -48,7 +48,7 @@
       </div>
       <div class="flex-3">
         <upload-file target="/api/file/upload/" accept="application/pdf" ref-path="[[selectDoctype]]" doc-type-id="[[selectDoctype]]"
-          data-type="[[dataTypeSet.data]]" company-taxno="[[companyTaxno]]" draft-id="[[draftId]]" list-files="{{listFiles}}">
+          data-type="[[dataTypeSet.data]]" company-taxno="[[companyTaxno]]" draft-id="[[draftId]]" >
         </upload-file>
       </div>
     </div>
@@ -67,7 +67,7 @@
         },
         docType: {
           statePath: 'exporter.docType',
-          observer:'setTypeDoc'
+          // observer:'setTypeDoc'
         },
         dataTypeSet: {
           statePath: 'confirm.confirmType',
@@ -77,11 +77,6 @@
           type: String,
           value: ''
         },
-        listFiles:{
-          type:Array,
-          notify:true
-
-        }
       },
       observers: [
         '_dataInput(data)'

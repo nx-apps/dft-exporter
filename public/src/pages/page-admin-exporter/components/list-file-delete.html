@@ -92,12 +92,12 @@
                                         file_status: false,
                                     }
                                     let newurlFalse = this.genUrl(urlFalse)
-                                    console.log(newurlFalse);
+                                    // console.log(newurlFalse);
                                     this.dispatchAction('UPLOAD_GET_LIST_DELETE', newurlFalse)
                                     this.fire('toast', {
                                         status: 'success', text: 'กู้ไฟล์สำเร็จ', callback: () => {
 
-                                            console.log('success');
+                                            // console.log('success');
                                         }
                                     });
                                 })

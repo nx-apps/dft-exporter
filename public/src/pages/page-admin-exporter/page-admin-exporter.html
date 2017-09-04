@@ -398,7 +398,7 @@
 
           <section id="content2">
             <gl-form-panel>
-              <fileup-company company-taxno="{{resultCompany.company_taxno}}" draft-id="{{resultCompany.draft_id}}" list-files="{{listFiles}}"></fileup-company>
+              <fileup-company company-taxno="{{resultCompany.company_taxno}}" draft-id="{{resultCompany.draft_id}}" ></fileup-company>
             </gl-form-panel>
           </section>
           <section id="content3">
@@ -451,10 +451,9 @@
           value: {}
         },
         listFiles: {
-          type: Array,
+          statePath: 'upload.fileList',
           observer: 'checkFile'
         }
-
       },
       checkFile(file) {
         let data = this.draftById
