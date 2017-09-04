@@ -234,6 +234,14 @@ export const exporter = {
         wait_approve:'Wait approve',
 
         file_type:'File type',
-        manage:'Manage'
+        manage:'Manage',
+        upload_disabled:'Disabled upload',
+        manage:'Manage',
+
+        want_delete_file:'You want to delete file ?',
+        delete_success:'Delete success',
+
+        upload_file:'Upload File',
+        success:'Success',
     }
 };
