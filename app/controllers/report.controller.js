@@ -51,7 +51,7 @@ exports.report1 = function (req, res) {
                     company_name_th: m('company')('company_name_th'),
                     lic_type_name: m('lic_type')('lic_type_name'),
                     company_taxno: m('company')('company_taxno'),
-                    exporter_status: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
+                    // exporter_status: r.branch(m('exporter_status').eq(true), 'เป็นสมาชิก', 'ไม่เป็นสมาชิก'),
                     date_load2: m('date_load').inTimezone('+07').toISO8601().split('T')(0),
                     date_expire2: m('date_expire').inTimezone('+07').toISO8601().split('T')(0),
                     exporter_no_name: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string'))
