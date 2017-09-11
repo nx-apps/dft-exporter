@@ -50,6 +50,7 @@ exports.report2 = function (req, res) {
     var data = _date(_query, tb, o);
     data.tb.filter(_query.q)
         .map(function (m) {
+            var directors = m('company')('company_directors').pluck('TitleNameTH', 'FirstNameTH', 'LastNameTH');
             return m.pluck('exporter_no', 'id', 'date_load', 'date_expire')
                 .merge({
                     company_name_th: m('company')('company_name_th'),
