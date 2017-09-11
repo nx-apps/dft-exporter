@@ -37,7 +37,7 @@ exports.report1 = function (req, res) {
         })
 }
 
-function _bool(p) {
+function _boolean(p) {
     var data = {}, q = {}, d = {};
     for (key in p) {
 
