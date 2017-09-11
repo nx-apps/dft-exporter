@@ -41,18 +41,18 @@ function _boolean(p) {
     var data = {}, q = {}, d = {};
     for (key in p) {
 
-        if (req.query[key] == "true") {
-            req.query[key] = true;
-        } else if (req.query[key] == "false") {
-            req.query[key] = false;
-        } else if (req.query[key] == "null") {
-            req.query[key] = null;
+        if (p[key] == "true") {
+            p[key] = true;
+        } else if (p[key] == "false") {
+            p[key] = false;
+        } else if (p[key] == "null") {
+            p[key] = null;
         }
 
         if (key.indexOf('date') > -1) {
-            d[key] = req.query[key] + tz;
+            d[key] = p[key] + tz;
         } else {
-            q[key] = req.query[key];
+            q[key] = p[key];
         }
     }
     data['q'] = q;
