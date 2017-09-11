@@ -59,7 +59,7 @@ exports.report2 = function (req, res) {
                     // date_load2: m('date_load').inTimezone('+07').toISO8601().split('T')(0),
                     // date_expire2: m('date_expire').inTimezone('+07').toISO8601().split('T')(0),
                     exporter_no_name: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string')),
-                    expoter_status: 'เป็นสมาชิก',
+                    exporter_status: 'เป็นสมาชิก',
                     company_directors: r.branch(directors.count().eq(0), [
                         { director_name: null }
                     ], directors.merge(function (m_name) {
