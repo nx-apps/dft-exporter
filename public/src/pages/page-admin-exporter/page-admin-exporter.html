@@ -510,9 +510,10 @@
         let month = today.getMonth() + 1
         if (month < 10)
           month = '0' + month
-        let day 
+        let day = today.getDate()
         if (today.getDate() <= 9) 
           day = '0'+today.getDate()
+        // console.log(day);
         dateStart = today.getFullYear() + 543 + '-' + month + "-" + day
         let nextDay = dateEnd = new Date(today.setDate(today.getDate() + 7)).toISOString().split('T')[0]
         dateEnd = today.getFullYear() + 543 + '-' + month + "-" + nextDay.split('-')[2]
@@ -647,7 +648,7 @@
       _report: function (e) {
         var str = this._retiveData();
         // console.log(str);
-        window.open('./api/external/report_exporter/' + e.target.getAttribute('report') + (str != '' ? '?' + str : ''), '_blank');
+        window.open('./api/report/' + e.target.getAttribute('report') + (str != '' ? '?' + str : ''), '_blank');
       },
       _checkData: function (val) {
         if (val.length > 0) {
