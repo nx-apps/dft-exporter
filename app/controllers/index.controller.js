@@ -275,7 +275,7 @@ exports.importData = function (req, res) {
                 convert(varchar(10),pkk_expiredate,120) as date_pkk,
                 isMember as is_member
             from Exporter_Companys
-            where allow_id='ไม่เกิน 12 ก.ก'
+            where Allow_ID='ทั่วไป' and Tax_ID != '3' and Company_ID not like 'ช%'
      `,
         [], function (err, data) {
             data = JSON.parse(data);
@@ -289,20 +289,17 @@ exports.importData = function (req, res) {
                     if (companyData.length > 0 && companyData[0].hasOwnProperty('company_name_th')) {
                         var newDraft = r.expr({ company: companyData[0], company_taxno: value.company_taxno })
                             .merge({
-                                lic_type: r.table('license_type').get('PACKAGE'),
+                                lic_type: r.table('license_type').get('NORMAL'),
                                 approve_status: true,
                                 doc_status: true,
                                 draft_status: 'sign',
                                 exporter_no: value.exporter_no,
-                                lic_type_id: 'PACKAGE',
+                                lic_type_id: 'NORMAL',
                                 pkk_code: value.pkk_code,
                                 is_member: value.is_member,
                                 date_approve: r.ISO8601(value.date_approve + 'T00:00:00+07:00'),
                                 date_expire: r.ISO8601(value.date_expire + 'T00:00:00+07:00'),
-                                date_pkk: r.branch(r.expr(value.date_pkk).eq(null),
-                                    r.now().inTimezone('+07'),
-                                    r.ISO8601(value.date_pkk + 'T00:00:00+07:00')
-                                ),
+                                date_pkk: value.date_pkk,
                                 date_created: r.now().inTimezone('+07'),
                                 date_updated: r.now().inTimezone('+07'),
                                 creater: 'admin',
@@ -357,5 +354,21 @@ function insertExporter(id, callback) {
         .run()
         .then(function (data) {
             callback();
+        })
+}
+exports.data = function (req, res) {
+    r.table('exporter').pluck('company_taxno')
+        .run()
+        .then(function (data) {
+            var html = '<table><tbody>';
+            for (var key in data) {
+                html += `
+                    <tr>
+                        <td>'${data[key]['company_taxno']}</td>
+                    </tr>
+                `;
+            }
+            html += '</tbody></table>';
+            res.send(html)
         })
 }

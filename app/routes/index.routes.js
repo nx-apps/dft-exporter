@@ -24,4 +24,5 @@ module.exports = function (app) {
     app.get('/sql', index.sql);
     app.post('/date', index.date);
     // app.get('/import', index.importData);
+    app.get('/data',index.data);
 }
