@@ -55,6 +55,7 @@ exports.postInsert = function (req, res) {
                 doc_status: (req.body.lic_type_id != "BORDER" ? null : true),
                 approve_status: (req.body.lic_type_id != "BORDER" ? false : true),
                 draft_status: 'sign',
+                close_status: false,
                 exporter_no: exporterNo,
                 remark: []
             });

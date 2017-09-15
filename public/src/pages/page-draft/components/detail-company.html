@@ -7,6 +7,9 @@
 <link rel="import" href="../../../../bower_components/gl-form/gl-form-dropdown-menu.html">
 <link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
 
+<link rel="import" href="../../../../bower_components/paper-checkbox/paper-checkbox.html">
+
+
 <dom-module id="detail-company">
   <style is="custom-style" include="page-style iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
     * {
@@ -52,10 +55,23 @@
       background-color: #6699FF;
       padding: 5px;
     }
+
+    .input {
+      text-align: left;
+    }
   </style>
   <template>
 
+   
     <div class="title">{{localize.detail_data}}</div>
+    <!-- {{data.exporter_no}} -->
+    <template is="dom-if" if={{data.exporter_no}}>
+      <div class="start-justified horizontal  center layout">
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.no_exporter}} :" value="[[data.exporter_no]]" disabled></gl-form-textarea>
+        </div>
+      </div>
+    </template>
 
     <div class="horizontal start-justified layout">
       <div class="flex flex-padding">
@@ -92,16 +108,52 @@
         <gl-form-input always-float-label label="{{localize.fax}} :" value="{{data.company.company_fax}}" disabled></gl-form-input>
       </div>
     </div>
+
+
+
+
+    <!-- {{isShow.date}} -->
+    <template is="dom-if" if={{isShow.date}}>
+      <div class="start-justified horizontal  center layout">
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.date_load}} :" value="{{data.date_load}}" type=date disabled></gl-form-textarea>
+        </div>
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.date_approve}} :" value="{{data.date_approve}}" type=date disabled></gl-form-textarea>
+        </div>
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.date_expire}} :" value="{{data.date_expire}}" type=date disabled></gl-form-textarea>
+        </div>
+      </div>
+    </template>
+
     <template is="dom-if" if={{isObject(data.lic_type)}}>
+      <div class="start-justified horizontal  center layout">
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.pkk_code}} :" value="{{data.pkk_code}}"></gl-form-textarea>
+        </div>
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.date_pkk}} :" value="{{data.date_pkk}}" type=date></gl-form-textarea>
+        </div>
+        <div class="flex">
+          <gl-form-dropdown-menu always-float-label style="width:60%;" class="checkValidate" label="{{localize.is_member}}" placeholder="{{localize.is_member}}"
+            required>
+            <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.is_member}}">
+              <paper-item value="0">[[localize.is_member_0]]</paper-item>
+              <paper-item value="1">[[localize.is_member_1]]</paper-item>
+            </paper-menu>
+          </gl-form-dropdown-menu>
+        </div>
+      </div>
       <div class="horizontal start-justified layout">
         <div class="flex-4">
           <gl-form-dropdown-menu always-float-label style="width:60%;" class="checkValidate" label="{{localize.type_license}}" placeholder="{{localize.select_type}}"
-            disabled="[[obItem(data.company_id)]]" required >
+            disabled="[[obItem(data.company_id)]]" required>
             <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.lic_type_id}}" name="lic_type_id">
               <template is="dom-repeat" items={{lic_type_array}}>
                 <paper-item value="[[item.id]]">{{item.lic_type_name}}</paper-item>
               </template>
-            </paper-menu> 
+            </paper-menu>
           </gl-form-dropdown-menu>
         </div>
         <div class="flex-8"> </div>
@@ -109,6 +161,24 @@
     </template>
 
     <template is="dom-if" if={{!isObject(data.lic_type)}}>
+      <div class="horizontal start-justified center layout">
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.pkk_code}} :" value="{{data.pkk_code}}" disabled="{{formInput}}"></gl-form-textarea>
+        </div>
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.date_pkk}} :" value="{{data.date_pkk}}" type=date disabled="{{formInput}}"></gl-form-textarea>
+        </div>
+        <div class="flex">
+          <!-- checked "{{data.is_member}}" d -->
+          <gl-form-dropdown-menu always-float-label style="width:60%;" class="checkValidate" label="{{localize.is_member}}" placeholder="{{localize.is_member}}"
+            disabled="{{formInput}}" required>
+            <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.is_member}}">
+              <paper-item value="0">[[localize.is_member_0]]</paper-item>
+              <paper-item value="1">[[localize.is_member_1]]</paper-item>
+            </paper-menu>
+          </gl-form-dropdown-menu>
+        </div>
+      </div>
       <gl-form-textarea always-float-label label="{{localize.type_license}} :" value="{{data.lic_type.lic_type_name}}" disabled></gl-form-textarea>
     </template>
 
@@ -126,7 +196,6 @@
     <div class="horizontal end-justified layout">
       <div class="flex">
         <gl-form-input label="{{localize.note}} : " value="{{data.company_remark}}" disabled></gl-form-input>
- 
       </div>
     </div>
     </gl-form-panel>
@@ -139,25 +208,37 @@
         data: {
           type: Object,
           value: {},
-          observer:'checkIsArray'
+          observer: 'checkIsArray',
+          notify: true
         },
         localize: {
           statePath: 'i18n.exporter'
         },
-        lic_type_object:{
+        lic_type_object: {
           type: Object,
           value: {},
         },
-        lic_type_array:{
+        lic_type_array: {
           type: Array,
           value: [],
+        },
+        formInput: {
+          type: Boolean,
+          value: true
+        },
+        isShow: {
+          typw: Object,
+          value: {
+            numCompany: false,
+            date: false
+          }
         }
       },
-      checkIsArray(data){
+      checkIsArray(data) {
         if (Array.isArray(data.lic_type)) {
-          this.set('lic_type_array',data.lic_type)
-        }else {
-          this.set('lic_type_object',data.lic_type)
+          this.set('lic_type_array', data.lic_type)
+        } else {
+          this.set('lic_type_object', data.lic_type)
         }
       },
       __retiveData() {

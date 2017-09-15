@@ -594,6 +594,10 @@
         return date
       },
       _docAndApproce(remarkText, diaText, isDoc) {
+        Date.prototype.addHours = function (h) {
+          this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+          return this;
+        }
         this.draftById.remark.map((item) => {
           let time = new Date(item.date)
           let date = new Date(time.setHours(time.getHours() + 7)).toISOString()
@@ -612,14 +616,16 @@
           newData = {
             id: this.draftById.id,
             remark: this.draftById.remark,
-            doc_status: isDoc.doc_status
+            doc_status: isDoc.doc_status,
+            date_pkk : new Date(this.draftById.date_pkk).addHours(7).toISOString().split('T')[0]
           }
           // console.log(1);
         } else {
           newData = {
             id: this.draftById.id,
             remark: this.draftById.remark,
-            approve_status: isDoc.approve_status
+            approve_status: isDoc.approve_status,
+            date_pkk : new Date(this.draftById.date_pkk).addHours(7).toISOString().split('T')[0]
           }
           // console.log(2);
         }
