@@ -49,6 +49,7 @@ exports.postInsert = function (req, res) {
             var obj = Object.assign(req.body, {
                 date_created: r.now().inTimezone('+07'),
                 date_updated: r.now().inTimezone('+07'),
+                date_pkk: r.ISO8601(req.body.date_pkk),
                 creater: 'admin',
                 updater: 'admin',
                 doc_status: (req.body.lic_type_id != "BORDER" ? null : true),

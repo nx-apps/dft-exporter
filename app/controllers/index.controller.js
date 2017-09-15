@@ -264,14 +264,18 @@ exports.date = function (req, res) {
         })
 }
 exports.importData = function (req, res) {
-
+    //normal => where Allow_ID='ทั่วไป' and Tax_ID != '3' and Company_ID not like 'ช%'
+    //package =>   where allow_id='ไม่เกิน 12 ก.ก'
     req.jdbc.query('mssql', `
             select cast(replace(company_id,'ข','') as int) as exporter_no,
                 tax_id as company_taxno,
                 convert(varchar(10),allow_date,120) as date_approve,
-                convert(varchar(10),expire_date,120) as date_expire
+                convert(varchar(10),expire_date,120) as date_expire,
+                pkk_code,
+                convert(varchar(10),pkk_expiredate,120) as date_pkk,
+                isMember as is_member
             from Exporter_Companys
-            where allow_id='ทั่วไป'
+            where allow_id='ไม่เกิน 12 ก.ก'
      `,
         [], function (err, data) {
             data = JSON.parse(data);
@@ -279,18 +283,26 @@ exports.importData = function (req, res) {
             var company = require('../global/company');
             var draft = require('./draft.controller');
             var msg = [];
-            var c = 0;
+            var c = 1;
             async.eachOfLimit(data, 25, function (value, index, callback) {
                 company.getCompany([value.company_taxno], function (companyData) {
                     if (companyData.length > 0 && companyData[0].hasOwnProperty('company_name_th')) {
                         var newDraft = r.expr({ company: companyData[0], company_taxno: value.company_taxno })
                             .merge({
-                                lic_type: r.table('license_type').get('NORMAL'),
+                                lic_type: r.table('license_type').get('PACKAGE'),
                                 approve_status: true,
                                 doc_status: true,
                                 draft_status: 'sign',
                                 exporter_no: value.exporter_no,
-                                lic_type_id: 'NORMAL',
+                                lic_type_id: 'PACKAGE',
+                                pkk_code: value.pkk_code,
+                                is_member: value.is_member,
+                                date_approve: r.ISO8601(value.date_approve + 'T00:00:00+07:00'),
+                                date_expire: r.ISO8601(value.date_expire + 'T00:00:00+07:00'),
+                                date_pkk: r.branch(r.expr(value.date_pkk).eq(null),
+                                    r.now().inTimezone('+07'),
+                                    r.ISO8601(value.date_pkk + 'T00:00:00+07:00')
+                                ),
                                 date_created: r.now().inTimezone('+07'),
                                 date_updated: r.now().inTimezone('+07'),
                                 creater: 'admin',
@@ -322,19 +334,20 @@ exports.importData = function (req, res) {
 function insertExporter(id, callback) {
     r.table('exporter').insert(
         r.table('draft').get(id).merge(function (m) {
-            var dateNow = r.now().inTimezone('+07');
+            var dateApprove = m('date_approve');
+            var dateExpire = m('date_expire');
             return {
                 draft_id: m('id'),
-                date_approve: dateNow.date(),
-                date_load: dateNow.date(),
-                date_expire: r.branch(
-                    m('lic_type_id').eq('BORDER'),
-                    r.ISO8601('9999-12-31T00:00:00+07:00'),
-                    r.time(dateNow.year().add(1), dateNow.month(), dateNow.day(), '+07:00')
-                ),
-                export_status: true,
-                date_created: dateNow,
-                date_updated: dateNow,
+                // date_approve: dateApprove,
+                date_load: dateApprove,
+                // date_expire: r.branch(
+                //     m('lic_type_id').eq('BORDER'),
+                //     r.ISO8601('9999-12-31T00:00:00+07:00'),
+                //     dateExpire// r.time(dateNow.year().add(1), dateNow.month(), dateNow.day(), '+07:00')
+                // ),
+                export_status: dateExpire.gt(r.now()),
+                date_created: r.now().inTimezone('+07'),
+                date_updated: r.now().inTimezone('+07'),
                 close_status: false,
                 creater: 'admin',
                 updater: 'admin'

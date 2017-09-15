@@ -88,3 +88,12 @@ exports.page = function (req, res) {
             res.json(err);
         })
 }
+exports.update = function (req, res) {
+    r.table('exporter')
+        .get(req.body.id)
+        .update(req.body)
+        .run()
+        .then(function (data) {
+            res.json(data)
+        })
+}
