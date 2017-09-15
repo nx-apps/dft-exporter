@@ -5,4 +5,5 @@ module.exports = function (app) {
     app.get('/get', controller.get);
     app.get('/page', controller.page);
     app.put('/', controller.update);
+    app.put('/close',controller.close);
 }

@@ -97,3 +97,15 @@ exports.update = function (req, res) {
             res.json(data)
         })
 }
+exports.close = function (req, res) {
+    var exporter = r.table('exporter').get(req.body.id);
+    exporter
+        .update({ close_status: true })
+        .do(function (d) {
+            return r.table('draft').get(exporter('draft_id')).update({ close_status: true })
+        })
+        .run()
+        .then(function (data) {
+            res.json(data)
+        })
+}

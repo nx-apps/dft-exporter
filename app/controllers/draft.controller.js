@@ -20,7 +20,7 @@ exports.getInsert = function (req, res) {
             r.expr({ company: companyData[0], company_taxno: req.query.company_taxno })
                 .merge({
                     lic_type: r.table('license_type').filter(function (f) {
-                        return r.table('draft').getAll([req.query.company_taxno, 'sign'], [req.query.company_taxno, 'change'], { index: 'taxnoDraftStatus' })
+                        return r.table('draft').getAll([req.query.company_taxno, 'sign', false], [req.query.company_taxno, 'change', false], { index: 'taxnoDraftStatusCloseStatus' })
                             .getField('lic_type_id')
                             .distinct().contains(f('id')).eq(false)
                     }).coerceTo('array')
@@ -49,7 +49,7 @@ exports.postInsert = function (req, res) {
             var obj = Object.assign(req.body, {
                 date_created: r.now().inTimezone('+07'),
                 date_updated: r.now().inTimezone('+07'),
-                date_pkk: r.ISO8601(req.body.date_pkk),
+                // date_pkk: (req.body.date_pkk != '' ? r.ISO8601(req.body.date_pkk) : ''),
                 creater: 'admin',
                 updater: 'admin',
                 doc_status: (req.body.lic_type_id != "BORDER" ? null : true),
