@@ -276,10 +276,6 @@
         }
       },
       _register: function () {
-        Date.prototype.addHours = function (h) {
-          this.setTime(this.getTime() + (h * 60 * 60 * 1000));
-          return this;
-        }
         // console.log(this.$.detailCompany)
 
         // // this.set('result.lic_type',lic_type)
@@ -297,7 +293,7 @@
                 // console.log(this.resultCompany);
                 let lic_type = data.lic_type.find((item) => item.id === idLic_type)
                 data.lic_type = lic_type
-                data.date_pkk = new Date(data.date_pkk).addHours(7).toISOString().split('T')[0]
+                data.date_pkk = data.date_pkk
                 this.dispatchAction('CONFIRM_REGISTER', data)
                   .then((res) => {
                     this.fire('toast', {
