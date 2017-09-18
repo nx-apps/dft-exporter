@@ -3,7 +3,8 @@ var config = {
   development: {
     server: {
       port: 3000,
-      cluster: 1
+      cluster: 1,
+      https:true
     },
 
     database: {
