@@ -16,6 +16,13 @@
 <link rel="import" href="./../../../bower_components/gl-styles/gl-table.html">
 <link rel="import" href="./../../../bower_components/gl-styles/gl-panel.html">
 <link rel="import" href="./../../../bower_components/gl-styles/gl-toast.html">
+
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<link rel="import" href="../../../bower_components/paper-tooltip/paper-tooltip.html">
+
 <link rel="import" href="./../../layout/nylon-toast.html">
 <link rel="import" href="../components/validateFormBehaviors.html">
 <link rel="import" href="../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
@@ -43,6 +50,16 @@
     * {
       font-family: 'CSChatThaiUI', sans-serif !important;
       -webkit-font-smoothing: antialiased;
+    }
+
+    paper-icon-button.crud {
+      margin: 5px 5px 5px 5px;
+    }
+
+    paper-icon-button.crud:hover {
+      background-color: var(--paper-grey-200);
+      border-radius: 5px;
+      box-shadow: inset 0 0 3px 3px rgba(0, 0, 0, .2);
     }
 
     .bg-title {
@@ -155,6 +172,23 @@
       /*cursor: pointer;*/
       padding: 10px 15px;
     }
+
+    #export_status {
+      border: 1px solid var(--gl-danger-color);
+      background-color: #FF6E40;
+    }
+
+    #export_status>iron-icon {
+      width: 60px;
+      height: 60px;
+      color: #FFC400;
+    }
+
+    #export_status>span.msg {
+      color: #ffffff;
+      font-weight: bold;
+      font-size: x-large;
+    }
   </style>
   <template>
     <paper-material elevation="1" class="elevation">
@@ -192,10 +226,10 @@
             </div>
             <div class="flex-2 flex-padding">
               <gl-form-dropdown-menu class="searchForm" label="{{localize.status_export}}" placeholder="{{localize.all}}">
-                <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.exporter_status}}" name="exporter_status">
+                <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.is_member}}" name="exporter_status">
                   <paper-item>{{localize.all}}</paper-item>
-                  <paper-item value="true">{{localize.member}}</paper-item>
-                  <paper-item value="false">{{localize.no_member}}</paper-item>
+                  <paper-item value="1">{{localize.member}}</paper-item>
+                  <paper-item value="0">{{localize.no_member}}</paper-item>
                 </paper-menu>
               </gl-form-dropdown-menu>
             </div>
@@ -355,8 +389,25 @@
 
 
           <section id="content1">
+            <div class="horizontal end-justified layout" hidden="{{resultCompany.close_status}}">
+              <paper-button raised class="gl-btn-danger" on-tap='closeExporter'> {{localize.close_exporter}}</paper-button>
+            </div>
             <gl-form-panel>
-              <detail-company id="detailCompany" data={{resultCompany}}></detail-company>
+
+              <template is="dom-if" if={{!resultCompany.close_status}}>
+                <div class="horizontal end-justified layout" hidden="{{!resultCompany.export_status}}">
+                  <paper-icon-button id="editExporter" icon="create" class="crud" disabled={{!editPkk}} on-tap="_editPkkCode"></paper-icon-button>
+                  <paper-tooltip for="editExporter" offset="0">{{localize.edit_data}}</paper-tooltip>
+
+                </div>
+              </template>
+
+              <div id="export_status" hidden="{{resultCompany.export_status}}" class="horizontal center-justified center layout">
+                <iron-icon icon="report-problem"></iron-icon>
+                <span class="msg">{{resultCompany.export_status_thai}}</span>
+              </div>
+
+              <detail-company id="detailCompany" data={{resultCompany}} is-show="{{isShow}}" form-input={{editPkk}}></detail-company>
               <table class="gl-table-default" style="width: 100%;border: 1px solid #ddd; margin: 20px 0px 10px 0px;">
                 <thead class="table-head">
                   <tr>
@@ -381,6 +432,13 @@
                   </template>
                 </tbody>
               </table>
+
+              <template is="dom-if" if="{{!editPkk}}">
+                <div class="horizontal end-justified layout">
+                  <paper-button raised class="gl-btn-default" on-tap="cancelExporter"> {{localize.bt_cancel}}</paper-button>
+                  <paper-button raised class="gl-btn-success" on-tap="saveExporter"> {{localize.bt_save}}</paper-button>
+                </div>
+              </template>
             </gl-form-panel>
           </section>
 
@@ -397,7 +455,7 @@
 
 
         </main>
-      </div>
+        <div/>
     </panel-right>
 
   </template>
@@ -442,6 +500,17 @@
         listFiles: {
           statePath: 'upload.fileList',
           observer: 'checkFile'
+        },
+        editPkk: {
+          type: Boolean,
+          value: true
+        },
+        isShow: {
+          typw: Object,
+          value: {
+            numCompany: true,
+            date: true
+          }
         }
       },
       checkFile(file) {
@@ -464,8 +533,94 @@
         this.dispatchAction('SETTING_GET_LIST_LIC');
         this.dispatchAction('EXPORTER_GET_PAGE');
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');
+        // console.log(new Date().window.addHours(7).toISOString().split('T')[0])
+      },
+      _editPkkCode() {
+        this.set('editPkk', !this.editPkk)
+      },
+      cancelExporter() {
+        this.fire('toast', {
+          status: 'openDialog',
+          text: 'คุณต้องการจะยกเลิกการแก้ไข ?',
+          confirmed: (result) => {
+            if (result == true) {
+              let newUrl = {
+                id: this.resultCompany.id
+              }
+              this.fire('toast', { status: 'load', text: this.localize.download_data + '...' })
+              this.dispatchAction('EXPORTER_GET_DATA_ID', this.genUrl(newUrl));
+              this._editPkkCode()
+            }
+          }
+        })
+      },
+      saveExporter() {
+        Date.prototype.addHours = function (h) {
+          this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+          return this;
+        }
+        let newData = {
+          id: this.resultCompany.id,
+          pkk_code: this.resultCompany.pkk_code,
+          is_member: this.resultCompany.is_member,
+          date_pkk: this.resultCompany.date_pkk
+        }
+        this.fire('toast', {
+          status: 'openDialog',
+          text: 'คุณต้องการจะบันทึก ?',
+          confirmed: (result) => {
+            if (result == true) {
+              // console.log(this.resultCompany);
+              this.dispatchAction('EXPORTER_UPDATE', newData)
+                .then((response) => {
+                  this.fire('toast', {
+                    status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
+                      this.dispatchAction('CONFIRM_GET_DATA');
+                      this._editPkkCode()
+                    }
+                  })
+                })
+                .catch((error) => {
+                  this.fire('toast', { status: 'connectError', text: 'ไม่สามารถบันทึกได้' });
+                })
+            }
+          }
+        })
+
+      },
+      closeExporter() {
+        this.fire('toast', {
+          status: 'openDialog',
+          text: 'คุณต้องการจะปิดผู้ส่งออกรายนี้ ใช่รึไม่ ?',
+          confirmed: (result) => {
+            if (result == true) {
+              // console.log(this.resultCompany);
+              let newData = {
+                id: this.resultCompany.id,
+                close_status: false
+              }
+              this.dispatchAction('EXPORTER_CLOSE', newData)
+                .then((response) => {
+                  this.fire('toast', {
+                    status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
+                      this.$$('panel-right').close();
+                      this.dispatchAction('EXPORTER_GET_DATA');
+                      this.dispatchAction('EXPORTER_GET_PAGE');
+                    }
+                  })
+                })
+                .catch((error) => {
+                  this.fire('toast', { status: 'connectError', text: 'ไม่สามารถบันทึกได้' });
+                })
+            }
+          }
+        })
       },
       setExporter: function (data) {
+        Date.prototype.addHours = function (h) {
+          this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+          return this;
+        }
         if (data.hasOwnProperty('draft_id')) {
           let url = {
             draft_id: data.draft_id,
@@ -483,6 +638,12 @@
           let newurlFalse = this.genUrl(urlFalse) + `file_status=false`
           // console.log(newurlFalse);
           this.dispatchAction('UPLOAD_GET_LIST_DELETE', newurlFalse)
+          // console.log(data);
+          data.date_approve = new Date(data.date_approve).addHours(7).toISOString().split('T')[0]
+          data.date_expire = new Date(data.date_expire).addHours(7).toISOString().split('T')[0]
+          data.date_load = new Date(data.date_load).addHours(7).toISOString().split('T')[0]
+          data.date_pkk = (data.date_pkk.search("T") === -1 ? data.date_pkk : new Date(data.date_pkk).addHours(7).toISOString().split('T')[0]); 
+          data.export_status_thai = (data.export_status === false ? 'หมดอายุ' : 'ยังไม่หมดอายุ')
           this.set('resultCompany', data)
           this.dispatchAction('CONFIRM_TYPE', 'registerdraft')
           this.fire('toast', {
@@ -500,8 +661,8 @@
         let time = new Date(date)
         date = new Date(time.setHours(time.getHours() + 7)).toISOString()
         date = date.split("T")[0]
-        if(date.split('-')[0] !== '9999')
-          return `${Number(date.split('-')[0])+543}-${date.split('-')[1]}-${date.split('-')[2]}`
+        if (date.split('-')[0] !== '9999')
+          return `${Number(date.split('-')[0]) + 543}-${date.split('-')[1]}-${date.split('-')[2]}`
         return date
       },
       attached() {
@@ -511,8 +672,8 @@
         if (month < 10)
           month = '0' + month
         let day = today.getDate()
-        if (today.getDate() <= 9) 
-          day = '0'+today.getDate()
+        if (today.getDate() <= 9)
+          day = '0' + today.getDate()
         // console.log(day);
         dateStart = today.getFullYear() + 543 + '-' + month + "-" + day
         let nextDay = dateEnd = new Date(today.setDate(today.getDate() + 7)).toISOString().split('T')[0]
@@ -556,7 +717,7 @@
         let newUrl = {
           id: e.currentTarget.data.id
         }
-        this.fire('toast', { status: 'load', text: this.localize.download_data+'...' })
+        this.fire('toast', { status: 'load', text: this.localize.download_data + '...' })
         this.dispatchAction('EXPORTER_GET_DATA_ID', this.genUrl(newUrl));
         this.layerContent = "detailRegExporter";
         this.titleName = this.localize.exporter_data
@@ -568,7 +729,7 @@
             id: id
           }
           // --------------------------------------------------------------------
-          this.fire('toast', { status: 'load', text: this.localize.download_data+'...' })
+          this.fire('toast', { status: 'load', text: this.localize.download_data + '...' })
           this.dispatchAction('EXPORTER_GET_DATA_ID', this.genUrl(newUrl));
           // this.dispatchAction('EXPORTER_GET_LIC_TYPE');
           this.dispatchAction('EXPORTER_GET_DOC_TYPE')
@@ -602,10 +763,10 @@
         var str = '';
 
         if (this.dataSelected.date_start != undefined && this.dataSelected.date_start != '' && (this.dataSelected.date_end == undefined || this.dataSelected.date_end == '')) {
-          this.fire('toast', { status: 'connectError', text: this.localize.field_date+this.localize.end_date })
+          this.fire('toast', { status: 'connectError', text: this.localize.field_date + this.localize.end_date })
         }
         else if (this.dataSelected.date_end != undefined && this.dataSelected.date_end != '' && (this.dataSelected.date_start == undefined || this.dataSelected.date_start == '')) {
-          this.fire('toast', { status: 'connectError', text: this.localize.field_date+this.localize.start_date })
+          this.fire('toast', { status: 'connectError', text: this.localize.field_date + this.localize.start_date })
         } else {
           // console.log(this.dataSelected.lic_type_id === null);
           str = this._retiveData()

@@ -144,6 +144,14 @@ export const exporter = {
         reject:'ไม่ผ่าน ใช่รึไหม ?',
         approve_exporter:'ต้องการอนุมัติ ใช่รึไม่ ?',
 
+        pkk_code:'Pkk code',
+        date_pkk:'วันที่ Pkk',
+        is_member:'สมาชิกสมาคมโรงสีข้าวไทย',
+        is_member_0:'ไม่เป็นสมาชิก',
+        is_member_1:'เป็นสมาชิก',
+
+        close_exporter:'ยกเลิกผู้ส่งออก'
+
     },
     en:{
         Meg:"EN",
@@ -288,5 +296,13 @@ export const exporter = {
         resend_doc:'Send Document Again ?',
         reject:'Reject Exporter ?',
         approve_exporter:'Approve Exporter ?',
+
+        pkk_code:'Pkk code',
+        date_pkk:'Date Pkk',
+        is_member:'Member of thai rice mills association',
+        is_member_0:'Not a member',
+        is_member_1:'Membership',
+
+        close_exporter:'Close Exporter'
     }
 };

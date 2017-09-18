@@ -293,6 +293,7 @@
                 // console.log(this.resultCompany);
                 let lic_type = data.lic_type.find((item) => item.id === idLic_type)
                 data.lic_type = lic_type
+                data.date_pkk = data.date_pkk
                 this.dispatchAction('CONFIRM_REGISTER', data)
                   .then((res) => {
                     this.fire('toast', {
@@ -345,7 +346,7 @@
                   })
                   .catch((err) => {
                     this.fire('toast', { status: 'connectError', text: 'ไม่สามารถต่ออายุได้' });
-                    console.log(err);
+                    // console.log(err);
                   })
                 //   this.$$('detail-company').resetValidate();
               } else {
