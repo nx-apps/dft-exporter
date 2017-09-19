@@ -262,7 +262,7 @@
               </nylon-datepicker>
             </div>
             <div class="flex-2">
-              <paper-button class="gl-btn-info" style="margin: 30px 0px 10px 50px;" on-tap="_clear" raised>ยกเลิก</paper-button>
+              <!-- <paper-button class="gl-btn-info" style="margin: 30px 0px 10px 50px;" on-tap="_clear" raised>ยกเลิก</paper-button> -->
             </div>
           </div>
 
@@ -314,11 +314,11 @@
               </tr>
             </thead>
 
-            <template is="dom-repeat" items="{{exporters}}">
+            <template is="dom-repeat" items="{{exporters.data}}">
               <tbody>
                 <tr id="detailRegExporter" on-tap="_selectData" data="[[item]]" style="cursor:pointer;">
                   <td>
-                    <div class="text-table">[[autoIndex(index)]]</div>
+                    <div class="text-table">[[autoIndex(index,exporters.start_rowindex)]]</div>
                   </td>
                   <td>
                     <div class="text-table">{{item.lic_type.lic_type_prefix}} {{item.exporter_no}}</div>
@@ -341,7 +341,7 @@
                 </tr>
             </template>
 
-            <template is="dom-if" if={{_checkData(exporters)}}>
+            <template is="dom-if" if={{_checkData(exporters.data)}}>
               <tr>
                 <td colspan="8">
                   <div class="text-table" style="margin:20px">{{localize.not_found}}</div>
@@ -355,7 +355,7 @@
 
       <div class="horizontal justified layout" style="margin:0px 40px 10px 40px;">
         <div>
-          {{localize.company}}{{localize.all}} [[countExporters(exporters)]] {{localize.company}}
+          {{localize.company}}{{localize.all}} [[exporters.limits_count]] {{localize.company}}  จากทั้งหมด [[exporters.rows_count]]
         </div>
         <div>
           {{localize.page}}
@@ -363,7 +363,7 @@
               <template is="dom-repeat" items={{pages}}>
                   <option value="{{item}}">{{item}}</option>
               </template>
-          </select> / [[countPage(pages)]] {{localize.page}}
+          </select> / [[exporters.pages_count]] {{localize.page}}
         </div>
       </div>
 
@@ -497,7 +497,8 @@
           statePath: 'i18n.exporter'
         },
         exporters: {
-          statePath: 'exporter.list'
+          statePath: 'exporter.list',
+          observer: 'setPage'
         },
         list_search: {
           statePath: 'exporter.list_search',
@@ -507,7 +508,8 @@
           statePath: 'setting.listLictype'
         },
         pages: {
-          statePath: 'exporter.pages'
+          type: Array,
+          value: []
         },
         draftById: {
           statePath: 'exporter.data',
@@ -533,6 +535,17 @@
           }
         }
       },
+      setPage(data){
+        let page = []
+        for (var i = 1; i <= data.pages_count; i++) {
+          page.push(i)
+        }
+        this.set('pages',page)
+
+        
+        // console.log(this.pages);
+        // console.log(data.pages_count);
+      },
       checkFile(file) {
         let data = this.draftById
         if (data !== undefined && data.draft_status !== undefined) {
@@ -548,10 +561,10 @@
 
       },
       nylonPageActive: function () {
-        this.dispatchAction('EXPORTER_GET_DATA');
+        this.dispatchAction('EXPORTER_GET_DATA',1);
         // this.dispatchAction('EXPORTER_GET_DATA_SEARCH');
         this.dispatchAction('SETTING_GET_LIST_LIC');
-        this.dispatchAction('EXPORTER_GET_PAGE');
+        // this.dispatchAction('EXPORTER_GET_PAGE');
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');
         // console.log(new Date().window.addHours(7).toISOString().split('T')[0])
       },
@@ -625,7 +638,7 @@
                     status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
                       this.$$('panel-right').close();
                       this.dispatchAction('EXPORTER_GET_DATA');
-                      this.dispatchAction('EXPORTER_GET_PAGE');
+                      // this.dispatchAction('EXPORTER_GET_PAGE');
                     }
                   })
                 })

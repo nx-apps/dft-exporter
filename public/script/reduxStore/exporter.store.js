@@ -37,22 +37,18 @@ export function exporterReducer(state = initialState, action) {
 export function exporterAction(store) {
     return [commonAction(),
     {
-        EXPORTER_GET_DATA: function (page) {
-            if (page == 'EXPORTER_GET_DATA') {
-                page = 1;
-            } else {
-                page = parseInt(page);
-            }
+        EXPORTER_GET_DATA: function (page = 1) {
+            // console.log(page);
             axios.get('./exporter?page=' + page + '&limit=100')
                 .then(function (response) {
-                    response.data.map((item) => {
-                        for (var key in item) {
-                            if (item[key] === "") {
-                                item[key] = '-';
-                            }
-                        }
-                        return item.company_name = '(' + item.company.company_taxno + ') ' + item.company.company_name_th + ' ' + item.company.company_name_en;
-                    })
+                    // response.data.data.map((item) => {
+                    //     for (var key in item) {
+                    //         if (item[key] === "") {
+                    //             item[key] = '-';
+                    //         }
+                    //     }
+                    //     return item.company_name = '(' + item.company.company_taxno + ') ' + item.company.company_name_th + ' ' + item.company.company_name_en;
+                    // })
                     // console.log(response.data);
                     store.dispatch({ type: 'EXPORTER_GET_DATA', payload: response.data })
                 })
@@ -127,14 +123,14 @@ export function exporterAction(store) {
                 this.fire('toast', { status: 'load' })
                 axios.get('./exporter?page=' + page + '&limit=100&' + val)
                     .then(function (response) {
-                        response.data.map((item) => {
-                            for (var key in item) {
-                                if (item[key] === '') {
-                                    item[key] = '-';
-                                }
-                            }
-                            return item.company_name = '(' + item.company_taxno + ') ' + item.company_name_th + ' ' + item.company_name_en;
-                        })
+                        // response.data.map((item) => {
+                        //     for (var key in item) {
+                        //         if (item[key] === '') {
+                        //             item[key] = '-';
+                        //         }
+                        //     }
+                        //     return item.company_name = '(' + item.company_taxno + ') ' + item.company_name_th + ' ' + item.company_name_en;
+                        // })
                         store.dispatch({ type: 'EXPORTER_SEARCH', payload: response.data })
                     });
                 this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback: function () { } })

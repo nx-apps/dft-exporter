@@ -143,11 +143,8 @@
             namePop.map((item) => (str[item] === null || '' || undefined ? delete str[item] : ''))
             return str
         },
-        autoIndex(index) {
-            return index + 1;
-        },
-        autoIndexPage(index, page) {
-            return (index * page) + 1;
+        autoIndex(index, start_rowindex = 0) {
+            return  index + start_rowindex + 1
         },
         // date time
         changeDate(date) {
@@ -169,19 +166,27 @@
             return date
         },
         _checkData: function (val) {
-            if (val.length > 0 || val !== undefined || val !== '') {
-                return false
+            if (val !== undefined) {
+                if (val.length > 0 || val !== undefined || val !== '') {
+                    return false
+                } else {
+                    return true
+                }
             } else {
                 return true
             }
+
         },
-        addHours(date,hours = 7){
+        addHours(date, hours = 7) {
             date = this.cloneData(date)
             Date.prototype.addHours = function (h) {
                 this.setTime(this.getTime() + (h * 60 * 60 * 1000));
                 return this;
             }
             return new Date(date).addHours(hours).toISOString()
+        },
+        setHours(date, hours = 7) {
+
         }
     }
 

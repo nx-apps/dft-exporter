@@ -65,6 +65,7 @@ exports.list = function (req, res) {
                     ? limit
                     : limit - ((result.pages_current * limit) - result.rows_count)
             )
+            result.start_rowindex = (result.pages_current-1) * limit;
             // delete result['data'];
             res.json(result)
         })
