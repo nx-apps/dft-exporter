@@ -660,7 +660,7 @@
           data.date_approve = new Date(data.date_approve).addHours(7).toISOString().split('T')[0]
           data.date_expire = new Date(data.date_expire).addHours(7).toISOString().split('T')[0]
           data.date_load = new Date(data.date_load).addHours(7).toISOString().split('T')[0]
-          data.date_pkk = (data.date_pkk.search("T") === -1 ? data.date_pkk : new Date(data.date_pkk).addHours(7).toISOString().split('T')[0]); 
+          data.date_pkk = (!data.hasOwnProperty('date_pkk') ? data.date_pkk : new Date(data.date_pkk).addHours(7).toISOString().split('T')[0]); 
           data.export_status_thai = (data.export_status === false ? 'หมดอายุ' : 'ยังไม่หมดอายุ')
           this.set('resultCompany', data)
           this.dispatchAction('CONFIRM_TYPE', 'registerdraft')
