@@ -294,7 +294,7 @@
               <tbody>
                 <tr style="cursor:pointer;">
                   <td>
-                    <div class="text-table">[[indexNo(index)]]</div>
+                    <div class="text-table">[[autoIndex(index)]]</div>
                   </td>
                   <td style="text-align:center">
                     {{item.lic_type.lic_type_prefix}}{{item.exporter_no}}
@@ -372,7 +372,7 @@
                     <tbody class="table-body">
                       <template is="dom-repeat" items="{{resultCompany.remark}}">
                         <tr>
-                          <td>[[indexNo(index)]]</td>
+                          <td>[[autoIndex(index)]]</td>
                           <td>[[item.msg]]</td>
                           <td>[[changeDateTime(item.date)]]</td>
                         </tr>
@@ -480,9 +480,7 @@
         'back_page': '_backPage',
         'clearData': 'clearData'
       },
-      goBack() {
-        this.fire('nylon-change-page', { path: '/admin-exporter' })
-      },
+      
       setDataDraft(data) {
         // console.log(data);
         if (data.hasOwnProperty('id')) {
@@ -498,6 +496,7 @@
 
         // console.log(this.resultCompany);
       },
+
       nylonPageActive: function () {
 
         this.dispatchAction('CONFIRM_GET_DATA');
@@ -505,6 +504,7 @@
         // ดึงประเภทเอกสารที่จะอัพโหลด
         this.dispatchAction('EXPORTER_GET_DOC_TYPE');
       },
+
       _selectData: function (e) {
         this.set('titleName', this.localize.title_exporter)
         let data = e.currentTarget.data
@@ -513,11 +513,13 @@
 
         this.$$('panel-right').open();
       },
+
       _backPage: function (data) {
         this.$$('panel-right').close();
         // this.pages = 0;
         // this.isHidden = false;
       },
+
       checkArrayEmpty(arr) {
         if (arr === undefined || arr.length === 0) {
           return true
@@ -545,6 +547,7 @@
         }
 
       },
+
       _search: function () {
         if (this.companyId != '') {
           this.dispatchAction('CONFIRM_SEARCH', this.companyId);
@@ -555,21 +558,13 @@
           this.fire('toast', { status: 'connectError', text: this.localize.please_fill + this.localize.tax_no })
         }
       },
+
       clearData: function () {
         this.idCompany = {};
         this.companyId = '';
         this._backPage();
       },
-      indexNo: function (val) {
-        return val + 1
-      },
-      _checkData: function (val) {
-        if (val.length > 0) {
-          return false
-        } else {
-          return true
-        }
-      },
+
       obDraftStatus: function (data, doc_status, approve_status) {
         if (data == 'change') {
           return this.localize.bt_change + ' (' + this.localize.wait_approve + ')'
@@ -702,13 +697,6 @@
 
       },
       rejectDoc() {
-        // ผลการตรวจสอบเอกสารเบื่องต้น
-        // console.log(docTitle);
-        // docTitle = docTitle || this.localize.reason
-        // console.log(docTitle);
-        // this.set('textIsReason', docTitle)
-        // console.log(this.textIsReason);
-        // this.$.rejectDoc.open()
         this._rejectDoc('ผลการตรวจสอบเอกสารเบื่องต้น')
 
       },
