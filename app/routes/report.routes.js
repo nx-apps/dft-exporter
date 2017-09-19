@@ -5,4 +5,6 @@ module.exports = function (app) {
     app.get('/report3', controller.report3)
     app.get('/normal/request',controller.normalRequest);
     app.get('/normal/company',controller.normalCompany);
+    app.get('/change',controller.change);
+    
 }

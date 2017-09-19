@@ -119,7 +119,7 @@ exports.normalRequest = function (req, res) {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
 
     };
-    r.db('external').table('draft').getAll(req.query.id)
+    r.db('external').table(req.query.table).getAll(req.query.id)
         .merge(function (m) {
             return {
                 exporter_no_name: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string')),
@@ -141,7 +141,7 @@ exports.normalCompany = function (req, res) {
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
-    r.db('external').table('draft').getAll(req.query.id)
+    r.db('external').table(req.query.table).getAll(req.query.id)
         .merge(function (m) {
             return {
                 exporter_no_name: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string')),
@@ -153,6 +153,29 @@ exports.normalCompany = function (req, res) {
             // res.json(result);
             parameters.OUTPUT_NAME = 'หนังสือเรียนบริษัท_' + result[0].exporter_no_name;
             res.ireport("exporter/approve_general_2.jasper", req.query.export || "word", result, parameters);
+        })
+        .error(function (err) {
+            res.json(err)
+        })
+}
+exports.change = function (req, res) {
+    var r = req.r;
+    var parameters = {
+        CURRENT_DATE: new Date().toISOString().slice(0, 10)
+    };
+    r.db('external').table(req.query.table).getAll(req.query.id)
+        .merge(function (m) {
+            return {
+                exporter_no_name: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string')),
+                // approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่'),
+                date_created: m('date_created').toISO8601().split('T')(0)
+            }
+        })
+        .run()
+        .then(function (result) {
+            // res.json(result);
+            parameters.OUTPUT_NAME = 'หนังสือเรียนอธิบดี_เปลี่ยนประเภทจากหีบห่อเป็นทั่วไป_' + result[0].exporter_no_name;
+            res.ireport("exporter/approve_changtype.jasper", req.query.export || "word", result, parameters);
         })
         .error(function (err) {
             res.json(err)
