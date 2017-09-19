@@ -115,10 +115,10 @@
             let count = new Number()
             // //console.log(url);
             for (var variable in url) {
-                // if (url[variable] != '') {
-                data = data + variable + "=" + url[variable];
-                (count < url_length - 1) ? data += '&' : '';
-                // }
+                if (url[variable] != '') {
+                    data = data + variable + "=" + url[variable];
+                    (count < url_length - 1) ? data += '&' : '';
+                }
                 count++
             }
             // //console.log(data);
@@ -135,6 +135,54 @@
             }
             // console.log(arr);
         },
+        cloneData(data) {
+            return JSON.parse(JSON.stringify(data))
+        },
+        deletePop(str, namePop) {
+            str = this.cloneData(str)
+            namePop.map((item) => (str[item] === null || '' || undefined ? delete str[item] : ''))
+            return str
+        },
+        autoIndex(index) {
+            return index + 1;
+        },
+        autoIndexPage(index, page) {
+            return (index * page) + 1;
+        },
+        // date time
+        changeDate(date) {
+            // let time = new Date(date)
+            date = this.addHours(date)
+            date = date.split("T")[0]
+            if (date.split('-')[0] !== '9999')
+                return `${date.split('-')[2]}/${date.split('-')[1]}/${Number(date.split('-')[0]) + 543}`
+            return date
+        },
+        changeDateTime(date) {
+            date = this.addHours(date)
+            time = date.split("T")[1]
+            date = date.split("T")[0]
+            time = `${time.split(":")[0]}:${time.split(":")[1]}`
+            // console.log(time)
+            if (date.split('-')[0] !== '9999')
+                return `${date.split('-')[2]}/${date.split('-')[1]}/${Number(date.split('-')[0]) + 543} ${time}`
+            return date
+        },
+        _checkData: function (val) {
+            if (val.length > 0 || val !== undefined || val !== '') {
+                return false
+            } else {
+                return true
+            }
+        },
+        addHours(date,hours = 7){
+            date = this.cloneData(date)
+            Date.prototype.addHours = function (h) {
+                this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+                return this;
+            }
+            return new Date(date).addHours(hours).toISOString()
+        }
     }
 
 </script>
