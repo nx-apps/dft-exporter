@@ -113,6 +113,29 @@ exports.report3 = function (req, res) {
             res.json(err)
         })
 }
+exports.normalRequest = function (req, res) {
+    // var r = req.r;
+    var parameters = {
+        CURRENT_DATE: new Date().toISOString().slice(0, 10),
+
+    };
+    r.db('external').table('draft').getAll(req.query.id)
+        .merge(function (m) {
+            return {
+                exporter_no_name: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string')),
+                date_created: m('date_created').toISO8601().split('T')(0)
+            }
+        })
+        .run()
+        .then(function (result) {
+            // res.json(result);
+            parameters.OUTPUT_NAME = 'หนังสือเรียนอธิบดี_' + result[0].exporter_no_name;
+            res.ireport("exporter/approve_general_1.jasper", req.query.export || "word", result, parameters);
+        })
+        .error(function (err) {
+            res.json(err)
+        })
+}
 
 function _boolean(p) {
     var data = {}, q = {}, d = {};
