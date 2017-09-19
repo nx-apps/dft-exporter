@@ -121,16 +121,21 @@
             setReport(data) {
                 // console.log(data);
                 let newReport = ''
-                if (this.table === 'draft') {
-                    newReport = this.listReport.filter(item =>
-                        item.approve_status === data.approve_status &&
-                        item.doc_status === data.doc_status &&
-                        item.draft_status === data.draft_status)
-                } else {
-                    newReport = this.listReport
+                if (this.listReport !== undefined) {
+                    if (this.table === 'draft') {
+                        newReport = this.listReport.filter(item =>
+                            item.approve_status === data.approve_status &&
+                            item.doc_status === data.doc_status &&
+                            item.draft_status === data.draft_status)
+                    } else {
+                        console.log(this.listReport);
+                        newReport = this.listReport.filter(item =>
+                            item.draft_status === data.draft_status)
+                    }
+                    // console.log(newReport);
+                    this.set('newReport', newReport)
                 }
-                // console.log(newReport);
-                this.set('newReport', newReport)
+
                 // console.log(data);
                 // console.log(newReport);
                 // data.approve_status
@@ -141,7 +146,7 @@
                 let link = ''
                 let table = `&table=${this.table}`
                 // if (this.table === 'draft') {
-                    link = `${e.model.item.link}${this.data.id}${table}`
+                link = `${e.model.item.link}${this.data.id}${table}`
                 // }
                 console.log(this.table);
                 // wind
