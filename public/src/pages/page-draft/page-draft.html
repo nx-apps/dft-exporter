@@ -357,7 +357,7 @@
                         <tr>
                           <td>[[indexNo(index)]]</td>
                           <td>[[item.msg]]</td>
-                          <td>[[changeDate(item.date)]]</td>
+                          <td>[[changeDateTime(item.date)]]</td>
                         </tr>
                       </template>
 
@@ -590,20 +590,34 @@
         date = new Date(time.setHours(time.getHours() + 7)).toISOString()
         date = date.split("T")[0]
         if (date.split('-')[0] !== '9999')
-          return `${Number(date.split('-')[0]) + 543}-${date.split('-')[1]}-${date.split('-')[2]}`
+          return `${date.split('-')[2]}/${date.split('-')[1]}/${Number(date.split('-')[0]) + 543}`
+        return date
+      },
+      changeDateTime(date) {
+        // console.log(1111);
+        let time = new Date(date)
+        date = new Date(time.setHours(time.getHours() + 7)).toISOString()
+        time = date.split("T")[1]
+        date = date.split("T")[0]
+        time = `${time.split(":")[0]}:${time.split(":")[1]}`
+        // console.log(time)
+        if (date.split('-')[0] !== '9999')
+          return `${date.split('-')[2]}/${date.split('-')[1]}/${Number(date.split('-')[0]) + 543} ${time}`
         return date
       },
       _docAndApproce(remarkText, diaText, isDoc) {
-        if (this.draftById.date_pkk !== undefined ) {
-          this.draftById.date_pkk = new Date(this.draftById.date_pkk).addHours(7).toISOString().split('T')[0]
-        }
         Date.prototype.addHours = function (h) {
           this.setTime(this.getTime() + (h * 60 * 60 * 1000));
           return this;
         }
+        if (this.draftById.date_pkk !== undefined ) {
+          this.draftById.date_pkk = new Date(this.draftById.date_pkk).addHours(7).toISOString().split('T')[0]
+        }
+        let length = this.draftById.remark
         this.draftById.remark.map((item) => {
           let time = new Date(item.date)
           let date = new Date(time.setHours(time.getHours() + 7)).toISOString()
+          console.log(date);
           item.date = date.split("T")[0] + 'T00:00:00+07:00'
           return item
         })
@@ -632,23 +646,23 @@
           }
           // console.log(2);
         }
-        // console.log(newData);
-        this.fire('toast', {
-          status: 'openDialog',
-          text: diaText,
-          confirmed: (result) => {
-            if (result == true) {
-              this.dispatchAction('CONFIRM_DOC_AND_APPROVE', newData)
-                .then((res) => {
-                  this.dispatchAction('CONFIRM_SEARCH_DRAFT', newData.id);
-                  this.nylonPageActive()
-                })
-                .catch((err) => {
-                  console.log(err);
-                })
-            }
-          }
-        })
+        console.log(newData);
+        // this.fire('toast', {
+        //   status: 'openDialog',
+        //   text: diaText,
+        //   confirmed: (result) => {
+        //     if (result == true) {
+        //       this.dispatchAction('CONFIRM_DOC_AND_APPROVE', newData)
+        //         .then((res) => {
+        //           this.dispatchAction('CONFIRM_SEARCH_DRAFT', newData.id);
+        //           this.nylonPageActive()
+        //         })
+        //         .catch((err) => {
+        //           console.log(err);
+        //         })
+        //     }
+        //   }
+        // })
         // console.log(remark, diaText, isDoc);
       },
       reSendDoc() {

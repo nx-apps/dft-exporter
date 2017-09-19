@@ -97,7 +97,7 @@ export const exporter = {
         bt_del_file:"ไฟล์ทีถูกลบ",
         bt_register:"ลงทะเบียนผู้ส่งออก",
         bt_change:"เปลี่ยนประเภท",
-        reason:"เหตุผล",
+        reason:"หมายเหตุ",
         bt_sent_new:"ส่งเอกสารใหม่",
         bt_recovery:"กู้ไฟล์คืน",
         bt_add_company:"เพิ่มบริษัท",

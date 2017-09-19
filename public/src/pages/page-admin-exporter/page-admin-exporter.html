@@ -662,7 +662,7 @@
         date = new Date(time.setHours(time.getHours() + 7)).toISOString()
         date = date.split("T")[0]
         if (date.split('-')[0] !== '9999')
-          return `${Number(date.split('-')[0]) + 543}-${date.split('-')[1]}-${date.split('-')[2]}`
+          return `${date.split('-')[2]}/${date.split('-')[1]}/${Number(date.split('-')[0]) + 543}`
         return date
       },
       attached() {
