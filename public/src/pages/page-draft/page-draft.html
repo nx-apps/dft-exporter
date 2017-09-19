@@ -480,7 +480,7 @@
         'back_page': '_backPage',
         'clearData': 'clearData'
       },
-      
+
       setDataDraft(data) {
         // console.log(data);
         if (data.hasOwnProperty('id')) {
@@ -508,6 +508,19 @@
       _selectData: function (e) {
         this.set('titleName', this.localize.title_exporter)
         let data = e.currentTarget.data
+        switch (data.draft_status) {
+          case "sign":
+            this.dispatchAction('CONFIRM_TYPE', 'registerdraft')
+            break;
+          case "renew":
+            this.dispatchAction('CONFIRM_TYPE', 'renewdraft')
+            break;
+          case "change":
+            this.dispatchAction('CONFIRM_TYPE', 'changedraft')
+            break;
+          default:
+            break;
+        }
         this.dispatchAction('CONFIRM_SEARCH_DRAFT', data.id)
         this.set('layerContent', 'approve')
 

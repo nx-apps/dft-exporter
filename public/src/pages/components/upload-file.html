@@ -173,6 +173,7 @@
             },
             _addHeader: function (e) {
                 let draft = 'sign'
+                console.log(this.dataType );
                 // event.detail.xhr.setRequestHeader('ref-path', this.refPath);
                 event.detail.xhr.setRequestHeader('doc-type-id', this.docTypeId);
                 if (this.dataType === 'registerdraft') {
