@@ -360,14 +360,6 @@
 
               <section id="content1">
                 <gl-form-panel>
-                  <!-- <div class="horizontal end-justified layout" style="margin:10px">
-                        <paper-dropdown-menu label="{{localize.select_report}}" placeholder="{{localize.select_report}}">
-                          <paper-listbox slot="dropdown-content" class="dropdown-content">
-                            <paper-item on-tap="_print" report="report1">{{localize.memorandum}}</paper-item>
-                            <paper-item on-tap="_print" report="report2">{{localize.confirmation}}</paper-item>
-                          </paper-listbox>
-                        </paper-dropdown-menu>
-                      </div> -->
                   <detail-company id="detailCompany" data={{resultCompany}}></detail-company>
                   <table class="gl-table-default" style="width: 100%;border: 1px solid #ddd; margin: 20px 0px 10px 0px;">
                     <thead class="table-head">
@@ -432,10 +424,10 @@
       </div>
     </panel-right>
     <paper-dialog id="rejectDoc">
-      <h2>{{localize.reason}}</h2>
+      <h2>{{docTitle}}</h2>
       <paper-dialog-scrollable>
         <div style="margin:10px 30px;">
-          <gl-form-input label="{{localize.reason}}" value="{{docReason}}"></gl-form-input>
+          <gl-form-input label="{{docTitle}}" value="{{docReason}}"></gl-form-input>
         </div>
       </paper-dialog-scrollable>
       <div class="buttons">
@@ -476,6 +468,10 @@
         resultCompany: {
           type: Object,
           value: {}
+        },
+        textIsReason: {
+          type: String,
+          value: 'หมายเหตุ'
         }
       },
       behaviors: [ReduxBehavior, nylonBehavior, uploadAction, MonthBehavior, i18nAction, confirmAction,
@@ -705,8 +701,12 @@
         this._docAndApproce('ส่งเอกสารใหม่', this.localize.resend_doc, { doc_status: null })
 
       },
-      rejectDoc() {
+      rejectDoc(docTitle = '') {
+        console.log(docTitle);
+        docTitle = docTitle || this.localize.reason
+        this.set('textIsReason', docTitle)
         this.$.rejectDoc.open()
+
       },
       __rejectDocDia() {
         this._docAndApproce(this.docReason || '', this.localize.reject, { doc_status: false })
@@ -717,7 +717,7 @@
 
       },
       rejectApprove() {
-        this.rejectDoc()
+        this.rejectDoc('หมายเหตุ')
         // console.log(this.draftById);
       },
       waitaApprove() {

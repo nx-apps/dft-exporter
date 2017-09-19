@@ -76,35 +76,35 @@
                             doc_status: true,
                             approve_status: false,
                             draft_status: 'sign',
-                            report_name: 'รายงานอธิบดี 1',
+                            report_name: 'บันทึกข้อความเรียนอธิบดี เรื่องการขึ้นทะเบียน',
                             link: './api/report/sign/request?id='
                         },
                         {
                             doc_status: true,
                             approve_status: true,
                             draft_status: 'sign',
-                            report_name: 'รายงานอธิบดี 2',
+                            report_name: 'หนังสือเรียนผู้ส่งออก เรื่องการขึ้นทะเบียน',
                             link: './api/report/sign/company?id='
                         },
                         {
                             doc_status: true,
                             approve_status: false,
                             draft_status: 'change',
-                            report_name: 'รายงานอธิบดี เปลี่ยนประเภท',
-                            link: './api/report/change/request?id='
+                            report_name: 'บันทึกข้อความเรียนอธิบดี เรื่องการขอเปลี่ยนแปลงประเภท',
+                            link: './api/report/change?id='
                         },
                         {
                             doc_status: true,
                             approve_status: false,
                             draft_status: 'renew',
-                            report_name: 'รายงานอธิบดี ต่ออายุ 1',
+                            report_name: 'บันทึกข้อความเรียนอธิบดี เรื่องการขอต่ออายุ',
                             link: './api/report/renew/request?id='
                         },
                         {
                             doc_status: true,
                             approve_status: true,
                             draft_status: 'renew',
-                            report_name: 'รายงานอธิบดี ต่ออายุ 2',
+                            report_name: 'หนังสือเรียนผู้ส่งออก เรื่องการขอต่ออายุ',
                             link: './api/report/renew/request?id='
                         },
                     ]
@@ -129,7 +129,7 @@
                 } else {
                     newReport = this.listReport
                 }
-                console.log(newReport);
+                // console.log(newReport);
                 this.set('newReport', newReport)
                 // console.log(data);
                 // console.log(newReport);
