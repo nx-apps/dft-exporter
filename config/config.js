@@ -3,13 +3,14 @@ var config = {
   development: {
     server: {
       port: 3000,
-      cluster: 1
+      cluster: 1,
+      https:true
     },
 
     database: {
       max: 10,
       servers: [
-        { host: 'rdb.codeunbug.com', port: 28015, user: 'admin', password: 'next@2017' }
+        { host: '127.0.0.1', port: 28015, user: 'admin', password: 'next@2017' }
       ],
       db: 'external'
     },
@@ -43,7 +44,7 @@ var config = {
       {
         name: "mssql",
         driver: "com.microsoft.sqlserver.jdbc.SQLServerDriver",
-        url: "jdbc:sqlserver://mssql.nextcorp.co.th:1433;databaseName=external",
+        url: "jdbc:sqlserver://10.3.231.39:1433;databaseName=external",
         user: "external",
         password: "external@2017"
       }
