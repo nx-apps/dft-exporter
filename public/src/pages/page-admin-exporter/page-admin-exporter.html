@@ -193,6 +193,23 @@
       font-weight: bold;
       font-size: x-large;
     }
+
+    #close_status {
+      border: 1px solid #B71C1C;
+      background-color: #E57373;
+    }
+
+    #close_status>iron-icon {
+      width: 60px;
+      height: 60px;
+      color: #D50000
+    }
+
+    #close_status>span.msg {
+      color: #ffffff;
+      font-weight: bold;
+      font-size: x-large;
+    }
   </style>
   <template>
     <paper-material elevation="1" class="elevation">
@@ -355,7 +372,7 @@
 
       <div class="horizontal justified layout" style="margin:0px 40px 10px 40px;">
         <div>
-          {{localize.company}}{{localize.all}} [[exporters.limits_count]] {{localize.company}}  จากทั้งหมด [[exporters.rows_count]]
+          {{localize.company}}{{localize.all}} [[exporters.limits_count]] {{localize.company}} จากทั้งหมด [[exporters.rows_count]]
         </div>
         <div>
           {{localize.page}}
@@ -415,11 +432,18 @@
                 </div>
               </template>
 
-              <div id="export_status" hidden="{{resultCompany.export_status}}" class="horizontal center-justified center layout">
-                <iron-icon icon="report-problem"></iron-icon>
-                <span class="msg">{{resultCompany.export_status_thai}}</span>
-              </div>
+              <template is="dom-if" if={{!resultCompany.close_status}}>
+                <div id="export_status" hidden="{{resultCompany.export_status}}" class="horizontal center-justified center layout">
+                  <iron-icon icon="report-problem"></iron-icon>
+                  <span class="msg">{{resultCompany.export_status_thai}}</span>
+                </div>
+              </template>
 
+
+              <div id="close_status" hidden="{{!resultCompany.close_status}}" class="horizontal center-justified center layout">
+                <iron-icon icon="close"></iron-icon>
+                <span class="msg">{{resultCompany.close_status_thai}}</span>
+              </div>
               <detail-company id="detailCompany" data={{resultCompany}} is-show="{{isShow}}" form-input={{editPkk}}></detail-company>
               <table class="gl-table-default" style="width: 100%;border: 1px solid #ddd; margin: 20px 0px 10px 0px;">
                 <thead class="table-head">
@@ -535,14 +559,14 @@
           }
         }
       },
-      setPage(data){
+      setPage(data) {
         let page = []
         for (var i = 1; i <= data.pages_count; i++) {
           page.push(i)
         }
-        this.set('pages',page)
+        this.set('pages', page)
 
-        
+
         // console.log(this.pages);
         // console.log(data.pages_count);
       },
@@ -561,7 +585,7 @@
 
       },
       nylonPageActive: function () {
-        this.dispatchAction('EXPORTER_GET_DATA',1);
+        this.dispatchAction('EXPORTER_GET_DATA', 1);
         // this.dispatchAction('EXPORTER_GET_DATA_SEARCH');
         this.dispatchAction('SETTING_GET_LIST_LIC');
         // this.dispatchAction('EXPORTER_GET_PAGE');
@@ -677,6 +701,7 @@
           data.date_load = new Date(data.date_load).addHours(7).toISOString().split('T')[0]
           data.date_pkk = (!data.hasOwnProperty('date_pkk') || data.date_pkk == '' ? data.date_pkk : new Date(data.date_pkk).addHours(7).toISOString().split('T')[0]);
           data.export_status_thai = (data.export_status === false ? 'หมดอายุ' : 'ยังไม่หมดอายุ')
+          data.close_status_thai = (data.close_status === false ? 'เปิดการใช้งาน' : 'ปิดการใช้งาน')
           this.set('resultCompany', data)
           this.dispatchAction('CONFIRM_TYPE', 'registerdraft')
           this.fire('toast', {
