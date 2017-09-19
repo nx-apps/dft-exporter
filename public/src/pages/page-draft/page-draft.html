@@ -594,6 +594,9 @@
         return date
       },
       _docAndApproce(remarkText, diaText, isDoc) {
+        if (this.draftById.date_pkk !== undefined ) {
+          this.draftById.date_pkk = new Date(this.draftById.date_pkk).addHours(7).toISOString().split('T')[0]
+        }
         Date.prototype.addHours = function (h) {
           this.setTime(this.getTime() + (h * 60 * 60 * 1000));
           return this;
@@ -617,7 +620,7 @@
             id: this.draftById.id,
             remark: this.draftById.remark,
             doc_status: isDoc.doc_status,
-            date_pkk : new Date(this.draftById.date_pkk).addHours(7).toISOString().split('T')[0]
+            date_pkk : this.draftById.date_pkk
           }
           // console.log(1);
         } else {
@@ -625,7 +628,7 @@
             id: this.draftById.id,
             remark: this.draftById.remark,
             approve_status: isDoc.approve_status,
-            date_pkk : new Date(this.draftById.date_pkk).addHours(7).toISOString().split('T')[0]
+            date_pkk : this.draftById.date_pkk
           }
           // console.log(2);
         }
