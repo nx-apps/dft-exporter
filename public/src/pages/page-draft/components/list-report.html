@@ -1,0 +1,161 @@
+<link rel="import" href="../../../layout/page-style.html">
+
+<link rel="import" href="../../../redux-behavior.html">
+
+<link rel="import" href="../../../nylon-behavior.html">
+
+<link rel="import" href="../../../i18n-behavior.html">
+
+<link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+<dom-module id="list-report">
+    <template>
+        <style is="custom-style" include="page-style iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
+             :host {
+                display: block;
+            }
+
+            paper-icon-button.crud:hover {
+                background-color: var(--paper-grey-200);
+                border-radius: 5px;
+                box-shadow: inset 0 0 3px 3px rgba(0, 0, 0, .2);
+            }
+
+            table.gl-table-default>tbody.table-body>tr>td {
+                /*cursor: pointer;*/
+                padding: 5px 15px;
+            }
+        </style>
+        <table class="gl-table-default" style="width: 100%;border: 1px solid #ddd; margin: 20px 0px 10px 0px;">
+            <thead class="table-head">
+                <tr>
+                    <th style="width :20%">{{localize.No}}</th>
+                    <th style="width :60%">{{localize.report_name}}</th>
+                    <th style="width : 20%">{{localize.send_report}}</th>
+                </tr>
+            </thead>
+            <tbody class="table-body">
+                <template is="dom-repeat" items="{{newReport}}">
+                    <tr>
+                        <td>[[indexNo(index)]]</td>
+                        <td>[[item.report_name]]</td>
+                        <td>
+                            <paper-icon-button class="crud" data="{{item}}" on-tap="_print" icon="print"></paper-icon-button>
+                        </td>
+                    </tr>
+                </template>
+                <template is="dom-if" if={{checkArrayEmpty(newReport)}}>
+                    <tr>
+                        <td colspan=3 style="text-align:center">{{localize.select_report}}</td>
+                    </tr>
+                </template>
+            </tbody>
+        </table>
+    </template>
+    <script>
+        Polymer({
+            is: 'list-report',
+            behaviors: [ReduxBehavior, nylonBehavior],
+            properties: {
+                localize: {
+                    statePath: 'i18n.exporter'
+                },
+                data: {
+                    type: Object,
+                    value: () => { },
+                    observer: 'setReport'
+                },
+                table: {
+                    type: String,
+                    value: 'draft'
+                },
+                listReport: {
+                    type: Array,
+                    value: [
+                        {
+                            doc_status: true,
+                            approve_status: false,
+                            draft_status: 'sign',
+                            report_name: 'รายงานอธิบดี 1',
+                            link: './api/report/sign/request?id='
+                        },
+                        {
+                            doc_status: true,
+                            approve_status: true,
+                            draft_status: 'sign',
+                            report_name: 'รายงานอธิบดี 2',
+                            link: './api/report/sign/company?id='
+                        },
+                        {
+                            doc_status: true,
+                            approve_status: false,
+                            draft_status: 'change',
+                            report_name: 'รายงานอธิบดี เปลี่ยนประเภท',
+                            link: './api/report/change/request?id='
+                        },
+                        {
+                            doc_status: true,
+                            approve_status: false,
+                            draft_status: 'renew',
+                            report_name: 'รายงานอธิบดี ต่ออายุ 1',
+                            link: './api/report/renew/request?id='
+                        },
+                        {
+                            doc_status: true,
+                            approve_status: true,
+                            draft_status: 'renew',
+                            report_name: 'รายงานอธิบดี ต่ออายุ 2',
+                            link: './api/report/renew/request?id='
+                        },
+                    ]
+                },
+                newReport: {
+                    type: Array,
+                    value: []
+                }
+            },
+
+            indexNo: function (val) {
+                return val + 1
+            },
+            setReport(data) {
+                // console.log(data);
+                let newReport = ''
+                if (this.table === 'draft') {
+                    newReport = this.listReport.filter(item =>
+                        item.approve_status === data.approve_status &&
+                        item.doc_status === data.doc_status &&
+                        item.draft_status === data.draft_status)
+                } else {
+                    newReport = this.listReport
+                }
+                console.log(newReport);
+                this.set('newReport', newReport)
+                // console.log(data);
+                // console.log(newReport);
+                // data.approve_status
+                // data.doc_status
+
+            },
+            _print(e) {
+                let link = ''
+                let table = `&table=${this.table}`
+                // if (this.table === 'draft') {
+                    link = `${e.model.item.link}${this.data.id}${table}`
+                // }
+                console.log(this.table);
+                // wind
+                console.log(e.model.item);
+                console.log(link);
+                window.open(link)
+            },
+            checkArrayEmpty(arr) {
+                if (arr === undefined || arr.length === 0) {
+                    return true
+                } else {
+                    return false
+                }
+            },
+        });
+    </script>
+</dom-module>

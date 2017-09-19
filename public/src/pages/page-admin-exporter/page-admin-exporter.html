@@ -45,6 +45,8 @@
 <link rel="import" href="../../action/settingAction.html">
 <link rel="import" href="../page-draft/components/fileup-company.html">
 
+<link rel="import" href="../page-draft/components/list-report.html">
+
 <dom-module id="page-admin-exporter">
   <style is="custom-style" include="page-style iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
     * {
@@ -151,13 +153,15 @@
 
     #tab1:checked~#content1,
     #tab2:checked~#content2,
-    #tab3:checked~#content3 {
+    #tab3:checked~#content3,
+    #tab4:checked~#content4 {
       display: block;
     }
 
     detail-company,
     fileup-company,
-    list-file-delete {
+    list-file-delete,
+    list-report {
       margin-top: 15px;
       width: 98%;
     }
@@ -387,6 +391,13 @@
             </div>
           </label>
 
+          <input id="tab4" type="radio" name="tabs">
+          <label for="tab4">
+            <div class="container" tabindex="0">
+              <span>4.{{localize.report}}</span>
+            </div>
+          </label>
+
 
           <section id="content1">
             <div class="horizontal end-justified layout" hidden="{{resultCompany.close_status}}">
@@ -447,11 +458,18 @@
               <fileup-company company-taxno="{{resultCompany.company_taxno}}" draft-id="{{resultCompany.draft_id}}"></fileup-company>
             </gl-form-panel>
           </section>
+
           <section id="content3">
             <gl-form-panel>
               <list-file-delete draft-byid="{{draftById}}"></list-file-delete>
             </gl-form-panel>
           </section>
+
+          <section id="content4">
+              <gl-form-panel>
+                  <list-report data={{resultCompany}} table="exporter"></list-report>
+              </gl-form-panel>
+            </section>
 
 
         </main>

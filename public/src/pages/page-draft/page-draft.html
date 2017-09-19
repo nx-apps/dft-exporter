@@ -11,6 +11,11 @@
 <link rel="import" href="./../../../bower_components/gl-styles/gl-color.html">
 <link rel="import" href="./../../../bower_components/gl-styles/gl-table.html">
 <!--<link rel="import" href="./../../../bower_components/gl-styles/gl-panel.html">-->
+
+<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+
 <link rel="import" href="./../../../bower_components/gl-styles/gl-toast.html">
 <link rel="import" href="./../../../bower_components/gl-form/gl-form-input.html">
 <link rel="import" href="./../../../bower_components/iron-pages/iron-pages.html">
@@ -44,6 +49,9 @@
 <link rel="import" href="../../action/confirmAction.html">
 
 <link rel="import" href="../../layout/page-style.html">
+
+
+<link rel="import" href="./components/list-report.html">
 
 <!-- <link rel="import" href="./components/test-eml.html"> -->
 
@@ -210,12 +218,14 @@
     }
 
     #tab1:checked~#content1,
-    #tab2:checked~#content2 {
+    #tab2:checked~#content2,
+    #tab3:checked~#content3 {
       display: block;
     }
 
     detail-company,
-    fileup-company {
+    fileup-company,
+    list-report {
       margin-top: 15px;
       width: 98%;
     }
@@ -340,9 +350,24 @@
                     </div>
                   </label>
 
+              <input id="tab3" type="radio" name="tabs">
+              <label for="tab3">
+                      <div class="container" tabindex="0">
+                        <span>3.{{localize.report}}</span>
+                        </div>
+                      </label>
+
 
               <section id="content1">
                 <gl-form-panel>
+                  <!-- <div class="horizontal end-justified layout" style="margin:10px">
+                        <paper-dropdown-menu label="{{localize.select_report}}" placeholder="{{localize.select_report}}">
+                          <paper-listbox slot="dropdown-content" class="dropdown-content">
+                            <paper-item on-tap="_print" report="report1">{{localize.memorandum}}</paper-item>
+                            <paper-item on-tap="_print" report="report2">{{localize.confirmation}}</paper-item>
+                          </paper-listbox>
+                        </paper-dropdown-menu>
+                      </div> -->
                   <detail-company id="detailCompany" data={{resultCompany}}></detail-company>
                   <table class="gl-table-default" style="width: 100%;border: 1px solid #ddd; margin: 20px 0px 10px 0px;">
                     <thead class="table-head">
@@ -363,7 +388,7 @@
 
                       <template is="dom-if" if={{checkArrayEmpty(resultCompany.remark)}}>
                         <tr>
-                          <td colspan=3 style="text-align:center">{{localize.not_found}}</td>
+                          <td colspan=3 style="text-align:center">{{localize.select_report}}</td>
                         </tr>
                       </template>
                     </tbody>
@@ -386,6 +411,12 @@
               <section id="content2">
                 <gl-form-panel>
                   <fileup-company company-taxno="{{resultCompany.company_taxno}}" draft-id="{{resultCompany.id}}"></fileup-company>
+                </gl-form-panel>
+              </section>
+
+              <section id="content3">
+                <gl-form-panel>
+                  <list-report data={{draftById}} table="draft"></list-report>
                 </gl-form-panel>
               </section>
 
@@ -499,11 +530,11 @@
         }
       },
       _print: function (e) {
-        // console.log(e.target.getAttribute('report'));
+        // console.log(this.draftById.draft_status);
         if (e.target.getAttribute('report') == 'report1') {
           // console.log(this.data.draft_status);
-          if (this.data.draft_status == 'sign') {
-            window.open('./api/external/report_exporter/approve_general_1/' + this.data.id);
+          if (this.draftById.draft_status == 'sign') {
+            window.open('./api/report/normal/request?id=' + this.draftById.id);
           } else if (this.data.draft_status == 'type') {
             window.open('./api/external/report_exporter/approve_changtype/' + this.data.id);
           } else {
@@ -511,7 +542,7 @@
           }
         } else {
           if (this.data.draft_status == 'sign') {
-            window.open('./api/external/report_exporter/approve_general_2/' + this.data.id);
+            window.open('./api/report/normal/company?id=' + this.draftById.id);
           } else {
             window.open('./api/external/report_exporter/approve_renew_2/' + this.data.id);
           }
@@ -595,8 +626,11 @@
       },
       changeDateTime(date) {
         // console.log(1111);
-        let time = new Date(date)
-        date = new Date(time.setHours(time.getHours() + 7)).toISOString()
+        Date.prototype.addHours = function (h) {
+          this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+          return this;
+        }
+        date = new Date(date).addHours(7).toISOString()
         time = date.split("T")[1]
         date = date.split("T")[0]
         time = `${time.split(":")[0]}:${time.split(":")[1]}`
@@ -610,20 +644,22 @@
           this.setTime(this.getTime() + (h * 60 * 60 * 1000));
           return this;
         }
-        if (this.draftById.date_pkk !== undefined ) {
+        if (this.draftById.date_pkk !== undefined) {
           this.draftById.date_pkk = new Date(this.draftById.date_pkk).addHours(7).toISOString().split('T')[0]
         }
-        let length = this.draftById.remark
-        this.draftById.remark.map((item) => {
+        let remarkLength = this.draftById.remark
+        this.draftById.remark.map((item, index) => {
           let time = new Date(item.date)
           let date = new Date(time.setHours(time.getHours() + 7)).toISOString()
-          console.log(date);
-          item.date = date.split("T")[0] + 'T00:00:00+07:00'
+          let timeDay = date.split("T")[1].split(".")[0]
+          item.date = date.split("T")[0] + `T${timeDay}+07:00`
           return item
         })
+        let timeDay = new Date().addHours(7).toISOString().split('T')[1].split(".")[0]
+        // console.log(timeDay);
         let remark = {
           msg: remarkText,
-          date: new Date().toISOString().split('T')[0] + 'T00:00:00+07:00'
+          date: new Date().toISOString().split('T')[0] + `T${timeDay}+07:00`
         }
         this.push('draftById.remark', remark)
         let newData = {}
@@ -634,7 +670,7 @@
             id: this.draftById.id,
             remark: this.draftById.remark,
             doc_status: isDoc.doc_status,
-            date_pkk : this.draftById.date_pkk
+            date_pkk: this.draftById.date_pkk
           }
           // console.log(1);
         } else {
@@ -642,27 +678,27 @@
             id: this.draftById.id,
             remark: this.draftById.remark,
             approve_status: isDoc.approve_status,
-            date_pkk : this.draftById.date_pkk
+            date_pkk: this.draftById.date_pkk
           }
           // console.log(2);
         }
-        console.log(newData);
-        // this.fire('toast', {
-        //   status: 'openDialog',
-        //   text: diaText,
-        //   confirmed: (result) => {
-        //     if (result == true) {
-        //       this.dispatchAction('CONFIRM_DOC_AND_APPROVE', newData)
-        //         .then((res) => {
-        //           this.dispatchAction('CONFIRM_SEARCH_DRAFT', newData.id);
-        //           this.nylonPageActive()
-        //         })
-        //         .catch((err) => {
-        //           console.log(err);
-        //         })
-        //     }
-        //   }
-        // })
+        // console.log(newData);
+        this.fire('toast', {
+          status: 'openDialog',
+          text: diaText,
+          confirmed: (result) => {
+            if (result == true) {
+              this.dispatchAction('CONFIRM_DOC_AND_APPROVE', newData)
+                .then((res) => {
+                  this.dispatchAction('CONFIRM_SEARCH_DRAFT', newData.id);
+                  this.nylonPageActive()
+                })
+                .catch((err) => {
+                  console.log(err);
+                })
+            }
+          }
+        })
         // console.log(remark, diaText, isDoc);
       },
       reSendDoc() {
