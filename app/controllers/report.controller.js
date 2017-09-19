@@ -184,7 +184,7 @@ exports.renewRequest = function (req, res) {
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
-    r.db('external').table('draft').getAll(req.query.id)
+    r.db('external').table(req.query.table).getAll(req.query.id)
         .map(function (m) {
             return m.pluck('company', 'date_updated', 'lic_type', 'date_load', 'date_approve').merge({
                 exporter_no_name: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string'))
@@ -205,7 +205,7 @@ exports.renewCompany = function (req, res) {
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
-    r.db('external').table('exporter').getAll(req.query.id)
+    r.db('external').table(req.query.table).getAll(req.query.id)
         .map(function (m) {
             return m.pluck('date_updated').merge({
                 company_name_th: m('company')('company_name_th'),
