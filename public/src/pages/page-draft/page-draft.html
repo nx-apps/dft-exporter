@@ -424,10 +424,10 @@
       </div>
     </panel-right>
     <paper-dialog id="rejectDoc">
-      <h2>{{docTitle}}</h2>
+      <h2>{{textIsReason}}</h2>
       <paper-dialog-scrollable>
         <div style="margin:10px 30px;">
-          <gl-form-input label="{{docTitle}}" value="{{docReason}}"></gl-form-input>
+          <gl-form-input label="{{textIsReason}}" value="{{docReason}}"></gl-form-input>
         </div>
       </paper-dialog-scrollable>
       <div class="buttons">
@@ -701,10 +701,22 @@
         this._docAndApproce('ส่งเอกสารใหม่', this.localize.resend_doc, { doc_status: null })
 
       },
-      rejectDoc(docTitle = '') {
-        console.log(docTitle);
+      rejectDoc() {
+        // ผลการตรวจสอบเอกสารเบื่องต้น
+        // console.log(docTitle);
+        // docTitle = docTitle || this.localize.reason
+        // console.log(docTitle);
+        // this.set('textIsReason', docTitle)
+        // console.log(this.textIsReason);
+        // this.$.rejectDoc.open()
+        this._rejectDoc('ผลการตรวจสอบเอกสารเบื่องต้น')
+
+      },
+      _rejectDoc(docTitle = '') {
+        // ผลการตรวจสอบเอกสารเบื่องต้น
         docTitle = docTitle || this.localize.reason
         this.set('textIsReason', docTitle)
+        console.log(this.textIsReason);
         this.$.rejectDoc.open()
 
       },
@@ -717,7 +729,7 @@
 
       },
       rejectApprove() {
-        this.rejectDoc('หมายเหตุ')
+        this._rejectDoc('หมายเหตุ')
         // console.log(this.draftById);
       },
       waitaApprove() {
