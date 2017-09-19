@@ -113,45 +113,45 @@ exports.report3 = function (req, res) {
             res.json(err)
         })
 }
-exports.normalRequest = function (req, res) {
+exports.signRequest = function (req, res) {
     // var r = req.r;
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10),
 
     };
     r.db('external').table(req.query.table).getAll(req.query.id)
-        .merge(function (m) {
-            return {
+        .map(function (m) {
+            return m.pluck('lic_type', 'lic_type_id', 'company').merge({
                 exporter_no_name: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string')),
                 date_created: m('date_created').toISO8601().split('T')(0)
-            }
+            })
         })
         .run()
         .then(function (result) {
             // res.json(result);
-            parameters.OUTPUT_NAME = 'หนังสือเรียนอธิบดี_' + result[0].exporter_no_name;
+            parameters.OUTPUT_NAME = 'หนังสือเรียนอธิบดี_ขึ้นทะเบียน_' + result[0].exporter_no_name;
             res.ireport("exporter/approve_general_1.jasper", req.query.export || "word", result, parameters);
         })
         .error(function (err) {
             res.json(err)
         })
 }
-exports.normalCompany = function (req, res) {
+exports.signCompany = function (req, res) {
     var r = req.r;
     var parameters = {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
     r.db('external').table(req.query.table).getAll(req.query.id)
-        .merge(function (m) {
-            return {
+        .map(function (m) {
+            return m.pluck('company').merge({
                 exporter_no_name: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string')),
                 date_created: m('date_created').toISO8601().split('T')(0)
-            }
+            })
         })
         .run()
         .then(function (result) {
             // res.json(result);
-            parameters.OUTPUT_NAME = 'หนังสือเรียนบริษัท_' + result[0].exporter_no_name;
+            parameters.OUTPUT_NAME = 'หนังสือเรียนบริษัท_ขึ้นทะเบียน_' + result[0].exporter_no_name;
             res.ireport("exporter/approve_general_2.jasper", req.query.export || "word", result, parameters);
         })
         .error(function (err) {
@@ -164,18 +164,59 @@ exports.change = function (req, res) {
         CURRENT_DATE: new Date().toISOString().slice(0, 10)
     };
     r.db('external').table(req.query.table).getAll(req.query.id)
-        .merge(function (m) {
-            return {
-                exporter_no_name: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string')),
-                // approve_status_name: r.branch(m('approve_status').eq('request'), 'ตรวจสอบเอกสาร', m('approve_status').eq('process'), 'รออนุมัติ', m('approve_status').eq('approve'), 'อนุมัติ', 'รอส่งเอกสารใหม่'),
-                date_created: m('date_created').toISO8601().split('T')(0)
-            }
+        .map(function (m) {
+            return m.pluck('company', 'date_updated', 'date_approve').merge({
+                exporter_no_name: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string'))
+            })
         })
         .run()
         .then(function (result) {
             // res.json(result);
             parameters.OUTPUT_NAME = 'หนังสือเรียนอธิบดี_เปลี่ยนประเภทจากหีบห่อเป็นทั่วไป_' + result[0].exporter_no_name;
             res.ireport("exporter/approve_changtype.jasper", req.query.export || "word", result, parameters);
+        })
+        .error(function (err) {
+            res.json(err)
+        })
+}
+exports.renewRequest = function (req, res) {
+    var r = req.r;
+    var parameters = {
+        CURRENT_DATE: new Date().toISOString().slice(0, 10)
+    };
+    r.db('external').table('draft').getAll(req.query.id)
+        .map(function (m) {
+            return m.pluck('company', 'date_updated', 'lic_type', 'date_load', 'date_approve').merge({
+                exporter_no_name: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string'))
+            })
+        })
+        .run()
+        .then(function (result) {
+            // res.json(result);
+            parameters.OUTPUT_NAME = 'หนังสือเรียนอธิบดี_ต่ออายุ_' + result[0].exporter_no_name;
+            res.ireport("exporter/approve_renew_1.jasper", req.query.export || "word", result, parameters);
+        })
+        .error(function (err) {
+            res.json(err)
+        })
+}
+exports.renewCompany = function (req, res) {
+    var r = req.r;
+    var parameters = {
+        CURRENT_DATE: new Date().toISOString().slice(0, 10)
+    };
+    r.db('external').table('exporter').getAll(req.query.id)
+        .map(function (m) {
+            return m.pluck('date_updated').merge({
+                company_name_th: m('company')('company_name_th'),
+                exporter_no_name: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string'))
+            })
+        })
+        .run()
+        .then(function (result) {
+            // res.json(result);
+            parameters.OUTPUT_NAME = 'หนังสือเรียนบริษัท_ต่ออายุ_' + result[0].exporter_no_name;
+            res.ireport("exporter/approve_renew_2.jasper", req.query.export || "word", result, parameters);
         })
         .error(function (err) {
             res.json(err)

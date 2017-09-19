@@ -201,9 +201,9 @@ exports.putRenew = function (req, res) {
                                     draft_status: 'renew',
                                     doc_status: null,
                                     approve_status: false,
-                                    exporter_no: getExporter.getField('exporter_no'),
+                                    // exporter_no: getExporter.getField('exporter_no'),
                                     remark: []
-                                });
+                                }).merge(getExporter.pluck('exporter_no', 'date_approve', 'date_load'));
                             r.table('draft').insert(draftInsert)
                                 .run()
                                 .then(function (data) {

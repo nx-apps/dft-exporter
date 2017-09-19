@@ -3,8 +3,9 @@ module.exports = function (app) {
     app.get('/report1', controller.report1)
     app.get('/report2', controller.report2)
     app.get('/report3', controller.report3)
-    app.get('/normal/request',controller.normalRequest);
-    app.get('/normal/company',controller.normalCompany);
+    app.get('/sign/request',controller.signRequest);
+    app.get('/sign/company',controller.signCompany);
     app.get('/change',controller.change);
-    
+    app.get('/renew/request',controller.renewRequest);
+    app.get('/renew/company',controller.renewCompany);
 }
