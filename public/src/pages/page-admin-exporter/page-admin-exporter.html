@@ -432,7 +432,7 @@
                     <tr>
                       <td>[[indexNo(index)]]</td>
                       <td>[[item.msg]]</td>
-                      <td>[[changeDate(item.date)]]</td>
+                      <td>[[changeDateTime(item.date)]]</td>
                     </tr>
                   </template>
 
@@ -681,6 +681,21 @@
         date = date.split("T")[0]
         if (date.split('-')[0] !== '9999')
           return `${date.split('-')[2]}/${date.split('-')[1]}/${Number(date.split('-')[0]) + 543}`
+        return date
+      },
+      changeDateTime(date) {
+        // console.log(1111);
+        Date.prototype.addHours = function (h) {
+          this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+          return this;
+        }
+        date = new Date(date).addHours(7).toISOString()
+        time = date.split("T")[1]
+        date = date.split("T")[0]
+        time = `${time.split(":")[0]}:${time.split(":")[1]}`
+        // console.log(time)
+        if (date.split('-')[0] !== '9999')
+          return `${date.split('-')[2]}/${date.split('-')[1]}/${Number(date.split('-')[0]) + 543} ${time}`
         return date
       },
       attached() {
