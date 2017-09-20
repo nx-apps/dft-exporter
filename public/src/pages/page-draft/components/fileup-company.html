@@ -40,7 +40,8 @@
     <div class="title">[[item.doc_type_th]]</div>
     <div class="start-justified layout">
       <div class="flex">
-        <vaadin-combo-box label="{{localize.doc_type}}" always-float-label item-label-path="doc_type_th" item-value-path="id" items='{{docType}}' on-selected-item-changed="_getData">
+        <vaadin-combo-box label="{{localize.doc_type}}" always-float-label item-label-path="doc_type_th" item-value-path="id" items='{{docType}}'
+          on-selected-item-changed="_getData">
           <template>
             [[item.doc_type_th]]
           </template>
@@ -48,7 +49,7 @@
       </div>
       <div class="flex-3">
         <upload-file target="/api/file/upload/" accept="application/pdf" ref-path="[[selectDoctype]]" doc-type-id="[[selectDoctype]]"
-          data-type="[[dataTypeSet.data]]" company-taxno="[[companyTaxno]]" draft-id="[[draftId]]" >
+          data-type="[[dataTypeSet.data]]" company-taxno="[[companyTaxno]]" draft-id="[[draftId]]">
         </upload-file>
       </div>
     </div>
@@ -71,7 +72,7 @@
         },
         dataTypeSet: {
           statePath: 'confirm.confirmType',
-          
+
         },
         selectDoctype: {
           type: String,
@@ -81,10 +82,10 @@
       observers: [
         '_dataInput(data)'
       ],
-      _getData: function(data) {
+      _getData: function (data) {
         if (data.detail.value !== null) {
           this.set('selectDoctype', data.detail.value.id)
-        }else {
+        } else {
           this.set('selectDoctype', '')
         }
 
