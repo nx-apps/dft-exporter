@@ -13,8 +13,6 @@
 	<parameter name="CURRENT_DATE" class="java.lang.String"/>
 	<field name="company" class="java.lang.Object"/>
 	<field name="exporter_no_name" class="java.lang.String"/>
-	<field name="lice_type_name_new" class="java.lang.String"/>
-	<field name="lice_type_name_old" class="java.lang.String"/>
 	<field name="date_updated" class="java.lang.String"/>
 	<field name="date_approve" class="java.lang.String"/>
 	<background>

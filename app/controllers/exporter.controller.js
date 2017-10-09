@@ -48,7 +48,7 @@ exports.list = function (req, res) {
     if (!isNaN(skip)) {
         table = r.expr({
             rows_count: table.count(),
-            data: table.coerceTo('array').skip(skip).limit(limit).orderBy(data.o)
+            data: table.coerceTo('array').orderBy(data.o).skip(skip).limit(limit)
         })
     } else {
         table = r.expr({
