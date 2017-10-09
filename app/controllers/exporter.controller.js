@@ -1,5 +1,6 @@
 var tz = "T00:00:00+07:00";
 var QUERY = require('../global/query');
+var COMPANY = require('../global/company');
 exports.list = function (req, res) {
     var page = (typeof req.query.page !== 'undefined' ? parseInt(req.query.page) - 1 : 0);
     var limit = (typeof req.query.limit !== 'undefined' ? parseInt(req.query.limit) : 100);;
@@ -65,7 +66,7 @@ exports.list = function (req, res) {
                     ? limit
                     : limit - ((result.pages_current * limit) - result.rows_count)
             )
-            result.start_rowindex = (result.pages_current-1) * limit;
+            result.start_rowindex = (result.pages_current - 1) * limit;
             // delete result['data'];
             res.json(result)
         })
@@ -78,7 +79,24 @@ exports.get = function (req, res) {
         .get(req.query.id)
         .run()
         .then(function (data) {
-            res.json(data)
+            if (data != null) {
+                COMPANY.getCompany([data.company_taxno], function (companyData) {
+                    if (companyData.length > 0 && companyData[0].hasOwnProperty('company_name_th')) {
+                        r.table('exporter').get(req.query.id).update(r.expr({ company: companyData[0] }))
+                            .do(function (d) {
+                                return r.table('exporter').get(data.id)
+                            })
+                            .run()
+                            .then(function (data) {
+                                res.json(data)
+                            })
+                    } else {
+                        res.json(data);
+                    }
+                })
+            } else {
+                res.json(data)
+            }
         })
 }
 exports.search = function (req, res) {
