@@ -262,6 +262,7 @@ exports.putChange = function (req, res) {
                                 draft_status: 'change',
                                 doc_status: null,
                                 approve_status: false,
+                                close_status: false,
                                 exporter_no: exporter('exporter_no'),
                                 remark: req.body.remark
                             });
@@ -297,5 +298,29 @@ function insertDraftIdDoc(draftId, callback) {
         .run()
         .then(function (data) {
             callback();
+        })
+}
+exports.checkNo = function (req, res) {
+
+    r.table('draft').getAll(
+        [Number(req.query.no), 'PACKAGE', false],
+        [Number(req.query.no), 'NORMAL', false],
+        { index: 'exporterNoLicIdCloseStatus' }
+    )
+        .coerceTo('array')
+        .do(function (d) {
+            var draftSign = r.table('draft').getAll(['NORMAL', 'sign'], ['PACKAGE', 'sign'], { index: 'licTypeIdAndDraftStatus' });
+            var exporterNo = r.branch(
+                draftSign.count().eq(0), 1, draftSign.max('exporter_no')('exporter_no').add(1)
+            );
+            return {
+                available: d.count().eq(0),
+                new_no: exporterNo,
+                check_no: Number(req.query.no)
+            }
+        })
+        .run()
+        .then(function (result) {
+            res.json(result)
         })
 }

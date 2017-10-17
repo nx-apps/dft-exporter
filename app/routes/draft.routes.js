@@ -12,4 +12,5 @@ module.exports = function (app) {
     app.route('/change')
         .get(controller.getChange)
         .put(controller.putChange);
+    app.get('/check',controller.checkNo);
 }
