@@ -64,7 +64,7 @@ exports.postInsert = function (req, res) {
                 .then(function (data) {
                     insertDraftIdDoc(data.generated_keys[0], function () {
                         if (req.body.lic_type_id == "BORDER") {
-                            res.json(insertExporter(data.generated_keys[0]));
+                            insertExporter(data.generated_keys[0], new Date().toISOString(), res);
                         } else {
                             res.json(data)
                         }
@@ -107,7 +107,7 @@ exports.putInsert = function (req, res) {
             .run()
             .then(function (data) {
                 if (typeof req.body.approve_status !== 'undefined' && req.body.approve_status === true && !data.hasOwnProperty('error'))
-                    res.json(insertExporter(req.body.id));
+                    insertExporter(req.body.id, req.body.date_approve || new Date().toISOString(), res);
                 else
                     res.json(data);
             })
@@ -115,18 +115,20 @@ exports.putInsert = function (req, res) {
         res.json('error: "id" is empty!');
     }
 }
-function insertExporter(id) {
+function insertExporter(id, dateApprove, res) {
+    // console.log(dateApprove)
     r.table('exporter').insert(
         r.table('draft').get(id).merge(function (m) {
+            var dateApprove2 = r.ISO8601(dateApprove).inTimezone('+07');
             var dateNow = r.now().inTimezone('+07');
             return {
                 draft_id: m('id'),
-                date_approve: dateNow.date(),
-                date_load: dateNow.date(),
+                date_approve: dateApprove2.date(),
+                date_load: dateApprove2.date(),
                 date_expire: r.branch(
                     m('lic_type_id').eq('BORDER'),
                     r.ISO8601('9999-12-31T00:00:00+07:00'),
-                    r.time(dateNow.year().add(1), dateNow.month(), dateNow.day(), '+07:00')
+                    r.time(dateApprove2.year().add(1), dateApprove2.month(), dateApprove2.day(), '+07:00')
                 ),
                 export_status: true,
                 date_created: dateNow,
@@ -139,7 +141,7 @@ function insertExporter(id) {
     )
         .run()
         .then(function (data) {
-            return data
+            res.json(data)
         })
 }
 exports.getRenew = function (req, res) {
