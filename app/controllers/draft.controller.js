@@ -313,7 +313,7 @@ exports.checkNo = function (req, res) {
         .do(function (d) {
             var draftSign = r.table('draft').getAll(['NORMAL', 'sign'], ['PACKAGE', 'sign'], { index: 'licTypeIdAndDraftStatus' });
             var exporterNo = r.branch(
-                draftSign.count().eq(0), 1, draftSign.max('exporter_no')('exporter_no').add(1)
+                draftSign.count().eq(0), 1, draftSign.max('exporter_no')('exporter_no').coerceTo('number').add(1)
             );
             return {
                 available: d.count().eq(0),
