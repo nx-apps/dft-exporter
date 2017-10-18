@@ -59,16 +59,16 @@ exports.list = function (req, res) {
     }
     table.run()
         .then(function (result) {
-            result.pages_count = Math.ceil(result.rows_count / limit);
-            result.pages_current = (page + 1 > result.pages_count ? result.pages_count : page + 1);
-            result.limits_count = (
-                result.pages_count != result.pages_current
-                    ? limit
-                    : limit - ((result.pages_current * limit) - result.rows_count)
-            )
-            result.start_rowindex = (result.pages_current - 1) * limit;
-            // delete result['data'];
-            res.json(result)
+            // result.pages_count = Math.ceil(result.rows_count / limit);
+            // result.pages_current = (page + 1 > result.pages_count ? result.pages_count : page + 1);
+            // result.limits_count = (
+            //     result.pages_count != result.pages_current
+            //         ? limit
+            //         : limit - ((result.pages_current * limit) - result.rows_count)
+            // )
+            // result.start_rowindex = (result.pages_current - 1) * limit;
+            // res.json(result)
+            res.json(pageResult(result, page, limit))
         })
         .error(function (err) {
             res.json(err)
@@ -100,15 +100,32 @@ exports.get = function (req, res) {
         })
 }
 exports.search = function (req, res) {
+    var page = (typeof req.query.page !== 'undefined' ? parseInt(req.query.page) - 1 : 0);
+    var limit = (typeof req.query.limit !== 'undefined' ? parseInt(req.query.limit) : 100);;
+    var skip = page * limit;
     var r = req.r;
-    r.table('exporter')
-        .filter(function (f) {
-            return f('company')(r.expr(req.query.field)).match(req.query.value)
-        })
-        .pluck('id', 'draft_id', 'draft_status', 'exporter_no', 'company_taxno', { company: ['company_taxno', 'company_name_th', 'company_name_en'] })
-        .run()
+    var table;
+    if (req.query.field == 'exporter_no') {
+        table = r.table('exporter').getAll(false, { index: 'close_status' })
+            .filter(function (f) {
+                return f('exporter_no').coerceTo('string').match(req.query.value)
+            }).orderBy('exporter_no');
+    } else {
+        table = r.table('exporter').getAll(false, { index: 'close_status' })
+            .filter(function (f) {
+                return f('company')(r.expr(req.query.field)).match(req.query.value)
+            }).orderBy(req.query.field);
+    }
+    table = table.pluck('id', 'date_approve', 'date_load', 'date_expire', 'export_status', 'draft_id', 'draft_status', 'lic_type_id', 'lic_type', 'is_member', 'exporter_no', 'company_taxno', { company: ['company_taxno', 'company_name_th', 'company_name_en'] })
+
+    table = r.expr({
+        rows_count: table.count(),
+        data: table.coerceTo('array').skip(skip).limit(limit)
+    })
+    
+    table.run()
         .then(function (result) {
-            res.json(result)
+            res.json(pageResult(result, page, limit))
         })
         .error(function (err) {
             res.json(err)
@@ -146,4 +163,15 @@ exports.close = function (req, res) {
         .then(function (data) {
             res.json(data)
         })
+}
+const pageResult = (result, page, limit) => {
+    result.pages_count = Math.ceil(result.rows_count / limit);
+    result.pages_current = (page + 1 > result.pages_count ? result.pages_count : page + 1);
+    result.limits_count = (
+        result.pages_count != result.pages_current
+            ? limit
+            : limit - ((result.pages_current * limit) - result.rows_count)
+    )
+    result.start_rowindex = (result.pages_current - 1) * limit;
+    return result;
 }
