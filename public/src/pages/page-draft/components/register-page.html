@@ -249,7 +249,7 @@
             if (this.dataTypeSet.data === 'registerdraft') {
               this.fire('toast', { status: 'connectError', text: 'สมัครครบแล้ว', callback: () => { } })
             } else if (this.dataTypeSet.data === 'renewdraft') {
-              this.fire('toast', { status: 'connectError', text: 'ยังไม่รายการที่หมดอายุ', callback: () => { } })
+              this.fire('toast', { status: 'connectError', text: 'ยังไม่มีรายการที่หมดอายุ', callback: () => { } })
             } else {
               this.fire('toast', { status: 'connectError', text: 'ไม่สามารถเปลี่ยนได้', callback: () => { } })
             }

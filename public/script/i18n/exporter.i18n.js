@@ -28,6 +28,7 @@ export const exporter = {
         name_company:"ชื่อบริษัท",
         no_tax:"เลขที่ผู้เสียภาษี",
         no_exporter:"เลข ข.",
+        no_exporter_update: "เลข ข. ล่าสุดที่ใช้ได้",
         no_exporter_fullname:"เลขประจำตัวผู้ส่งออก",
         not_found:"ไม่พบข้อมูลที่ค้นหา",
         add_exporter:"จัดการทะเบียนผู้ส่งออกข้าว",

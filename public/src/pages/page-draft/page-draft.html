@@ -12,6 +12,8 @@
 <link rel="import" href="./../../../bower_components/gl-styles/gl-table.html">
 <!--<link rel="import" href="./../../../bower_components/gl-styles/gl-panel.html">-->
 
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+
 <link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
 
 <link rel="import" href="../../../bower_components/paper-item/paper-item.html">
@@ -23,7 +25,6 @@
 <link rel="import" href="./../../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="./../../../bower_components/gl-form/gl-form-panel.html">
 <link rel="import" href="./../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="./../../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="./../../../bower_components/gl-grid/gl-grid-col.html">
 <link rel="import" href="./../../../bower_components/gl-grid/gl-grid-row.html">
 <link rel="import" href="./../../../bower_components/gl-form/gl-form-textarea.html">
@@ -33,25 +34,17 @@
 <link rel="import" href="./../../../bower_components/paper-item/paper-item.html">
 
 <link rel="import" href="../components/month-behavior.html">
-
 <link rel="import" href="../components/validateFormBehaviors.html">
-
 <link rel="import" href="./components/detail-company.html">
-
 <link rel="import" href="../../redux-behavior.html">
-
 <link rel="import" href="../../nylon-behavior.html">
-
 <link rel="import" href="../../i18n-behavior.html">
-
 <link rel="import" href="../../action/exporterAction.html">
-
 <link rel="import" href="../../action/confirmAction.html">
-
 <link rel="import" href="../../layout/page-style.html">
-
-
 <link rel="import" href="./components/list-report.html">
+
+<link rel="import" href="./components/date-approve.html">
 
 <!-- <link rel="import" href="./components/test-eml.html"> -->
 
@@ -242,6 +235,7 @@
     }
   </style>
   <template>
+    <date-approve id="dateApprove"></date-approve>
     <paper-material elevation="1" class="elevation">
       <div class="horizontal end-justified layout">
         <div>
@@ -360,7 +354,7 @@
 
               <section id="content1">
                 <gl-form-panel>
-                  <detail-company id="detailCompany" data={{resultCompany}}></detail-company>
+                  <detail-company id="detailCompany" data={{resultCompany}} edit-exporter={{editExporter}} is-exporter-use={{isExporterUse}}></detail-company>
                   <table class="gl-table-default" style="width: 100%;border: 1px solid #ddd; margin: 20px 0px 10px 0px;">
                     <thead class="table-head">
                       <tr>
@@ -385,7 +379,7 @@
                       </template>
                     </tbody>
                   </table>
-                  <div class="horizontal end-justified layout" style="margin:10px">
+                  <div class="horizontal end-justified layout" style="margin:10px" hidden="{{!editExporter}}">
                     <paper-button raised class="gl-btn-primary" on-tap="reSendDoc" hidden="[[_BtnShowReSend(resultCompany)]]">
                       <iron-icon icon="check"></iron-icon>{{localize.send_doc}}</paper-button>
                     <paper-button raised class="gl-btn-danger" on-tap="rejectDoc" hidden="[[_BtnShowDoc(resultCompany)]]">
@@ -396,6 +390,13 @@
                       <iron-icon icon="close"></iron-icon>{{localize.exporter_cannot_approve}}</paper-button>
                     <paper-button raised class="gl-btn-primary" on-tap="waitaApprove" hidden="[[_BtnShowApprove(resultCompany)]]">
                       <iron-icon icon="check"></iron-icon>{{localize.exporter_approve}}</paper-button>
+                  </div>
+                  <div class="horizontal end-justified layout" style="margin:10px" hidden="{{editExporter}}">
+                    <paper-button raised class="gl-btn-default" on-tap="cancelExporter">
+                      <iron-icon icon="clear"></iron-icon>{{localize.cancle_edit}}</paper-button>
+                    <paper-button raised class="gl-btn-primary" on-tap="updateExporter">
+                      <iron-icon icon="check"></iron-icon>{{localize.save_data}}</paper-button>
+
                   </div>
                 </gl-form-panel>
               </section>
@@ -472,13 +473,22 @@
         textIsReason: {
           type: String,
           value: 'หมายเหตุ'
+        },
+        editExporter: {
+          type: Boolean,
+          value: true
+        },
+        isExporterUse: {
+          type: Object,
+          value: {}
         }
       },
       behaviors: [ReduxBehavior, nylonBehavior, uploadAction, MonthBehavior, i18nAction, confirmAction,
         exporterAction, ValidateFormBehavior],
       listeners: {
         'back_page': '_backPage',
-        'clearData': 'clearData'
+        'clearData': 'clearData',
+        'approve-exporter': 'approveExporter'
       },
 
       setDataDraft(data) {
@@ -506,6 +516,9 @@
       },
 
       _selectData: function (e) {
+        // console.log(this.$.detailCompany);
+        this.$.detailCompany.resetExporterNo()
+
         this.set('titleName', this.localize.title_exporter)
         let data = e.currentTarget.data
         switch (data.draft_status) {
@@ -649,7 +662,17 @@
           return this;
         }
         if (this.draftById.date_pkk !== undefined) {
-          this.draftById.date_pkk = new Date(this.draftById.date_pkk).addHours(7).toISOString().split('T')[0]
+          // เก็บธรรมดา
+          let date_pkk = new Date(this.draftById.date_pkk).addHours(7).toISOString().split("T")[0]
+          this.set('draftById.date_pkk', date_pkk)
+        }
+        if (this.draftById.date_approve !== undefined) {
+          // let date_approve = new Date(this.draftById.date_approve).addHours(7).toISOString()
+          let time = new Date(this.draftById.date_approve)
+          let date = new Date(time.setHours(time.getHours() + 7)).toISOString()
+          let timeDay = date.split("T")[1].split(".")[0]
+          // let timeDay = date_approve.split("T")[1].split(".")[0]
+          this.set('draftById.date_approve', date.split("T")[0] + `T${timeDay}+07:00`)
         }
         let remarkLength = this.draftById.remark
         this.draftById.remark.map((item, index) => {
@@ -672,6 +695,7 @@
           // console.log(isDoc);
           newData = {
             id: this.draftById.id,
+            exporter_no: Number(this.draftById.exporter_no),
             remark: this.draftById.remark,
             doc_status: isDoc.doc_status,
             date_pkk: this.draftById.date_pkk
@@ -682,6 +706,7 @@
             id: this.draftById.id,
             remark: this.draftById.remark,
             approve_status: isDoc.approve_status,
+            date_approve: this.draftById.date_approve,
             date_pkk: this.draftById.date_pkk
           }
           // console.log(2);
@@ -696,6 +721,8 @@
                 .then((res) => {
                   this.dispatchAction('CONFIRM_SEARCH_DRAFT', newData.id);
                   this.nylonPageActive()
+                  this._backPage()
+                  // this.$.detailCompany.resetExporterNo()
                 })
                 .catch((err) => {
                   console.log(err);
@@ -733,7 +760,16 @@
         // console.log(this.draftById);
       },
       waitaApprove() {
+        // this._rejectDoc('หมายเหตุ')
+        this.$.dateApprove.openDia()
+        // this._docAndApproce('อนุมัติแล้ว' || '', this.localize.approve_exporter, { approve_status: true })
+      },
+      approveExporter(e) {
+        // date_approve
+        this.set('draftById.date_approve', e.detail)
         this._docAndApproce('อนุมัติแล้ว' || '', this.localize.approve_exporter, { approve_status: true })
+        // console.log(this.draftById);
+        // console.log(e.detail);
       },
       _BtnShowReSend(resultCompany) {
         if (resultCompany.doc_status === false && resultCompany.approve_status === false)
@@ -749,6 +785,33 @@
         if (resultCompany.doc_status === true && resultCompany.approve_status === false)
           return false
         return true
+      },
+      updateExporter() {
+
+        const save = () => {
+          // console.log(this.draftById)
+          this._docAndApproce('อัพเดทข้อมูล', 'อัพเดทข้อมูล', { doc_status: null })
+          this.$.detailCompany.resetExporterNo()
+          // this.cancelExporter()
+        }
+        let hasProperty = this.isExporterUse.hasOwnProperty('available')
+        if (hasProperty) {
+          if (this.isExporterUse.available != true) {
+            this.fire('toast', { status: 'connectError', text: 'ไม่สามารถบันทึกได้ เนื่องจากเลขผู้ส่งออกซ้ำกับที่มีอยู่ในระบบ' });
+          } else {
+            save()
+          }
+        } else {
+          save()
+        }
+
+        // console.log(this.isExporterUse);
+        // console.log(this.data);
+      },
+      cancelExporter() {
+        this.set('editExporter', !this.editExporter)
+        this.dispatchAction('CONFIRM_SEARCH_DRAFT', this.data.id)
+        this.$.detailCompany.resetExporterNo()
       }
     });
   </script>

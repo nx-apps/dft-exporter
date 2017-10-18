@@ -1,0 +1,45 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+
+
+<dom-module id="date-approve">
+    <template>
+        <style>
+             :host {
+                display: block;
+            }
+        </style>
+        <paper-dialog id="dia">
+            <h2>วันที่อนุมัติ</h2>
+            <paper-dialog-scrollable>
+                    <paper-input label="วันที่อนุมัติ" always-float-label type="date" value="{{date}}"></paper-input>
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button dialog-dismiss>ยกเลิก</paper-button>
+                <paper-button dialog-confirm autofocus on-tap="approveDate">ยืนยัน</paper-button>
+            </div>
+        </paper-dialog>
+    </template>
+    <script>
+        Polymer({
+            is: 'date-approve',
+            properties: {
+                date: {
+                    type: String,
+                    value: ''
+                }
+            },
+            openDia(){
+                this.$.dia.open()
+                // console.log(this.$.dia);
+            },
+            approveDate(){
+                // console.log(this.date);
+                this.fire('approve-exporter',this.date)
+            }
+        });
+    </script>
+</dom-module>
