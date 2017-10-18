@@ -5,6 +5,7 @@ export const exporter = {
         test:"ทดสอบ",
         title_exporter:"ข้อมูลผู้ส่งออกข้าวไปต่างประเทศ",
         name_exporter:"ชื่อผู้ส่งออก",
+        or:"หรือ",
         type_license:"ประเภทใบอนุญาต",
         all:"ทั้งหมด",
         company:"บริษัท",

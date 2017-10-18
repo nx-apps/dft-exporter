@@ -167,7 +167,8 @@
         },
         _checkData: function (val) {
             if (val !== undefined) {
-                if (val.length > 0 || val !== undefined || val !== '') {
+
+                if (val.length > 0 && val !== undefined && val !== '') {
                     return false
                 } else {
                     return true

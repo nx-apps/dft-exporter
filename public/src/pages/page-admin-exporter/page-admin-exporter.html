@@ -7,6 +7,9 @@
 <link rel="import" href="./../../../bower_components/paper-material/paper-material.html">
 <link rel="import" href="./../../../bower_components/gl-form/gl-combo-box.html">
 <link rel="import" href="./../../../bower_components/gl-form/gl-form-dropdown-menu.html">
+
+<link rel="import" href="../../../bower_components/gl-form/gl-form-input.html">
+
 <link rel="import" href="./../../../bower_components/paper-menu/paper-menu.html">
 <link rel="import" href="./../../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="./../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
@@ -223,12 +226,17 @@
         <div class="searchBox searchBorder">
           <div class="horizontal start-justified layout">
             <div class="flex-3"></div>
-            <div class="flex-6 flex-padding">
-              {{searchInput(dataSearch)}}
-              <vaadin-combo-box label="{{localize.name_exporter}}" items="{{list_search}}" item-label-path="company_name" item-value-path="id"
+            <div class="flex-2 flex-padding">
+              <gl-form-input label="{{localize.no_exporter}}" value="{{dataSelected.exporter_no}}" always-float-label on-value-changed="_checkIDExporter"></gl-form-input>
+            </div>
+            <div class="flex-4 flex-padding">
+              {{searchInput(dataSelected.id)}}
+              <gl-form-input label="{{localize.tax_no}} {{localize.or}} {{localize.name_exporter}} {{localize.or}} {{localize.name_company}}"
+                always-float-label value="{{dataSelected.id}}"></gl-form-input>
+              <!-- <vaadin-combo-box label="{{localize.no_exporter}}" items="{{list_search}}" item-label-path="company_name" item-value-path="id"
                 value="{{dataSelected.id}}" on-value-changed="_checkID" loading={{checkLoad}} filter={{dataSearch}}>
                 <template>[[item.company_name]]</template>
-              </vaadin-combo-box>
+              </vaadin-combo-box> -->
             </div>
             <div class="flex-3"></div>
           </div>
@@ -286,6 +294,8 @@
           <div class="horizontal layout center-justified">
             <!--<div class="flex">ๅๅๅ-->
             <paper-button class="gl-btn-info" style="margin: 30px 0px 10px 50px;" on-tap="_search" title="{{localize.bt_search}}" raised>{{localize.bt_search}}</paper-button>
+            <paper-button class="gl-btn-default" style="margin: 30px 0px 10px 50px;" on-tap="_searchReset" title="{{localize.bt_search}}"
+              raised>ล้างค่า</paper-button>
             <!--</div>-->
           </div>
         </div>
@@ -377,9 +387,9 @@
         <div>
           {{localize.page}}
           <select id="selectedPage" on-change="selectPage">
-              <template is="dom-repeat" items={{pages}}>
-                  <option value="{{item}}">{{item}}</option>
-              </template>
+            <template is="dom-repeat" items={{pages}}>
+              <option value="{{item}}">{{item}}</option>
+            </template>
           </select> / [[exporters.pages_count]] {{localize.page}}
         </div>
       </div>
@@ -391,17 +401,17 @@
         <main>
           <input id="tab1" type="radio" name="tabs" checked>
           <label for="tab1">
-                <div class="container" tabindex="0">
-                  <span>1.{{localize.detail}}</span>
-                </div>
-              </label>
+            <div class="container" tabindex="0">
+              <span>1.{{localize.detail}}</span>
+            </div>
+          </label>
 
           <input id="tab2" type="radio" name="tabs">
           <label for="tab2">
-              <div class="container" tabindex="0">
-                <span>2.{{localize.doc_ev}}</span>
-                </div>
-              </label>
+            <div class="container" tabindex="0">
+              <span>2.{{localize.doc_ev}}</span>
+            </div>
+          </label>
 
           <input id="tab3" type="radio" name="tabs">
           <label for="tab3">
@@ -552,11 +562,15 @@
           value: true
         },
         isShow: {
-          typw: Object,
+          type: Object,
           value: {
             numCompany: true,
             date: true
           }
+        },
+        dataSetSearch: {
+          type: Object,
+          value: {}
         }
       },
       setPage(data) {
@@ -745,12 +759,16 @@
 
         this.debounce('searchInput', () => {
           if (typeof val !== 'undefined' && val.length >= 3) {
+            // console.log(val);
             if (reg_num.test(val) === true) {
-              this.dispatchAction('EXPORTER_GET_DATA_SEARCH', { att_name: 'company_taxno', val: val, type: 'number' });
+              this.set('dataSetSearch', { att_name: 'company_taxno', val: val, type: 'number' })
+              this.dispatchAction('EXPORTER_GET_DATA_SEARCH', this.dataSetSearch);
             } else if (reg_char_th.test(val) === true) {
-              this.dispatchAction('EXPORTER_GET_DATA_SEARCH', { att_name: 'company_name_th', val: val, type: 'char_th' });
+              this.set('dataSetSearch', { att_name: 'company_name_th', val: val, type: 'char_th' })
+              this.dispatchAction('EXPORTER_GET_DATA_SEARCH', this.dataSetSearch);
             } else if (reg_char_en.test(val) === true) {
-              this.dispatchAction('EXPORTER_GET_DATA_SEARCH', { att_name: 'company_name_en', val: val, type: 'char_en' });
+              this.set('dataSetSearch', { att_name: 'company_name_en', val: val, type: 'char_en' })
+              this.dispatchAction('EXPORTER_GET_DATA_SEARCH', this.dataSetSearch);
             }
           } else {
             // console.log('clear');
@@ -770,34 +788,31 @@
         this.layerContent = "detailRegExporter";
         this.titleName = this.localize.exporter_data
       },
-      _checkID: function (id) {
-        if (id.detail.value !== "" && typeof id.detail.value !== 'undefined') {
-          var id = id.detail.value;
-          let newUrl = {
-            id: id
-          }
-          // --------------------------------------------------------------------
-          this.fire('toast', { status: 'load', text: this.localize.download_data + '...' })
-          this.dispatchAction('EXPORTER_GET_DATA_ID', this.genUrl(newUrl));
-          // this.dispatchAction('EXPORTER_GET_LIC_TYPE');
-          this.dispatchAction('EXPORTER_GET_DOC_TYPE')
-          this.layerContent = "detailRegExporter"
-          this.titleName = this.localize.exporter_data
-          // var searchId = this.list_search.filter((item) =>  item.id == id)
-
-        }
+      _checkIDExporter(e) {
+        this.debounce('searchInput', () => {
+          let val = e.detail.value
+          this.set('dataSetSearch', { att_name: 'exporter_no', val: val, type: 'number' })
+          this.dispatchAction('EXPORTER_GET_DATA_SEARCH', this.dataSetSearch)
+        }, 1000)
       },
+      // _checkID: function (id) {
+      //   if (id.detail.value !== "" && typeof id.detail.value !== 'undefined') {
+      //     var id = id.detail.value;
+      //     let newUrl = {
+      //       id: id
+      //     }
+      //     // --------------------------------------------------------------------
+      //     this.fire('toast', { status: 'load', text: this.localize.download_data + '...' })
+      //     this.dispatchAction('EXPORTER_GET_DATA_ID', this.genUrl(newUrl));
+      //     // this.dispatchAction('EXPORTER_GET_LIC_TYPE');
+      //     this.dispatchAction('EXPORTER_GET_DOC_TYPE')
+      //     this.layerContent = "detailRegExporter"
+      //     this.titleName = this.localize.exporter_data
+      //     // var searchId = this.list_search.filter((item) =>  item.id == id)
+
+      //   }
+      // },
       _clear() {
-        // let setData = this.dataSelected
-        // for (var variable in setData) {
-        //   if (setData.hasOwnProperty(variable)) {
-        //     setData[variable] = ''
-        //     // this.notify('dataSelected'[variable])
-        //     console.log(variable);
-        //     // console.log( this.dataSelected[variable] );
-        //     // { date_start: "", date_end: "", lic_type_id: null, is_member: null, export_status: null }
-        //   }
-        // }
         let x = { date_start: "", date_end: "", lic_type_id: null, is_member: null, export_status: null }
         this.set('dataSelected', x)
       },
@@ -817,7 +832,7 @@
         else {
           str = this._retiveData()
 
-          // console.log(str);
+          console.log(str);
           this.dispatchAction('EXPORTER_SEARCH', str, page, type);
           // console.log(this.queryFrom('.searchForm'));
           this.queryFrom('.searchForm').map((el) => el.reset());
@@ -846,13 +861,43 @@
       },
       selectPage: function () {
         var page = this.$$('#selectedPage').value;
-        this.dispatchAction('EXPORTER_GET_DATA', page);
+        let check = (prop) => {
+          if (prop !== undefined && prop !== '' && prop !== null) {
+            return true
+          } else {
+            return false
+          }
+        }
+        if (check(this.dataSelected.exporter_no) || check(this.dataSelected.id)) {
+          this.dispatchAction('EXPORTER_GET_DATA_SEARCH', this.dataSetSearch, page)
+        } else {
+          this.dispatchAction('EXPORTER_GET_DATA', page);
+        }
+        // console.log(this.dataSelected);
+        // 
+        // console.log(page);
+
       },
       countPage: function (page) {
         return page.length
       },
       countExporters: function (val) {
         return numeral(val.length).format('0,0');
+      },
+      _searchReset(e) {
+        // console.log(this.dataSelected);
+        // คืนค่าเวลา
+        
+        let dataSelected = {
+          export_status: "",
+          exporter_no: "",
+          id: "",
+          is_member: "",
+          lic_type_id: ""
+        }
+        this.set('dataSelected', dataSelected)
+        this.attached()
+        this.dispatchAction('EXPORTER_GET_DATA', 1)
       }
     });
   </script>

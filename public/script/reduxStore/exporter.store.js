@@ -13,8 +13,8 @@ export function exporterReducer(state = initialState, action) {
     switch (action.type) {
         case 'EXPORTER_GET_DATA':
             return Object.assign({}, state, { list: action.payload });
-        case 'EXPORTER_GET_DATA_SEARCH':
-            return Object.assign({}, state, { list_search: action.payload });
+        // case 'EXPORTER_GET_DATA_SEARCH':
+        //     return Object.assign({}, state, { list_search: action.payload });
         case 'EXPORTER_GET_PAGE':
             return Object.assign({}, state, { pages: action.payload });
         case 'EXPORTER_GET_DATA_ID':
@@ -34,7 +34,7 @@ export function exporterAction(store) {
     return [commonAction(),
     {
         CHECK_EXPORTER_NO: function (exporter_no) {
-            return axios.get('./draft/check?no='+exporter_no)
+            return axios.get('./draft/check?no=' + exporter_no)
         },
         UPDATE_DRAFT_EXPORTER_NO: function (exporter_no) {
             return axios.put('./exporter/close', data)
@@ -51,13 +51,17 @@ export function exporterAction(store) {
                     console.log(error);
                 });
         },
-        EXPORTER_GET_DATA_SEARCH: function (data) {
-            axios.get('./exporter/search?field=' + data.att_name + '&value=' + data.val)
+        EXPORTER_GET_DATA_SEARCH: function (data, page = 1) {
+            this.fire('toast', { status: 'load' })
+            axios.get('./exporter/search?field=' + data.att_name + '&value=' + data.val + '&page=' + page + '&limit=100')
                 .then((response) => {
-                    response.data.map((item) => {
-                        return item.company_name = '(' + item.company.company_taxno + ') ' + item.company.company_name_th + ' ' + item.company.company_name_en;
-                    })
-                    store.dispatch({ type: 'EXPORTER_GET_DATA_SEARCH', payload: response.data })
+                    let text = 'ค้นหาข้อมูลสำเร็จ เจอบริษัทจำนวน'+  response.data.rows_count + ' บริษัท'
+                    store.dispatch({ type: 'EXPORTER_SEARCH', payload: response.data })
+                    this.fire('toast', { status: 'success', text: text, callback: function () { } })
+                    // response.data.map((item) => {
+                    //     return item.company_name = '(' + item.company.company_taxno + ') ' + item.company.company_name_th + ' ' + item.company.company_name_en;
+                    // })
+                    // store.dispatch({ type: 'EXPORTER_GET_DATA_SEARCH', payload: response.data })
                 })
         },
         EXPORTER_GET_PAGE: function () {
@@ -98,7 +102,7 @@ export function exporterAction(store) {
                 this.fire('toast', { status: 'load' })
                 axios.get('./exporter?page=' + page + '&limit=100&' + val)
                     .then(function (response) {
-
+                        console.log(response.data);
                         store.dispatch({ type: 'EXPORTER_SEARCH', payload: response.data })
                     });
                 this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback: function () { } })
