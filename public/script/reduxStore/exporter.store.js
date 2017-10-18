@@ -33,6 +33,12 @@ export function exporterReducer(state = initialState, action) {
 export function exporterAction(store) {
     return [commonAction(),
     {
+        CHECK_EXPORTER_NO: function (exporter_no) {
+            return axios.get('./draft/check?no='+exporter_no)
+        },
+        UPDATE_DRAFT_EXPORTER_NO: function (exporter_no) {
+            return axios.put('./exporter/close', data)
+        },
         EXPORTER_GET_DATA: function (page = 1) {
             // console.log(page);
             // &pluck=company,lic_type,export_status,date_load,date_expire
@@ -75,7 +81,7 @@ export function exporterAction(store) {
                     console.log(error);
                 });
         },
-        
+
         EXPORTER_GET_DOC_TYPE: function () {
             axios.get('./doctype')
                 .then(function (response) {
@@ -92,7 +98,7 @@ export function exporterAction(store) {
                 this.fire('toast', { status: 'load' })
                 axios.get('./exporter?page=' + page + '&limit=100&' + val)
                     .then(function (response) {
-                       
+
                         store.dispatch({ type: 'EXPORTER_SEARCH', payload: response.data })
                     });
                 this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback: function () { } })
@@ -104,12 +110,12 @@ export function exporterAction(store) {
         },
         // new
         EXPORTER_UPDATE: (data) => {
-            return axios.put('./exporter',data)
+            return axios.put('./exporter', data)
         },
         EXPORTER_CLOSE: (data) => {
-            return axios.put('./exporter/close',data)
+            return axios.put('./exporter/close', data)
         },
-        
+
         EXPORTER_CLEAR_LIST_SEARCH: function () {
             store.dispatch({ type: 'EXPORTER_CLEAR_LIST_SEARCH', payload: [] });
         }

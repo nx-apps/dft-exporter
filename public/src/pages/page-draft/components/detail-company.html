@@ -4,10 +4,18 @@
 <link rel="import" href="../../../../bower_components/gl-form/gl-form-input.html">
 <link rel="import" href="../../../redux-behavior.html">
 <link rel="import" href="../../../layout/page-style.html">
+
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="../../../../bower_components/iron-icon/iron-icon.html">
+
+<link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+
 <link rel="import" href="../../../../bower_components/gl-form/gl-form-dropdown-menu.html">
 <link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
-
 <link rel="import" href="../../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../../bower_components/paper-tooltip/paper-tooltip.html">
 
 
 <dom-module id="detail-company">
@@ -61,18 +69,41 @@
     }
   </style>
   <template>
+    {{checkExpoterNo(data.draft_status,data.doc_status)}}
+    <template is="dom-if" if={{checkExpoter}}>
+      <div class="horizontal end-justified layout">
+        <paper-icon-button id="editExporter" icon="create" class="crud" disabled={{!editExporter}} on-tap="_editExCode"></paper-icon-button>
+        <paper-tooltip for="editExporter" offset="0">{{localize.edit_data}}</paper-tooltip>
+      </div>
+    </template>
 
-   
     <div class="title">{{localize.detail_data}}</div>
     <!-- {{data.exporter_no}} -->
     <template is="dom-if" if={{data.exporter_no}}>
       <div class="start-justified horizontal  center layout">
-        <div class="flex flex-padding input">
-          <gl-form-input always-float-label label="{{localize.no_exporter}} :" value="[[data.exporter_no]]" disabled></gl-form-textarea>
-        </div>
+        <template is="dom-if" if={{editExporter}}>
+          <div class="flex flex-padding input">
+            <gl-form-input always-float-label label="{{localize.no_exporter}} :" value="[[data.exporter_no]]" disabled></gl-form-input>
+          </div>
+        </template>
+        <template is="dom-if" if={{!editExporter}}>
+          <div class="flex-2 flex-padding input">
+            <gl-form-input always-float-label allowed-pattern="[0-9]" label="{{localize.no_exporter}} :" value="{{data.exporter_no}}"
+              on-value-changed="getCheckExporter">
+              <iron-icon id='exporter_no_input' suffix></iron-icon>
+            </gl-form-input>
+          </div>
+          <div class="flex-2 flex-padding input">
+            <gl-form-input id="idAvablie" always-float-label label="{{localize.no_exporter_update}} :" value="" disabled></gl-form-input>
+          </div>
+          <div class="flex-8 flex-padding input">
+          </div>
+        </template>
       </div>
     </template>
 
+
+    <!-- {{data.draft_status}}//{{data.doc_status}}// -->
     <div class="horizontal start-justified layout">
       <div class="flex flex-padding">
         <gl-form-input always-float-label label="{{localize.tax_no}} :" value="{{data.company_taxno}}" disabled></gl-form-input>
@@ -211,6 +242,10 @@
           observer: 'checkIsArray',
           notify: true
         },
+        oldDate: {
+          type: Object,
+          value: {}
+        },
         localize: {
           statePath: 'i18n.exporter'
         },
@@ -232,9 +267,74 @@
             numCompany: false,
             date: false
           }
+        },
+        checkExpoter: {
+          type: Boolean,
+          value: false
+        },
+        editExporter: {
+          type: Boolean,
+          value: true,
+          notify: true
+        },
+        isExporterUse: {
+          type: Object,
+          value: {},
+          notify: true
         }
       },
+      checkExpoterNo(draft_status, doc_status) {
+        if (draft_status === 'sign' && doc_status === null) {
+          this.set('checkExpoter', true)
+        } else {
+          this.set('checkExpoter', false)
+        }
+      },
+      _editExCode() {
+        this.set('editExporter', !this.editExporter)
+        this.set('formInput',!this.formInput)
+      },
+      getCheckExporter(e) {
+        let exporter_no = e.detail.value
+
+        // console.log(Polymer.dom(this.root).querySelector('#exporter_no_input'));
+        // console.log(this.$.exporter_no_input);
+        this.debounce('exporter', () => {
+          this.fire('toast', { status: 'load' })
+          let el = Polymer.dom(this.root).querySelector('#exporter_no_input')
+          // console.log(exporter_no);
+          // console.log(this.oldDate.exporter_no);
+          if (Number(exporter_no) === this.oldDate.exporter_no) {
+            el.icon = 'check'
+            el.style = 'color:green'
+            this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback: function () { } })
+            this.set('isExporterUse', { available: true })
+          } else {
+            this.dispatchAction('CHECK_EXPORTER_NO', exporter_no)
+              .then(res => {
+                this.set('isExporterUse', res.data)
+                // console.log(res.data);
+                // console.log(idAvablie);
+                Polymer.dom(this.root).querySelector('#idAvablie').value = res.data.new_no
+
+                if (res.data.available) {
+                  el.icon = 'check'
+                  el.style = 'color:green'
+                } else {
+                  el.icon = 'clear'
+                  el.style = 'color:red'
+                }
+                this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback: function () { } })
+              })
+          }
+        }, 500)
+
+
+        // this.dispatchAction('CHECK_EXPORTER_NO',exporter_no)
+
+      },
       checkIsArray(data) {
+        this.set('oldDate', JSON.parse(JSON.stringify(data)))
         if (Array.isArray(data.lic_type)) {
           this.set('lic_type_array', data.lic_type)
         } else {
@@ -288,6 +388,12 @@
       },
       resetValidate: function () {
         this.queryFrom('.checkValidate').map((el) => { el.reset(); });
+      },
+      resetExporterNo() {
+        this.set('checkExpoter', false)
+        this.set('editExporter', true)
+        this.set('isExporterUse', true)
+        this.set('formInput',true)
       }
     });
   </script>
