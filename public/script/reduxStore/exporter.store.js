@@ -42,7 +42,7 @@ export function exporterAction(store) {
         EXPORTER_GET_DATA: function (page = 1) {
             // console.log(page);
             // &pluck=company,lic_type,export_status,date_load,date_expire
-            axios.get('./exporter?page=' + page + '&limit=100')
+            axios.get('./exporter?page=' + page + '&limit=100&close_status=false')
                 .then(function (response) {
                     // console.log(response.data);
                     store.dispatch({ type: 'EXPORTER_GET_DATA', payload: response.data })
@@ -53,7 +53,7 @@ export function exporterAction(store) {
         },
         EXPORTER_GET_DATA_SEARCH: function (data, page = 1) {
             this.fire('toast', { status: 'load' })
-            axios.get('./exporter/search?field=' + data.att_name + '&value=' + data.val + '&page=' + page + '&limit=100')
+            axios.get('./exporter/search?field=' + data.att_name + '&value=' + data.val + '&page=' + page + '&limit=100&close_status=false')
                 .then((response) => {
                     let text = 'ค้นหาข้อมูลสำเร็จ เจอบริษัทจำนวน'+  response.data.rows_count + ' บริษัท'
                     store.dispatch({ type: 'EXPORTER_SEARCH', payload: response.data })
@@ -100,9 +100,9 @@ export function exporterAction(store) {
                 // console.log('search');
                 var page = parseInt(page);
                 this.fire('toast', { status: 'load' })
-                axios.get('./exporter?page=' + page + '&limit=100&' + val)
+                axios.get('./exporter?page=' + page + '&limit=100&close_status=false&' + val)
                     .then(function (response) {
-                        console.log(response.data);
+                        // console.log(response.data);
                         store.dispatch({ type: 'EXPORTER_SEARCH', payload: response.data })
                     });
                 this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback: function () { } })
