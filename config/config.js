@@ -10,7 +10,7 @@ var config = {
     database: {
       max: 10,
       servers: [
-        { host: '127.0.0.1', port: 28015, user: 'admin', password: 'next@2017' }
+        { host: 'rdb.codeunbug.com', port: 28015, user: 'admin', password: 'next@2017' }
       ],
       db: 'external'
     },

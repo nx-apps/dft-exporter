@@ -1,0 +1,303 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../nylon-behavior.html">
+<link rel="import" href="../../components/page-header.html">
+<link rel="import" href="../../components/page-panel.html">
+<link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="./../../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="./../../../month-behavior.html">
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid-selection-column.html">
+<link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../components/format-number-behavior.html">
+<link rel="import" href="../../../redux-behavior.html">
+
+<!-- <link rel="import" href="./../../components/custom-grid-zoom.html"> -->
+
+<dom-module id="confirm-list">
+    <template>
+        <style include="shared-styles">
+            /* vaadin-grid#material {
+                height: calc(100vh - var(--set-dynamic-height) - 110px);
+            } */
+            vaadin-grid#material {
+                /* height:450px; */
+                height: calc(100vh - var(--set-dynamic-height) - 110px);
+
+                --vaadin-grid-header-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    font-weight: bold;
+                }
+                --vaadin-grid-body-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    /*padding:0px;*/
+                }
+                --vaadin-grid-footer-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    font-weight: bold;
+                }
+            }
+        </style>
+        
+        <vaadin-grid slot="grid" id="material" items="{{data}}" size="200">
+
+            <!--<template is="dom-repeat" items="{{item.quantity}}">-->
+            <vaadin-grid-selection-column width="100px" select-all="{{selectAll}}" resizable frozen>
+                <template class="header">
+                    <div class="cell" style="text-align:center">
+                        <!-- <span style="padding:5px">เลือกทั้งหมด</span> -->
+                        <paper-checkbox checked="{{selectAll}}">เลือกทั้งหมด</paper-checkbox>
+                    </div>
+                </template>
+                <template>
+                    <template is="dom-if" if="[[checkStatus(item.status)]]">
+                        <div class="cell" style="text-align:center">
+                            <paper-checkbox checked="{{selected}}"></paper-checkbox>
+                            {{getSelect(selected,item.check,index)}}
+                        </div>
+                    </template>
+                </template>
+            </vaadin-grid-selection-column>
+            <!--</template>-->
+
+            <vaadin-grid-column width="80px" flex-grow="0" frozen>
+                <template class="header">
+                    <div class="cell" style="text-align:center">
+                        #
+                    </div>
+                </template>
+                <template>
+                    <div class="cell" style="text-align:center">
+                        {{count(index)}}
+                    </div>
+                </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="200px" resizable frozen>
+                <template class="header">
+                    <div class="cell" style="text-align:left">
+                        ผู้ส่งออก
+                    </div>
+                </template>
+                <template>
+                    <div class="cell" style="text-align:left">
+                        {{item.exporter_name}}
+                    </div>
+                </template>
+            </vaadin-grid-column>
+
+            <template is="dom-repeat" as="col" index-as="num" items="[[quantity]]">
+                <vaadin-grid-column width="200px" resizable>
+                    <template class="header">
+                        <div class="cell" style="text-align:center">
+                            งวดที่ {{col.period}} เดือน {{getMonthShortName(col.month)}}
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell" style="text-align:right">
+                            {{getweight(item.quantity,num)}}
+                            <!--{{as.weight}}-->
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+            </template>
+
+            <vaadin-grid-column width="200px" resizable>
+                <template class="header">
+                    <div class="cell" style="text-align:center">
+                        ปริมาณโควตารวม
+                    </div>
+                </template>
+                <template>
+                    <div class="cell" style="text-align:right">
+                        {{formatNumber(item.amount_update)}}
+                    </div>
+                </template>
+            </vaadin-grid-column>
+
+            
+            <!-- <template is="dom-if" if="[[confirm]]">
+                <vaadin-grid-column width="200px" resizable>
+                    <template class="header">
+                        <div class="cell" style="text-align:center">
+                            ผู้โอน
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell" style="text-align:center">
+                            {{item.exporter_transfer}}
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+            </template> -->
+            
+            <template is="dom-if" if="[[!confirm]]">
+                <vaadin-grid-column width="100px" resizable>
+                    <template class="header">
+                        <div class="cell" style="text-align:center">
+                            จัดการ
+                        </div>
+                    </template>
+                    <template>
+                        <template is="dom-if" if="[[checkAmount(item.amount)]]">
+                        <div class="cell" style="text-align:center">
+                            <paper-icon-button item="{{item}}" on-tap="select" disabled="{{checkStatusList(status)}}" icon="create"></paper-icon-button>
+                        </div>
+                        </template>
+                    </template>
+                </vaadin-grid-column>
+            </template>
+
+        </vaadin-grid>
+    </template>
+    <script>
+        Polymer({
+            is: 'confirm-list',
+            observers: ['getQuantity(quantity.*)','_getHeight(height,height2)'],
+            behaviors: [MonthBehavior,FormatNumberBehavior ,ReduxBehavior],
+            properties: {
+                quantity: {
+                    type: Array,
+                    value: []
+                },
+                dataSelect: {
+                    type: Object,
+                    value: {}
+                },
+                confirm: {
+                    type: Boolean,
+                    value: false
+                },
+                status:{
+                    type:String,
+                }
+            },
+            checkStatus:function(val){
+                // console.log(val);
+                if(val == 'r'){
+                    return false
+                }
+                else { 
+                    return true
+                }
+            },
+            checkStatusList:function(val){
+                if(val == 'cf'){
+                    return true
+                }
+                else {
+                    return false
+                }
+                // console.log(val)
+            },
+            checkAmount:function(val){
+                // console.log(val);
+                if(val == 0){
+                    return false
+                }
+                else{
+                    return true
+                }
+            },
+            count:function(val){
+                return val + 1;
+            },
+            getQuantity: function (val) {
+                this.quantity = val.base;
+            },
+            getweight: function (val, num) {
+                if(val){
+                    if(num < val.length){
+                        if(typeof val[num].weight_update == 'undefined') return  this.formatNumber(val[num].weight);
+                        else return this.formatNumber(val[num].weight_update);
+                    }
+                }   
+            },
+            getSelect: function (val, check, index) {
+                if (typeof val != 'undefined') {
+                    // console.log('1234',index);
+                    this.data[index].check = val;
+                }
+            },
+            select: function (e) {
+                // console.log(e.currentTarget.item);
+                // console.log(this.dataSelect);
+                var newItem = this.dataSelect;
+                newItem.exporter_id = e.currentTarget.item.exporter_id;
+                // console.log(newItem);
+                this.fire('toast',{status:'load'});
+                if (this.confirm) {
+                    console.log(e.model.item)
+                    this.dispatchAction('CONFIRM_CLEAR_DATA')
+                        .then(() => {
+                            this.dispatchAction('CONFIRM_SELECT_CONFIRM', {allocate_detail:e.model.item})
+                                .then((res) => {
+                                    this.fire('toast',{status:'success',text:'โหลดข้อมูลสำเร็จ',
+                                      callback:function(){
+                                          this.fire('open-panel', this.confirm)
+                                      }.bind(this)
+                                     });
+                                })
+                                .catch((error) => {
+                                    this.fire('toast', {
+                                        status: 'connectError', text: error,
+                                        callback: function () {
+                                        }
+                                    })
+                                })
+                        })
+
+                }
+                else {
+                    this.dispatchAction('CONFIRM_CLEAR_DATA')
+                        .then(() => {
+                            this.dispatchAction('CONFIRM_SELECT_NOCONFIRM', newItem)
+                                .then((res) => {
+                                    this.fire('toast',{status:'success',text:'บันทึกสำเร็จ',
+                                      callback:function(){
+                                          this.fire('open-panel', this.confirm)
+                                      }.bind(this)
+                                     });
+                                    
+                                })
+                                .catch((error) => {
+                                    this.fire('toast', {
+                                        status: 'connectError', text: error,
+                                        callback: function () {
+                                        }
+                                    })
+                                })
+                        })
+                }
+
+            },
+            selectAll: function (e) {
+                var active = e.currentTarget.checked;
+                // console.log(active);
+                if (typeof this.data.data != 'undefined') {
+                    this.data.data.map(function (item, index) {
+                        // this.async(function(){
+                        this.set('data.data.' + index + '.check', active)
+                        // }.bind(this),100);
+                    }.bind(this))
+                }
+                // console.log(this.data.data);
+            },
+            resize:function(){
+                // console.log('1234')
+                this.$.material.notifyResize();
+            },
+            _getHeight:function(h,h2){
+                // console.log(h,h2)
+                var val = (h+h2).toString();
+                this.customStyle['--set-dynamic-height'] = val + 'px';
+                this.updateStyles();
+            }
+        });
+    </script>
+</dom-module>

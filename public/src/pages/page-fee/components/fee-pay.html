@@ -1,0 +1,203 @@
+<link rel="import" href="./../../components/format-number-behavior.html">
+<link rel="import" href="./../../../layout/shared-styles.html">
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<!-- <link rel="import" href="./fee-list2.html"> -->
+<dom-module id="fee-pay">
+    <template>
+        <style include="shared-styles">
+            paper-textarea {
+                --paper-input-container-input: {
+                    border: 1px solid #454545;
+                }
+            }
+        </style>
+        เลือกรูปแบบการชำระเงิน :
+        <paper-radio-group selected="{{typePay}}" attr-for-selected="name">
+            <paper-radio-button name="normal">แบบปกติ</paper-radio-button>
+            <paper-radio-button name="quota">ใช้ยอดเดิม</paper-radio-button>
+            <paper-radio-button name="over">แบบเกิน</paper-radio-button>
+        </paper-radio-group>
+        <div hidden="{{enableQuota}}">
+            <div class="content">
+                <div class="flex">
+                    <div>
+                        <!-- <fee-list2 checkbox></fee-list2> -->
+                    </div>
+                </div>
+            </div>
+            <div class="white-space"></div>
+            <!--{{typePay}} -->
+            <div class="row around-xs">
+                <div class="col-xs-4">
+                    <div class="box">
+                        <!--{{bringForward.amount}}-->
+                        <nylon-input label="จำนวนเงินตามคำขอ EC : " format-number value="{{bringForward.amount}}" disabled></nylon-input>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="เงินคงเหลือจาก EC ที่ยกเลิก: " format-number value="{{bringForward.balance}}" disabled></nylon-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row around-xs">
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="จำนวนเงินที่ต้องการใช้จากใบเสร็จ/ EC ที่ยกเลิก" format-number allowed-pattern="[0-9||,||.]" format-number
+                            value="{{bringForward.pay_balance}}" disabled></nylon-input>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="จำนวนเงินที่ต้องชำระ: " format-number allowed-pattern="[0-9||,||.]" value="{{bringForward.pay}}"></nylon-input>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="white-space"></div>
+        <!--<template is="dom-if" if="{{!check(bringForward.pay)}}">-->
+        <div hidden="{{enableNormal}}">
+            <div class="row around-xs">
+                <div class="col-xs-4">
+                    <div class="box">
+                        <vaadin-combo-box class="saveData" label="เลือกธนาคาร" items="{{listBank}}" value="{{datas.bank_id}}" item-label-path="name"
+                            item-value-path="id" error-message="กรุณาเลือกบริษัท" disabled$="{{check(bringForward.pay)}}"></vaadin-combo-box>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="สาขา" disabled$="{{check(bringForward.pay)}}" value="{{datas.branch}}"></nylon-input>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row around-xs">
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="เลขที่เช็ค" value="{{datas.check_number}}" disabled$="{{check(bringForward.pay)}}"></nylon-input>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="box">
+                        <vaadin-date-picker label="วันที่เช็ค" value="{{datas.check_date}}" disabled$="{{check(bringForward.pay)}}"></vaadin-date-picker>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row around-xs">
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="จำนวนเงินที่ต้องชำระ" value="{{datas.total}}" format-number disabled$="{{check(bringForward.pay)}}"></nylon-input>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="จำนวนเงินที่ชำระจริงตามเช็ค" value="{{datas.check_sum}}" allowed-pattern="[0-9||,||.]" format-number
+                            disabled$="{{check(bringForward.pay)}}"></nylon-input>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row center-xs">
+                <div class="col-xs-10">
+                    <div class="box">
+                        <paper-textarea rows="2" label="หมายเหตุ" value="{{datas.note}}"></paper-textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row between-xs">
+            <div class="col-xs-4">
+                <div class="box">
+                    ออกใบเสร็จแบบ
+                    <paper-radio-group selected="{{typeReceipt}}" attr-for-selected="name">
+                        <paper-radio-button name="receipt">A4</paper-radio-button>
+                        <paper-radio-button name="receiptDotmatrix">Dotmatrix</paper-radio-button>
+                    </paper-radio-group>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="box" style="text-align:right">
+                    <paper-button class="gl-btn-primary" on-tap="saveData" raised>ชำระเงิน</paper-button>
+                    <!--<paper-button class="gl-btn-success" on-tap="openReceipt" raised>ออกใบเสร็จ</paper-button>-->
+                </div>
+            </div>
+        </div>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'fee-pay',
+            observers: [
+                'selectTypePay(typePay)',
+            ],
+            behaviors: [FormatNumberBehavior, ReduxBehavior],
+            properties: {
+                typePay: {
+                    type: String,
+                    value: 'normal'
+                },
+                listBank: {
+                    statePath: 'commonData.bank'
+                },
+                datas:{
+                    type:Object,
+                    value:{}
+                },
+                data:{
+                    type:Array,
+                    value:[]
+                }
+            },
+            selectTypePay: function (val) {
+                console.log(val)
+                this.enableQuota = false;
+                this.enableNormal = false;
+                if (val == 'normal') {
+                    this.enableNormal = false;
+                    this.enableQuota = true;
+                }
+                else if (val == 'quota') {
+                    this.enableNormal = true;
+                    this.enableQuota = false;
+                }
+            },
+            saveData:function(){
+                // console.log(this.datas)
+                this.fire('toast',{status:'load'});
+                var newData = this.datas
+                newData.credit = this.unFormat(this.datas.check_sum);
+                newData.company_taxno = this.datas.select[0].company_taxno;
+                newData.hmcode6 = this.datas.select[0].hmcode6;
+                newData.remark = this.datas.select.map((item)=>{
+                   var newItem = {
+                       reference_code2: item.reference_code2,
+                       net_weight: item.net_weight
+                   }
+                    return newItem
+                })
+                this.dispatchAction('FEE_DATA_INSERT',newData)
+                .then((response) => {
+                    console.log(response.data)
+                     window.open('/api/payment/printReceipt?id='+response.data.id+
+                        '&coppy=false'+
+                        '&type='+this.typeReceipt,
+                        '_blank');
+                        this.fire('toast', {
+                        status: 'success', text: 'โหลดข้อมูลสำเร็จ',
+                        callback: function () {
+
+                        }
+                    });
+                   console.log(response.data)
+                })
+                .catch((error) => {
+                    console.log('error');
+                    console.log(error);
+                });
+                // console.log(newData)
+            }
+          
+        });
+    </script>
+</dom-module>

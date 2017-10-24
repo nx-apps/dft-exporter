@@ -1,0 +1,158 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="./../../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="./../../../month-behavior.html">
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid-selection-column.html">
+<link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../components/format-number-behavior.html">
+<link rel="import" href="../../../redux-behavior.html">
+
+<dom-module id="special-list">
+    <template>
+        <style include="shared-styles">
+            vaadin-grid#material {
+                 height: auto;
+                /* height: calc(100vh - var(--set-dynamic-height) - 107px); */
+
+                --vaadin-grid-header-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    font-weight: bold;
+                }
+                --vaadin-grid-body-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    /*padding:0px;*/
+                }
+                --vaadin-grid-footer-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    font-weight: bold;
+                }
+            }
+        </style>
+        
+        <vaadin-grid slot="grid" id="material" items="{{data.list}}" size="200">
+
+            <vaadin-grid-column width="80px">
+                <template class="header">
+                    <div class="cell" style="text-align:center">
+                        #
+                    </div>
+                </template>
+                <template>
+                    <div class="cell" style="text-align:center">
+                        {{count(index)}}
+                    </div>
+                </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="200px">
+                <template class="header">
+                    <div class="cell" style="text-align:left">
+                        ผู้ส่งออก
+                    </div>
+                </template>
+                <template>
+                    <div class="cell" style="text-align:left">
+                        {{item.exporter_name}}
+                    </div>
+                </template>
+                <template class="footer">
+                    <div class="cell">รวม</div>
+                </template>
+            </vaadin-grid-column>
+
+            <template is="dom-repeat" as="col" index-as="num" items="[[quantity]]">
+                <vaadin-grid-column width="200px">
+                    <template class="header">
+                        <div class="cell" style="text-align:center">
+                            งวดที่ {{col.period}} เดือน {{getMonthShortName(col.month)}}
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell" style="text-align:right">
+                            <!-- {{getweight(item.quantity,num)}} -->
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+            </template>
+
+            <vaadin-grid-column width="200px">
+                <template class="header">
+                    <div class="cell" style="text-align:center">
+                        ปริมาณโควตาที่ขอ
+                    </div>
+                </template>
+                <template>
+                    <div class="cell" style="text-align:right">
+                        {{formatNumber(item.amount)}}
+                    </div>
+                </template>
+                <template class="footer">
+                    <div class="cell" style="text-align:right">
+                        [[_sum(data.list)]]
+                    </div>
+                </template>
+            </vaadin-grid-column>
+
+
+            <vaadin-grid-column width="100px">
+                <template class="header">
+                    <div class="cell" style="text-align:center">
+                        จัดการ
+                    </div>
+                </template>
+                <template>
+                    <div class="cell" style="text-align:center">
+                        <!-- <paper-icon-button on-tap="select" icon="create"></paper-icon-button> -->
+                         <paper-icon-button on-tap="deleteData" icon="delete"></paper-icon-button> 
+                    </div>
+                </template>
+            </vaadin-grid-column>
+
+        </vaadin-grid>
+        <div>
+              <b>ปริมาณคงเหลืองงวดพิเศษ [[formatNumber(data.quota.amount)]]</b>
+        </div>
+      
+        
+    </template>
+    <script>
+        Polymer({
+            is: 'special-list',
+            behaviors: [FormatNumberBehavior ,ReduxBehavior],
+            properties:{
+                data:{
+                    type:Object,
+                    statePath:'special.list'
+                }
+            },
+            _sum:function(val){
+                var i = 0;
+                if(val && val.length != 0){
+                    val.map((item)=>{
+                        i += item.amount;
+                    })
+                }   
+               
+                return this.formatNumber(i)
+            },
+            count:function(val){
+                return val+1;
+            },
+            select:function(e){
+                console.log(e.model.item.id);
+                this.dispatchAction('SPECIAL_SELECT',e.model.item.id);
+                this.fire('open-panel')
+            },
+            deleteData:function(e){
+                console.log(e.model.item);
+                this.dispatchAction('SPECIAL_DELETE',e.model.item)
+                // this.dispatchAction('SPECIAL_DELETE',e.model.item.id)
+            }
+        });
+    </script>
+</dom-module>

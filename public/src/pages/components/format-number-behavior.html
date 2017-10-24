@@ -1,47 +1,56 @@
 <link rel="import" href="../../../bower_components/polymer/polymer.html">
 <script>
     /**
-     * formatNumBehavior
     * @polymerBehavior
-    */ 
+    */  
     FormatNumberBehavior = {
         properties:{
             _defaultFormat:{
                 type: String,
                 value: '0,0.00'
+            },
+            editFormat:{
+                type: String,
+                value: '0,0.00'
             }
         },
-        formatNumber:function(number){
-        //    console.log(number);
+        formatNumber:function(number,format){
+        //    console.log(number,format);
             if(number == null){
                 return "";
             }
             else {
-                var num = numeral(number).format(this._defaultFormat);
-                return num
+                if(format){
+                    // console.log('event',format);
+                    // this._defaultFormat = '0,0.00'
+                    var num = numeral(number).format(format);
+                    return num
+                }
+                else{
+                    var num = numeral(number).format('0,0.00');
+                    return num
+                }
             }
            
         },
-        formatNumberNoZero:function(number){
-        //    console.log(number);
+        newFormat:function(number){
             if(number == null){
                 return "";
             }
             else {
-                var num = numeral(number).format(this._defaultFormatNoZero);
-                return num
+                return numeral(number).format(this.editFormat);
             }
-
         },
         setFormat:function(format){
-            if(format == "" || format == "undefined"){
-                format = '0,0';
-                this._defaultFormat = format;
-            }
-            else{
-                this._defaultFormat = format;
-            } 
-            return this._defaultFormat;
+            this.editFormat = format;
+            // if(format == "" || format == "undefined"){
+            //     format = '0,0';
+            //     this._defaultFormat = format;
+            // }
+            // else{
+            //     this._defaultFormat = format;
+            // } 
+            // return this._defaultFormat;
         },
         unFormat:function(number){
             var num = numeral().unformat(number);

@@ -1,0 +1,33 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<script src="../../../../bower_components/element-resize-detector/dist/element-resize-detector.js"></script>
+
+<dom-module id="ribbon-bar">
+    <template>
+        <div id="ribbon">
+            <slot></slot>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'ribbon-bar',
+            properties: {
+                width: {
+                    type:String,
+                    notify:true
+                },
+                height: {
+                    type:String,
+                    notify:true
+                }
+            },
+            ready:function(){
+                var erd = elementResizeDetectorMaker();
+                erd.listenTo(this.$.ribbon, (element)=> {
+                    this.width = element.offsetWidth;
+                    this.height = element.offsetHeight;
+                });
+            }
+            
+        });
+    </script>
+</dom-module>

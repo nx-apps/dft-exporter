@@ -1,0 +1,451 @@
+<link rel="import" href="./../../components/format-number-behavior.html">
+<link rel="import" href="./../../../layout/shared-styles.html">
+<link rel="import" href="./fee-list.html">
+<link rel="import" href="./../../../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="./../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="./../../../../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="./../../components/nylon-input.html">
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="./../../../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="./../../../../bower_components/paper-radio-button/paper-radio-button.html">
+<dom-module id="over-pay">
+    <template>
+        <style include="shared-styles">
+            paper-textarea {
+                --paper-input-container-input: {
+                    border: 1px solid #454545;
+                }
+            }
+        </style>
+        เลือกรูปแบบการชำระเงิน : 
+        <paper-radio-group selected="{{typePay}}" attr-for-selected="name" >
+            <paper-radio-button name="normal">แบบปกติ</paper-radio-button>
+            <paper-radio-button name="quota">ใช้ยอดเดิม</paper-radio-button>
+            <paper-radio-button name="over">แบบเกิน</paper-radio-button>
+        </paper-radio-group>
+        <div hidden="{{enableQuota}}">
+            <div class="content">
+                <div class="flex">
+                    <div>
+                        <fee-list id="list" data="{{data.ecList}}" data-pay="[[mathDataPay(data.ecList.*)]]" check-box="true" data-overplay='true'></fee-list>
+                    </div>
+                </div>
+            </div>
+            <div class="white-space"></div>
+            <!--{{typePay}} -->
+            <div class="row around-xs">
+                <div class="col-xs-4">
+                    <div class="box">
+                        <!--{{bringForward.amount}}-->
+                        <nylon-input label="จำนวนเงินตามคำขอ EC : " format-number value="{{bringForward.amount}}" disabled></nylon-input>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="เงินคงเหลือจาก EC ที่ยกเลิก: " format-number value="{{bringForward.balance}}" disabled></nylon-input>
+                    </div>
+                </div>
+            </div>
+            <div class="row around-xs">
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="จำนวนเงินที่ต้องการใช้จากใบเสร็จ/ EC ที่ยกเลิก" format-number allowed-pattern="[0-9||,||.]" format-number
+                            value="{{bringForward.pay_balance}}" disabled></nylon-input>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="จำนวนเงินที่ต้องชำระ: " format-number allowed-pattern="[0-9||,||.]" value="{{bringForward.pay}}"></nylon-input>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="white-space"></div>
+        <!--<template is="dom-if" if="{{!check(bringForward.pay)}}">-->
+        <div hidden="{{enableNormal}}">
+            <div class="row around-xs">
+                <div class="col-xs-4">
+                    <div class="box">
+                        <vaadin-combo-box class="saveData" label="เลือกธนาคาร" items="{{listBank}}" value="{{datas.bank_id}}" item-label-path="name"
+                            item-value-path="id" error-message="กรุณาเลือกบริษัท" disabled$="{{check(bringForward.pay)}}"></vaadin-combo-box>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="สาขา" disabled$="{{check(bringForward.pay)}}" value="{{datas.branch}}"></nylon-input>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row around-xs">
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="เลขที่เช็ค" value="{{datas.check_number}}" disabled$="{{check(bringForward.pay)}}"></nylon-input>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="box">
+                        <vaadin-date-picker label="วันที่เช็ค" value="{{datas.check_date}}" disabled$="{{check(bringForward.pay)}}"></vaadin-date-picker>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row around-xs">
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="จำนวนเงินที่ต้องชำระ" value="{{datas.total}}" format-number disabled$="{{check(bringForward.pay)}}"></nylon-input>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="box">
+                        <nylon-input label="จำนวนเงินที่ชำระจริงตามเช็ค" value="{{datas.check_sum}}" allowed-pattern="[0-9||,||.]" format-number
+                            disabled$="{{check(bringForward.pay)}}"></nylon-input>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row center-xs">
+                <div class="col-xs-10">
+                    <div class="box">
+                        <paper-textarea rows="2" label="หมายเหตุ" value="{{datas.note}}"></paper-textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row between-xs">
+            <div class="col-xs-4">
+                <div class="box">
+                    ออกใบเสร็จแบบ 
+                     <paper-radio-group selected="{{typeReceipt}}" attr-for-selected="name" >
+                        <paper-radio-button name="receipt">A4</paper-radio-button>
+                        <paper-radio-button name="receiptDotmatrix">Dotmatrix</paper-radio-button>
+                    </paper-radio-group>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <div class="box" style="text-align:right">
+                    <paper-button class="gl-btn-primary" on-tap="saveData" raised>ชำระเงิน</paper-button>
+                    <!--<paper-button class="gl-btn-success" on-tap="openReceipt" raised>ออกใบเสร็จ</paper-button>-->
+                </div>
+            </div>
+        </div>
+        <!--<div class="row end-xs">
+            <div class="col-xs-6">
+                <div class="box">
+                   
+                </div>
+            </div>
+        </div>-->
+
+    </template>
+    <script>
+        Polymer({
+            is: 'over-pay',
+            observers: [
+                'setPay(bringForward.pay)',
+                // 'setTypePay(bringForward.pay,bringForward.amount)',
+                'manageCheckBox(bringForward.pay)',
+                'selectTypePay(typePay)',
+                'checkData(data.ecList.*)'
+            ],
+            behaviors: [FormatNumberBehavior, ReduxBehavior],
+            ready: function () {
+                window.$ = this;
+            },
+            properties: {
+                bringForward: {
+                    type: Object,
+                    // computed: 'checkData(data.ecList.*)',
+                    // value:{
+                    //     amount:'1',
+                    //     balance:'2',
+                    //     pay:'3',
+                    //     pay_balance:'4'
+                    // }
+                },
+                datas: {
+                    type: Object,
+                    value: {}
+                },
+                listBank: {
+                    statePath: 'commonData.bank'
+                },
+                typePay: {
+                    type: String,
+                    value: 'normal'
+                },
+                typeReceipt:{
+                    type:String,
+                    value:'receipt'
+                }
+            },
+            selectTypePay: function (val) {
+                console.log(val)
+                this.enableQuota = false;
+                this.enableNormal = false;
+                if(val == 'normal'){
+                    this.enableNormal = false;
+                    this.enableQuota = true;
+                }
+                else if(val == 'quota'){
+                    this.enableNormal = true;
+                    this.enableQuota = false;
+                }
+            },
+            setPay: function (pay) {
+                this.set('datas.total', pay);
+            },
+            manageCheckBox: function (val) {
+                if (typeof val != 'undefined') {
+                    // this.$.list.checkboxHide()
+                    if (val == 0) {
+                        this.$.list.checkboxHide()
+                    }
+                    // else if (val > 0) {
+                    //     this.$.list.clearCheckbox()
+                    // }
+
+                }
+            },
+            // ไม่ได้ใช้
+            setTypePay: function (val, amount) {
+                // console.log(val,amount)
+                // if(typeof this.bringForward.amount != 'undefined'){
+                if (val == amount) {
+                    this.typePay = "ชำระแบบปกติ"
+                }
+                else if (val == 0) {
+                    this.typePay = "ชำระยอดเดิม"
+                }
+                else if (val < amount && val != 0) {
+                    this.typePay = "ชำระเกิน"
+                }
+                // }
+
+            },
+            check: function (data) {
+                // console.log('*',data==0);
+                return data == 0;
+            },
+            mathDataPay: function (data) {
+                // console.log('test');
+                // console.log(this.data.ecList);
+                if (typeof this.data.ecList == 'undefined') return;
+                var amount = 0;
+                var select = this.data.ecList.filter(function (item) {
+                    return item.check == true;
+                })
+                this.data.ecSelect.map((item) => {
+                    amount += item.amount;
+                })
+                var old = [];
+                var result = {};
+
+                for (var i = 0; i < select.length; i++) {
+                    var check = select[i].balance - amount;
+                    if (check >= 0) {
+                        this.set('data.ecList' + [i] + 'balance_s', amount)
+                        // this.data.ecList[i].balance_s = amount;
+                        break;
+                    }
+                    else {
+                        this.set('data.ecList' + [i] + 'balance_s', select[i].balance)
+                        // this.data.ecList[i].balance_s = select[i].balance;
+                        amount = amount - select[i].balance;
+                    }
+                }
+                return this.data.ecList;
+
+            },
+            checkData: function (data) {
+                var pathLength = data.path.split('.').length;
+                var path = data.path.split('.')[pathLength-1];
+                var obj = {};
+                // console.log(path);
+                // console.log(data.base)
+                if(typeof data.base == 'undefined') return;
+                // console.log(data.path.split('.'))
+                if(path == 'check' || path == 'ecList') {
+                    var ec = 0;
+                    var sum = data.base;
+                    this.data.ecSelect.map((item) => {
+                        ec += item.amount;
+                    })
+
+                    if (sum.length != 0) {
+                        sum = sum.reduce(function (total, num) {
+                            return { balance: total.balance + num.balance }
+                        }).balance
+                    }
+                    var select = data.base.filter(function (row) {
+                        return (row.check || false) == true
+                    })
+                    if (select.length != 0) {
+                        select = select.reduce(function (total, num) {
+                            return { balance: total.balance + num.balance }
+                        }).balance
+                    } else {
+                        select = 0;
+                    }
+
+                    var balance = ((select - ec) < 0 ? 0 : (select - ec)) + (sum - select);
+                    var pay_balance = select > ec ? ec : select;
+                    var pay = ec - pay_balance;
+
+
+
+
+                    var ecUpdate = [];
+                    var amount = ec;
+                    var select_ec = this.data.ecList.filter(function (item) {
+                        return item.check == true;
+                    })
+
+                    for (var i = 0; i < select_ec.length; i++) {
+                        var check = select_ec[i].balance - amount;
+
+                        if (check >= 0) {
+                            //amount
+
+                            select_ec[i].useBalance = amount;
+                            select_ec[i].totalBalance = select_ec[i].balance - amount;
+                            ecUpdate.push(select_ec[i])
+                            break;
+                        }
+                        else {
+                            //select_ec[i].balance
+                            select_ec[i].useBalance = select_ec[i].balance;
+                            select_ec[i].totalBalance = select_ec[i].balance - select_ec[i].balance;
+                            ecUpdate.push(select_ec[i])
+
+                            amount = amount - select_ec[i].balance;
+                        }
+                    }
+
+                    var iEcUpdate = 0;
+                    var allEcList = this.data.ecList;
+                    allEcList.map(function (row, i) {
+                        if (row.check) {
+                            allEcList[i] = ecUpdate[iEcUpdate];
+                            iEcUpdate++;
+                        } else {
+                            allEcList[i].useBalance = 0;
+                            allEcList[i].totalBalance = allEcList[i].balance;
+                        }
+                    });
+
+                    this.data.ecList = allEcList;
+
+                    this.data.ecList.map((row, i) => {
+                        this.notifyPath(`data.ecList.${i}.useBalance`);
+                        this.notifyPath(`data.ecList.${i}.totalBalance`);
+                    })
+                    console.log(
+                        {
+                            amount: ec,
+                            balance: balance,
+                            pay_balance: pay_balance,
+                            pay: pay
+                        }
+                    )
+                    this.set('bringForward',{
+                            amount: ec,
+                            balance: balance,
+                            pay_balance: pay_balance,
+                            pay: pay
+                    }) 
+                    // return obj
+                }
+
+                // if (typeof this.data.ecList == 'undefined') return;
+                // // console.log(data.path);
+                // // console.log(this.data.ecSelect);
+                // this.dataList = this.data.ecList;
+                // if (!((data.value === true || data.value === false) || data.path === 'data.ecList'))
+                //     return;
+
+               
+            },
+            saveData: function () {
+                var amount = 0;
+                var select = this.data.ecList.filter(function (item) {
+                    return item.check == true;
+                })
+                this.data.ecSelect.map((item) => {
+                    amount += item.amount;
+                })
+                var old = [];
+
+
+                for (var i = 0; i < select.length; i++) {
+                    var check = select[i].balance - amount;
+
+                    if (check >= 0) {
+                        old.push({
+                            ec_id: select[i].id,
+                            amount: amount
+                        })
+                        break;
+                    }
+                    else {
+                        old.push({
+                            ec_id: select[i].id,
+                            amount: select[i].balance
+                        })
+                        amount = amount - select[i].balance;
+                    }
+                }
+                var result = {};
+                var ecSelect = this.data.ecSelect.map((item) => {
+                    var { quantity, price } = item;
+                    var newData = { quantity, price }
+                    newData.ec_id = item.id;
+                    newData.amount = newData.quantity * newData.price;
+                    return newData;
+                })
+                console.log(ecSelect);
+                if (old.length != 0)
+                    result.list_old = old;
+                if (!this.check(this.bringForward.pay)) {
+                    var num = 0;
+                    this.data.ecSelect.map((item)=>{
+                        num += item.quantity;
+                    })
+                    // result.check = this.datas;
+                    result.bank_id = this.datas.bank_id || '';
+                    result.check_date = this.datas.check_date || '';
+                    result.check_number = this.datas.check_number || '';
+                    result.check_sum = this.unFormat(this.datas.check_sum);
+                    result.credit = num;
+                    result.note = this.datas.note || '';
+                    result.bank_branch = this.datas.branch || '';
+                }
+                result.total = this.datas.total || 0;
+                result.list = ecSelect;
+                console.log(JSON.stringify(result));
+                //  this.fire('save-data', { result: result, el: this,type:this.typeReceipt });
+                // console.log(JSON.stringify(result));
+                // this.fire('toast', { status: 'load' });
+                // this.dispatchAction('FEE_DATA_INSERT', result)
+                //     .then(function (res) {
+                //         this.receip_id = res.data
+                //         // window.open('./api/payment/printReceipt?id=' + res.data.receipt_id, '_blank');
+                //         this.fire('toast', {
+                //             status: 'success', text: 'บันทึกสำเร็จ',
+                //             callback: function () {
+                               
+                //                 this.dispatchAction('FEE_GET_DATA_LIST', this.dataSelect)
+                //             }.bind(this)
+                //         });
+                // }.bind(this))
+            },
+            openReceipt: function () {
+                this.fire('print-receip',{type:this.typeReceipt})
+                // this.receiptId = '2560-42980'
+                // console.log(this.receiptId);
+                // window.open('/api/payment/report1?id='+this.receip_id.receipt_id+
+                // '?type='+this.typeReceipt,'_blank'); 
+            }
+        });
+    </script>
+</dom-module>

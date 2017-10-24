@@ -1,0 +1,27 @@
+{
+  "name": "upload-file",
+  "homepage": "https://github.com/Nutthawut-Ice/upload-file",
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "vaadin-upload": "^1.1.1"
+  },
+  "version": "0.0.2",
+  "_release": "0.0.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.2",
+    "commit": "649d8538cfacea6faa92a6617cdfba8377272821"
+  },
+  "_source": "https://github.com/Nutthawut-Ice/upload-file.git",
+  "_target": "^0.0.2",
+  "_originalSource": "upload-file"
+}

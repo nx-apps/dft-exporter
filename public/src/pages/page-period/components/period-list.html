@@ -1,0 +1,326 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../components/format-number-behavior.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../month-behavior.html">
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="../../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="./../../components/custom-grid-zoom.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+
+<dom-module id="period-list">
+   
+    <template>
+         <!--<style>
+            vaadin-grid {
+                height: 100vh;
+            }
+        </style>-->
+        <style include="shared-styles">
+            #modal{
+                width: 50%;
+                height: auto;
+            }
+             vaadin-grid#material {
+                /* height:450px; */
+                height: calc(100vh - var(--set-dynamic-height) - 107px);
+
+                --vaadin-grid-header-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    font-weight: bold;
+                }
+                --vaadin-grid-body-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    /*padding:0px;*/
+                }
+                --vaadin-grid-footer-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    font-weight: bold;
+                }
+            }
+            .transfer{
+              padding:5px;
+            }
+            .textRight{
+                text-align: right;
+            }
+        </style>
+        <custom-grid-zoom>
+            <vaadin-grid slot="grid" id="material" items="{{data}}">
+            
+                <vaadin-grid-column width="150px">
+                    <template class="header">
+                        <div style="text-align:center">
+                            เลขประจำตัวผู้เสียภาษี
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell" style="text-align:center">
+                            [[item.company_taxno]]
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="200px">
+                    <template class="header">ผู้ส่งออก</template>
+                    <template>
+                        <div class="cell">
+                            [[item.company_name_th]]
+                        </div>
+                    </template>
+                    <template class="footer">
+                        รวม
+                    </template>
+                </vaadin-grid-column>
+                
+                <template is="dom-if" if="[[!data.0.type]]">
+                    <vaadin-grid-column hidden="[[data.0.type]]">
+                        <template class="header">
+                            <div class="cell textRight">
+                                ยอดยกมา
+                            </div>
+                        </template>
+                        <template>
+                            <div class="cell textRight">
+                                [[formatNumber(item.bf.balance)]]
+                            </div>
+                        </template>
+                        <template class="cell footer">
+                                <div class="textRight">[[_sum(data,'bf','balance')]]</div>
+                        </template>
+                    </vaadin-grid-column>
+                </template>
+                <vaadin-grid-column>
+                    <template class="header">
+                        <div class="cell textRight">
+                            ปริมาณโควตา
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">
+                            [[formatNumber(item.cu.debit)]] <br>
+                            <!--<vaadin-combo-box no-label-float items="{{month}}"></vaadin-combo-box>-->
+                        </div>
+                    </template>
+                    
+                    <template class="footer">
+                        <div class="cell textRight">[[_sum(data,'cu','debit')]]</div>
+                    </template>
+                    
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                    <template class="header"><div class="cell textRight">ปริมาณ EC ที่ขอ</div></template>
+                    <template>
+                        <div class="cell textRight">
+                            [[formatNumber(item.cu.credit)]] <br>
+                            <!--<vaadin-combo-box no-label-float items="{{month}}"></vaadin-combo-box>-->
+                        </div>
+                    </template>
+                    <template class="footer">
+                            <div class="cell textRight">[[_sum(data,'cu','credit')]]</div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column hidden="[[data.0.type]]">
+                    <template class="header"><div class="cell textRight">คงเหลือ</div></template>
+                    <template>
+                        <div class="cell textRight">
+                            [[getBalance(item.cu.debit,item.cu.credit)]] <br>
+                            <!--<vaadin-combo-box no-label-float items="{{month}}"></vaadin-combo-box>-->
+                        </div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell textRight">[[_mulitSum(data)]]</div>
+                    </template>
+                    
+                </vaadin-grid-column>
+                <vaadin-grid-column hidden="[[!data.0.type]]">
+                    <template class="header"><div class="cell textRight">คงเหลือ</div></template>
+                    <template>
+                        <div class="cell textRight">
+                            [[formatNumber(item.cu.balance)]]
+                            <!-- [[getBalance(item.bf.balance,item.cu.balance)]] <br> -->
+                            <!--<vaadin-combo-box no-label-float items="{{month}}"></vaadin-combo-box>-->
+                        </div>
+                    </template>
+                    <template class="footer">
+                            <div class="cell textRight">[[_sum(data,'cu','balance')]]</div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column hidden="[[data.0.type]]">
+                    <template class="header"><div class="cell textRight">ยอดยกไป</div></template>
+                    <template>
+                        <div class="cell textRight">
+                            [[formatNumber(item.cf.balance)]] <br>
+                            <!--<vaadin-combo-box no-label-float items="{{month}}"></vaadin-combo-box>-->
+                        </div>
+                    </template>
+                    <template class="footer">
+                            <div class="cell textRight">[[_sum(data,'cf','balance')]]</div>
+                    </template>
+                </vaadin-grid-column>
+                 <vaadin-grid-column hidden="[[!data.0.type]]">
+                    <template class="header">โอน</template>
+                    <template>
+                        <div class="cell">
+                            <paper-button class="transfer" on-tap="teansfer" item="[[item]]" raised>โอน</paper-button>
+                        </div>
+                    </template>
+                </vaadin-grid-column> 
+                <!-- <vaadin-grid-column width="100px">
+                    <template class="header">จัดการ</template>
+                    <template>
+                        <div class="cell">
+                            <paper-checkbox checked="{{expanded}}">แสดงรายละเอียด</paper-checkbox>
+                            <paper-icon-button icon="create" on-tap="dataSelect"></paper-icon-button>
+                            <paper-icon-button id="[[item.quota_id]]" icon="delete" on-tap="confirmDelete"></paper-icon-button>
+                        </div>
+                    </template>
+                </vaadin-grid-column> -->
+            </vaadin-grid>
+        </custom-grid-zoom>
+        <paper-dialog id="modal" modal>
+            <div>
+                <div>
+                    <paper-input label="บริษัท" value="[[form.company_name_th]]" disabled></paper-input>
+                </div>
+                <div>
+                     <paper-input label="ปริมาณ" value="[[formatNumber(form.cu.debit)]]" disabled></paper-input>
+                </div>
+                 <div>
+                    <vaadin-combo-box label="ชื่อบริษัท" items="[[form.exporter]]" item-label-path="company_name_th" loading="{{check}}" item-value-path="company_taxno"
+                        value="{{form.exporter_id}}">
+                        <template>
+                            [[item.company_name_th]]
+                        </template>
+                    </vaadin-combo-box>
+                </div>
+            </div>
+            <div class="buttons">  
+                <paper-button class="gl-btn-primary" on-tap="transferData">โอน</paper-button>
+                <paper-button  dialog-confirm autofocus>ปิด</paper-button>
+            </div>
+        </paper-dialog>
+    </template>
+    <script>
+        Polymer({
+            is: 'period-list',
+            behaviors: [ReduxBehavior, FormatNumberBehavior, MonthBehavior],
+            observers: ['getHeight(height)'],
+            properties: {
+                data: {
+                    statePath: 'period.list'
+                },
+                form:{
+                    type:Object,
+                    value:{}
+                },
+                year:{
+                    type:String,
+                    value:''
+                },
+                typeRice:{
+                    type:String,
+                    value:''
+                }
+            },
+            _mulitSum:function(val){
+                //  [[getBalance(item.bf.balance,item.cu.balance)]]
+               var bf =  this._sum(val,'cu','debit');
+               var cu = this._sum(val, 'cu','credit');
+               var result = 0;
+               bf = this.unFormat(bf);
+               cu = this.unFormat(cu);
+               result = bf-cu;
+               console.log(result)
+               return this.formatNumber(result);
+            },
+            _sum:function(val,key1,key2){
+                if(val){
+                    var i = 0;
+                    val.map((item)=>{
+                        if(item[key1]){
+                            if(item[key1][key2]){
+                                i += item[key1][key2]
+                            }
+                        }            
+                    })
+                    return this.formatNumber(i);
+                } 
+            },
+            getHeight: function (h) {
+                this.customStyle['--set-dynamic-height'] = h.toString() + 'px';
+                //console.log(this.customStyle['--set-dynamic-height'])
+                this.updateStyles();
+            },
+            getBalance:function(a,b){
+                var c = a-b;
+                return this.formatNumber(c)
+            },
+            dataSelect: function (e) {
+                var id = e.model.item.quota_id
+                // console.log(id);
+                this.dispatchAction('QUOTA_SELECT', this, id)
+                .then(()=>{
+                    this.fire('open-panel')
+                })
+            },
+            confirmDelete: function (e) {
+                var id = e.currentTarget.id;
+                this.fire('toast', {
+                    status: 'openDialog',
+                    text: 'ต้องการลบข้อมูลใช่หรือไม่ ?',
+                    confirmed: this.deleteData.bind(this),
+                    data: id
+                })
+            },
+            deleteData: function (status, data) {
+                if (status == true) {
+                    // console.log(data.data);
+                    this.fire('toast',{status:'load'});
+                    this.dispatchAction('QUOTA_DELETE', data.data)
+                        .then(function (response) {
+                            this.dispatchAction('QUOTA_GET_YEAR')
+                                .then(() => {
+                                    
+                                    this.dispatchAction('QUOTA_GET_QUOTA', this, this.selectYear);
+                                })
+                        }.bind(this))
+                        .catch(function (error) {
+                            // console.log({error});
+                             this.fire('toast',{status:'connectError',text:error.response.data.error,
+                             callback:function(){
+                             }})
+                        }.bind(this));
+                }
+            },  
+            teansfer:function(e){   
+                // console.log(e.currentTarget.item);
+                var newItem = e.currentTarget.item;
+                newItem.exporter = this.data.filter((item)=>{
+                    return item.company_taxno != newItem.company_taxno && item.transfer == true;
+                })
+                console.log(newItem.exporter)
+                this.set('form',e.currentTarget.item);
+                
+                // this.set('form')
+               this.$.modal.open();
+            },
+            transferData:function(){
+                var newItem = {
+                    year:parseInt(this.year),
+                    type_rice_id:this.typeRice,
+                    from_company_taxno:this.form.company_taxno,
+                    to_company_taxno:this.form.exporter_id
+                }
+                console.log(newItem);
+                this.$.modal.close();
+                this.dispatchAction('PERIOD_TRANSFER',newItem);
+            }
+        });
+    </script>
+</dom-module>

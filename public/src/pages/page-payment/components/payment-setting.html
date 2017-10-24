@@ -1,0 +1,107 @@
+<link rel="import" href="./../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="./../../components/nylon-input.html">
+<link rel="import" href="./../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="./../../../layout/shared-styles.html">
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="./../../components/page-panel.html">
+<link rel="import" href="./../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="./../../components/format-number-behavior.html">
+
+<dom-module id="payment-setting">
+    <!--<link rel="import" type="css" href="payment-setting.css">-->
+    <template>
+        <style include="shared-styles">
+
+        </style>
+        <div class="container">
+            <page-panel label="ตั้งค่าปริมาณ">
+                <nylon-input label="ค่าธรรมเนียม" format-number value="{{form.price}}"></nylon-input>
+                <!--<div class="row center-xs">
+                    <div class="col-xs-6">
+                        <div class="box">
+                            
+                        </div>
+                    </div>
+                </div>-->
+                
+            </page-panel>
+            <div class="white-space"></div>
+            <page-panel label="ตั้งค่าใบเสร็จ">
+                <div class="box">
+                    <!-- <nylon-input label="ปีโควตา" value="{{form.year}}"></nylon-input> -->
+                </div>
+                <div class="box">
+                    <nylon-input label="เลขที่อ้างอิงล่าสุด" value="{{form.count_show}}" disabled></nylon-input>
+                </div>
+                <div class="box">
+                     <nylon-input label="แก้ไขเลขที่อ้างอิง" format-number value="{{form.count_ref}}"></nylon-input> 
+                </div>
+                <div class="box">
+                    <nylon-input label="เลขที่ใบเสร็จล่าสุด" value="{{form.last_receipt}}" disabled></nylon-input>
+                </div>
+            </page-panel>
+            
+            <div class="row end-xs">
+                <div class="col-xs-6">
+                    <div class="box">
+                         <paper-button on-tap="updateData" class="gl-btn-success" raised>บันทึก</paper-button>
+                    </div>
+                </div>
+            </div>
+           
+            
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'payment-setting',
+            behaviors: [ReduxBehavior,FormatNumberBehavior],
+            properties:{
+                 quotaYear: {
+                    statePath: 'commonData.year',
+                },
+                form:{
+                    statePath:'fee.setting',
+                    observer:'storeData'
+                },
+                storeForm:{
+                    type:Object,
+                    value:{}
+                },
+                price:String
+            },
+            storeData:function(val){
+                this.storeForm = _.clone(val);
+            },  
+            checkMax:function(){
+                console.log(this.form)
+                var max = this.unFormat(this.form.max);
+                var ref = this.unFormat(this.form.count_ref);
+                if(max < ref){
+                    console.log('1234',max,ref)
+                    this.set('form.count_ref',0)
+                }
+                else{
+                    this.set('form.count_ref',this.storeForm.count_ref)
+                }
+                // else if(max >= ref){
+                //     console.log('2222',max,ref)
+                //     
+                // }
+            },
+            updateData:function(){
+                // console.log(this.form)
+                var newData = {
+                    id: this.form.id,
+                    price : this.unFormat(this.form.price),
+                    count_ref : this.unFormat(this.form.count_ref)
+                }
+                if(this.form.count_ref == 0){
+                    newData.count_ref = 0;
+                }
+                console.log(newData);
+                this.dispatchAction('FEE_UPDATE_SETTING',newData)
+            }
+        });
+    </script>
+</dom-module>

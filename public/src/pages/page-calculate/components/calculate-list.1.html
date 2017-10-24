@@ -1,0 +1,199 @@
+<link rel="import" href="../../components/format-number-behavior.html">
+<!--<link rel="import" href="./../../components/data-manage-behavior.html">-->
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid.html">
+<!--<link rel="import" href="../../../redux-behavior.html">-->
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="./../../components/format-number-behavior.html">
+<link rel="import" href="./../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="./../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="./../../components/custom-grid-zoom.html">
+
+<dom-module id="calculate-list">
+    <template>
+        <style include="shared-styles">
+            .cell {
+                white-space: nowrap;
+            }
+
+            .textCener {
+                text-align: center;
+            }
+
+            .textRight {
+                text-align: right;
+                background-color: #3399ff;
+            }
+
+
+            vaadin-grid#material {
+
+          
+                
+                --vaadin-grid-header-cell: {
+                    border-bottom: 1px solid #d4d4d4;
+                     word-wrap: break-word;
+                    background-image: linear-gradient(to bottom, #fafafa 2%, #efefef 98%);
+                    height: 30px;
+                    font-size:0.8rem;
+                };
+
+                --vaadin-grid-body-cell: {
+                    font-size:0.8rem;
+                };
+            }
+        </style>
+        <custom-grid-zoom>
+            <vaadin-grid slot="grid" id="material" items="[[list.list]]" size="200">
+             
+                <vaadin-grid-column width="100px">
+                    <template class="header">
+                        <div class="cell">คำนวณครั้งที่</div>
+                    </template>
+                    <template>
+                        <div class="cell">[[item.ordinal]]</div>
+                    </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="100px">
+                    <template class="header">
+                        <div class="cell">ยอดรวมการส่งออกที่ผ่านมา</div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">[[formatNumber(item.report)]]</div>
+                    </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="100px">
+                    <template class="header">
+                        <div class="cell">ยอดรวมประวัติการส่งออกเพื่อคำนวณส่วนจัดสรร</div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">[[formatNumber(item.calculate)]]</div>
+                    </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="200px">
+                    <template class="header">
+                        <div class="cell">ยอดรวมโควตาที่เคยได้รับ</div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">[[formatNumber(item.confirm)]]</div>
+                    </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="200px">
+                    <template class="header">
+                        <div class="cell">ปริมาณโควตา</div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">[[formatNumber(item.amount_cal)]]</div>
+                    </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="200px">
+                    <template class="header">
+                        <div class="cell">ปริมาณโควตา (ปรับปรุง)</div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">[[formatNumber(item.amount_update)]]</div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="200px">
+                    <template class="header">
+                        <div class="cell textCener">อนุมัติ</div>
+                    </template>
+                    <template>
+                        <div class="cell textCener">
+                            <paper-button class="gl-btn-success" on-tap="confirmOrdinal" disabled="[[checkStatus(item.status)]]" raised>อนุมัติ</paper-button>
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+
+
+                <vaadin-grid-column width="140px">
+                    <template class="header">
+                        <div class="cell textCener">จัดการ</div>
+                    </template>
+                    <template>
+                        <div class="cell textCener">
+                            <paper-icon-button icon="create" on-tap="selectData"></paper-icon-button>
+                            <paper-icon-button icon="delete" disabled="[[checkStatus(item.status)]]" on-tap="confirmDelete"></paper-icon-button>
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+
+            </vaadin-grid>
+        </custom-grid-zoom>
+    </template>
+    <script>
+        Polymer({
+            is: 'calculate-list',
+            behaviors: [FormatNumberBehavior, ReduxBehavior],
+            properties: {
+                list: {
+                    type: Array,
+                    value: []
+                },
+                year: {
+                    type: String,
+                    value: ''
+                }
+            },
+            selectData: function (e) {
+                // console.log(e.model.item.id);
+                var id = e.model.item.id;
+                var year = this.year;
+                // this.dispatchAction('CALCULATE_SELECT',id);
+                this.fire('nylon-change-page', { path: `/calculate-detail/${year}/${id}` })
+            },
+            confirmDelete: function (e) {
+                this.fire('toast', {
+                    status: 'openDialog',
+                    text: 'ต้องการลบข้อมูลใช่หรือไม่ ?',
+                    confirmed: this.deleteData.bind(this),
+                    data: e.model.item.id
+                })
+            },
+            deleteData: function (check, val) {
+                if (check == true) {
+                    // console.log(check,val);
+                    this.dispatchAction('CALCULATE_DELETE', val.data, this.year)
+                }
+            },
+            confirmOrdinal: function (e) {
+                this.fire('toast', {
+                    status: 'openDialog',
+                    text: 'ต้องการอนุมัติใช่หรือไม่ ?',
+                    confirmed: this.confirm.bind(this),
+                    el: this,
+                    data: e.model.item.id
+                })
+                // console.log(e.model.item.id);
+            },
+            confirm: function (check, data) {
+                if (check == true) {
+                    this.dispatchAction('CALCULATE_CONFIRM_ORINAL', data.data)
+                        .then(function () {
+                            this.fire('toast', {
+                                status: 'success', text: 'บันทึกสำเร็จ',
+                                callback: function () {
+                                    this.dispatchAction('CALCULATE_GET_DATA', this.year);
+                                    // this.dispatch Action('CALCULATE_SELECT', data.data);
+                                }.bind(this)
+                            });
+                        }.bind(this))
+                }
+            },
+            checkStatus: function (val) {
+                if (val == 'a' || val == 'n' || val == 'cf') {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        });
+    </script>
+</dom-module>

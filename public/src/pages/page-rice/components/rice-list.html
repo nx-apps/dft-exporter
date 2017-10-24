@@ -1,0 +1,56 @@
+<!--<link rel="import" href="./../../components/data-manage-behavior.html">-->
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<!--<link rel="import" href="../../../../bower_components/juicy-table-repeat/juicy-table-repeat.html">-->
+<link rel="import" href="../../../layout/shared-styles.html">
+
+<dom-module id="rice-list">
+    <template>
+        <style include="shared-styles"></style>
+        <div class="Table">
+            <div class="Heading">
+                <div class="Cell">
+                    <p>ลำดับที่</p>
+                </div>
+                <div class="Cell">
+                    <p>ประเภทข้าว(ไทย)</p>
+                </div>
+                <div class="Cell">
+                    <p>ประเภทข้าว(อังกฤษ)</p>
+                </div>
+            </div>
+            <template is="dom-repeat" items="[[data]]">
+                <div class="Row">
+                    <div class="Cell">
+                        <p>[[index]]</p>
+                    </div>
+                    <div class="Cell">
+                        <p>[[item.type_rice_name_th]]</p>
+                    </div>
+                    <div class="Cell">
+                        <p>[[item.query_name]]</p>
+                    </div>
+                </div>
+             </template>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'rice-list',
+            properties: {
+                data: {
+                    type: Array,
+                    value: [
+                        {
+                            type_rice_name_th: 'ข้าวขาว',
+                            query_name: 'WhiteRice'
+                        },
+                        {
+                            type_rice_name_th: 'ข้าวหัก',
+                            query_name: 'BrokenRice'
+                        }
+                    ]
+                }
+            }
+        });
+    </script>
+</dom-module>

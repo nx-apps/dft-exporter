@@ -1,0 +1,43 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/iron-selector/iron-selector.html">
+
+<dom-module id="ribbon-tabs">
+    <template>
+        <style>
+             :host {
+                position: fixed;
+                left: 100px;
+                top: 36px;
+                z-index: 1;
+            }
+
+            .tabs {
+                margin: 0;
+                list-style: none;
+                position: relative;
+                font-size: 12px;
+                font-family: arial;
+                
+            }
+
+            
+        </style>
+        <ul class="tabs">
+            <iron-selector attr-for-selected="name" selected="{{select}}">
+                <slot></slot>
+            </iron-selector>
+        </ul>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'ribbon-tabs',
+            properties: {
+                select: {
+                    type: String,
+                    notify: true
+                }
+            }
+        });
+    </script>
+</dom-module>

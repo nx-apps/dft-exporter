@@ -1,0 +1,25 @@
+{
+  "name": "gl-font",
+  "description": "gl-font for web components",
+  "version": "0.0.7",
+  "main": "gl-rsu-font.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.4.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  },
+  "homepage": "https://github.com/9lon/gl-font",
+  "_release": "0.0.7",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.7",
+    "commit": "8c37f9c3e319c64517a0dcf37402dda47024648d"
+  },
+  "_source": "https://github.com/9lon/gl-font.git",
+  "_target": "^0.0.7",
+  "_originalSource": "9lon-gl-font"
+}

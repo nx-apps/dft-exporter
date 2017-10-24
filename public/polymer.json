@@ -13,11 +13,33 @@
     "images/**/*",
     "bower.json",
     "fonts/**/*",
-    "bower_components/gl-font/**/*"
+    "bower_components/gl-font/**/*",
+    "service-worker.js"
   ],
   "extraDependencies": [
     "bundle.js",
     "manifest.json",
     "bower_components/webcomponentsjs/webcomponents-lite.min.js"
-  ]
+  ],
+  "builds": [
+    {
+      "name": "default",
+      "bundle": true,
+      "html": {
+        "minify": true
+      },
+      "css": {
+        "minify": true
+      },
+      "js": {
+        "minify": true,
+        "compile": false
+      },
+      "addServiceWorker": false,
+      "addPushManifest": false
+    }
+  ],
+  "lint": {
+    "rules": ["polymer-2-hybrid"]
+  }
 }

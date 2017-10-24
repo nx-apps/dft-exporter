@@ -1,0 +1,220 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../iron-form/iron-form.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../gl-styles/gl-color.html">
+<link rel="import" href="../gl-grid/gl-grid-row.html">
+<link rel="import" href="../gl-grid/gl-grid-col.html">
+<link rel="import" href="../gl-form/gl-form-input.html">
+<link rel="import" href="../gl-form/gl-form-dropdown-menu.html">
+
+
+
+
+
+<!--
+`gl-search-input`
+
+
+@demo demo/index.html 
+-->
+
+<dom-module id="gl-search-input">
+    <template>
+        <style include="iron-flex iron-flex-alignment iron-flex-factors gl-color">
+            :host {
+                --gl-input-width: 100%;
+            }
+            
+            .width {
+                width: var(--gl-input-width);
+                margin:20px 0px 0px 0px;
+            }
+            .width2 {
+               margin:0px;             
+            }
+            .text {
+                text-align: right;
+                margin: 20px 4px 0px 4px;
+                font-size: 18px;
+                padding-top: 10px;
+            }
+            .text2 {
+                /*padding-top: 31px;*/
+            }
+            .floated-label-placeholder{
+                margin-top:-20px;
+            }
+            .button {
+                margin: 15px;
+            }
+            
+            .bd {
+                border: 1px solid #000;
+            }
+        </style>
+
+            <form is="iron-form" id="searchInput" method="get">
+                
+                    <gl-grid-row width="{{getWidth}}">   
+
+                        <template is="dom-if" if={{searchInput}}>                 
+
+                            <div class="text">{{searchLabelName}} :</div>    
+
+                            <gl-grid-col width="[[getWidth]]" grid="[[500,3]]">
+                                <gl-form-input  label="{{searchLabelName}}"  no-label-float id="searchName" name="searchName" value="{{search}}" class="width"></gl-form-input>
+                            </gl-grid-col>
+                        </template>
+
+                        <template is="dom-if" if={{searchInputType}}> 
+                        
+                            <div class="text">{{searchLabelType}} :</div>
+                            
+                            <gl-grid-col width="[[getWidth]]" grid="[[500,3]]">
+                                <gl-form-dropdown-menu label="ทั้งหมด" name="searchType" class="width" no-label-float>
+                                    <paper-listbox class="dropdown-content">
+                                        <template is="dom-repeat" items={{searchType}} as=item index-as=index>
+                                            <paper-item value="{{item.name}}">{{item.name}} </paper-item>
+                                        </template>
+                                    </paper-listbox>
+                                </gl-form-dropdown-menu>
+                            </gl-grid-col>
+                        </template>
+
+                        <template is="dom-if" if={{searchInputType2}}> 
+                        
+                            <div class="text">{{searchLabelType2}} :</div>
+                            
+                            <gl-grid-col width="[[getWidth]]" grid="[[500,3]]">
+                                <gl-form-dropdown-menu label="ทั้งหมด" name="searchType2" class="width" no-label-float>
+                                    <paper-listbox class="dropdown-content">
+                                        <template is="dom-repeat" items={{searchType2}} as=item index-as=index>
+                                            <paper-item value="{{item.name}}">{{item.name}} </paper-item>
+                                        </template>
+                                    </paper-listbox>
+                                </gl-form-dropdown-menu>
+                            </gl-grid-col>                
+                        </template>
+                
+                <template is="dom-if" if={{searchData}}>
+                    <gl-grid-row>
+
+                        <div class="text text2">เริ่มจากวันที่ :</div>
+                        
+                        <gl-grid-col width="[[getWidth]]" grid="[[500,3]]">
+                            <vaadin-date-picker name="searchStart" no-label-float class="width width2"></vaadin-date-picker>
+                        </gl-grid-col>
+                        
+                        <div class="text text2">จนถึงวันที่ :</div>
+                        
+                        <gl-grid-col width="[[getWidth]]" grid="[[500,3]]">
+                            <vaadin-date-picker name="searchEnd" no-label-float class="width width2"></vaadin-date-picker>
+                        </gl-grid-col>
+
+                    </gl-grid-row>
+                </template>
+                
+            </form>
+        </div>
+
+        <div class="horizontal center-justified layout button">
+            <paper-button raised on-tap="_searchKey" class="gl-btn-info">ค้นหา</paper-button>
+        </div>
+
+
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'gl-search-input',
+            properties: {
+                searchLabelName:{
+                    type: String,
+                    value:'ค้นหา'
+                },
+                searchLabelType:{
+                    type: String,
+                    value:'ค้นหาตาม'
+                },
+                searchLabelType2:{
+                    type: String,
+                    value:'ค้นหาตาม'
+                },
+                search: {
+                    type: String,
+                },
+                searchType: {
+                    type: Object,
+                    value: [{
+                        id: 1,
+                        name: 'allosaurus'
+                    }, {
+                        id: 2,
+                        name: 'brontosaurus'
+                    }, {
+                        id: 3,
+                        name: 'carcharodontosaurus'
+                    }, {
+                        id: 4,
+                        name: 'diplodocus'
+                    }, ]
+                },
+                searchType2: {
+                    type: Object,
+                    value: [{
+                        id: 1,
+                        name: 'allosaurus'
+                    }, {
+                        id: 2,
+                        name: 'brontosaurus'
+                    }, {
+                        id: 3,
+                        name: 'carcharodontosaurus'
+                    }, {
+                        id: 4,
+                        name: 'diplodocus'
+                    }, ]
+                },
+                result: {
+                    type: Object,
+                    notify: true
+                },
+                searchInput:{
+                    type: Boolean,
+                    value: false
+                },
+                searchInputType:{
+                    type: Boolean,
+                    value: false
+                },
+                searchInputType2:{
+                    type: Boolean,
+                    value: false
+                },
+                searchData:{
+                    type: Boolean,
+                    value: false
+                }
+            },
+            listeners: {
+                'iron-form-submit': '_submitData',
+            },
+            _searchKey:function (event) {
+                this.$.searchInput.submit();
+            },
+            _submitData:function (event) {
+                // console.log(JSON.stringify(event.detail));
+               this.result = event.detail;
+            }
+
+        });
+    </script>
+</dom-module>

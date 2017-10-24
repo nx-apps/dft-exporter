@@ -1,0 +1,205 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../layout/shared-styles.html">
+<link rel="import" href="../../nylon-behavior.html">
+<link rel="import" href="../components/page-header.html">
+<link rel="import" href="../components/page-panel.html">
+<link rel="import" href="../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../components/nylon-panel-right.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="./components/amount-list.html">
+<link rel="import" href="../../redux-behavior.html">
+<link rel="import" href="./../components/custom-grid-zoom.html">
+
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../components/ribbon-bar/ribbon-bar.html">
+<link rel="import" href="../components/ribbon-tab/ribbon-tabs.html">
+<link rel="import" href="../components/ribbon-tab/ribbon-tab.html">
+
+<dom-module id="page-amount">
+
+  <template>
+    <style include="shared-styles">
+      .icon {
+        --iron-icon-height: 18px;
+        --iron-icon-width: 18px;
+        position: relative;
+        left: 98%;
+      }
+    </style>
+
+    <ribbon-tabs select="{{selectRibbon}}">
+      <ribbon-tab name="home">ปรับปรุงส่วนจัดสรรข้าว</ribbon-tab>
+    </ribbon-tabs>
+
+     <ribbon-bar width="{{w}}" height="{{h}}">
+      <iron-collapse id="collapse">
+        <page-panel id="searchbox">
+
+          <iron-icon class="icon" icon="close" on-tap="closeSearchBox"></iron-icon>
+          <div class="row around-xs">
+            <div class="col-xs-3">
+              <div class="box">
+                <vaadin-combo-box label="แสดงข้อมูลรายปี" items="[[year]]" value="{{selectYear}}"></vaadin-combo-box>
+              </div>
+            </div>
+            <div class="col-xs-3">
+              <div class="box">
+                <vaadin-combo-box label="ประเภทข้าว" items="[[typeRice]]" value="{{select.selectTypeRice}}">
+                  <template>[[item.label]]</template>
+                </vaadin-combo-box>
+              </div>
+            </div>
+            <div class="col-xs-3">
+              <div class="box">
+                <vaadin-combo-box label="การคำนวณครั้งที่" items="[[ordinal]]" value="{{select.selectOrdinal}}">
+                  <template>[[item]]</template>
+                </vaadin-combo-box>
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="row center-xs">
+              <div class="col-xs-6">
+                <div class="box">
+                  <paper-button class="gl-btn-primary" on-tap="searchData" style="width:100%">
+                    <iron-icon icon="search" raised></iron-icon>
+                    ค้้นหา</paper-button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </page-panel>
+        <div class="row end-xs">
+          <div class="col-xs-2">
+            <div class="box">
+              <paper-button class="gl-btn-success" on-tap="confirmDialog">บันทึก</paper-button>
+            </div>
+          </div>
+        </div>
+      </iron-collapse>
+    </ribbon-bar>
+
+
+    <div>
+       <amount-list id="list" height="[[h]]" data-select="{{select}}"></amount-list> 
+    </div>
+    </div> 
+  </template>
+  <script>
+    Polymer({
+      is: "page-amount",
+      behaviors: [NylonBehavior, ReduxBehavior],
+      observers: [
+        'getOrdinalNumber(selectYear,select.selectTypeRice)',
+        'getTypeRice(selectYear)'
+        // 'searchData(selectYear,select.selectTypeRice,select.selectOrdinal)'
+      ],
+      properties: {
+        year: {
+          statePath: 'commonData.year'
+        },
+        typeRice: {
+          statePath: 'commonData.type_rice'
+        },
+        ordinal: {
+          statePath: 'amount.ordinal'
+        },
+        select: {
+          type: Object,
+          value: {}
+        },
+        selectYear: {
+          type:String,
+          statePath: 'commonData.selectYear'
+        },
+        selectRibbon: {
+          type: String,
+          value: 'home',
+          observer: '_selectRibbonChanged'
+        }
+      },
+      nylonPageActive: function () {
+        this.dispatchAction('COMMON_DATA_GET_YEAR');
+        if(this.selectYear){
+          this.dispatchAction('COMMON_DATA_SET_YEAR', this.selectYear);
+          if(this.selectYear && this.select.selectTypeRice){
+            this.dispatchAction('AMOUNT_GET_ORDINAL', this.selectYear, this.select.selectTypeRice);
+          }
+        }
+        // this.dispatchAction('COMMON_DATA_GET_TYPE_RICE');
+        this.fire('set-nav', '1')
+        // this.fire('set-nav','ปรับปรุงส่วนจัดสรรข้าว');
+      },
+      getTypeRice(val){
+        if(val){
+          // this.set('select.selectTypeRice','')
+          this.dispatchAction('COMMON_DATA_SET_YEAR', this.selectYear);
+        } 
+        // this.dispatchAction('COMMON_DATA_GET_TYPE_RICE',val);
+      },
+      getOrdinalNumber: function (year, typeRice) {
+        // if(this.select.selectOrdinal) this.set('select.selectOrdinal','')
+        // this.set('select.selectOrdinal','')
+        if (year && typeRice) {
+          this.dispatchAction('AMOUNT_GET_ORDINAL', this.selectYear, this.select.selectTypeRice);
+        }
+      },
+      searchData: function () {
+        // if (this.selectYear && this.select.type_rice && this.select.ordinal) {
+          this.fire('toast', { status: 'load' });
+          this.select.selectYear = this.selectYear;
+          this.dispatchAction('AMOUNT_GET_DATA', this.select)
+            .then(function (res) {
+              this.fire('toast', {
+                status: 'success', text: 'โหลดข้อมูลสำเร็จ',
+                callback: () => {
+                  this.selectRibbon = "none"
+                }
+              });
+            }.bind(this))
+            .catch(function(error){
+               this.fire('toast',{status:'connectError',text:error,
+               callback:function(){
+               }})
+            }.bind(this))
+        // }
+        // if (this.selectYear != '' && this.selectTypeRice != '' && this.selectOrdinal != '') {
+        // this.fire('toast',{status:'load'});
+        // this.select.selectYear = this.selectYear;
+        // this.dispatchAction('AMOUNT_GET_DATA', this.select)
+        // .then(function(res){
+        //   this.fire('toast',{status:'success',text:'โหลดข้อมูลสำเร็จ',
+        //     callback:function(){
+        //     }
+        //    });
+        // }.bind(this))
+        // }
+      },
+      confirmDialog:function(){
+        this.fire('toast', {
+            status: 'openDialog',
+            text: 'ต้องการบันทึกข้อมูลใช่ไหม ?',
+            confirmed: this.saveData.bind(this)
+        })
+      },
+      saveData: function (check) {
+        if(check == true){
+          // console.log('=w=');
+          this.$.list.saveData();
+        }
+        
+        // this.selectRibbon = "none"
+      },
+      _selectRibbonChanged: function (val) {
+        if (val !== "none") {
+          this.$.collapse.opened = true;
+        } else {
+          this.$.collapse.hide();
+        }
+      },
+      closeSearchBox: function () {
+        this.selectRibbon = "none"
+      }
+    });
+  </script>
+</dom-module>

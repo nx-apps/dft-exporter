@@ -1,0 +1,463 @@
+<link rel="import" href="../../redux-behavior.html">
+<link rel="import" href="../../nylon-behavior.html">
+<link rel="import" href="../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../layout/shared-styles.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../nylon-behavior.html">
+<link rel="import" href="../components/nylon-panel-right.html">
+<link rel="import" href="../components/page-header.html">
+<link rel="import" href="../components/page-panel.html">
+<link rel="import" href="../../month-behavior.html">
+<link rel="import" href="../../../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="./../components/nylon-input.html">
+<link rel="import" href="./../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="./../../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+้้<link rel="import" href="./../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="./../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="./../../../bower_components/paper-icon-button/paper-icon-button.html">
+
+
+<link rel="import" href="./components/reports-export.html">
+
+
+<dom-module id="page-reports">
+    <template>
+        <style include="shared-styles">
+            #alignedDialog {
+                margin: 0;
+                width: 50%;
+                height: 500px;
+                overflow-y: auto;
+            }
+            paper-item{
+                border:1px solid #ddd;
+            }
+                #report1:checked~#content1,
+                #report2:checked~#content2,
+                #report3:checked~#content3 {
+                    display: block;
+                }
+        </style>
+
+         <page-header label="ออกรายงาน"></page-header> 
+        <main>
+            <input id="report1" value="list_1" type="radio" name="tabs" checked>
+            <label for="report1">สรุปรายงานการส่งออกข้าวไปสหภาพยุโรป</label>
+
+            <input id="report2" value="list_2" type="radio" name="tabs" disabled>
+            <label for="report2">Exporter Certificate of thai Rice</label>
+
+            <input id="report3" value="list_3" type="radio" name="tabs" disabled>
+            <label for="report3">บัญชีแสดงรายงานการโอนปริมาณส่วนจัดสรร</label>
+
+            <section id="content1">
+                <reports-export></reports-export>
+            </section>
+            <section id="content2">
+                2
+            </section>
+            <section id="content3">
+                3
+            </section>
+        </main>
+        <!-- <page-panel label="สรุปรายงายงานการส่งออกข้าวไปสหภาพยุโรป">
+            <div class="row around-xs">
+                <div class="col-xs-10">
+                    <div class="box">
+                        <vaadin-combo-box label="เลือกประเภทรายงาน" items="{{typeReports}}" value="{{reportSelect}}" error-message="กรุณาเลือกรายการ"
+                            item-label-path="name" item-value-path="id" required></vaadin-combo-box>
+                    </div>
+                </div>
+            </div>
+
+            <template is="dom-if" if="{{reportSelect}}">
+                <div class="row around-xs">
+                    <div class="col-xs-10">
+                        <div class="box">
+                            <vaadin-combo-box label="เลือกรายงาน" items="{{listEu}}" value="{{listEuValue}}" error-message="กรุณาเลือกรายการ" item-label-path="name"
+                                item-value-path="id" required></vaadin-combo-box>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row around-xs">
+                    <div class="col-xs-4">
+                        <div class="box">
+                            <vaadin-combo-box label="เดือนเริ่มตัน" items="{{month}}" value="{{firstmonth}}" error-message="กรุณาเลือกรายการ" item-label-path="name"
+                                item-value-path="id" required></vaadin-combo-box>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4">
+                        <div class="box">
+                            <vaadin-combo-box label="ปีเริ่มต้น" items="{{year}}" value="{{firstyear}}" required></vaadin-combo-box>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row around-xs">
+                    <div class="col-xs-4">
+                        <div class="box">
+                            <vaadin-combo-box label="เดือนสิ้นสุด" items="{{month}}" value="{{lastmonth}}" error-message="กรุณาเลือกรายการ" item-label-path="name"
+                                item-value-path="id" required></vaadin-combo-box>
+                        </div>
+                    </div>
+
+                    <div class="col-xs-4">
+                        <div class="box">
+                            <vaadin-combo-box label="ปีสิ้นสุด" items="{{year}}" value="{{lastyear}}" required></vaadin-combo-box>
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <template is="dom-if" if="{{ !reportSelect}}">
+                <div class="contentHeader">
+                    <div class="box">ออกประกาศ</div>
+                </div>
+
+                <div class="row around-xs">
+                    <div class="col-xs-4">
+                        <div class="box">
+                            <vaadin-combo-box class="book_saveData" label="เดือน" items="{{month}}" value="{{notifyMonth}}" error-message="กรุณาเลือกเดือน"
+                                item-label-path="name" item-value-path="id" required></vaadin-combo-box>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="box">
+                            <vaadin-combo-box class="book_saveData" label="ปี" items="[[year]]" value="{{notifyYear}}" required></vaadin-combo-box>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contentHeader">
+                    <div class="box">เรียน กรรมการผู้จัดการบริษัท : [[dataExporter.name]]</div><button on-tap="openDialog">เลือกบริษัท</button>
+                </div>
+
+                <div class="row around-xs">
+                    <div class="col-xs-10">
+                        <div class="box">
+                       
+                        </div>
+                    </div>
+                </div>
+
+                <div class="contentHeader">
+                    <div class="box">แจ้งผลการตรวจสอบหลักฐานเอกสารการส่งออกข้าวไปยังสหภาพยุโรปของบริษัท</div>
+                </div>
+
+                <div class="row around-xs">
+                    <div class="col-xs-4">
+                        <div class="box">
+                            <vaadin-combo-box class="book_saveData" label="เดือน" items="[[month]]" value="{{b_fistMonth}}" error-message="กรุณาเลือกเดือน"
+                                item-label-path="name" item-value-path="id" required></vaadin-combo-box>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="box">
+                            <vaadin-combo-box class="book_saveData" label="ปี" items="[[year]]" value="{{b_fistYear}}" required></vaadin-combo-box>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row around-xs">
+                    <div class="col-xs-4">
+                        <div class="box">
+                            <vaadin-combo-box class="book_saveData" label="เดือน" items="{{month}}" value="{{b_lastMonth}}" error-message="กรุณาเลือกเดือน"
+                                item-label-path="name" item-value-path="id" required></vaadin-combo-box>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="box">
+                            <vaadin-combo-box class="book_saveData" label="ปี" items="[[getLastYear(b_fistYear)]]" value="{{b_lastYear}}" required></vaadin-combo-box>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row around-xs">
+                    <div class="col-xs-4">
+                        <div class="box">
+                            ประวัติการส่งออกตามประกาศกรมการค้าต่างประเทศ
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="box">
+                            <vaadin-date-picker class="book_saveData" label="วันที่" value="{{hisDate}}" required></vaadin-date-picker>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row around-xs">
+                    <div class="col-xs-4">
+                        <div class="box">
+                            ประกาศกรมการค้าต่างประเทศ
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                        <div class="box">
+                            <vaadin-date-picker class="book_saveData" label="วันที่" value="{{notiDate}}" required></vaadin-date-picker>
+                        </div>
+                    </div>
+                </div>
+
+            </template>
+            <div class="row around-xs">
+                    <div class="col-xs-4">
+                        <div class="box">
+                            <vaadin-combo-box label="เลือกประเภทเอกสาร" items="[[typeDoc]]" value="{{selectDoc}}"></vaadin-combo-box>
+                        </div>
+                    </div>
+                    <div class="col-xs-4">
+                       
+                    </div>
+            </div>
+            <div class="row end-xs">
+                <div class="col-xs-6">
+                    <div class="box">
+                        
+                    </div>
+                </div>
+                <div class="col-xs-6">
+                    <div class="box" style="text-align:right">
+                        <paper-button raised class="gl-btn-primary" on-tap="_checkActive">ออกรายงาน</paper-button>
+                    </div>
+                </div>
+            </div>
+        </page-panel> -->
+        <!-- <paper-dialog id="alignedDialog" modal>
+            <nylon-input label="ค้นหาชื่อบริษัท" on-blur="getExporter" value="{{searchExporter}}"></nylon-input>
+           
+            <paper-dialog-scrollable>
+                <template is="dom-repeat" items="[[exporter]]">
+                    <paper-item>
+                        [[item.company_name_th]] 
+                        <div class="cell">
+                            <paper-icon-button value="[[item]]" on-tap="selectData" icon="icons:send"></paper-icon-button>
+                          
+                        </div> 
+                    </paper-item>
+                </template>
+              
+            </paper-dialog-scrollable>
+           
+        </paper-dialog> -->
+    </template>
+    <script>
+        Polymer({
+            is: 'page-reports',
+            behaviors: [NylonBehavior, ReduxBehavior, MonthBehavior],
+            properties: {
+                listEu: {
+                    type: Array,
+                    value: [
+                        {
+                            id: 'true',
+                            name: 'ในโควตา'
+                        },
+                        {
+                            id: 'false',
+                            name: 'นอกโควตา'
+                        }
+                    ]
+                },
+                typeDoc:{
+                    type:Array,
+                    value:[
+                        'word',
+                        'excel',
+                        'pdf'
+                    ]
+                },
+                typeReports: {
+                    type: Array,
+                    value: [
+                        {
+                            id: true,
+                            name: 'สรุปรายงานการส่งออกข้าวไปสหภาพยุโรป'
+                        },
+                        {
+                            id: false,
+                            name: 'ขอแจ้งตัวเลขประวัติการส่งออกข้าวไปสหภาพยุโรป'
+                        }
+                    ]
+                },
+                year: {
+                    statePath: 'commonData.year'
+                },
+                month: {
+                    statePath: 'commonData.month'
+                },
+                exporter: {
+                    statePath: 'commonData.companyReport'
+                },
+                dataExporter:{
+                    type:Object,
+                    value:{}
+                }
+            },
+            nylonPageActive: function () {
+                this.dispatchAction('COMMON_DATA_GET_YEAR');
+                // this.dispatchAction('COMMON_DATA_GET_TYPE_RICE');
+                this.dispatchAction('COMMON_DATA_GET_COMPANY');
+            },
+            selectData:function(e){
+                // console.log(e.currentTarget.value);
+                var data = e.currentTarget.value;
+                // this.exporter_name = data.company_name_th
+                this.dataExporter = {
+                    name: data.company_name_th,
+                    id : data.company_taxno
+                }
+                 this.$.alignedDialog.close();
+                
+            },  
+            openDialog: function () {
+                // console.log('event',this.$.alignedDialog.open();
+                // this.$$('#alignedDialog').open();
+                // this.$.alignedDialog.positionTarget = e.currentTarget;
+                this.$.alignedDialog.open();
+            },
+            closeDialog:function(){
+                this.$.alignedDialog.close();
+            },
+            getExporter: function (e) {
+                console.log(e.currentTarget.value);
+                this.dispatchAction('COMMON_DATA_GET_COMPANY_REPORT',e.currentTarget.value)
+            },
+            getLastYear: function (val) {
+                var year = this.year;
+                this.lastyear = '';
+                if (val != '') {
+                    return year.filter((item) => {
+                        return item > val;
+                    })
+                }
+            },
+            getExporterName: function (id) {
+                var name;
+                var exporter = this.exporter;
+                var check = exporter.filter(function (item) {
+                    return item.id == id
+                })
+                check.map((item) => {
+                    name = item.name
+                })
+                return name
+            },
+            fillterYearVaddinDate: function (date) {
+                var get = date.split('-');
+                var year = parseInt(get[0]) + 543;
+                return year.toString();
+            },
+            _checkActive: function () {
+                // console.log(this.reportSelect);
+                if (this.reportSelect == true) {
+                    this._activeReports();
+                }
+                else if (this.reportSelect == false) {
+                    this._activeBook();
+                }
+
+                // if(this.reportSelect == 'reports') 
+            },
+            _activeReports: function () {
+                var datas = {
+                    quota: this.listEuValue,
+                    first_year: this.firstyear,
+                    first_month: this.firstmonth,
+                    first_month_th: this.getMonthName(this.firstmonth),
+                    last_year: this.lastyear,
+                    last_month:this.lastmonth,
+                    last_month_th: this.getMonthName(this.lastmonth)
+                }
+                // var check = Polymer.dom(this.root).querySelectorAll('.saveData').map(function (item) {
+                //     return item.validate();
+                // }.bind(this))
+                // console.log(check);
+                // const checkStat = function (check) {
+                //     return check == true;
+                // }
+                // if (check.every(checkStat) == true) {
+                if (datas.last_year == '' || datas.last_month == '') {
+                    datas.last_year = '0';
+                    datas.last_month_th = '0';
+                    datas.last_month = '0';
+                }
+                console.log(datas);
+                window.open(
+                    '/api/report/report_quota?quota=' + datas.quota +
+                    '&first_year=' + datas.first_year +
+                    '&first_month=' + datas.first_month +
+                    '&first_month_th=' + datas.first_month_th +
+                    '&last_year=' + datas.last_year +
+                    '&last_month=' + datas.last_month +
+                    '&last_month_th=' + datas.last_month_th+
+                    '&type='+this.selectDoc,
+                    '_blank'
+                );
+                // }
+            },
+            _activeBook: function () {
+                // var check = Polymer.dom(this.root).querySelectorAll('.book_saveData').map(function(item){
+                //     return item.validate();
+                // }.bind(this))
+                // console.log(check);
+                // const checkStat = function(check) {
+                //     return check == true;
+                // }
+                // if(check.every(checkStat) == true){
+
+                var shortFirst = this.getMonthShortName(this.b_fistMonth) + this.b_fistYear//.slice(2, 5);
+                var shortLast = this.getMonthShortName(this.b_lastMonth) + this.b_lastYear//.slice(2, 5);
+                var short = shortFirst + ' - ' + shortLast;
+                var datas = {
+                    notify_month: this.notifyMonth,
+                    notify_month_th: this.getMonthName(this.notifyMonth),
+                    notify_year: this.notifyYear,
+                    exporter_id: this.dataExporter.id,
+                    exporter_name: this.dataExporter.name,
+                    first_month: this.b_fistMonth,
+                    first_month_th: this.getMonthName(this.b_fistMonth),
+                    first_year: this.b_fistYear,
+                    last_month: this.b_lastMonth,
+                    last_month_th: this.getMonthName(this.b_lastMonth),
+                    last_year: this.b_lastYear,
+                    hisDate: this.hisDate,
+                    hisDate_year: this.fillterYearVaddinDate(this.hisDate),
+                    notiDate: this.notiDate,
+                    notiDate_year: this.fillterYearVaddinDate(this.notiDate),
+                    fl: short,
+                }
+                console.log(JSON.stringify(datas));
+                // console.log(datas);
+//it was edited by chon
+                if (datas.last_year == '' || datas.last_month == '') {
+                    datas.last_year = '0';
+                    datas.last_month_th = '0';
+                    datas.last_month = '0';
+                }
+///////////////////
+                window.open(
+                    '/api/report/report_alert?notify_month=' + datas.notify_month +
+                    '&notify_month_th=' + datas.notify_month_th +
+                    '&notify_year=' + datas.notify_year +
+                    '&exporter_id=' + datas.exporter_id +
+                    '&exporter_name=' + datas.exporter_name +
+                    '&first_month=' + datas.first_month +
+                    '&first_month_th=' + datas.first_month_th +
+                    '&first_year=' + datas.first_year +
+                    '&last_month=' + datas.last_month +
+                    '&last_month_th=' + datas.last_month_th +
+                    '&last_year=' + datas.last_year +
+                    '&hisDate=' + datas.hisDate +
+                    '&hisDate_year=' + datas.hisDate_year +
+                    '&notiDate=' + datas.notiDate +
+                    '&notiDate_year=' + datas.notiDate_year +
+                    '&fl=' + datas.fl+
+                    '&type='+this.selectDoc,
+                    '_blank'
+                )
+                // } 
+            }
+        });
+    </script>
+</dom-module>

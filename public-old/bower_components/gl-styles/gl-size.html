@@ -1,0 +1,72 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`gl-color`
+gl-color for web components
+
+@demo demo/index.html
+-->
+
+<dom-module id="gl-size">
+    <template>
+    <style>
+      :root {
+       --font-size-default:          16px;
+       --font-size-large:         calc(var(--font-size-default) * 1.25);/*// ~20px*/
+       --font-size-small:         calc(var(--font-size-default) * 0.85); /*// ~14px*/
+       
+
+       --font-size-h1:            calc(var(--font-size-default) * 2.6);  /*// ~42px*/
+       --font-size-h2:            calc(var(--font-size-default) * 2.15); /*// ~34px*/
+       --font-size-h3:            calc(var(--font-size-default) * 1.7); /*// ~27px*/
+       --font-size-h4:            calc(var(--font-size-default) * 1.25); /*// ~20px*/
+       --font-size-h5:            var(--font-size-default);               /*// ~16px*/
+       --font-size-h6:            var(--font-size-small);                /*// ~14px*/
+      
+       --gl-font-family: {
+         font-family: 'tahoma', sans-serif;
+         -webkit-font-smoothing: antialiased;
+        }
+        --gl-margin: {
+            margin: 1px;
+        }
+      }
+      .gl-ex-large {
+        font-size: calc(var(--font-size-default) * 2);
+        padding: 14px 16px 14px 16px;
+        margin: var(--gl-margin);
+         @apply --gl-font-family; 
+      }
+      .gl-large {
+        font-size: var(--font-size-h3);
+        padding: 10px 16px 10px 16px;
+        margin: var(--gl-margin);  
+        @apply --gl-font-family; 
+      }
+      .gl-default {
+        font-size: var(--font-size-large);
+        padding: 6px 12px 6px 12px;
+        margin: var(--gl-margin);  
+        @apply --gl-font-family; 
+      }
+      .gl-small {
+        font-size: var(--font-size-large);
+        padding: 5px 10px 5px 10px;
+        margin: var(--gl-margin); 
+        @apply --gl-font-family; 
+      }
+      .gl-ex-small {
+        font-size: var(--font-size-large);
+        padding: 1px 8px 1px 8px;
+        margin: var(--gl-margin);
+        @apply --gl-font-family; 
+      }
+    </style>
+  </template>
+
+    <script>
+        Polymer({
+            is: 'gl-size',
+        });
+    </script>
+</dom-module>

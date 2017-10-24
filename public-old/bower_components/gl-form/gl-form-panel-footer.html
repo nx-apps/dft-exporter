@@ -1,0 +1,62 @@
+
+
+<link rel="import" href="./../polymer/polymer.html">
+<link rel="import" href="./../iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="gl-form-panel-footer">
+    <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment">
+        .container{
+            padding: var(--gl-set-padding);
+        }
+        .fontSize{
+            font-size: var(--gl-font-size);
+            font-family: 'rsuregular';
+            font-weight: bold;
+        }
+    </style>
+    <template>
+        <div class="container">
+            <div class="horizontal justified layout">
+                <div>
+                    <div class="fontSize">
+                        {{label}}
+                    </div>
+                    <div>
+                        {{labelContent}}
+                    </div>
+                </div>
+                <div>
+                    <content></content>
+                </div>
+            </div>
+           
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'gl-form-panel-footer',
+            properties:{
+                label:{
+                    type: String
+                },
+                labelContent:{
+                    type: String
+                },
+                fontSize:{
+                    type: String,
+                    value: '30px'
+                },
+                setPadding:{
+                    type: String,
+                    value: '20px'
+                }
+            },
+            ready:function(){
+                this.customStyle['--gl-font-size'] = this.fontSize;
+                this.customStyle['--gl-set-padding'] = this.setPadding;
+            }
+        });
+    </script>
+</dom-module>
+
+

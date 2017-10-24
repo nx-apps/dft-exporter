@@ -1,12 +1,10 @@
 export const common = {
     th:{
         foo:'ก',
-        baa:'ข',
-        menu:'เมนู'
+        baa:'ข'
     },
     en:{
         foo:'a',
-        baa:'b',
-        menu:'Menu'
+        baa:'b'
     }
 };

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    
+    <link rel="import" href="./src/nylon-panel-right.html">
+    
+</head>
+<body>
+    
+    <nylon-panel-right title="หัวข้อ" id="test">
+       
+    </nylon-panel-right>
+    <button onclick="clickMe()">Click</button>
+    
+    <script>
+        function clickMe(){
+           document.querySelector('#test').open();
+        }
+    </script>
+</body>
+</html>

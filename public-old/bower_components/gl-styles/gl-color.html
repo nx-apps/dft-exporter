@@ -1,0 +1,121 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`gl-color`
+gl-color for web components
+
+@demo demo/index.html
+-->
+
+<dom-module id="gl-color">
+    <template>
+    <style>
+      :root{
+        /*patten form bootstap*/
+        --gl-primary-color: #337ab7;
+        --gl-success-color: #5cb85c;
+        --gl-info-color: #5bc0de;
+        --gl-warning-color: #f0ad4e;
+        --gl-danger-color: #d9534f;
+
+        --gl-gray-darker-color:#222;
+        --gl-gray-dark-color:#333;
+        --gl-gray-color:#555;
+        --gl-gray-light-color:#777;
+        --gl-gray-lighter-color:#eee;
+
+        --gl-white-color:#FFFFFF;
+
+        --gl-primary-font-color: #2E2EFE;
+        --gl-success-font-color: #008000;
+        --gl-info-font-color: #1E90FF;
+        --gl-warning-font-color: #FAAC58;
+        --gl-danger-font-color: 	#FF0000;
+
+        --gl-padding: 15px;
+        --gl-padding-btn: 10px 15px 10px 15px;
+        --gl-btn-min-hight: 20px;
+        --gl-btn-min-width: 100px;
+        --gl-btn-margin:5px 10px 5px 10px;
+
+        --gl-icon-hight:20px;
+        --gl-icon-width:20px;
+      }
+      /*bg*/
+      .gl-bg-primary {
+        background-color: var(--gl-primary-color);
+        color: var(--gl-white-color);
+        padding: var(--gl-padding);
+      }
+      .gl-bg-success {
+        background-color: var(--gl-success-color);
+        color: var(--gl-white-color);
+        padding: var(--gl-padding);
+      }
+      .gl-bg-info {
+        background-color: var(--gl-info-color);
+        color: var(--gl-white-color);
+        padding: var(--gl-padding);
+      }
+      .gl-bg-warning {
+        background-color: var(--gl-warning-color);
+        color: var(--gl-white-color);
+        padding: var(--gl-padding);
+      }
+      .gl-bg-danger {
+        background-color: var(--gl-danger-color);
+        color: var(--gl-white-color);
+        padding: var(--gl-padding);
+      }
+       /*end bg */
+      /*btn*/
+       .gl-btn-primary {
+        background-color: var(--gl-primary-color);
+        color: var(--gl-white-color);
+        min-height:var(--gl-btn-min-hight);
+        min-width:var(--gl-btn-min-width);
+        margin: var(--gl-btn-margin);
+      }
+      .gl-btn-success {
+        background-color: var(--gl-success-color);
+        color: var(--gl-white-color);
+        min-height:var(--gl-btn-min-hight);
+        min-width:var(--gl-btn-min-width);
+        margin: var(--gl-btn-margin);
+      }
+      .gl-btn-info {
+        background-color: var(--gl-info-color);
+        color: var(--gl-white-color);
+        min-height:var(--gl-btn-min-hight);
+        min-width:var(--gl-btn-min-width);
+        margin: var(--gl-btn-margin);
+      }
+      .gl-btn-warning {
+        background-color: var(--gl-warning-color);
+        color: var(--gl-white-color);
+        min-height:var(--gl-btn-min-hight);
+        min-width:var(--gl-btn-min-width);
+        margin: var(--gl-btn-margin);
+      }
+      .gl-btn-danger {
+        background-color: var(--gl-danger-color);
+        color: var(--gl-white-color);
+        min-height:var(--gl-btn-min-hight);
+        min-width:var(--gl-btn-min-width);
+        margin: var(--gl-btn-margin);
+      }
+       /*end btn*/
+      .gl-icon-size {
+        height:var(--gl-icon-hight);
+        width:var(--gl-icon-width);
+        padding-right: 5px;
+       }
+    </style>
+  </template>
+
+    <script>
+        Polymer({
+            is: 'gl-color',
+        });
+    </script>
+</dom-module>

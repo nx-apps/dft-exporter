@@ -1,0 +1,211 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../../bower_components/juicy-table-repeat/juicy-table-repeat.html">
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="./../../../../bower_components/vaadin-grid/vaadin-grid-column-group.html">
+<link rel="import" href="./../../components/custom-grid-zoom.html">
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="./../../components/format-number-behavior.html">
+<link rel="import" href="./../../../month-behavior.html">
+
+
+<dom-module id="money-list">
+    <template>
+        <style include="shared-styles">
+            .textCenter{
+                text-align: center;
+            }
+        </style>
+        <!--<custom-grid-zoom>-->
+        <vaadin-grid slot="grid" id="material" aria-label="Basic Binding Example" items="[[data]]" size="200">
+            <vaadin-grid-column flex-grow="0">
+                <template class="header"><div class="textCenter">ลำดับ</div></template>
+                <template> <div class="textCenter">[[num(index)]]</div></template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="200px">
+                <template class="header">ว/ด/ป ที่รับเงิน</template>
+                <template>[[converDate(item.pay_date)]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="200px">
+                <template class="header">เลขที่ใบเสร็จ</template>
+                <template>[[item.id]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="300px">
+                <template class="header">บริษัท</template>
+                <template>[[item.exporter_name]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column-group>
+                <template class="header">EC</template>
+                    <vaadin-grid-column width="200px">
+                        <template class="header">เลขที่ ec</template>
+                        <template>[[item.ec_number]]</template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column width="200px">
+                        <template class="header">วันที่ ec</template>
+                        <template>[[converDate(item.req_date)]]</template>
+                    </vaadin-grid-column>
+            </vaadin-grid-column-group>
+
+            <vaadin-grid-column width="200px"> 
+                <template class="header">ปริมาณ (ตัน)</template>
+                <template>[[item.quantity]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="200px">
+                <template class="header">ราคา/ตัน <br> (* [[formatNumber(price,'0\,0')]])</template>
+                <template>[[mathData(item.price,item.quantity)]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column-group>
+                <template class="header">เช็คค่าธรรมเนียม</template>
+                    <!--<vaadin-grid-column flex-grow="0">
+                        <template class="header">เลขที่</template>
+                        <template>[[item.check_number]]</template>
+                    </vaadin-grid-column>-->
+
+                    <vaadin-grid-column width="300px">
+                        <template class="header">ธนาคาร</template>
+                        <template>[[item.bank_name]]</template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column width="200px">
+                        <template class="header">สาขา</template>
+                        <template>[[item.bank_branch]]</template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column width="200px">
+                        <template class="header">เลขที่</template>
+                        <template>[[item.check_number]]</template>
+                    </vaadin-grid-column>
+
+                    <vaadin-grid-column width="200px">
+                        <template class="header">วันที่</template>
+                        <template>[[converDate(item.pay_date)]]</template>
+                    </vaadin-grid-column>
+            </vaadin-grid-column-group>
+
+            <vaadin-grid-column width="200px">
+                <template class="header">จำนวนเงิน</template>
+                <template>[[fillter_list_count(item.total,item.list_count)]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="200px">
+                <template class="header">ประเภท</template>
+                <template>[[item.type_name]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="300px">
+                <template class="header">หมายเหตุ</template>
+                <template>[[item.note]]</template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column flex-grow="0" width="100px">
+                <template class="header">ออกใบเสร็จ</template>
+                <template>
+                    <paper-icon-button icon="icons:content-paste" on-tap="openReceipt"></paper-icon-button>
+                </template>
+            </vaadin-grid-column>
+            <vaadin-grid-column flex-grow="0" width="100px">
+                <template class="header">แก้ไขใบเสร็จ</template>
+                <template>
+                    <paper-icon-button disabled="{{item.check}}" icon="icons:create" on-tap="updateReceipt"></paper-icon-button>
+                </template>
+            </vaadin-grid-column>
+             <vaadin-grid-column flex-grow="0" width="100px">
+                <template class="header">ยกเลิกใบเสร็จ</template>
+                <template>
+                    <paper-icon-button disabled="{{item.check}}" icon="icons:cancel" on-tap="confirmReceipt"></paper-icon-button>
+                </template>
+            </vaadin-grid-column> 
+        </vaadin-grid>
+        <!--</custom-grid-zoom>-->
+    </template>
+    <script>
+        Polymer({
+            is: 'money-list',
+            behaviors:[ReduxBehavior,FormatNumberBehavior,MonthBehavior],
+            properties: {
+                select:{
+                    type:Object,
+                    value:{}
+                }
+            },
+            num:function(index){
+                return index+1;
+            },
+            converDate:function(val){
+                if(typeof val != 'undefined' && val != ''){
+                    // console.log(val);
+                    var arr = val.split('-');
+                    if(parseInt(arr[1]) >= 10){
+                        return arr[arr.length-1]+' '+this.getMonthShortName(arr[1])+' '+(parseInt(arr[0])+543);
+                    }
+                    else{
+                        if(arr[1].split('0').length == 2){
+                            var newMonth = arr[1].split('0');
+                            // console.log(arr[1].split('0'));
+                            return arr[arr.length-1]+' '+this.getMonthShortName(newMonth[1])+' '+(parseInt(arr[0])+543);
+                        }
+                        else{
+                            console.log(arr)
+                            var result = arr[arr.length-1]+' '+this.getMonthShortName(arr[1])+' '+(parseInt(arr[0])+543);
+                            return result;
+                        }
+                    } 
+                   
+                    // console.log(arr);
+                }
+            },
+            mathData:function(price,amount){
+                return this.formatNumber(price*amount);
+            },
+            fillter_list_count:function(total,list){
+                if(list == 1){
+                     return this.formatNumber(total);
+                }
+                else {
+                    return '-'
+                }
+            },
+            openReceipt:function(e){
+                this.fire('open-panel',{page:1,id:e.model.item.id});
+                // window.open('/api/payment/printReceipt?id='+e.model.item.id,'_blank'); 
+                // console.log(e.model.item.id);
+            },
+            confirmReceipt:function(e){
+                this.fire('toast',{ 
+                 status:'openDialog',
+                 text:'ต้องการลบข้อมูลใช่หรือไม่ ?',
+                 confirmed:this.deleteReceipt.bind(this), 
+                 data:e.model.item.id 
+                 })
+            },
+            updateReceipt:function(e){
+                // console.log(e.model.item.id);
+                var id = e.model.item.id;
+                this.dispatchAction('FEE_RECEIPT_SELECT',id)
+                this.fire('open-panel',{page:0})
+            },
+            deleteReceipt:function(check,val){
+                if(check==true){
+                    this.dispatchAction('FEE_DATA_DELETE',val.data)
+                    .then((response)=>{
+                        this.dispatchAction('FEE_GET_PRINT_LIST',this.select);
+                    })
+                    .catch((error)=>{
+                        console.log('error');
+                        console.log(error);
+                    });
+                }
+               
+            }
+        });
+    </script>
+</dom-module>

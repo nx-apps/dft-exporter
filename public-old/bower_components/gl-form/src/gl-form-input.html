@@ -1,0 +1,250 @@
+<!--<link rel="import" href="../bower_components/paper-input/paper-input.html">-->
+<link rel="import" href="../bower_components/iron-input/iron-input.html">
+<link rel="import" href="../bower_components/iron-form-element-behavior/iron-form-element-behavior.html">
+<link rel="import" href="../bower_components/paper-input/paper-input-error.html">
+<link rel="import" href="../bower_components/paper-input/paper-input-behavior.html">
+<link rel="import" href="../bower_components/paper-input/paper-input-char-counter.html">
+<link rel="import" href="../bower_components/paper-input/paper-input-container.html">
+<link rel="import" href="./../bower_components/numeral-js/numeral-js.html">
+<script src="./../bower_components/numeral/min/numeral.min.js"></script>
+<link rel="import" href="../bower_components/gl-font/gl-cschatthai-font.html">
+<link rel="import" href="../bower_components/gl-font/gl-rsu-font.html">
+
+<!--include="gl-rsu-font"-->
+<dom-module id="gl-form-input">
+  <style>
+     :host {
+      display: block;
+    }
+    
+     :host([focused]) {
+      outline: none;
+    }
+    
+     :host([hidden]) {
+      display: none !important;
+    }
+    
+    input::-webkit-input-placeholder {
+      color: var(--paper-input-container-color, --secondary-text-color);
+    }
+    
+    input:-moz-placeholder {
+      color: var(--paper-input-container-color, --secondary-text-color);
+    }
+    
+    input::-moz-placeholder {
+      color: var(--paper-input-container-color, --secondary-text-color);
+    }
+    
+    input:-ms-input-placeholder {
+      color: var(--paper-input-container-color, --secondary-text-color);
+    }
+    
+    label {
+      pointer-events: none;
+      font-family: 'CSChatThaiUI', sans-serif !important;
+      -webkit-font-smoothing: antialiased;
+      font-weight: bold !important;
+      font-size: 18px !important;
+    }
+    
+    input {
+      font-family: 'CSChatThaiUI', sans-serif !important;
+      -webkit-font-smoothing: antialiased;
+    }
+    /*input[type=text]{
+        text-align: right !important;
+      }*/
+    
+    numeral-js {
+      position: absolute;
+      font-size: 16px;
+      top: 26px;
+      right: 0%;
+    }
+    
+    paper-input-container {
+      --paper-input-container-disabled: {
+        opacity: 1;
+        @apply(--gl-form-input-container-disabled);
+      }
+      --paper-input-container-label: {
+        color: var(--paper-input-label-color-success);
+        @apply(--gl-form-input-label-color-success);
+      }
+      --paper-input-container-underline: {
+        border-bottom: var(--paper-input-border-success);
+        @apply(--gl-form-input-border-success);
+      }
+      --paper-input-container-underline-disabled: {
+        display: none;
+        @apply(--gl-form-input-container-underline-disabled);
+      }
+      --paper-input-container-label-floating: {
+        font-size: 20px;
+        @apply(--gl-form-input-container-label-floating);
+      }
+    }
+    
+    .hide {
+      display: var(--paper-input-show-number);
+    }
+    
+    .requried {
+      color: #FE2E2E;
+      padding: 2px;
+      margin-top: -10px;
+      /*position: relative;
+        top: 22px;
+        left: -5px;*/
+    }
+  </style>
+  <template>
+
+    <paper-input-container no-label-float="[[noLabelFloat]]" always-float-label="[[_computeAlwaysFloatLabel(alwaysFloatLabel,placeholder)]]"
+      auto-validate$="{{autoValidate}}" disabled$="[[disabled]]" invalid="[[invalid]]">
+
+      <content select="[prefix]"></content>
+
+      <label hidden$="[[!label]]" aria-hidden="true" for="input">[[label]]<span class="requried" hidden>*</span></label>
+
+      <input is="iron-input" id="input" aria-labelledby$="[[_ariaLabelledBy]]" aria-describedby$="[[_ariaDescribedBy]]" disabled$="[[disabled]]"
+        title$="[[title]]" bind-value="{{value}}" invalid="{{invalid}}" prevent-invalid-input="[[preventInvalidInput]]" allowed-pattern="[[allowedPattern]]"
+        validator="[[validator]]" type$="[[type]]" pattern$="[[pattern]]" required$="[[required]]" autocomplete$="[[autocomplete]]"
+        autofocus$="[[autofocus]]" inputmode$="[[inputmode]]" minlength$="[[minlength]]" maxlength$="[[maxlength]]" min$="[[min]]"
+        max$="[[max]]" step$="[[step]]" name$="[[name]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]" list$="[[list]]"
+        size$="[[size]]" autocapitalize$="[[autocapitalize]]" autocorrect$="[[autocorrect]]" on-change="_onChange" tabindex$="[[tabindex]]"
+        autosave$="[[autosave]]" results$="[[results]]" accept$="[[accept]]" multiple$="[[multiple]]" on-blur="InputOnBlur"
+        on-focus="InputOnFocus" on-input="disText">
+      <content select="[suffix]"></content>
+      <template is="dom-if" if="[[errorMessage]]">
+        <paper-input-error aria-live="assertive">[[errorMessage]]</paper-input-error>
+      </template>
+
+      <!--<div class="hide">
+           <numeral-js number="{{dataFormatNumber}}" format="{{formatNumber}}" print></numeral-js>
+        </div>-->
+
+
+      <template is="dom-if" if="[[charCounter]]">
+        <paper-input-char-counter></paper-input-char-counter>
+      </template>
+
+    </paper-input-container>
+  </template>
+  <script>
+    Polymer({
+      is: 'gl-form-input',
+      behaviors: [
+        Polymer.IronFormElementBehavior,
+        Polymer.PaperInputBehavior
+      ],
+      observers: ['numberPattle(value)'],
+      properties: {
+        formatNumber: {
+          type: String,
+          value: 'off',
+          observer: 'checkFormat'
+        },
+        required: {
+          observer: 'checkRequired'
+        },
+        activeColor: {
+          type: String,
+          value: 'on'
+        }
+      },
+      checkFormat: function () {
+        return typeof this.formatNumber == 'string';
+      },
+      checkRequired: function (e) {
+        if (e == true) {
+          // console.log('e', e)
+          this.$$('.requried').removeAttribute('hidden');
+        }
+      },
+      disText: function () {
+        if (this.formatNumber == 'on') {
+          let charReg = /[a-z||A-Z||ก-ฮ||]/;
+          let pattern = /[^-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/;
+          if (this.$$('input').value.match(charReg)) {
+            // console.log('error');
+            this.$$('input').value = this.$$('input').value.replace(charReg, '');
+            // x2 = '';
+          }
+
+        }
+      },
+      numberPattle: function (Num) {
+        if (this.value != '') {
+          this.$$('.requried').setAttribute("hidden", true);
+        }
+        else if (this.$$('input').required == true) {
+          this.$$('.requried').removeAttribute('hidden');
+        }
+
+        if (this.formatNumber == 'on') {
+          // console.log('num',Num);
+          if (typeof Num == 'undefined') {
+            return ''
+          }
+          else {
+            Num += '';
+            Num = Num.replace(/,/g, '');
+            x = Num.split('.');
+            x1 = x[0];
+            x2 = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(x1))
+              x1 = x1.replace(rgx, '$1' + ',' + '$2');
+            this.$$('input').value = x1 + x2;
+
+          }
+        }
+      },
+      InputOnBlur: function (e) {
+        if (this.activeColor == 'on') {
+          e.target.validate;
+          if (e.target.validate()) {
+            this.customStyle['--paper-input-border-success'] = "1px solid green";
+            this.customStyle['--paper-input-label-color-success'] = "green";
+          }
+          this.updateStyles();
+        }
+
+      },
+      InputOnFocus: function (e) {
+        if (this.activeColor == 'off') {
+          this.customStyle['--paper-input-label-color-success'] = "#737373";
+          this.customStyle['--paper-input-label-color-success'] = "#737373";
+          this.updateStyles();
+        }
+      },
+      getValue: function () {
+        this.value.toString();
+        let charReg = /[a-z||A-Z||ก-ฮ]/;
+        if (this.value.match(charReg)) {
+          var data = this.value;
+          return data;
+        }
+        else {
+          var data = numeral().unformat(this.value);
+          return data;
+        }
+
+      },
+      reset: function () {
+        if (this.required == true) {
+          this.$$('input').removeAttribute('required');
+          this.$$('input').validate();
+          this.$$('input').setAttribute("required", true);
+        }
+        this.customStyle['--paper-input-border-success'] = "1px solid #737373";
+        this.customStyle['--paper-input-label-color-success'] = "#737373";
+        this.customStyle['--paper-input-container-color'] = "#737373";
+        this.updateStyles();
+      }
+    });
+  </script>
+</dom-module>

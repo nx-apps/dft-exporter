@@ -1,0 +1,27 @@
+{
+  "name": "gl-search-input",
+  "main": "gl-search-input.html",
+  "version": "0.0.12",
+  "authors": [
+    "tonsai-j <tonsai.j@nexts-corp.com>",
+    "Nutthawut-Ice <nutthawut.l@nexts-corp.com>"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.4.0",
+    "paper-item": "PolymerElements/paper-item#^1.2.1",
+    "paper-listbox": "polymerelements/paper-listbox#^1.1.2",
+    "iron-form": "PolymerElements/iron-form#^1.1.4",
+    "iron-icons": "PolymerElements/iron-icons#^1.1.3",
+    "vaadin-date-picker": "glon-gl-date-picker#^0.0.3",
+    "paper-button": "PolymerElements/paper-button#^1.0.13",
+    "gl-styles": "9lon-gl-styles#^0.0.11",
+    "gl-grid": "glon-gl-grid#^0.1.2",
+    "gl-form": "glon-gl-form#^0.2.5"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  }
+}

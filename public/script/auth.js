@@ -2,8 +2,6 @@ import axios from './axios'
 import {baseURL} from './config'
 
 
-
-
 export function handleAuth(store){
     var path = window.location.pathname.split("/");
  

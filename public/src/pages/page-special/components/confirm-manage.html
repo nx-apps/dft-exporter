@@ -1,0 +1,418 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../nylon-behavior.html">
+<link rel="import" href="../../components/page-header.html">
+<link rel="import" href="../../components/page-panel.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../components/format-number-behavior.html">
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="../../../month-behavior.html">
+
+<link rel="import" href="./../../components/nylon-input.html">
+
+<dom-module id="confirm-manage">
+
+  <template>
+    <style include="shared-styles">
+      /*.margin {
+        margin-top: -10px;
+      }*/
+    </style>
+
+
+    <page-panel label="รายละเอียดปริมาณจัดสรร บริษัท {{data.allocate_detail.exporter_name}}">
+      <div class="row start-xs">
+        <div class="col-xs-6">
+          <div class="box">
+            <!--<paper-input label="ชื่อบริษัท(ไทย)" readonly></paper-input>-->
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="row">
+          <div class="col-xs-1">
+            <div class="box">
+
+            </div>
+          </div>
+          <div class="col-xs-2">
+            <div class="box">
+              ปริมาณโควตารวม :
+            </div>
+          </div>
+          <div class="col-xs-2">
+            <div class="box">
+              {{formatNumber(data.allocate_detail.amount)}}
+            </div>
+          </div>
+          <div class="col-xs-2">
+            <div class="box">
+
+            </div>
+          </div>
+          <div class="col-xs-2">
+            <div class="box">
+              ปริมาณโควตารวม
+            </div>
+          </div>
+          <div class="col-xs-2">
+            <div class="box">
+              <nylon-input class="margin" on-input="mathPercents" value="{{data.allocate_detail.amount_update}}" format-number no-label-float></nylon-input>
+            </div>
+          </div>
+          <div class="col-xs-1">
+            <div class="box">
+
+            </div>
+          </div>
+        </div>
+      </div>
+      <template is="dom-repeat" items="{{data.allocate_detail.quantity}}">
+        <div class="section">
+          <div class="row">
+            <div class="col-xs-1">
+              <div class="box">
+              </div>
+            </div>
+            <div class="col-xs-2">
+              <div class="box">
+                ปริมาณ งวดที่ {{item.period}} [[getMonthShortName(item.month)]]
+              </div>
+            </div>
+            <div class="col-xs-2">
+              <div class="box">
+                {{formatNumber(item.weight)}}
+              </div>
+            </div>
+            <div class="col-xs-2">
+              <div class="box">
+
+              </div>
+            </div>
+            <div class="col-xs-2">
+              <div class="box">
+                ปริมาณ งวดที่ {{item.period}} [[getMonthShortName(item.month)]]
+              </div>
+            </div>
+            <div class="col-xs-2">
+              <div class="box">
+                <!--{{item.weight_update}}-->
+                <nylon-input on-input="sumAmount" no-label-float value="{{item.weight_update}}"></nylon-input>
+                <!--<nylon-input class="margin" on-input="sumAmount" value="[[mathPercent(item,data.allocate_detail.amount_update,index)]]" format-number no-label-float></nylon-input>-->
+              </div>
+            </div>
+            <div class="col-xs-1">
+              <div class="box">
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+
+      <div class="row end-xs">
+        <div class="col-xs-6">
+          <div style="text-align : right;">
+            <!--<paper-button class$="{{setClass}}" on-tap="_saveData" raised>{{btnName}}</paper-button>-->
+            <template is="dom-if" if="{{status}}">
+              <paper-button class="gl-btn-danger" style="margin-right:0" on-tap="_cancelData" raised>ยกเลิกส่วนจัดสรร</paper-button>
+            </template>
+            <template is="dom-if" if="{{!status}}">
+              <paper-button class="gl-btn-danger" style="margin-right:0" on-tap="_noSaveData" raised>ไม่รับส่วนจัดสรร</paper-button>
+              <paper-button class="gl-btn-primary" style="margin-right:0" on-tap="_saveData" raised>ยืนยันส่วนจัดสรร</paper-button>
+            </template>
+          </div>
+        </div>
+      </div>
+
+    </page-panel>
+    <div class="white-space"></div>
+    <page-panel label="โอนส่วนจัดสรร" hidden="{{!status}}">
+      <div class="row around-xs">
+        <div class="col-xs-1"></div>
+        <div class="col-xs-3">
+          <div class="box"> 
+            <paper-input label="บริษัท" value="{{data.allocate_detail.exporter_name}}" readonly></paper-input>
+          </div>
+        </div>
+        <div class="col-xs-4">
+          <div class="box" style="padding-top:30px;text-align:center">
+            โอนส่วนจัดสรรให้กับ
+          </div>
+        </div>
+        <div class="col-xs-3">
+          <div class="box">
+            <vaadin-combo-box label="บริษัท" placeholder="{{textExporter}}" items="{{newExporter}}" item-label-path="exporter_name" item-value-path="exporter_id"
+              value="{{selectExporter}}">
+              	<template>
+								  [[item.exporter_name]]
+							  </template> 
+            </vaadin-combo-box>
+          </div>
+        </div>
+        <div class="col-xs-1"></div>
+      </div>
+
+      <div class="row end-xs">
+        <div class="col-xs-6">
+          <div style="text-align :right;">
+            <paper-button class="gl-btn-primary" style="margin-right:0" on-tap="_transferData" raised>โอนส่วนจัดสรร</paper-button>
+          </div>
+        </div>
+      </div>
+    </page-panel>
+
+
+  </template>
+  <script>
+    Polymer({
+      is: "confirm-manage",
+      observers: ['setExporter(data.allocate_detail.exporter_id,exporter.allocate_detail)'],
+      behaviors: [ReduxBehavior, FormatNumberBehavior, MonthBehavior],
+      properties: {
+        data: {
+         statePath: 'confirm.data'
+        },
+        status: {
+          type: Boolean,
+          value: false
+        },
+        exporter: {
+          statePath:'confirm.exporter'
+        },
+        newExporter:{
+          type:Array,
+          value:[]
+        },
+        dataSelect:{
+          type:Object,
+          value:{}
+        },
+        textExporter:String
+      },
+      setExporter: function (val,exporter) {
+        // console.log('*',val);
+        //  this.textExporter = 'กำลังโหลด...'
+        if(typeof val != 'undefined' && typeof this.exporter.allocate_detail  != 'undefined'){
+          this.selectExporter = '';
+          console.log(val,this.exporter.allocate_detail);
+          this.newExporter = this.exporter.allocate_detail.filter((item)=>{
+            return item.exporter_id != val
+          })
+          this.textExporter = 'มีข้อมูลทั้งหมด'+this.newExporter.length+'รายการ'
+         
+          // console.log(newExporter);
+        }
+        // console.log(this.exporter.confirm.allocate_detail);
+        // if (val) {
+        //   var myExporter_id = this.data.exporter_id;
+        //   console.log(myExporter_id,this.exporter.allocate_detail);
+        //   // console.log('*',this.exporter.allocate_detail);
+        //   this.listExporter = this.exporter.confirm.allocate_detail.filter(function (item) {
+        //     return myExporter_id != item.exporter_id;
+        //   })
+        //   console.log(this.listExporter);
+        // }
+        // else {
+        //   this.listExporter = [];
+        // }
+      },
+      mathPercents:function(e){
+        console.log(this.data.allocate_detail.quantity);
+        var value = this.unFormat(e.currentTarget.value);
+        if(value != this.data.allocate_detail.amount){
+            this.newQuantity = this.data.allocate_detail.quantity.map((item,index)=>{
+              var answer = value * item.percent/100;
+              item.weight_update = answer;
+              this.notifyPath('data.allocate_detail.quantity.'+index+'.weight_update',answer);
+              return item;
+            })
+          // this.data.allocate_detail.quantity.concat(newQuantity);
+          
+          // this.set('data.allocate_detail.quantity',newQuantity)
+          // console.log(newQuantity)
+          //  this.set('data.allocate_detail.quantity')
+        } 
+        else  if(value == this.data.allocate_detail.amount){
+            this.data.allocate_detail.quantity.map((item,index)=>{
+              this.notifyPath('data.allocate_detail.quantity.'+index+'.weight_update',item.weight);
+              // return item;
+            })
+        }
+        console.log(e.currentTarget.value);
+      },
+      mathPercent: function (item, amount_update, index) {
+        // console.log(item, amount_update, index);
+        // console.log(amount_update);
+        if (this.data.allocate_detail.amount != amount_update) {
+          this.data.allocate_detail.quantity[index].weight_update = this.unFormat(amount_update) * item.percent / 100;
+          console.log(this.data.allocate_detail.quantity)
+          return this.unFormat(amount_update) * item.percent / 100;
+        }
+        if (this.data.allocate_detail.amount == amount_update) {
+          this.data.allocate_detail.quantity[index].weight_update = item.weight;
+          console.log(this.data.allocate_detail.quantity);
+          // console.log('default',item.weight);
+          return this.unFormat(item.weight);
+        }
+      },
+      sumAmount:function(e){
+        // this.data.allocate_detail.quantity[index].weight = e.model.item.value
+        // console.log(e.model.index,e.currentTarget.value);
+        var index = e.model.index;
+        var value = this.unFormat(e.currentTarget.value);
+        this.data.allocate_detail.quantity[index].weight_update = value;
+        var sum = 0;
+        this.data.allocate_detail.quantity.map((item)=>{
+          sum += item.weight_update;
+        })
+        this.set('data.allocate_detail.amount_update',sum);
+        // console.log(this.data.allocate_detail.quantity,sum);
+      },
+      _transferData: function () {
+        var quantitTransfer = this.data.allocate_detail.quantity.map(function (item) {
+          var { period, weight } = item;
+          var newitem = { period, weight };
+          newitem.weight = this.unFormat(item.weight_update);
+          return newitem;
+        }.bind(this));
+        // var exporterName = this.listExporter.filter((item)=>{
+        //   return item.exporter_id == this.selectExporter
+        // })
+        // console.log(exporterName);
+        var transfer = {
+          id: this.data.allocate_detail.id,
+          amount: this.unFormat(this.data.allocate_detail.amount_update),
+          exporter_id: this.selectExporter,
+          exporter_transfer: this.data.allocate_detail.exporter_name,
+          quantity: quantitTransfer,
+          quota_id: this.data.quota_id,
+          calculate_id: this.data.allocate_detail.calculate_id,
+          allocate_id: this.data.allocate_detail.allocate_id
+        }
+        console.log(transfer);
+        // this.fire('toast', { status: 'load' });
+        // this.dispatchAction('CONFIRM_TRANFER', transfer)
+        //   .then(() => {
+        //     this.fire('toast', {
+        //       status: 'success', text: 'บันทึกสำเร็จ',
+        //       callback: () => {
+        //         this.dispatchAction('CONFORM_GET_DATA', this.dataSelect);
+        //       }
+        //     });
+        //   })
+        //   .catch((error) => {
+        //     this.fire('toast', {
+        //       status: 'connectError', text: error,
+        //       callback: function () {
+        //       }
+        //     })
+        //   })
+        // this.fire('transfer-data', transfer)
+        // console.log(transfer);
+      },
+      _cancelData: function () {
+        var newData = []
+        newData[0] = {
+          allocate_id: this.data.allocate_detail.allocate_id
+        }
+        // console.log(newData);
+        this.fire('toast', { status: 'load' });
+        this.dispatchAction('CONFIRM_CANCEL_EXPORTER', newData)
+          .then((res) => {
+            this.fire('toast', {
+              status: 'success', text: 'บันทึกสำเร็จ',
+              callback: () => {
+                this.dispatchAction('CONFORM_GET_DATA', this.dataSelect);
+              }
+            });
+          })
+          .catch((error) => {
+            this.fire('toast', {
+              status: 'connectError', text: error,
+              callback: function () {
+              }
+            })
+          })
+      },
+      _saveData: function () {
+        console.log(this.newQuantity)
+        var quantityUpdate = this.newQuantity.map(function (item) {
+          var { period, weight } = item;
+          var newitem = { period, weight };
+          newitem.weight = this.unFormat(item.weight_update);
+          return newitem;
+        }.bind(this));
+        var datas = [
+          {
+            amount: this.unFormat(this.data.allocate_detail.amount_update),
+            exporter_id: this.data.allocate_detail.exporter_id,
+            quantity: quantityUpdate,
+            quota_id: this.data.quota_id,
+            allocate_id: this.data.allocate_detail.id
+          }
+        ]
+        if(datas[0].amount <= this.data.allocate_detail.amount){
+            // console.log(this.dataSelect);
+            this.fire('toast', { status: 'load' });
+            this.dispatchAction('CONFIRM_CONFIRM_EXPORTER', datas)
+              .then((res) => {
+                this.fire('toast', {
+                  status: 'success', text: 'บันทึกสำเร็จ',
+                  callback: () => {
+                    this.dispatchAction('CONFORM_GET_DATA', this.dataSelect);
+                  }
+                });
+              })
+              .catch((error) => {
+                this.fire('toast', {
+                  status: 'connectError', text: error,
+                  callback: function () {
+                  }
+                })
+              })
+        }
+       
+       
+      },
+      _noSaveData: function () {
+        var quantityUpdate = this.data.quantity.map(function (item) {
+          var { period, weight } = item;
+          var newitem = { period, weight };
+          newitem.weight = 0;
+          return newitem;
+        }.bind(this));
+        var datas = [
+          {
+            amount: 0,
+            exporter_id: this.data.allocate_detail.exporter_id,
+            quantity: quantityUpdate,
+            quota_id: this.data.quota_id,
+            allocate_id: this.data.allocate_detail.id,
+            calculate_id : this.data.allocate_detail.calculate_id
+          }
+        ]
+        console.log(datas);
+        this.fire('toast', { status: 'load' });
+        this.dispatchAction('CONFIRM_CONFIRM_EXPORTER', datas)
+        .then((res) => {
+          this.fire('toast', {
+            status: 'success', text: 'บันทึกสำเร็จ',
+            callback: () => {
+              this.dispatchAction('CONFORM_GET_DATA', this.dataSelect);
+            }
+          });
+        })
+        .catch((error) => {
+          this.fire('toast', {
+            status: 'connectError', text: error,
+            callback: function () {
+            }
+          })
+        })
+      }
+    });
+  </script>
+</dom-module>

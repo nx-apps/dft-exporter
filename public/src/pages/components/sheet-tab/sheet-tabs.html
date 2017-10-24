@@ -1,0 +1,64 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/iron-selector/iron-selector.html">
+
+<dom-module id="sheet-tabs">
+    <template>
+        <style>
+             :host {
+                position: fixed;
+                left: 0;
+                bottom: 0;
+                width: 100%;
+                height: 40px;
+                padding-left: 5px;
+                background-image: linear-gradient(to bottom, #cccccc 1%, #ffffff 99%);
+            }
+
+            .tabrow {
+
+                 list-style: none;
+                padding: 0;
+                margin: 0;
+                line-height: 20px;
+                height: 22px;
+                font-size: 12px;
+                font-family: arial;
+                position: relative; 
+            }
+
+    
+          
+
+            
+            .tabrow:before {
+                 position: absolute;
+                content: " ";
+                width: 100%;
+                top: 0;
+                left: 0;
+                border-top: 1px solid #AAA;
+                z-index: 1; 
+            }
+
+
+          
+        </style>
+        <ul class="tabrow">
+            <iron-selector attr-for-selected="name" selected="{{select}}">
+                <slot></slot>
+            </iron-selector>
+        </ul> 
+
+    </template>
+    <script>
+        Polymer({
+            is: 'sheet-tabs',
+            properties: {
+                select: {
+                    type:String,
+                    notify:true
+                }
+            }
+        });
+    </script>
+</dom-module>

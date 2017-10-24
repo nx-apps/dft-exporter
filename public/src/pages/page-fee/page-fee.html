@@ -1,0 +1,293 @@
+<link rel="import" href="../../redux-behavior.html">
+<link rel="import" href="./../components/data-manage-behavior.html">
+<link rel="import" href="./../components/format-number-behavior.html">
+<link rel="import" href="./components/fee-list.html">
+<link rel="import" href="./components/fee-manage.html">
+<!--<link rel="import" href="./../../../bower_components/nylon-panel/nylon-panel-right.html">-->
+<link rel="import" href="../components/nylon-panel-right.html">
+<link rel="import" href="../../nylon-behavior.html">
+<link rel="import" href="./../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="./../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="./../components/page-header.html">
+<link rel="import" href="./../components/page-panel.html">
+<link rel="import" href="../../layout/shared-styles.html">
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="./../page-money/page-money.html">
+<link rel="import" href="./../../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="./components/fee-setting.html">
+
+<dom-module id="page-fee">
+    <template>
+        <style include="shared-styles">
+            #sub1:checked~#subcontent1,
+            #sub2:checked~#subcontent2 {
+                display: block;
+            }
+        </style>
+        <page-header label="ชำระเงินค่าธรรมเนียมพิเศษ">
+            <paper-button class="gl-btn-primary" on-tap="settingPage" raised>
+                ตั้งค่า
+            </paper-button>
+        </page-header>
+        <main>
+            <input class="radio" id="sub1" type="radio" name="sub" value="true" checked>
+            <label for="sub1">ชำระค่าธรรมเนียม</label>
+
+            <input class="radio" id="sub2" type="radio" name="sub" value="false">
+            <label for="sub2">ประวัติการชำระค่าธรรมเนียม</label>
+
+            <section id="subcontent1">
+                <!--<page-panel label="แบบฟอร์มนำเข้าข้อมูล">-->
+                <page-panel>
+                    <div class="row around-xs">
+                        <div class="col-xs-4">
+                            <div class="box">
+                                <vaadin-combo-box label="ปี" items="{{quotaYear}}" value="{{search.year}}" error-message="กรุณาเลือกปี"></vaadin-combo-box>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="box">
+                                 {{searchInput(dataTest)}}
+                                <vaadin-combo-box label="ชื่อบริษัท" items="[[myItem]]" item-label-path="company_name_th" loading="{{check}}" item-value-path="company_taxno"
+                                    filter="{{dataTest}}" value="{{search.exporter_id}}">
+                                    <template>
+                                        [[item.company_name_th]]
+                                    </template>
+                                </vaadin-combo-box>
+                                <!-- <vaadin-combo-box label="ชื่อบริษัท" placeholder="[[countExporter]]" items="{{getListCompany}}" value="{{selectExporter}}"
+                                    item-label-path="name" item-value-path="company_taxno" error-message="กรุณาเลือกบริษัท">
+                                    <template>
+                                        {{item.name}}
+                                    </template>
+                                </vaadin-combo-box> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row around-xs">
+                        <div class="col-xs-4">
+                            <div class="box">
+                                <vaadin-date-picker label="เริ่มวันที่" value="{{search.from_date}}"></vaadin-date-picker>
+                            </div>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="box">
+                               <vaadin-date-picker label="ถึงวันที่" value="{{search.to_date}}"></vaadin-date-picker>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row center-xs">
+                        <div class="col-xs-6">
+                            <div class="box">
+                                <paper-button style="width:100%" class="gl-btn-primary" on-tap="searchData" raised>ค้นหา</paper-button>
+                            </div>
+                        </div>
+                    </div>
+                </page-panel>
+                <div class="white-space"></div>
+                <page-panel label="ข้อมูลรายการ EC">
+                    <div class="white-space"></div>
+                    <fee-list data="{{dataList}}" check-box="true" show-data="true"></fee-list>
+                    <div class="row end-xs">
+                        <div class="col-xs-6">
+                            <div class="box">
+                                <paper-button class="gl-btn-primary" on-tap="dataSelected" raised>ดำเนินการ</paper-button>
+                            </div>
+                        </div>
+                    </div>
+                </page-panel>
+                <!--</page-panel>-->
+            </section>
+
+            <section id="subcontent2">
+                <page-money></page-money>
+            </section>
+        </main>
+        
+        <nylon-panel-right title="พิมพ์ใบเสร็จ" width="90%">
+            <iron-pages selected="{{selectPage}}">
+                <div>
+                    <fee-manage data="[[listSelected]]" list-bank="[[listBank]]"></fee-manage>
+                </div>
+                <div>
+                    <fee-setting></fee-setting>
+                </div>
+            </iron-pages>
+        </nylon-panel-right>
+    </template>
+    <script>
+        Polymer({
+            is: "page-fee",
+            behaviors: [DataManageBehavior, FormatNumberBehavior, ReduxBehavior, NylonBehavior],
+            observers: [
+            'checkData()'
+            // '_getExporter(yearValue)'
+            ],
+            listeners: {
+                'save-data': '_saveData',
+                'print-receip': '_printReceip'
+            },
+            properties: {
+                quotaYear: {
+                    statePath: 'commonData.year',
+                },
+                getListCompany: {
+                    statePath: 'fee.exporterList'
+                },
+                dataList: {
+                    statePath: 'fee.list'
+                },
+                listSelected: {
+                    statePath: 'fee.ec'
+                },
+                dataSelect: String,
+                countExporter: {
+                    type: String,
+                    value: ''
+                },
+                myItem: {
+                    statePath: 'commonData.companyReport',
+                    observer: 'checkItem'
+                },
+                search:{
+                    type:Object,
+                    value:{}
+                }
+            },
+            nylonPageActive: function () {
+                this.dispatchAction('COMMON_DATA_GET_YEAR');
+                this.dispatchAction('COMMON_DATA_GET_BANK');
+            },
+            searchInput: function (value) {
+                this.check = true;
+                this.debounce('searchItem', () => {
+                    // 
+                    if (typeof value != 'undefined' && value.length >= 3) {
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_REPORT', value);
+                    }
+                    else {
+                        console.log('clear')
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_CLEAR');
+                    }
+
+                }, 500)
+            },
+            checkItem: function () {
+                this.check = false;
+            },
+            // _getExporter: function (year) {
+            //     if (year != '') {
+            //         this.selectExporter = 'เลือกบริษัทด้วย',
+            //             this.countExporter = 'กำลังโหลด...'
+            //         this.dispatchAction('FEE_GET_EXPORTER_LIST', year)
+            //             .then(function () {
+            //                 this.countExporter = ''
+            //             }.bind(this))
+            //     }
+            // },
+            searchData: function () {
+                this.fire('toast', { status: 'load' });
+                this.dispatchAction('FEE_GET_DATA_LIST', this.search)
+                .then(function () {
+                    this.fire('toast', {
+                        status: 'success', text: 'โหลดข้อมูลสำเร็จ',
+                        callback: function () {
+                        }
+                    });
+                }.bind(this))
+                .catch(function (error) {
+                    this.fire('toast', {
+                        status: 'connectError', text: error,
+                        callback: function () {
+                        }
+                    })
+                }.bind(this))
+                // if (this.yearValue != '') {
+                //     var param = '?year=' + this.yearValue + '&exporter_id=' + this.selectExporter;
+                //     if (this.selectExporter == 'เลือกบริษัทด้วย' || this.selectExporter == '') {
+                //         // console.log('1234');
+                //         param = '?year=' + this.yearValue
+                //     }
+                //     this.dataSelect = param;
+                //     this.fire('toast', { status: 'load' });
+                //     this.dispatchAction('FEE_GET_DATA_LIST', param)
+                //         .then(function () {
+                //             this.fire('toast', {
+                //                 status: 'success', text: 'โหลดข้อมูลสำเร็จ',
+                //                 callback: function () {
+                //                 }
+                //             });
+                //         }.bind(this))
+                //         .catch(function (error) {
+                //             this.fire('toast', {
+                //                 status: 'connectError', text: error,
+                //                 callback: function () {
+                //                 }
+                //             })
+                //         }.bind(this))
+                // }
+            },
+            dataSelected: function (e) {
+                this.selectPage = 0;
+                var select = this.$$('fee-list').getDataCheckBox();
+                var id = select.map((item) => {
+                    return item.id;
+                })
+                var data = {
+                    ec_id: id
+                }
+                // console.log(data);
+                // console.log(JSON.stringify(data));
+                this.fire('toast', { status: 'load' });
+                this.dispatchAction('FEE_SELECT_DATA_LIST', data)
+                    .then(function () {
+                        this.fire('toast', {
+                            status: 'success', text: 'โหลดข้อมูลสำเร็จ',
+                            callback: function () {
+                                this.$$('nylon-panel-right').open();
+                            }.bind(this)
+                        });
+                    }.bind(this))
+                    .catch(function (error) {
+                        this.fire('toast', {
+                            status: 'connectError', text: error,
+                            callback: function () {
+                            }
+                        })
+                    }.bind(this))
+            },
+            _saveData: function (e) {
+                e.detail.result.year = parseInt(this.search.year);
+                // console.log(e.detail.result);
+                this.fire('toast', { status: 'load' });
+                this.dispatchAction('FEE_DATA_INSERT', e.detail.result)
+                    .then(function (res) {
+                        this.receip_id = res.data
+                        this.typeDoc = e.detail.type;
+                        this.$$('nylon-panel-right').close();
+                        window.open('/api/payment/printReceipt?id='+this.receip_id.receipt_id+
+                        '&coppy=false'+
+                        '&type='+this.typeDoc,
+                        '_blank'); 
+                        // window.open('/api/payment/printReceipt?id=' + this.receip_id.receipt_id, '_blank');
+                        this.fire('toast', {
+                            status: 'success', text: 'บันทึกสำเร็จ',
+                            callback: function () {
+                            //    console.log(this.dataSelect)
+                                this.dispatchAction('FEE_GET_DATA_LIST', this.search)
+                            }.bind(this)
+                        });
+                    }.bind(this))
+            },
+            _printReceip: function (e) {
+                // console.log(this.receip_id.receipt_id);
+                window.open('/api/payment/printReceipt?id='+this.receip_id.receipt_id+
+                '&type='+e.detail.type,'_blank'); 
+            },
+            settingPage:function(){
+                this.selectPage = 1;
+                this.dispatchAction('FEE_GET_SETTING')
+                this.$$('nylon-panel-right').open();
+            }
+        });
+    </script>
+</dom-module>

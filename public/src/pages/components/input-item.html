@@ -1,0 +1,80 @@
+
+<link rel="import" href="./../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="./../../../bower_components/polymer/polymer.html">
+<link rel="import" href="./../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../redux-behavior.html">
+<dom-module id="input-item">
+    <template> 
+        <style>
+            .size {
+                height: auto;
+                max-height: 150px;
+                overflow-y: auto;
+            }
+            .border{
+                border: 1px solid #ddd;
+            }   
+        </style>
+        <paper-input id="input" label="[[label]]" on-input="searchItem" value="{{value::input}}"></paper-input>
+         <div class="size" hidden="[[status]]">
+            <template is="dom-repeat" items="{{items}}">
+                <paper-item class="border">
+                    [[item.company_name_th]] <button on-click="selectData">select</button>
+                </paper-item>
+            </template>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'input-item',
+            behaviors:[ReduxBehavior],
+            properties:{
+                label:{
+                    type:String,
+                    value:''
+                },
+                items:{
+                    statePath:'commonData.companyReport'
+                },
+                value:{
+                    type:String,
+                    value:''
+                },
+                sendValue:{
+                    type:String,
+                    value:''
+                }
+            },
+            // setValue:function(val){
+            //     // console.log(val)
+            // },
+            selectData:function(e){
+                this.$.input.value = e.model.item.company_name_th;
+                this.sendValue = e.model.item;
+                this.status = true;
+            },
+            searchItem:function(e){
+                //  console.log(e.currentTarget.value);
+                var value = e.currentTarget.value
+                this.debounce('searchItem',()=>{
+                    // 
+                    if(typeof value != 'undefined' && value.length >= 3){
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_REPORT',value)
+                    }
+                    else{
+                        console.log('clear')
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_CLEAR');
+                    }
+                
+                },1000)
+            },
+            getValuePath:function(path){
+                return this.sendValue[path]
+            },
+            getValue:function(){
+                // console.log(this.sendValue.company_taxno)
+                return this.sendValue.company_taxno;
+            }
+        });
+    </script>
+</dom-module>

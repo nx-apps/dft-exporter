@@ -1,0 +1,72 @@
+<!-- build:import -->
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<!-- endbuild -->
+
+<link rel="import" href="./../bower_components/paper-material/paper-material.html">
+
+<link rel="import" href="gl-form-panel-head.html">
+<link rel="import" href="gl-form-panel-body.html">
+<link rel="import" href="gl-form-panel-footer.html">
+
+
+<dom-module id="gl-form-panel">
+   <template>
+      <style include="paper-material-shared-styles"></style>
+      <style>
+          .content{
+              padding: var(--gl-form-padding);
+              background-color: var(--el-color-bglabel);
+              color: var(--el-color-label);
+          }
+          paper-material{
+              margin: var(--el-margin-material);
+              border: var(--gl-set-padding) solid #b3b3b3;
+          }
+      </style>
+      <paper-material class="content" elevation="{{setElevation}}">
+         <content></content>
+      </paper-material>
+   </template>
+    <script>
+        Polymer({
+            is:'gl-form-panel',
+            properties:{
+                setElevation:{
+                    type:String,
+                    value:'0'
+                },
+                label:{
+                    type:String,
+                    value:'gl-form-panel'
+                },
+                colorLabel:{
+                    type:String,
+                    value:'#000'
+                },
+                colorBglabel:{
+                    type:String,
+                    value:'#FFF'
+                },
+                setMargin:{
+                    type:String,
+                    value:'15px'
+                },
+                setPadding:{
+                    type: String,
+                    value:'10px'
+                },
+                setBorder:{
+                    type: String,
+                    value: '1px'
+                }
+            },
+            ready:function(){
+                 this.customStyle['--el-color-label'] = this.colorLabel;
+                 this.customStyle['--el-color-bglabel'] = this.colorBglabel;
+                 this.customStyle['--el-margin-material'] = this.setMargin;
+                 this.customStyle['--gl-form-padding'] = this.setPadding;
+                 this.customStyle['--gl-set-padding'] = this.setBorder;
+            }
+        });
+    </script>
+</dom-module>

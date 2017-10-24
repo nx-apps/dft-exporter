@@ -22,8 +22,7 @@ export function i18nReducer(state = initialState, action) {
 }
 
 export function i18nAction(store) {
-  return [commonAction(),
-  {
+  return {
     I18N_SELECT_LANGUAGE: function (lang) {
       let preLang = {};
       for (var prop in languagePack) {
@@ -31,5 +30,5 @@ export function i18nAction(store) {
       }
       store.dispatch({ type: 'I18N_SELECT_LANGUAGE', payload: preLang,lang: lang})
     }
-  }]
+  }
 }

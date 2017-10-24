@@ -1,0 +1,116 @@
+<link rel="import" href="./../polymer/polymer.html">
+<link rel="import" href="./../paper-tabs/paper-tabs.html">
+<link rel="import" href="./../paper-tabs/paper-tab.html">
+<link rel="import" href="./../iron-pages/iron-pages.html">
+<link rel="import" href="./../gl-styles/gl-color.html">
+<link rel="import" href="./../gl-styles/gl-size.html">
+<!-- test import-->
+<link rel="import" href="./../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="./../iron-menu-behavior/iron-menubar-behavior.html">
+<link rel="import" href="./../iron-resizable-behavior/iron-resizable-behavior.html">
+
+
+<dom-module id="gl-tabs">
+    <template>
+        <style is="custom-style" include="iron-flex iron-flex-alignment gl-color gl-size">
+            #container {
+                max-width: 600px;
+            }
+            
+            paper-tabs,
+            paper-toolbar {
+                background-color: #f7941e;
+                color: #F2F2F2;
+                --paper-tabs-selection-bar: {
+                    height: 5px;
+                    background-color: var(--gl-info-color);
+                }
+            }
+            
+            paper-tab:focus>div.tab-content {
+                background-color: yellow;
+                opacity: 1;
+                font-weight: 0px;
+            }
+            
+            paper-tab {
+                font-size: var(--font-size-h5);
+                font-family: 'CSChatThaiUI', sans-serif !important;
+                -webkit-font-smoothing: antialiased;
+            }
+            
+            paper-tabs paper-tab.iron-selected {
+                font-size: var(--font-size-h4);
+                color: var(--gl-white-color);
+                background-color: var(--gl-info-color);
+            }
+            
+             :host {
+                /*@apply(--layout);*/
+                @apply(--layout-center);
+                @apply(--paper-tabs);
+            }
+            
+             :host-context([dir=rtl]) {
+                @apply(--layout-horizontal-reverse);
+            }
+            
+            iron-pages {
+                padding: var(--gl-form-padding);
+            }
+        </style>
+
+        <paper-material elevation="1">
+            <content select="section-content[name=0]"></content>
+            <content id="items" select="items"></content>
+            <paper-tabs selected="{{selected}}" align-bottom no-slide>
+                <template is="dom-repeat" items="{{row}}">
+                    <paper-tab>{{item.label}}</paper-tab>
+                </template>
+            </paper-tabs>
+            <iron-pages selected="{{selected}}">
+                <template is="dom-repeat" items="{{row}}">
+                    <div>
+                        <content select="section-content[data={{item.data}}]"></content>
+                    </div>
+                </template>
+            </iron-pages>
+        </paper-material>
+    </template>
+    <script>
+        Polymer({
+            is: 'gl-tabs',
+            properties: {
+                getData: {
+                    type: Array
+                },
+                setPadding: {
+                    type: String,
+                    value: "20px"
+                },
+                platForm: {
+                    type: String,
+                    observer: 'changeStyle'
+                }
+            },
+            changeStyle: function (e) {
+                Polymer.dom(this.root).querySelector('paper-tabs').setAttribute(this.platForm, '');
+            },
+            ready: function () {
+                this.customStyle['--gl-form-padding'] = this.setPadding;
+
+                this.selected = 0;
+                var items = Polymer.dom(this.$.items).getDistributedNodes();
+                var lists = Polymer.dom(items[0]).querySelectorAll('list');
+                var row = [];
+                lists.map(function (list) {
+                    row.push({ data: list.getAttribute('data'), label: list.getAttribute('label') });
+                });
+                // console.log(row);
+                this.row = row;
+
+            }
+
+        });
+    </script>
+</dom-module>

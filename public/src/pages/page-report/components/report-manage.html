@@ -1,0 +1,49 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../nylon-behavior.html">
+<link rel="import" href="../../components/page-header.html">
+<link rel="import" href="../../components/page-panel.html">
+<link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="./report-form.html">
+<!--<link rel="import" href="../../../../bower_components/nylon-upload/nylon-upload.html">-->
+
+้ี
+<dom-module id="report-manage">
+    <template>
+        <style include="shared-styles">
+            #sub1:checked~#subcontent1,
+            #sub2:checked~#subcontent2,
+            #sub3:checked~#subcontent3 {
+                display: block;
+            }
+        </style>
+
+        <div class="content">
+            <main>
+                <input class="radio" id="sub1" type="radio" name="sub" value="true" checked>
+                <label for="sub1">ป้อนข้อมูล</label>
+
+                <input class="radio" id="sub2" type="radio" name="sub" value="false">
+                <label for="sub2">อัพโหลดไฟล์</label>
+
+                <section id="subcontent1">
+                    <page-panel label="แบบฟอร์มนำเข้าข้อมูล">
+                        <report-form></report-form>
+                    </page-panel>
+                </section>
+
+                <section id="subcontent2">
+                    <page-panel label="อัพโหลดไฟล์">
+                        <!--<nylon-upload target="/api/upload/file" accept="application/pdf" ref-path="{{setRefpath(id)}}"></nylon-upload>-->
+                    </page-panel>
+                </section>
+            </main>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'report-manage',
+        });
+    </script>
+</dom-module>

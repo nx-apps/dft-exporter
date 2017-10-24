@@ -4,43 +4,36 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-  <title>ระบบขึ้นทะเบียนผู้ส่งออกข้าว</title>
-  <meta http-equiv="X-UA-Compatible" content="chrome=1">
-  <link rel="shortcut icon" sizes="32x32" href="/images/01/48.png">
-  <link rel="manifest" href="/manifest.json">
 
+  <title>ระบบจัดการโควตาข้าวภายใต้โควตาภาษีสหภาพยุโรป</title>
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="shortcut icon" sizes="32x32" href="/images/manifest/icon-32x32.ico">
+  <link rel="manifest" href="/manifest.json">  
+  <meta name="theme-color" content="#3f51b5">
   <script src="/bundle.js"></script>
   <link rel="import" href="/src/nylon-app.html" async>
-
   <style>
-    /* @font-face {
-        font-family: CSChatThaiUI;
-        src: url('fonts/CSChatThaiUI.eot');
-        src: url('fonts/CSChatThaiUI.eot?#iefix') format('eot'),
-            url('fonts/CSChatThaiUI.woff') format('woff'),
-            url('fonts/CSChatThaiUI.ttf') format('truetype'),
-            url('fonts/CSChatThaiUI.svg') format('svg');
-    } */
-
     @font-face {
-      font-family: 'CSChatThaiUI';
-      src: url('/bower_components/gl-font/fonts/csChatThai/CSChatThaiUI.ttf');
+        font-family: CSChatThaiUI;
+        src: url('/fonts/CSChatThaiUI.eot');
+        src: url('/fonts/CSChatThaiUI.eot?#iefix') format('eot'),
+            url('/fonts/CSChatThaiUI.woff') format('woff'),
+            url('/fonts/CSChatThaiUI.ttf') format('truetype'),
+            url('/fonts/CSChatThaiUI.svg') format('svg');
     }
-
     body {
       margin: 0;
       background: #efefef;
     }
-
     #toolbar {
       background-color: #f7941e;
       color: white;
       font-family: CSChatThaiUI, sans-serif;
       -webkit-font-smoothing: antialiased;
-      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+      /* box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); */
       height: 64px;
     }
-
+    
     .loader {
       border: 5px solid #f3f3f3;
       border-radius: 50%;
@@ -51,7 +44,7 @@
       animation: spin 0.5s linear infinite;
       margin: auto;
     }
-
+    
     @-webkit-keyframes spin {
       0% {
         -webkit-transform: rotate(0deg);
@@ -60,7 +53,7 @@
         -webkit-transform: rotate(360deg);
       }
     }
-
+    
     @keyframes spin {
       0% {
         transform: rotate(0deg);
@@ -69,7 +62,7 @@
         transform: rotate(360deg);
       }
     }
-
+    
     .middle {
       position: fixed;
       width: 100%;
@@ -80,17 +73,17 @@
       display: -webkit-flex;
       display: flex;
     }
-
-    #toolbar>.icon {
+    
+    #toolbar > .icon {
       margin-left: 76px;
       padding-top: 8px;
       float: left;
     }
-
-    #toolbar>.title {
+    
+    #toolbar > .title {
       line-height: 65px;
       margin-left: 20px;
-      font-size: 20px;
+      font-size: 1.1rem;
       font-weight: 590;
       float: left;
     }
@@ -101,10 +94,10 @@
   <nylon-app unresolved>
     <div id="toolbar">
       <div class="icon">
-        <img src="/images/01/48.png" alt="">
+        <img src="/images/manifest/icon-48x48.png" alt="">
       </div>
       <div class="title">
-        ระบบขึ้นทะเบียนผู้ส่งออกข้าว
+        ระบบจัดการโควตาข้าวภายใต้โควตาภาษีสหภาพยุโรป
       </div>
     </div>
     <div class="middle">
@@ -115,12 +108,12 @@
   <script>
     window.performance && performance.mark && performance.mark('index.html');
 
-    Polymer = { lazyRegister: true, dom: 'shadow' };
+    Polymer = {lazyRegister: true, dom: 'shadow'};
 
-    (function () {
+    (function() {
       if ('registerElement' in document
-        && 'import' in document.createElement('link')
-        && 'content' in document.createElement('template')) {
+          && 'import' in document.createElement('link')
+          && 'content' in document.createElement('template')) {
         // platform is good!
       } else {
         // polyfill the platform!
@@ -129,6 +122,13 @@
         document.body.appendChild(e);
       }
     })();
+
+    // Load pre-caching Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/service-worker.js');
+      });
+    }
   </script>
 
 </body>

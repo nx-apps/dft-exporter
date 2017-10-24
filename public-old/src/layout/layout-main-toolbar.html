@@ -1,0 +1,97 @@
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<!--<link rel="import" href="bower_components/paper-/paper-.html">-->
+
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="./shared-styles.html">
+
+<link rel="import" href="../redux-behavior.html">
+
+<link rel="import" href="../i18n-behavior.html">
+
+<dom-module id="layout-main-toolbar">
+	<template>
+		<style is="custom-style" include="shared-styles">
+			app-toolbar {
+				background-color: #f7941e;
+				color: white;
+				font-family: CSChatThaiUI, sans-serif;
+				-webkit-font-smoothing: antialiased;
+				--app-toolbar-font-size: 20px;
+				box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+			}
+			
+			.background {
+				padding: 10px;
+				background-color: white;
+			}
+			
+			iron-image {
+				margin-right: 20px;
+				margin-left: 20px;
+			}
+			
+			.sectionContent {
+				margin-left: 9%;
+				margin-top: 20px;
+				font-size: 16px;
+				padding-bottom: 5px;
+			}
+			
+			paper-button {
+				font-size: 16px;
+			}
+			
+			.icon {
+				display: inline-block;
+				width: 1em;
+				height: 1em;
+				stroke-width: 0;
+				stroke: currentColor;
+				fill: currentColor;
+			}
+		</style>
+		<app-toolbar>
+			<paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
+			<iron-image src="../../images/01/32.png"></iron-image>
+			<div main-title>ระบบขึ้นทะเบียนผู้ส่งออกข้าว</div>
+			<paper-button on-tap="changeLanguage">{{localize.Meg}}</paper-button>
+		</app-toolbar>
+	</template>
+	<script>
+		Polymer({
+			is: 'layout-main-toolbar',
+			behaviors: [ReduxBehavior, i18nAction],
+			properties: {
+				localize:{
+					statePath : 'i18n.exporter'
+				}
+			},
+			check: function () {
+				if (this.user.id) {
+					this.hidden = false;
+				}
+				else {
+					// this.fire('nylon-change-page',{path:'/login'})
+					this.hidden = true;
+				}
+			},
+			attached: function () {
+				//this.nylonLocalizeImport('/i18n-page1.json');
+			},
+			toggleDrawer: function () {
+				this.fire('toggle-drawer');
+			},
+			changeLanguage: function () {
+				var lang = this.localize.Meg;
+				if(lang == 'TH'){
+					lang = 'en';
+				}else{
+					lang = 'th';
+				}
+				this.dispatchAction('I18N_SELECT_LANGUAGE', lang);
+			}
+		});
+	</script>
+</dom-module>

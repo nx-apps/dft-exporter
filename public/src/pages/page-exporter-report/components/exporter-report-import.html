@@ -1,0 +1,250 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../components/nylon-input.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../layout/flexbox-grid.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../../../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="./exporter-report-stock.html"> 
+<link rel="import" href="./exporter-report-upload.html">
+<link rel="import" href="../../../redux-behavior.html"> 
+<link rel="import" href="../../../month-behavior.html">
+<link rel="import" href="../../components/format-number-behavior.html">
+<link rel="import" href="../../../../bower_components/pdf-browser-viewer/pdf-browser-viewer.html">
+
+
+<dom-module id="exporter-report-import">
+    <template>
+        <style include="shared-styles flexbox-grid">
+            vaadin-grid {
+                height: auto;
+            }
+            .section{
+                padding: 1rem;
+            }
+            .gl-btn-primary {
+                margin: 0;
+                width: 100%;
+            }
+
+            #sub1:checked~#subcontent1,
+            #sub2:checked~#subcontent2 {
+                display: block;
+            }
+        </style>
+
+        <main>
+            <input class="radio" id="sub2" type="radio" name="sub" value="false" checked>
+            <label for="sub2">แบบฟอร์มนำเข้าข้อมูล</label>
+
+            <input class="radio" id="sub1" type="radio" name="sub" value="true">
+            <label for="sub1">จัดการไฟล์</label>
+
+            <section id="subcontent2">
+                <page-panel>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6 section">
+                            <div class="box">
+                                <!-- <page-panel> -->
+                                <exporter-report-stock data="[[data]]" id="stock"></exporter-report-stock>
+                                <!-- </page-panel> -->
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6 section">
+                            <div class="box">
+                                <!-- <page-panel> -->
+                                <b>นำเข้ารายงาน</b>
+                                <div class="row">
+                                    <div class="col-xs-12 col-md-6">
+                                        <vaadin-combo-box items="[[year]]" label="ปีโควตา" on-change="setYear" error-message="กรุณาเลือกปี" value="{{form.year}}"
+                                            required></vaadin-combo-box>
+                                    </div>
+                                    <div class="col-xs-12 col-md-6">
+                                        <vaadin-combo-box label="รายงานการส่งออกข้าวไป EU" items="[[listEu]]" value="{{form.quota}}"></vaadin-combo-box>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        <vaadin-combo-box label="บริษัท" loading="{{check}}" filter="{{word}}" items="[[company]]" item-label-path="company_name_th"
+                                            item-value-path="company_taxno" value="{{form.exporter_id}}">
+                                            <template>
+                                                [[item.company_name_th]]
+                                            </template>
+                                        </vaadin-combo-box>
+                                    </div>
+                                    <div class="col-xs-12 col-md-6">
+                                        <paper-input label="เลขที่รับ" value="{{form.no_receipt}}"></paper-input>
+                                    </div>
+                                    <div class="col-xs-12 col-md-6">
+                                        <paper-input label="เลขที่ใบอนุณาต" value="{{form.license}}"></paper-input>
+                                    </div>
+                                    <div class="col-xs-12 col-md-6">
+                                        <vaadin-combo-box label="ประเภท" items="[[typeRice]]" value="{{form.type_rice_id}}"></vaadin-combo-box>
+                                    </div>
+                                    <div class="col-xs-12 col-md-6">
+                                        <nylon-input label="ปริมาณ" value="{{form.weight}}" format-number></nylon-input>
+                                    </div>
+                                    <div class="col-xs-12 col-md-6">
+                                        <vaadin-date-picker label="วันที่รายงาน" value="{{form.date_report}}"></vaadin-date-picker>
+                                    </div>
+                                    <div class="col-xs-12 col-md-6">
+                                        <vaadin-date-picker label="วันที่ส่งออก" value="{{form.date_export}}"></vaadin-date-picker>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        <vaadin-combo-box label="ความถูกต้องของเอกสาร" items="[[checkDoc]]" value="{{form.type_doc}}"></vaadin-combo-box>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        <paper-textarea label="หมายเหตุ" value="{{form.note}}"></paper-textarea>
+                                    </div>
+                                    <div class="col-xs-12">
+                                        <!-- <div class="box"> -->
+                                        <paper-button class="gl-btn-primary" on-tap="addForm" raised>เพิ่มรายงาน</paper-button>
+                                        <!-- </div> -->
+                                    </div>
+                                </div>
+                                <!-- </page-panel> -->
+                            </div>
+                        </div>
+                    </div>
+                </page-panel>
+            </section>
+            <section id="subcontent1">
+                <page-panel>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="box">
+                                <b>กำลังแสดงไฟล์ : [[file.name]]</b>
+                                <template is="dom-if" if="[[checkPath(file.path)]]">
+                                    <button on-tap="fileOpen">open</button>
+                                </template>
+                            </div>
+                            <div class="box">
+                                <pdf-browser-viewer id="pdfViewer" file="[[file.path]]" not-supported-message="Not supported by your browser" not-supported-link-message="see the file here!"
+                                    height="850px" width="100%">
+                                </pdf-browser-viewer>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <div class="box">
+                                <b>แนบไฟล์เอกสารบริษัท : </b>
+                            </div>
+                            <div class="box">
+                                 <exporter-report-upload select="[[form]]"></exporter-report-upload>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </page-panel>
+            </section>
+        </main>
+    </template>
+    <script>
+        Polymer({
+            is: 'exporter-report-import',
+            behaviors: [ReduxBehavior, FormatNumberBehavior, MonthBehavior],
+            observers: ['searchExporter(word)'],
+            properties: {
+                data: {
+                    type: Array,
+                    value: []
+                },
+                form: {
+                    type: Object,
+                    value: {
+                        license: 'พณ',
+                        note:''
+                    }
+                },
+                listEu: {
+                    type: Array,
+                    value: [
+                        {
+                            value: 'true',
+                            label: 'ในโควตา'
+                        },
+                        {
+                            value: 'false',
+                            label: 'นอกโควตา'
+                        }
+                    ]
+                },
+                checkDoc: {
+                    type: Array,
+                    value: [
+                        {
+                            value: 'c',
+                            label: 'ถูกต้องตามประกาศ'
+                        },
+                        {
+                            value: 'ic',
+                            label: 'ไม่ถููกต้องตามประกาศ'
+                        },
+                        {
+                            value: 'od',
+                            label: 'เอกสารเกินกำหนด'
+                        }
+                    ]
+                },
+                typeRice: {
+                    statePath: 'commonData.type_rice'
+                },
+                year: {
+                    statePath: 'commonData.year'
+                },
+                company: {
+                    statePath: 'commonData.companyReport',
+                    observer: 'clearLoad'
+                },
+            },
+            count: function (val) {
+                return val + 1
+            },
+            setYear: function (e) {
+                console.log(e.currentTarget.value);
+                this.dispatchAction('COMMON_DATA_GET_QUOTA_TYPE_RICE', e.currentTarget.value)
+            },
+            searchExporter: function (value) {
+                this.check = true;
+                this.debounce('searchItem', () => {
+                    // 
+                    if (typeof value != 'undefined' && value.length >= 3) {
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_REPORT', value);
+                    }
+                    else {
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_CLEAR');
+                    }
+
+                }, 1000)
+            },
+            clearLoad: function (val) {
+                // console.log(val)
+                this.check = false;
+            },
+            addForm: function () {
+                // console.log(JSON.stringify(this.form))
+                console.log(this.form)
+                var quota;
+                if (this.form.quota == 'true') quota = true;
+                else { quota = false }
+                var newItem = {
+                    export_date: this.form.date_export,
+                    report_date: this.form.date_report,
+                    exporter_id: this.form.exporter_id,
+                    permit_number: this.form.license,
+                    number: this.form.no_receipt,
+                    type_rice_id: this.form.type_rice_id,
+                    quota: quota,
+                    type_doc: this.form.type_doc,
+                    weight: this.form.weight,
+                    year: this.form.year,
+                    note: this.form.note
+                }
+                this.push('data', newItem);
+                console.log(this.data)
+            },
+            importData: function () {
+                console.log(this.data)
+            }
+        });
+    </script>
+</dom-module>

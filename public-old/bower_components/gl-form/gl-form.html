@@ -1,0 +1,137 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-input/paper-textarea.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../paper-dropdown-menu/paper-dropdown-menu-light.html">
+<link rel="import" href="../paper-listbox/paper-listbox.html">
+<link rel="import" href="../paper-item/paper-item.html">
+<link rel="import" href="./../iron-input/iron-input.html">
+<link rel="import" href="./../paper-input/paper-input-container.html">
+<link rel="import" href="./../paper-input/paper-input-error.html">
+<link rel="import" href="./../paper-input/demo/ssn-input.html">
+<link rel="import" href="./../paper-input/demo/ssn-validator.html">
+<link rel="import" href="./../iron-validator-behavior/iron-validator-behavior.html">
+<link rel="import" href="./../vaadin-combo-box/vaadin-combo-box.html">
+
+<link rel="import" href="gl-form-input.html">
+<link rel="import" href="gl-form-textarea.html">
+<link rel="import" href="gl-form-dropdown-menu.html">
+<link rel="import" href="gl-form-label-input.html">
+<link rel="import" href="gl-form-label-textarea.html">
+<link rel="import" href="gl-form-panel.html">
+<link rel="import" href="gl-tabs.html">
+<link rel="import" href="gl-combo-box.html">
+
+<dom-module id="gl-form">
+    <style>
+        .container {
+            padding: 10px;
+        }
+        /*gl-combo-box{
+            font-family: 'CSChatThaiUI', sans-serif !important;
+            -webkit-font-smoothing: antialiased;
+        }*/
+        /*gl-form-input{
+            --paper-input-container-input:{
+                 text-align: right;
+            }  
+        }*/
+    </style>
+    <template>
+        <gl-tabs>
+            <items>
+                <list data="data1" label="test1"></list>
+                <list data="data2" label="test2"></list>
+                <list data="data3" label="test3"></list>
+                <list data="data4" label="test4"></list>
+            </items>    
+            <section-content data="data1">
+                <gl-form-input label="text" value="1233" active-color="off" required></gl-form-input>
+                <gl-form-input label="Money" id="price" value="12321" format-number="on" required></gl-form-input>
+                <gl-form-input label="Money" id="price" value="12321" format-number="on" ></gl-form-input>
+                <gl-form-textarea label="text" disabled value="1234321" format-number="on"></gl-form-textarea>
+                <paper-button raised on-tap="getValue">GetValue</paper-button>
+                  <gl-combo-box label="ทดสอบ" id="resetInput" class="skillLevels" placeholder="ทดสอบ" items="[[skillLevels]]" value="Beginner"  error-message="needs some text!"></gl-combo-box>
+                  
+                   <gl-form-dropdown-menu id="resetInput" label="ทดสอบ">
+                    <paper-listbox class="dropdown-content">
+                        <paper-item value="ตัวอักษร">ตัวอักษร</paper-item>
+                        <paper-item value="ขนาด">ขนาด</paper-item>
+                        <paper-item value="สี">สี</paper-item>
+                        <paper-item value="ความถูกต้อง">ความถูกต้อง</paper-item>
+                    </paper-listbox>
+                </gl-form-dropdown-menu> 
+            </section-content>
+
+            <section-content data="data2">
+               
+                <!--<gl-form-textarea id="resetInput" label="Text" value="12345" auto-validate disabled></gl-form-textarea>-->
+                
+                
+            </section-content>
+
+            <section-content data="data3">
+              
+            </section-content>
+
+            <section-content data="data4">
+                <items>
+                     <gl-combo-box label="ทดสอบ" class="skillLevels" items="[[skillLevels]]" value="Beginner" required auto-validate error-message="needs some text!"></gl-combo-box>
+                </items>
+               
+                <!--<vaadin-combo-box label="Skill level" class="skillLevels" items="[[skillLevels]]"></vaadin-combo-box>-->
+            </section-content>
+
+        </gl-tabs>
+    </template>
+    <script>
+  
+        Polymer({
+            is: 'gl-form',
+            properties:{
+                skillLevels:{
+                    type: Array,
+                    value: [
+                         'ทดสอบ', 
+                         'ตัวอักษร', 
+                         'Advanced', 
+                         'Professional', 
+                         'Native' 
+                    ]
+                },
+                elementsJson:{
+                    value:[
+                        {name: 'Hydrogen', symbol: 'H', number: 1},
+                        {name: 'Helium', symbol: 'He', number: 2}
+                    ]
+                }
+            },
+            ready:function(){
+                this.num = '100000.321231';
+            },
+            resetInput:function(){
+                //console.log(this.$('#resetInput'));
+                //this.$$('#resetInput').reset();
+                //Polymer.dom(this.root).querySelectorAll('#resetInput').reset();
+                // console.log(Polymer.dom(this.root).querySelectorAll('#resetInput'));
+                Polymer.dom(this.root).querySelectorAll('#resetInput').map((el)=>{
+                    // console.log(el);
+                    el.reset();
+                })
+            },
+            getValue:function(){
+                console.log(this.$$('#price').getValue());
+                this.$$('#resetInput').reset();
+            },
+            edit:function(){
+                this.stat =!this.stat;
+            },
+            ddd:function(num){
+                console.log('1234');   
+                return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+               //this.$$('#price').value = num;
+               //console.log('xxx')
+            },
+        });   
+    </script>
+</dom-module>

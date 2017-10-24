@@ -1,0 +1,59 @@
+
+<dom-module id="gl-toast">
+    <template>
+        <style>
+            paper-spinner{
+			    --paper-spinner-stroke-width: 3px;
+		    }
+            paper-button{
+                font-size: 16px !important;
+            }
+            .gl-toast-loading, .gl-toast-success, .gl-toast-warning, .gl-toast-error,.gl-toast-dialog{
+                width: 100%;
+                text-align: center;
+                font-size: 22px;
+                font-family: 'rsubold', sans-serif;
+                -webkit-font-smoothing: antialiased;
+                color: white;
+            }
+            .gl-toast-loading>span{
+                padding-left:10px; 
+                position:relative; 
+                bottom: 6px;
+            }
+            .gl-toast-loading>div{
+                padding: 10px 20px 10px 20px;
+            }
+            .gl-toast-dialog>div{
+                padding: 10px 20px 10px 20px;
+            }
+            .gl-toast-success{
+                background-color: #5cb85c;
+            }
+            .gl-toast-success>span{
+                padding-left:10px;
+            }
+            .gl-toast-warning{
+                background-color: #f0ad4e;
+            }
+            .gl-toast-error,.gl-toast-connecterror{
+                background-color: #d9534f;
+            }
+            .gl-toast-connecterror,.gl-toast-dialog{
+                width: 100%;
+                text-align: center;
+            }
+            .gl-toast-dialog{
+                background-color: #337ab7;
+            }
+            .gl-toast-connecterror>span{
+                font-size: 16px;
+            }
+        </style>
+    </template>
+    <script>
+        Polymer({
+            is: 'gl-toast'
+        });
+    </script>
+</dom-module>

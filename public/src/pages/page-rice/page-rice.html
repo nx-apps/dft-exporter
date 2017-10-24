@@ -1,0 +1,58 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../nylon-behavior.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="components/rice-list.html">
+<link rel="import" href="components/rice-manage.html">
+<link rel="import" href="../components/nylon-panel-right.html">
+<link rel="import" href="../../layout/shared-styles.html">
+<link rel="import" href="../../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../components/page-header.html">
+<link rel="import" href="../components/page-panel.html">
+
+<dom-module id="page-rice">
+    <template>
+        <style include="shared-styles">
+        </style>
+        <div class="container">
+            <page-header label="จัดการประเภทข้าว">
+                <paper-button class="gl-btn-primary" on-tap="_addTypeRice" raised>
+                    <iron-icon icon="add"></iron-icon>
+                    เพิ่มประเภทข้าว
+                </paper-button>
+            </page-header>
+            <!--<div class="header section">จัดการประเภทข้าว</div>
+            <div class="flex-end-justified">
+                <paper-button class="gl-btn-primary" on-tap="_addTypeRice" raised>
+                    <iron-icon icon="add"></iron-icon>
+                    เพิ่มประเภทข้าว
+                </paper-button>
+            </div>-->
+            <div class="section">
+                <page-panel>
+                     <rice-list></rice-list>
+                </page-panel>
+                <!--<div class="material">
+                    <div class="content">
+                        <rice-list></rice-list>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+        <nylon-panel-right title="จัดการประเภทข้าว" width="80%">
+            <rice-manage></rice-manage>
+        </nylon-panel-right>
+    </template>
+    <script>
+        Polymer({
+            is: 'page-rice',
+            behaviors: [NylonBehavior],
+            nylonPageActive: function () {
+
+            },
+            _addTypeRice: function () {
+                this.$$('nylon-panel-right').open();
+            },
+        });
+    </script>
+</dom-module>

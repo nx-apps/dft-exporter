@@ -1,0 +1,31 @@
+{
+  "name": "gl-styles",
+  "description": "gl-style for web components",
+  "version": "0.0.14",
+  "main": "gl-color.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.4.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0",
+    "paper-button": "PolymerElements/paper-button#^1.0.13",
+    "iron-icons": "PolymerElements/iron-icons#^1.1.3",
+    "paper-toast": "PolymerElements/paper-toast#^1.3.0",
+    "paper-spinner": "PolymerElements/paper-spinner#^1.2.1",
+    "gl-font": "9lon-gl-font#^0.0.5",
+    "iron-icon": "PolymerElements/iron-icon#^1.0.12"
+  },
+  "homepage": "https://github.com/9lon/gl-styles",
+  "_release": "0.0.14",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.0.14",
+    "commit": "298f7085d667b722270c42b31b71270f385969c2"
+  },
+  "_source": "https://github.com/9lon/gl-styles.git",
+  "_target": "^0.0.14",
+  "_originalSource": "9lon-gl-styles"
+}

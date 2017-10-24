@@ -1,40 +1,9 @@
-export function commonAction(){
-    return {
-        listeners:{
-            'method':'handleCall'
-        },
-        handleCall:function(e){
-            var detail = e.detail;
-            var args = detail.args;
-            var callback = detail.callback;
-
-            var methodName = args[0];
-            var args = Array.prototype.slice.call(args);
-            if(args.length>1)
-            args = args.slice(1,args.length);
-
-            var argsText = "";
-            var params = [];
-            args.map((row,i)=>{
-                params.push(row);
-                if(i!=0) argsText+=',';
-                argsText += `params[${i}]`
-            });
-        
-            callback(eval(`
-                if(this.${methodName})
-                this.${methodName}(${argsText})
-            `));
-
-        }
-    }
-}
-
 export function dispatchActionBehavior(){
     return {
         dispatchAction:function(){
+            
             return new Promise((reslove,reject)=>{
-                this.fire('method',{
+                this.fire('dispatchAction',{
                     args:arguments,
                     callback:(promise)=>{
                         if(typeof promise == "undefined"){
@@ -54,17 +23,6 @@ export function dispatchActionBehavior(){
     }
 }
 
-let url = ''
-if (process.env.NODE_ENV == "production") {
-    url = `https://${window.location.hostname}:3000`
-    window.console.log = function () {
-        return;
-    }
-} else {
-    url = `https://${window.location.hostname}:3000`
-    // window.console.log = function () {
-    //     return;
-    // }
-}
 //export const baseURL = `https://${window.location.hostname}:${location.port}`;
-export const baseURL = url
+window.baseURL = `https://${window.location.hostname}:3004`
+export const baseURL = window.baseURL

@@ -1,0 +1,218 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../components/page-panel.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../layout/flexbox-grid.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../../bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="../../../month-behavior.html">
+<dom-module id="reports-export">
+    <template>
+        <style include="shared-styles flexbox-grid">
+            :host {
+                display: block;
+            }
+            .content{
+                padding: 20px;
+            }
+        </style>
+        
+        <page-panel>
+            <div class="content">
+                <div>
+                    <span><b>รายงานการส่งออกข้าวไป EU :</b></span>
+                    <paper-radio-group selected="{{form.quota}}" allow-empty-selection>
+                        <paper-radio-button name="true">ในโควตา</paper-radio-button>
+                        <paper-radio-button name="false">นอกโควตา</paper-radio-button>
+                    </paper-radio-group>
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-lg-8">
+                            <vaadin-combo-box label="บริษัท" loading="{{checkExporter}}" filter="{{word}}" items="[[exporter]]" item-label-path="company_name_th" item-value-path="company_taxno" value="{{form.exporter_id}}">
+                                <template>
+                                    [[item.company_name_th]]
+                                </template> 
+                            </vaadin-combo-box>
+                        </div>  
+                    </div>
+                  
+                </div>
+                <div>
+                    <div style="margin:20px"></div>
+                    
+                    <div class="box">
+                        <b>ตั้งแต่</b>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6 col-lg-4">
+                                <div class="box">
+                                    <vaadin-combo-box label="เดือน" items="{{getMonth()}}" value="{{form.firstmonth}}" error-message="กรุณาเลือกรายการ" item-label-path="name"
+                                    item-value-path="id" required></vaadin-combo-box>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6 col-lg-4">
+                                <div class="box">
+                                    <vaadin-combo-box label="ปี" items="[[year]]" value="{{form.firstyear}}" required></vaadin-combo-box>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                    <div style="margin:20px"></div>
+                    
+                    <div class="box">
+                        
+                        <paper-checkbox checked="{{checked}}"><b>ถึง</b></paper-checkbox>
+                        
+                        <template is="dom-if" if="[[checked]]">
+                            <div class="row">
+                                <div class="col-xs-12 col-md-6 col-lg-4">
+                                    <div class="box">
+                                        <vaadin-combo-box label="เดือน" items="{{getMonth()}}" value="{{form.lastmonth}}" error-message="กรุณาเลือกรายการ" item-label-path="name"
+                                        item-value-path="id" required></vaadin-combo-box>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-md-6 col-lg-4">
+                                    <div class="box">
+                                       <vaadin-combo-box label="ปี" items="[[year]]" value="{{form.lastyear}}" required></vaadin-combo-box>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div class="row end-xs">
+                        <div class="col-xs-6">
+                            <div class="box">
+                                <paper-button class="gl-btn-primary" on-tap="openDialog" raised>พิมพ์รายงาน</paper-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </page-panel>
+        
+        <paper-dialog id="dialog" modal>
+            <h2>เลือกประเภทรายงาน</h2>
+            <p>
+                <vaadin-combo-box label="เลือกประเภทเอกสาร" items="[[typeDoc]]" value="{{selectDoc}}"></vaadin-combo-box>
+            </p>
+            <div>
+                <paper-button dialog-dismiss>ยกเลิก</paper-button>
+                <paper-button class="gl-btn-primary" on-tap="printReport" raised>ออกรายงาน</paper-button>
+            </div>
+        </paper-dialog>
+        
+        
+    </template>
+    <script>
+        Polymer({
+            is: 'reports-export',
+            behaviors: [ReduxBehavior, MonthBehavior],
+            observers: ['check(checked)','searchExporter(word)'],
+            properties:{
+                exporter: {
+                    statePath: 'commonData.companyReport',
+                    observer: 'clearLoad'
+                },
+                listEu: {
+                    type: Array,
+                    value: [
+                        {
+                            id: 'true',
+                            name: 'ในโควตา'
+                        },
+                        {
+                            id: 'false',
+                            name: 'นอกโควตา'
+                        }
+                    ]
+                },
+                form:{
+                    type:Object,
+                    value:{
+                        quota:'',
+                        exporter_id:''
+                    }
+                },
+                year: {
+                    statePath: 'commonData.year'
+                },
+                typeDoc:{
+                    type:Array,
+                    value:[
+                        'word',
+                        'excel',
+                        'pdf'
+                    ]
+                }
+            },
+            clearLoad:function(val){
+                this.checkExporter = false;
+            },
+            searchExporter:function(value){
+                this.checkExporter = true;
+                this.debounce('searchItem', () => {
+                    // 
+                    if (typeof value != 'undefined' && value.length >= 3) {
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_REPORT', value);
+                    }
+                    else {
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_CLEAR');
+                    }
+
+                }, 1000)
+            },
+            check:function(val){
+                if(val == false){
+                    this.set('form.lastmonth','');
+                    this.set('form.lastyear','');
+                }
+            },
+            openDialog:function(){
+                    this.$.dialog.open()
+            },
+            printReport:function(){
+                var datas = {
+                    quota: this.form.quota,
+                    first_year: this.form.firstyear,
+                    first_month: this.form.firstmonth,
+                    first_month_th: this.getMonthName(this.form.firstmonth),
+                    last_year: this.form.lastyear,
+                    last_month:this.form.lastmonth,
+                    last_month_th: this.getMonthName(this.form.lastmonth),
+                    exporter_id: this.form.exporter_id
+                }
+                // var check = Polymer.dom(this.root).querySelectorAll('.saveData').map(function (item) {
+                //     return item.validate();
+                // }.bind(this))
+                // console.log(check);
+                // const checkStat = function (check) {
+                //     return check == true;
+                // }
+                // if (check.every(checkStat) == true) {
+                // if (!datas.last_year || !datas.last_month) {
+                //     datas.last_year = '0';
+                //     datas.last_month_th = '0';
+                //     datas.last_month = '0';
+                // }
+                console.log(datas);
+                window.open(
+                    '/api/report/report_quota?quota=' + datas.quota +
+                    '&startYear=' + datas.first_year +
+                    '&startMonth=' + datas.first_month +
+                    '&endYear=' + datas.last_year +
+                    '&endMonth=' + datas.last_month +
+                    '&type='+this.selectDoc+
+                    '&exporter_id='+datas.exporter_id,
+                    '_blank'
+                );
+            }
+        });
+    </script>
+</dom-module>

@@ -1,11 +1,9 @@
-<link rel="import" href="./../bower_components/polymer/polymer.html">
-
+<link rel="import" href="../bower_components/polymer/polymer.html">
 <script>
     /**
-     * nylonBehavior
     * @polymerBehavior
-    */  
-    nylonBehavior = {
+    */   
+    NylonBehavior = {
         properties:{
             nylonShow:{
                 value:true,
@@ -14,10 +12,14 @@
             visible:{
                 type:Boolean,
                 observer:'_checkVisible'
+            },
+            i18n:{
+                statePath:'i18n'
             }
         },
         _checkVisible:function(ob){
             if(ob){
+                window.bundle.default.ReduxAction.target = this;
                 if(typeof this.nylonPageActive != "undefined"){
                     this.nylonPageActive();
                 }

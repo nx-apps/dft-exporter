@@ -24,17 +24,21 @@ const storeApp = createStore(
     rootReducer,
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
 );
-window.preReduxBehavior = PolymerRedux(storeApp)
-window.preDispatchActionBehavior = dispatchActionBehavior()
-window.dispatchActionBehavior = dispatchActionBehavior()
 
 handleAuth(storeApp);
-window.prei18nAction = i18nAction(storeApp);
+
+let actionPacket = {}
 modules.map(function(row){
 	for (var prop in row) {
 		var arrSplit = prop.split('Action');
 		if(arrSplit.length==2){
-			window['pre'+prop] = row[prop](storeApp);
+			actionPacket = Object.assign({},actionPacket,row[prop](storeApp));
 		}
 	}
 })
+actionPacket = Object.assign({},actionPacket,i18nAction(storeApp));
+
+export default {
+	ReduxBehavior : Object.assign({},PolymerRedux(storeApp),dispatchActionBehavior()),
+	ReduxAction:actionPacket
+}

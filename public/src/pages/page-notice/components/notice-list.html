@@ -1,0 +1,110 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="./../../../../bower_components/vaadin-grid/vaadin-grid-column-group.html">
+<link rel="import" href="./../../../../bower_components/paper-checkbox/paper-checkbox.html">
+<!--<link rel="import" href="../../../../bower_components/paper-radio-button/paper-radio-button.html">-->
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="./../../components/format-number-behavior.html">
+<link rel="import" href="./../../components/custom-grid-zoom.html">
+
+<dom-module id="notice-list">
+    <template>
+        <style include="shared-styles"></style>
+        <custom-grid-zoom>
+        <vaadin-grid slot="grid" id="material" items="[[data]]" size="200">
+            <vaadin-grid-column width="100px" flex-grow="0">
+                <template class="header">
+                    <div style="text-align:center">
+                        เลือก
+                    </div>
+                </template>
+                <template>
+                    <div style="text-align:center" value="[[item.id]]">
+                         <paper-checkbox id="typeRice" name$="{{item.type_rice_id}}" disabled$="{{disabledSelectBox(item.status)}}"  value="[[item.id]]"></paper-checkbox> 
+                        <!--<input type="radio" id="typeRice" name$="{{item.type_rice_id}}" disabled$="{{checkStatus(item.status)}}" on-tap="getIDtypeRice" value="[[item.id]]">-->
+                        <!--<input type="radio" id="typeRice" value="[[item.id]]" checked="{{item.checked}}">-->
+                        <!--<paper-radio-button id="typeRice" name$="{{item.type_rice_id}}" value="[[item.id]]"></paper-radio-button>-->
+                    </div>
+                </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column>
+                <template class="header">คำนวณครั้งที่</template>
+                <template>
+                    <div>[[item.ordinal]]</div>
+                </template>
+                <!--<template class="footer">First Name</template>-->
+            </vaadin-grid-column>
+
+            <vaadin-grid-column>
+                <template class="header">ปริมาณ (ตัน)</template>
+                <template><div>[[formatNumber(item.amount_update)]]</div></template>
+                <!--<template class="footer">Last Name</template>-->
+            </vaadin-grid-column>
+
+            <vaadin-grid-column>
+                <template class="header">สถานะ</template>
+                <template>
+                    <div>[[item.status_th]]</div>
+                </template>
+                <!--<template class="footer">Address</template>-->
+            </vaadin-grid-column>
+
+            <vaadin-grid-column>
+                <template class="header">จัดการ</template>
+                <template><div>
+                <paper-button item="{{item}}" on-tap="selectData"  disabled$="{{disableMnageNotice(item.status)}}" raised>จัดการประกาศ</paper-button>
+                </div></template>
+            </vaadin-grid-column>
+        </vaadin-grid>
+        </custom-grid-zoom>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'notice-list',
+            behaviors: [ReduxBehavior,FormatNumberBehavior],
+            disabledSelectBox:function(status){
+                if(status == 'a' || status == 'c') return true
+                else return false
+            },
+            disableMnageNotice:function(status){
+                // console.log(status);
+                // true กดไม่ได้ false กดได้
+                if(status == 'c' || status == 'cf') return true;
+                else return false
+            },  
+            selectData:function(e){
+                var item = e.target.item;
+                var newData = {
+                    id: item.id,
+                    year : item.year,
+                    typeRice : item.type_rice_id
+                }
+                // console.log(newData);
+                // return newData;
+                this.dispatchAction('NOTICE_SELECT',this,newData.id,newData.year,newData.typeRice)
+            },
+            getValueForReport:function(e){
+                var checkSelect =  Polymer.dom(this.root).querySelectorAll('#typeRice').map(function(item){
+                    if(item.checked == true){
+                        return item.value
+                    }  
+                }.bind(this));
+                // console.log(checkSelect);
+                var queryString = "";
+                checkSelect.map(function(id){
+                    if(id){
+                        var comma = "";
+                        if(queryString!=""){comma=","}
+                        queryString = queryString+comma+id;
+                    }
+                })
+                return queryString;
+            }   
+        });
+    </script>
+</dom-module>

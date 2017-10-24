@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+     <script>
+        /* this script must run before Polymer is imported */
+        window.Polymer = {
+        dom: 'shadow',
+        lazyRegister: true
+        };
+    </script>
+    <link rel="import" href="src/gl-form.html">
+    <link rel="import" href="./bower_components/paper-button/paper-button.html">
+    <link rel="import" href="./bower_components/gl-font/gl-rsu-font.html">
+    <link rel="import" href="./bower_components/paper-material/paper-material.html">
+
+
+    <style>
+        .t1{
+            width: 300px;
+        }
+        .t2{
+            width: 250px;
+        }
+        .card{
+            margin: 20px;
+            width: 60%;
+            height: 10%;
+        }
+    </style>
+</head>
+<body>
+    <gl-form></gl-form>
+
+    
+</body>
+</html>

@@ -1,5 +1,4 @@
 import axios from '../axios'
-import { commonAction } from '../config'
 const initialState = {
     list: [],
     list_search: [],
@@ -30,7 +29,7 @@ export function companyReducer(state = initialState, action) {
     }
 }
 export function companyAction(store) {
-    return [commonAction(),
+    return 
     {
         COMPANY_GET_DATA: function (page) {
             if (page == 'COMPANY_GET_DATA') {
@@ -233,5 +232,5 @@ export function companyAction(store) {
             }
         }
     }
-    ]
+    
 }

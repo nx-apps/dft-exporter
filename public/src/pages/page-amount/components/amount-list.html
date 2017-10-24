@@ -1,0 +1,451 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+ <link rel="import" href="../../components/page-header.html">
+<link rel="import" href="../../components/page-panel.html">
+<link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid-column-group.html">
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="../../components/format-number-behavior.html">
+<link rel="import" href="../../../month-behavior.html">
+<link rel="import" href="../../components/nylon-input.html">
+<link rel="import" href="../../components/page-panel.html">
+<link rel="import" href="./../../../../bower_components/iron-input/iron-input.html">
+<link rel="import" href="../../components/sheet-tab/sheet-tabs.html">
+<link rel="import" href="../../components/sheet-tab/sheet-tab.html"> 
+
+<dom-module id="amount-list">
+    <template>
+         <style include="shared-styles">
+            .colorRed {
+                color: red;
+            }
+
+            .colorGreen {
+                color: green;
+            }
+
+            nylon-input {
+                --paper-input-container-input: {
+                    font-size: 14px;
+                }
+            }
+
+            .textRight {
+                text-align: right;
+            }
+
+            vaadin-grid#material {
+                /* height:450px; */
+                height: calc(100vh - var(--set-dynamic-height) - 107px);
+
+                --vaadin-grid-header-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    font-weight: bold;
+                }
+                --vaadin-grid-body-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    /*padding:0px;*/
+                }
+                --vaadin-grid-footer-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    font-weight: bold;
+                }
+            }
+
+            .footer {
+                position: fixed;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+            }
+/* 
+            paper-tabs {
+                border-top: 1px solid #ddd;
+                height: 40px;
+                background-color: white;
+                --paper-tabs-selection-bar-color: #f7941e;
+            } */
+
+            paper-tab {
+
+                --paper-tab-content-unselected: {
+                    color: black;
+                }
+
+                --paper-tab-content: {
+                    color: #f7941e;
+                }
+            }
+        </style> 
+         <div>
+            <div class="content"> 
+                  <vaadin-grid slot="grid" id="material" size="500" items="{{dataList.allocate_detail}}">
+                    <vaadin-grid-column width="50px" flex-grow="0" frozen>
+                        <template class="header">
+                            <div class="cell">
+                                #
+                            </div>
+                        </template>
+                        <template>
+                            <div class="cell">
+                                [[count(index)]]
+                            </div>
+                        </template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column resizable frozen>
+                        <template class="header">
+                            <div class="cell">
+                                ผู้ส่งออก
+                            </div>
+                        </template>
+                        <template>[[item.exporter_name]]</template>
+                        <template class="footer">
+                            <div class="cell">
+                                ยอดเป้าหมาย
+                            </div>
+                            <div class="cell">
+                                ปริมาณโควตารวม
+                            </div>
+                        </template>
+                    </vaadin-grid-column>
+                    <template is="dom-repeat" index-as="num" as="col" items="[[quantity]]">
+                        <vaadin-grid-column hidden="{{check.period}}">
+                            <template class="header">
+                                <div class="cell textRight">
+                                    งวดที่ [[col.period]] [[getMonthShortName(col.month)]]
+                                </div>
+                            </template>
+                            <template>
+                                <div class="cell" style="text-align:right">
+                                    [[getweight(item.quantity,num,'weight_cal')]]
+                                </div>
+                            </template>
+                            <template class="footer">
+                                <div class="cell" style="text-align:right">
+                                    [[getweight(quantity,num,'weight')]]
+                                </div>
+                                <div class="cell" style="text-align:right">
+                                    [[getweight(dataList.sum.sum_period,num,'sum_weight_cal')]]
+                                </div>
+                            </template>
+                        </vaadin-grid-column>
+                        <vaadin-grid-column hidden="{{check.period_update}}">
+                            <template class="header">
+                                <div class="cell textRight">
+                                    ปรับปรุงงวดที่ [[col.period]] <br> [[getMonthShortName(col.month)]]
+                                </div>
+                            </template>
+                            <template>
+                                <div class="cell" style="text-align:right">
+                                    <nylon-input no-label-float format-number item="{{item}}" num="{{num}}" index="{{index}}" on-change="pushData" on-input="setItem"
+                                        value="{{getweight(item.quantity,num,'weight_update','noformat')}}" disabled="{{checkStatus(dataList.status)}}"></nylon-input>
+                                </div>
+                            </template>
+                            <template class="footer">
+                                <div class$="[[mathWeight(dataList.allocate_detail.*,num,quantity,'class')]]" style="text-align:right">
+                                    [[mathWeight(dataList.allocate_detail.*,num,quantity,'data')]]
+                                </div>
+                                <div class="cell" style="text-align:right">
+                                    [[sumweightUpdate(dataList.allocate_detail.*,num)]]
+                                </div>
+                            </template>
+                        </vaadin-grid-column>
+                    </template>
+                    <vaadin-grid-column>
+                        <template class="header">
+                            <div class="cell textRight">
+                                ปริมาณโควตารวม
+                            </div>
+                        </template>
+                        <template>
+                            <div class="cell" style="text-align:right">
+                                [[formatNumber(item.amount)]]
+                            </div>
+                        </template>
+                        <template class="footer">
+                            <div class="cell" style="text-align:right">
+                                [[formatNumber(dataList.amount_update)]]
+                            </div>
+                            <div class="cell" style="text-align:right">
+                                [[formatNumber(dataList.sum.sum_amount)]]
+                            </div>
+                        </template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column>
+                        <template class="header">
+                            <div class="cell textRight">
+                                รวมยอดปรับปรุง
+                            </div>
+                        </template>
+                        <template>
+                            <div class="cell" style="text-align:right">
+                                [[formatNumber(item.amount_update,'0\,0.000')]]
+                            </div>
+                        </template>
+                        <template class="footer">
+                            <div class="cell" style="text-align:right">
+                                <!-- [[sum(dataList.allocate_detail.*,'total')]] -->
+                            </div>
+                            <div class="cell" style="text-align:right">
+                                [[sum(dataList.allocate_detail.*,'amount_update','0\,0.000')]]
+                            </div>
+                        </template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column>
+                        <template class="header">
+                            <div class="cell textRight">
+                                ปริมาณโควตารวม - <br>รวมยอดปรับปรุง
+                            </div>
+                        </template>
+                        <template>
+                            <div class$="[[setColor(item.total)]]" style="text-align:right">
+                                [[formatNumber(item.total)]]
+                            </div>
+                        </template>
+                        <template class="footer">
+                            <div class="cell" style="text-align:right">
+                                [[sum(dataList.allocate_detail.*,'total')]]
+                            </div>
+                        </template>
+                    </vaadin-grid-column>
+                </vaadin-grid>  
+             </div> 
+
+             <sheet-tabs select="{{selected}}">
+                <sheet-tab name="period">ยอดคำนวณของแต่ละงวด</sheet-tab>
+                <sheet-tab name="period_update">ยอดปรับปรุงของแต่ละงวด</sheet-tab>
+                <sheet-tab name="all">แสดงทั้งหมด</sheet-tab>
+            </sheet-tabs> 
+         </div> 
+    </template>
+    <script>
+        Polymer({
+            is: 'amount-list',
+            observers: ['checkQuota(selected)', 'getHeight(height)'],
+            behaviors: [ReduxBehavior, FormatNumberBehavior, MonthBehavior],
+            properties: {
+                dataList: {
+                    statePath: 'amount.data',
+                    observer: 'getQuantity'
+                },
+                quantity: {
+                    type: Array,
+                    value: [1, 2, 3]
+                },
+                result: {
+                    type: Array,
+                    value: []
+                },
+                dataSelect: {
+                    type: Object,
+                    value: {}
+                },
+                check: {
+                    type: Object,
+                    value: {
+                        period: false,
+                        period_update: true,
+                        all: true
+                    }
+                }
+            },
+            ready: function () {
+                this.selected = 'period'
+            },
+            mathWeight:function(data,num,quantity,type){
+                if(data && quantity){
+                    var num1 = this.getweight(quantity,num,'weight');
+                    var num2 = this.sumweightUpdate(data,num)
+                    if(type == 'data')
+                        return this.unFormat(num1) - this.unFormat(num2);
+                    else{
+                        if((this.unFormat(num1) - this.unFormat(num2)<0))
+                            return 'cell colorRed'
+                        else return 'cell colorGreen'
+                    }
+                }
+            },
+            getHeight: function (h) {
+
+                this.customStyle['--set-dynamic-height'] = h.toString() + 'px';
+                //console.log(this.customStyle['--set-dynamic-height'])
+                this.updateStyles();
+
+            },
+            count: function (val) {
+                return val + 1;
+            },
+            checkStatus: function (val) {
+                if (val == 'n' || val == 'cf') {
+                    return true
+                }
+                else {
+                    return false
+                }
+            },
+            setColor: function (val) {
+                var result = val;
+                // console.log(result);
+                if (result < 0) {
+                    return 'cell colorRed'
+                }
+                else if (result == 0) {
+                    return 'cell'
+                }
+                else if (result > 0) {
+                    return 'cell colorGreen'
+                }
+            },
+            checkQuota: function (select) {
+                // console.log(select);
+                // this.$.material.notifyResize();
+                // console.log(e.currentTarget.value);
+                // var element = e.currentTarget;
+                var value = select;
+                this.check = {
+                    period: true,
+                    period_update: true,
+                }
+                if (value == 'period') {
+                    this.set('check.period', false);
+                }
+                else if (value == 'period_update') {
+                    this.set('check.period_update', false);
+                }
+                else if (value == 'all') {
+                    this.set('check', {
+                        period: false,
+                        period_update: false
+                    })
+                }
+            },
+            sum: function (val, filed, format) {
+                if (typeof val.base != 'undefined') {
+                    // console.log(val);
+                    var sum = 0;
+                    val.base.map((item) => {
+                        sum += item[filed];
+                    })
+                    return this.formatNumber(sum, format);
+                }
+            },
+            sumweightUpdate: function (val, num) {
+                // console.log(val);
+                var sum = 0;
+                // if(num < val.length){
+                    // console.log(val.base.length,num);
+                    // console.log(val.base)
+                    val.base.map((item) => {
+                        if(num < item.quantity.length)
+                            sum += item.quantity[num].weight_update;
+                    })
+                    return this.formatNumber(sum);
+                // }
+            },
+            pushData: function (e) {
+                var element = e.currentTarget;
+                var item = element.item;
+                var index = element.index;
+                var saveQuantity = item.quantity.map((item)=>{
+                    var newItem = {
+                        period:item.period,
+                        weight:item.weight,
+                        weight_cal:item.weight_cal,
+                        weight_update: this.unFormat(item.weight_update)
+                    }
+                    return newItem;
+                    // var { period, weight, weight_cal, weight_update } = item;
+                    // var newData = { period, weight, weight_cal, weight_update };
+                    // newData.weight_update = this.unFormat(item.weight_update);
+                    // return newData;
+                })
+                var datas = {
+                    quantity: saveQuantity,
+                    id: item.id,
+                    amount: item.amount,
+                    amount_update: item.amount_update
+                }
+                const checkId = function (data) {
+                    return data.id == item.id;
+                }
+                if (this.result.length == 0) {
+                    this.push('result', datas)
+                }
+                else {
+                    var setIndex = this.result.findIndex(checkId);
+                    // console.log(setIndex);
+                    if (setIndex == -1) {
+                        this.push('result', datas)
+                    }
+                    else {
+                        this.set('result.' + setIndex, datas)
+                    }
+                }
+                console.log(datas);
+            },
+            setItem: function (e) {
+                var element = e.currentTarget;
+                var value = element.value;
+                var row = element.index;
+                var period = element.num;
+                var item = element.item;
+                var quantity = item.quantity;
+                quantity[period].weight_update = this.unFormat(value);
+                // console.log(quantity);
+                this.set('dataList.allocate_detail.' + row + '.quantity', quantity);
+                var answer = 0;
+                for (var i = 0; i < item.quantity.length; i++) {
+                    answer += item.quantity[i].weight_update;
+                }
+                this.set('dataList.allocate_detail.' + row + '.amount_update', answer);
+                var newTotal = this.unFormat(item.amount) - this.unFormat(item.amount_update);
+                this.set('dataList.allocate_detail.' + row + '.total', newTotal)
+                // console.log(item.quantity);
+            },
+            getQuantity: function (val) {
+                // console.log(val.base);
+                this.quantity = val.quantity;
+                // console.log(this.quantity);
+            },
+            getweight: function (val, num, name, check) {
+                // if(name == 'test') console.log(val);
+                if (check == 'noformat') {
+                    if(num < val.length)
+                        return val[num][name];
+                }
+                else {
+                    if(num < val.length)
+                        return this.formatNumber(val[num][name]);
+                }
+
+            },
+            reset: function () {
+                this.dispatchAction('AMOUNT_GET_DATA', this.dataSelect);
+            },
+            saveData: function () {
+                // console.log(this.result);
+                this.fire('toast', { status: 'load' });
+                this.dispatchAction('AMOUNT_UPDATE', this.result)
+                    .then((response) => {
+                        this.fire('toast', {
+                            status: 'success', text: 'บันทึกสำเร็จ',
+                            callback: () => {
+                                this.dispatchAction('AMOUNT_GET_DATA', this.dataSelect);
+                            }
+                        });
+
+                    })
+                    .catch(function (error) {
+                        console.log('error');
+                        console.log(error);
+                    });
+            }
+        });
+    </script>
+</dom-module>

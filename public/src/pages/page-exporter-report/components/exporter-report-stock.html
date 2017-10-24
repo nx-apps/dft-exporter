@@ -1,0 +1,108 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+้<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="../../components/format-number-behavior.html">
+<dom-module id="exporter-report-stock">
+    <template>
+        <style include="shared-styles">
+            .gl-btn-primary{
+                margin: 0;
+                width: 100%;
+            }
+        </style>
+          <b>รายงานการส่งออกข้าว</b>
+            <vaadin-grid slot="grid" id="material" items="[[data]]" size="200">
+                <vaadin-grid-column width="100px" flex-grow="0">
+                    <template class="header">
+                        <div class="cell" style="text-align:center;padding:15px">
+                            ลำดับที่
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell" style="text-align:center;padding:15px">
+                            [[count(index)]]
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                    <template class="header">
+                        <div class="cell">
+                            เลขที่รับ
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell" style="text-align:right">
+                            [[item.number]]
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                    <template class="header">
+                        <div class="cell">
+                            ปริมาณ (ตัน)
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell" style="text-align:right">
+                            [[formatNumber(item.weight,'0\,0.00000')]]
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="100px" flex-grow="0">
+                    <template class="header">
+                        <div class="cell">
+                            จัดการ
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell">
+                            <paper-icon-button on-tap="deleteData" icon="delete"></paper-icon-button>
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+            </vaadin-grid>
+            <paper-button class="gl-btn-primary" on-tap="confirmDialog">นำเข้าข้อมูล</paper-button>
+    </template>
+    <script>
+        Polymer({
+            is: 'exporter-report-stock',
+            behaviors: [ReduxBehavior, FormatNumberBehavior],
+            properties:{
+                data:{
+                    type:Array,
+                    value:[],
+                }
+            },
+            deleteData:function(e){
+                console.log(e.model.index)
+                this.splice('data',e.model.index)
+            },
+            count:function(num){
+                return num+1;
+            },
+            confirmDialog:function(){
+                this.fire('toast', {
+                    status: 'openDialog',
+                    text: 'ต้องการนำเข้าข้อมูลใช่ไหม ?',
+                    confirmed: this.importData.bind(this)
+                })
+            },
+            importData:function(check){
+                if(check == true){
+                    // console.log(this.data)
+                    this.data.map((item)=>{
+                        item.weight = this.unFormat(item.weight);
+                        return item
+                    })
+                    if(this.data.length != 0){
+                        console.log(this.data)
+                        this.dispatchAction('EXPORTER_REPORT_INSERT',this.data)
+                    }
+                }
+            }
+        });
+    </script>
+</dom-module>

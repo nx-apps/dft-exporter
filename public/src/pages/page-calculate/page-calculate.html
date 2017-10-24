@@ -1,0 +1,184 @@
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../layout/shared-styles.html">
+<link rel="import" href="../../nylon-behavior.html">
+<link rel="import" href="../components/page-header.html">
+<link rel="import" href="../components/page-panel.html">
+<link rel="import" href="../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../components/nylon-panel-right.html">
+<link rel="import" href="components/calculate-list.html">
+<link rel="import" href="components/calculate-setting.html">
+<link rel="import" href="../../redux-behavior.html">
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="./../../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="page-calculate">
+
+  <template>
+    <style is="custom-style" include="shared-styles">
+      #modal {
+        margin: 0;
+        width: 50%;
+        height: auto;
+      }
+
+      .dailogHeader {
+        font-size: 22px;
+      }
+      .section{
+        padding: 0.5rem;
+      }
+      .page{
+        height: calc(100vh - 64px);
+      }
+    </style>
+    
+    <div class="page">
+      <page-header label="การคำนวณส่วนจัดสรร">
+        <paper-button raised class="gl-btn-primary" hidden="{{isHidden(selectYear)}}" on-tap="mathSetting" id="addRedRegExporter">
+          <iron-icon icon="add"></iron-icon>เพิ่มการคำนวณ</paper-button>
+      </page-header>
+      <page-panel>
+        <div class="row between-xs">
+          <div class="col-xs-12 col-sm-4 col-md-2">
+            <div class="box">
+              ปีโควตา :
+              <vaadin-combo-box label="แสดงข้อมูลรายปี" no-label-float items="[[year]]" value="{{selectYear}}"></vaadin-combo-box>
+            </div>
+          </div>
+        </div>
+        <div class="section">
+          <template is="dom-repeat" items="[[list]]">
+            <h3>ประเภท : {{item.type_rice_name_th}}</h3>
+            <calculate-list list="[[item]]" year="{{selectYear}}"></calculate-list>
+            <div class="white-space"></div>
+          </template>
+        </div>
+      
+      </page-panel>
+    </div>
+    <paper-dialog id="modal" modal no-overlap horizontal-align="right" vertical-align="top">
+
+      <div class="container">
+        <div class="row between-xs">
+          <div class="col-xs-6">
+            <div class="dailogHeader">
+              เพิ่มการคำนวณ
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <div style="text-align:right">
+              <paper-icon-button icon="close" on-tap="closeDailog"></paper-icon-button>
+            </div>
+          </div>
+        </div>
+        <div class="cell">
+          <vaadin-combo-box label="ปีโควตา" items="[[year]]" disabled value="{{data.year}}"></vaadin-combo-box>
+        </div>
+        <div class="cell">
+          <vaadin-combo-box label="ประเภทข้าว" id="typeRice" items="[[typeRice]]" value="{{data.type_rice_id}}" required>
+            
+            <template>[[item.label]]</template>
+            
+          </vaadin-combo-box>
+        </div>
+        <div class="white-space"></div>
+        <div class="cell">
+          <paper-button style="margin:0;" on-tap="confirmDialog" class="gl-btn-success">สร้าง</paper-button>
+        </div>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: "page-calculate",
+      behaviors: [NylonBehavior, ReduxBehavior],
+      observers: ['getCalculate(selectYear)'],
+      properties: {
+        year: {
+          statePath: 'commonData.year'
+        },
+        typeRice: {
+          statePath: 'commonData.type_rice'
+        },
+        list: {
+          statePath: 'calculate.list'
+        },
+        data: {
+          statePath: 'calculate.data'
+        },
+        selectYear: {
+          statePath: 'commonData.selectYear'
+        }
+        // getyear: {
+        //   statePath: 'commonData.selectYear'
+        // }
+      },
+      isHidden: function (val) {
+        console.log(val);
+        if (val) return false;
+        else return true
+      },
+      nylonPageActive: function () {
+        this.dispatchAction('COMMON_DATA_GET_YEAR');
+        if(this.selectYear){
+          // this.set('data.year', getyear)
+          if(this.data.year) this.dispatchAction('COMMON_DATA_SET_YEAR', this.data.year);
+          // this.dispatchAction('CALCULATE_GET_DATA', this.selectYear);
+        }
+        // this.dispatchAction('COMMON_DATA_GET_TYPE_RICE');
+        // this.data.year = this.year;
+        // this.dispatchAction('CALCULATE_GET_YEAR');
+      },
+      mathSetting: function (e) {
+        var element = e.currentTarget;
+        // console.log(element);
+        this.$.modal.positionTarget = element;
+        this.$.modal.open();
+      },
+      closeDailog: function () {
+        this.$.modal.close();
+      },
+      getCalculate: function (getyear) {
+        if (getyear != '' && typeof getyear != 'undefined') {
+          this.set('data.year', getyear)
+          this.dispatchAction('COMMON_DATA_SET_YEAR', getyear);
+          this.dispatchAction('CALCULATE_GET_DATA', getyear);
+          // this.dispatchAction('COMMON_DATA_GET_TYPE_RICE',getyear)
+        }
+      },
+      confirmDialog:function(){
+        this.fire('toast', {
+            status: 'openDialog',
+            text: 'ต้องการคำนวณโควตาปี '+(this.data.year+543)+' ใช่ หรือ ไม่ ?',
+            confirmed: this.getForm.bind(this)
+        })
+      },
+      getForm: function (check) {
+        console.log(this.$.typeRice.validate())
+        if(check == true){
+          if(this.$.typeRice.validate() == true){
+            this.$.modal.close();
+            this.fire('toast', { status: 'load' });
+            this.dispatchAction('CALCULATE_INSERT', this.data)
+              .then(function () {
+                this.fire('toast', {
+                  status: 'success', text: 'บันทึกสำเร็จ',
+                  callback: function () {
+                    this.dispatchAction('CALCULATE_GET_DATA', this.selectYear);  
+                  }.bind(this)
+                });
+              }.bind(this))
+              .catch(function (error) {
+                this.fire('toast', {
+                  status: 'connectError', text: error,
+                  callback: function () {
+                  }
+                })
+              }.bind(this))
+          }
+        }
+      }
+
+    });
+  </script>
+</dom-module>

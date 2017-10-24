@@ -10,26 +10,21 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 
+<link rel="import" href="./../../bower_components/app-layout/app-header/app-header.html">
+
 <link rel="import" href="./layout-main-toolbar.html">
 <link rel="import" href="./layout-main-drawer.html">
 <link rel="import" href="./nylon-toast.html">
-
-<link rel="import" href="../../bower_components/gl-font/gl-cschatthai-font.html">
 
 <link rel="import" href="./flexbox-grid.html">
 <dom-module id="layout-main">
 	<template>
 		<style include="flexbox-grid">
-			* {
-				font-family: 'CSChatThaiUI', sans-serif;
-				-webkit-font-smoothing: antialiased;
-			}
-
 			#drawer {
 				z-index: 2;
 				--app-drawer-width: 400px;
 			}
-
+			
 			.offline {
 				position: fixed;
 				top: 0;
@@ -41,14 +36,14 @@
 				opacity: 0.7;
 				filter: alpha(opacity=70);
 			}
-
+			
 			.offline>.flex-container {
 				display: -webkit-flex;
 				display: flex;
 				width: 100%;
 				height: 100%;
 			}
-
+			
 			.offline>.flex-container>.flex-item {
 				margin: auto;
 				color: #FFF;
@@ -57,7 +52,7 @@
 				font-family: 'rsuregular', sans-serif;
 				-webkit-font-smoothing: antialiased;
 			}
-
+			
 			[blur] {
 				-webkit-filter: blur(0.5px);
 				-moz-filter: blur(0.5px);
@@ -65,6 +60,11 @@
 				-ms-filter: blur(0.5px);
 				filter: blur(0.5px);
 			}
+
+			.container{
+				padding-top: 63px;
+			}
+
 			/*.xcontainer{
 				margin:auto;
 			}
@@ -74,6 +74,7 @@
 					width:80%;
 				}
 			}*/
+			
 			/*.main-container {
 				margin-right: auto;
 				margin-left: auto;
@@ -99,23 +100,25 @@
 				}
 			}*/
 
-			.container {
+			  .container{
 				padding-left: 0.5em;
 				padding-right: 0.5em;
-			}
+			}  
 
-			.test-main {
+			.test-main{
 				background-color: #DD22DD
 			}
 		</style>
 		<div blur$="{{offline}}">
 			<app-drawer id="drawer">
-				<layout-main-drawer path="{{path}}" on-toggle-drawer="_toggleDrawer" on-open-drawer="_openDrawer" on-close-drawer="_closeDrawer"></layout-main-drawer>
+				 <div style="height: 100%; overflow: auto;">
+					<layout-main-drawer path="{{path}}" on-toggle-drawer="_toggleDrawer" on-open-drawer="_openDrawer" on-close-drawer="_closeDrawer"></layout-main-drawer>
+				</div>
 			</app-drawer>
 
 			<app-header-layout style="z-index:1;">
 				<app-header fixed condenses effects="waterfall">
-					<layout-main-toolbar on-toggle-drawer="_toggleDrawer" on-open-drawer="_openDrawer" on-close-drawer="_closeDrawer"></layout-main-toolbar>
+					 <layout-main-toolbar title-nav="[[titleNav]]" on-toggle-drawer="_toggleDrawer" on-open-drawer="_openDrawer" on-close-drawer="_closeDrawer"></layout-main-toolbar> 
 				</app-header>
 			</app-header-layout>
 
@@ -126,18 +129,21 @@
 			</nylon-toast>
 
 		</div>
-		<div class="offline" hidden$="{{!offline}}">
+		<!-- <div class="offline" hidden$="{{!offline}}">
 			<div class="container">
 				<div class="flex-item">
 					<paper-spinner active></paper-spinner><br>Unable to connect to the Internet<br>&#34 Connecting... Please wait &#34</div>
 			</div>
-		</div>
+		</div> -->
 	</template>
 
 
 	<script>
 		Polymer({
 			is: 'layout-main',
+			listeners: {
+				'set-nav': '_setNav'
+			},
 			ready: function () {
 				this.offline = navigator.onLine === false;
 				window.addEventListener('online', function () {
@@ -157,6 +163,9 @@
 			},
 			_closeDrawer: function () {
 				this.$.drawer.close();
+			},
+			_setNav:function(e){
+				this.titleNav = e.detail;
 			}
 		});
 	</script>

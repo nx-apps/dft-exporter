@@ -1,0 +1,137 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../components/page-panel.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../components/nylon-input.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="../../components/format-number-behavior.html">
+
+<dom-module id="special-manage">
+    <template>
+        <style include="shared-styles">
+        </style>
+        <page-panel>
+            <vaadin-combo-box label="ปีโควตา" items="[[year]]" value="{{search.year}}" disabled></vaadin-combo-box>
+            <vaadin-combo-box label="ประเภทข้าว" items="[[typeRice]]" value="{{search.type_rice_id}}" item-label-path="type_rice_name_th" item-value-path="id" disabled></vaadin-combo-box> 
+            <vaadin-combo-box id="form" label="บริษัท" loading="{{check}}" filter="{{word}}" items="[[exporter]]" item-label-path="company_name_th" item-value-path="company_taxno" value="{{data.exporter_id}}" required>
+              	<template>
+				    [[item.company_name_th]]
+				</template> 
+            </vaadin-combo-box>
+            <nylon-input id="form" label="ปริมาณ" value="{{data.amount}}" required format-number></nylon-input>
+            <div>
+               หมายเหตุ : ปริมาณไม่เกิน [[formatNumber(list.quota.amount)]]
+            </div>
+            <div class="row end-xs">
+                <div class="col-xs-2">
+                    <paper-button class="gl-btn-success" on-tap="confirmDialog" raised>บันทึก</paper-button>
+                </div>
+            </div>
+        </page-panel>
+    </template>
+    <script>
+        Polymer({
+            is: 'special-manage',
+            behaviors:[ReduxBehavior,FormatNumberBehavior],
+            observers:['searchExporter(word)','getTypeRice(data.year)'],
+            properties:{
+                data: {
+                    type: Object,
+                    statePath: 'special.form',
+                    observer:'setItemExporter'
+                },
+                list:{
+                    type:Object,
+                    statePath:'special.list'
+                },
+                search:{
+                    type:Object,
+                    statePath:'special.search',
+                    observer:'setData'
+                },
+                year: {
+                    type: Array,
+                    statePath: 'commonData.year'
+                },
+                typeRice: {
+                    type: Array,
+                    statePath: 'commonData.type_rice'
+                },
+                exporter:{
+                    type:Array,
+                    statePath: 'commonData.companyReport',
+                    observer:'clearLoad'
+                }
+            },
+            getTypeRice:function(val){
+                this.dispatchAction('COMMON_DATA_SET_YEAR',val)
+            },
+            searchExporter:function(value){
+                this.check = true;
+                this.debounce('searchItem', () => {
+                    // 
+                    if (typeof value != 'undefined' && value.length >= 3) {
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_REPORT', value);
+                    }
+                    else {
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_CLEAR');
+                    }
+
+                }, 1000)
+            },
+            clearLoad:function(val){
+                console.log(val)
+                this.check = false;
+            },
+            validateForm:function(){
+                var check = false
+                var newData = this.unFormat(this.data.amount);
+                if(this.elementValidate('#form')==true){
+                    if(newData <= this.list.quota.amount){
+                        console.log('1234')
+                        check = true;
+                    }
+                    else{
+                        this.fire('toast',{status:'connectError',text:'ปริมาณเกินกำหนด',
+                            callback:function(){
+                            }})
+                    }
+                }
+                return check
+            },
+            confirmDialog:function(){
+                this.fire('toast',{ 
+                 status:'openDialog',
+                 text:'ต้องการบันทึกข้อมูลใช่หรือไม่ ?',
+                 confirmed:this.saveData.bind(this)
+                 })
+            },
+            saveData:function(check){
+                if(check == true){
+                    this.data.amount = this.unFormat(this.data.amount);
+                    if(this.validateForm() == true){
+                        // console.log('event');
+                        this.dispatchAction('SPECIAL_INSERT',this.data)
+                    }
+                }
+            },
+            setData:function(val){
+                this.set('data.year',val.year);
+                this.set('data.type_rice_id',val.type_rice_id);
+            },
+            setItemExporter:function(item){
+                if(item.exporter_id){
+                    this.dispatchAction('COMMON_DATA_GET_COMPANY_REPORT', item.exporter_id);
+                }
+            },
+            elementValidate:function(val){
+                var item = Polymer.dom(this.root).querySelectorAll(val).map(function(item){
+                    return item.validate();
+                })
+                return item.every(check=> check == true);
+            }
+        });
+    </script>
+</dom-module>

@@ -1,0 +1,294 @@
+<link rel="import" href="./../../components/data-manage-behavior.html">
+<link rel="import" href="./../../components/format-number-behavior.html">
+<link rel="import" href="./../../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="./../../../layout/shared-styles.html">
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="./../../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="./../../../month-behavior.html">
+<link rel="import" href="./../../components/custom-grid-zoom.html">
+
+<dom-module id="fee-list">
+    <template>
+        <style include="shared-styles">
+            div[check-group]{
+                 color: #B6B6B6;
+            }
+        </style>
+        <custom-grid-zoom>
+          <vaadin-grid slot="grid" id="material" items="[[data]]" size="200">
+            <template is="dom-if" if="{{checkBox}}">
+                <vaadin-grid-column width="100px" flex-grow="0" frozen>
+                    <template class="header">
+                        <div class="box" style="text-align:center;">
+                        เลือก
+                        </div>
+                    </template>
+                    <template>
+                        <div class="box">
+                            <paper-checkbox on-tap="setDataCheck" value="{{item}}" checked="{{item.check}}" disabled="{{item.hidden}}"></paper-checkbox>
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+            </template>
+
+            <vaadin-grid-column width="200px" flex="0">
+                <template class="header">
+                    <div class="cell">ชื่อฟอร์ม</div>
+                </template>
+                <template>
+                    <div class="cell" check-group$="[[item.class]]">EC ในโควตา EU</div>
+                </template>
+            </vaadin-grid-column>
+
+             <vaadin-grid-column width="200px" flex="0">
+                <template class="header">
+                    <div class="cell">บริษัท</div>
+                </template>
+                <template>
+                    <div class="cell">[[item.exporter_name]]</div>
+                </template>
+            </vaadin-grid-column>
+
+            <!-- <vaadin-grid-column width="200px" flex="0">
+                <template class="header">
+                    <div class="cell">เลขที่คำขอ EC</div>
+                </template>
+                <template>
+                    <div class="cell">[[item.req_number]]</div>
+                </template>
+            </vaadin-grid-column> -->
+
+            <vaadin-grid-column width="200px" flex="0">
+                <template class="header">
+                    <div class="cell">เลขที่หนังสือรับรอง</div>
+                </template>
+                <template>
+                    <div class="cell">[[item.ec_number]]</div>
+                </template>
+            </vaadin-grid-column>
+
+            <vaadin-grid-column width="200px" flex="0">
+                <template class="header">
+                    <div class="cell">วันที่ส่ง</div>
+                </template>
+                <template>
+                    <div class="cell">[[converDate(item.req_date)]]</div>
+                </template>
+            </vaadin-grid-column>
+
+            <template is="dom-if" if="{{showData}}">
+                <vaadin-grid-column width="200px" flex="0">
+                    <template class="header">
+                        <div class="cell">ปริมาณ(ตัน)</div>
+                    </template>
+                    <template>
+                        <div class="cell" style="text-align:right">[[formatNumber(item.quantity)]]</div>
+                    </template>
+                     <template class="footer">
+                        <div class="cell" style="text-align:right">
+                            {{sum(data.*,'quantity')}}
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="200px" flex="0">
+                    <template class="header">
+                        <div class="cell">ราคาต่อหน่วย</div>
+                    </template>
+                    <template>
+                        <div class="cell" style="text-align:right">[[formatNumber(item.price)]]</div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell" style="text-align:right">
+                            {{sum(data.*,'price')}}
+                            <!--{{sum(data.*,'balance')}}-->
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="200px" flex="0">
+                    <template class="header">
+                        <div class="cell">จำนวนเงิน</div>
+                    </template>
+                    <template>
+                        <div class="cell" style="text-align:right">[[formatNumber(item.sum)]]</div>
+                        <!--<div class="cell" style="text-align:right">[[mathMoney(item.quantity,item.price)]]</div>-->
+                    </template>
+                    <template class="footer">
+                        <div class="cell" style="text-align:right">
+                            {{sumMoney(data.*)}}
+                            <!--{{sum(data.*,'balance')}}-->
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+            </template>
+            <template is="dom-if" if="{{dataOverplay}}">
+                 <vaadin-grid-column width="200px" flex="0">
+                    <template class="header">
+                        <div class="cell">ยอดเงินสุทธิ</div>
+                    </template>
+                    <template>
+                        <div class="cell"  style="text-align:right">[[formatNumber(item.balance)]]</div>
+                    </template>
+                     <template class="footer">
+                        <div class="cell" style="text-align:right">
+                            {{sum(data.*,'balance')}}
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="200px" flex="0">
+                    <template class="header">
+                        <div class="cell">ยอดเงินที่ใช้</div>
+                    </template>
+                    <template>
+                        <div class="cell" style="text-align:right">[[formatNumber(item.useBalance)]]</div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell" style="text-align:right">
+                            {{sum(data.*,'useBalance')}}
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column width="200px" flex="0">
+                    <template class="header">
+                        <div class="cell">คงเหลือ</div>
+                    </template>
+                    <template>
+                        <div class="cell" style="text-align:right">[[formatNumber(item.totalBalance)]]</div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell" style="text-align:right">
+                            {{sum(data.*,'totalBalance')}}
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+            </template>
+        </vaadin-grid>
+        </custom-grid-zoom>
+    </template>
+    <script>
+        Polymer({
+            is: 'fee-list',
+            behaviors:[DataManageBehavior,FormatNumberBehavior,MonthBehavior],
+            observers:['checkData(data)','hiddenCheckBox(data.*)'],
+            properties:{
+                checkBox:{
+                    type: Boolean,
+                    value: false
+                },
+                data:{
+                    observer: 'setDataForCheckBox'
+                }
+            },
+            converDate:function(val){
+                if(typeof val != 'undefined'){
+                    var arr = val.split('/');
+                    var year = parseInt(arr[2])+543;
+                    var result = arr[0]+' '+this.getMonthShortName(arr[1])+' '+year;
+                    return result
+                    //  console.log(val.split('/'));
+                } 
+            },
+            sum:function(val,feild){
+                // console.log(val,feild);
+                var sum = 0;
+                val.base.map((item)=>{
+                    sum += item[feild]
+                })
+                return this.formatNumber(sum)
+            },
+            dataSelected:function(e){
+                this.fire('data-select',e.currentTarget.item);
+            },
+            hiddenCheckBox:function(data){
+                // console.log(data);
+                if(data.value == true){
+                    var dataArray = this.data.filter((item)=>{
+                        return item.check == true;
+                    })
+                    var exporter
+                    dataArray.map((item)=>{
+                        exporter = item.exporter_id;
+                    })
+                    this.data.map((item,index)=>{
+                        if(exporter != item.exporter_id){
+                            this.set('data.'+index+'.hidden',true);
+                            this.set('data.'+index+'.class',true);
+                        }
+                    })
+                    // console.log('<------>',exporter);
+                }
+                else if(data.value == false && typeof this.data != 'undefined'){
+                    // console.log('--->',this.data);
+                    this.data.map((item,index)=>{
+                        this.set('data.'+index+'.hidden',false);
+                        this.set('data.'+index+'.class',false);
+                    })
+                }
+            },
+            mathMoney:function(quantity,price){
+                // console.log(quantity,price);
+                var answer = quantity * price;
+                return this.formatNumber(answer)
+            },
+            sumMoney:function(val){
+                if(val.base.length > 0 && val.path == 'data'){
+                    var sum = 0;
+                    console.log(val);
+                    val.base.map(function(item){
+                        sum += (item.quantity * item.price);
+                    }.bind(this))
+                    return this.formatNumber(sum)
+                    // console.log('event',val.base);
+                }
+            },
+            setDataForCheckBox:function(){
+                this.data.map((item)=>{
+                    item.check = false;
+                    item.hidden = false;
+                    item.class = false;
+                })
+            },
+            setDataCheck:function(e){
+                var index = e.model.index;
+                var item = e.model.item;
+                this.set('data.'+index+'.check',item.check)
+            },
+            getDataCheckBox:function(e){ 
+                return this.data.filter(function(item){
+                    return item.check == true;
+                });
+            },
+            checkboxHide:function(){
+                this.data.map((item,index)=>{
+                    this.set('data.'+index+'.hidden',!item.check)
+                })
+
+                // for (var key in dataSelect) {
+                //     var id = dataSelect[key].id;
+                //     for (var num in this.data) {
+                //         if(this.data[num].id == id && this.data[num].hidden == false){
+                //             console.log(this.data[num])
+                //             this.set('data.'+num+'.hidden',true)
+                //         }
+                //     }
+                // }
+            },
+            clearCheckbox:function(){
+                // if(typeof this.data != 'undefined'){
+                //     var dataSelect = this.data.filter((item)=>{
+                //         return item.check != true
+                //     })
+                //     for (var key in dataSelect) {
+                //         var id = dataSelect[key].id;
+                //         for (var num in this.data) {
+                //             if(this.data[num].id == id && this.data[num].hidden == true){
+                //                 // console.log(this.data[num])
+                //                 this.set('data.'+num+'.hidden',false)
+                //             }
+                //         }
+                //     }
+                // }
+    
+            } 
+        });
+    </script>
+</dom-module>

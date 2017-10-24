@@ -1,0 +1,271 @@
+
+<link rel="import" href="../../../bower_components/polymer/polymer.html">
+
+<link rel="import" href="./../../layout/shared-styles.html">
+<link rel="import" href="./../components/page-header.html">
+<link rel="import" href="./../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="./../../nylon-behavior.html">
+<link rel="import" href="./../components/page-panel.html">
+<link rel="import" href="./components/exporter-report-list.html">
+<link rel="import" href="./components/exporter-report-import.html">
+
+<link rel="import" href="../components/nylon-panel-right.html">
+<!--<link rel="import" href="./../../../bower_components/pdf-browser-viewer/pdf-browser-viewer.html">-->
+<link rel="import" href="./../../redux-behavior.html">
+<link rel="import" href="./components/exporter-report-manage.html">
+<link rel="import" href="../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="./../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../redux-behavior.html">
+<link rel="import" href="../../month-behavior.html">
+
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
+
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../components/ribbon-bar/ribbon-bar.html">
+<link rel="import" href="../components/ribbon-tab/ribbon-tabs.html">
+<link rel="import" href="../components/ribbon-tab/ribbon-tab.html">
+<link rel="import" href="../components/sheet-tab/sheet-tabs.html">
+<link rel="import" href="../components/sheet-tab/sheet-tab.html"> 
+
+
+<dom-module id="page-exporter-report">
+    <template>
+        <style include="shared-styles">
+            paper-progress.blue {
+                width: 100%;
+                --paper-progress-active-color: var(--paper-light-blue-500);
+                --paper-progress-secondary-color: var(--paper-light-blue-100);
+            }
+            #tabmain1:checked~#contentmain1,
+            #tabmain2:checked~#contentmain2 {
+                display: block;
+            }
+            .icon {
+                --iron-icon-height: 18px;
+                --iron-icon-width: 18px;
+                position: relative;
+                left: 98%;
+            }
+        </style>
+
+        <ribbon-tabs select="{{selectRibbon}}">
+            <ribbon-tab name="home">รายงานการส่งออกข้าว</ribbon-tab>
+        </ribbon-tabs>
+
+        <ribbon-bar width="{{w}}" height="{{h}}">
+            <iron-collapse id="collapse">
+                <page-panel>
+                    <iron-icon class="icon" icon="close" on-tap="closeSearchBox"></iron-icon>
+                    <div class="row around-xs">
+                         <div class="col-xs-3">
+                            <div class="box">
+                                <!-- <vaadin-date-picker label="ตั้งแต่วันที่" value="{{search.start_date}}"></vaadin-date-picker> -->
+                                 <vaadin-combo-box label="ตั้งแต่เดือน" items="[[getMonth()]]" item-label-path="name" item-value-path="id" value="{{search.startMonth}}"></vaadin-combo-box> 
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="box">
+                                <!-- <vaadin-date-picker label="ถึงวันที่" value="{{search.end_date}}"></vaadin-date-picker> -->
+                                 <vaadin-combo-box label="ปี" items="[[year]]" value="{{search.startYear}}"></vaadin-combo-box> 
+                            </div>
+                        </div>
+                         <div class="col-xs-3">
+                            <div class="box">
+                                <!-- <vaadin-date-picker label="ตั้งแต่วันที่" value="{{search.start_date}}"></vaadin-date-picker> -->
+                                 <vaadin-combo-box label="ถึงเดือน" items="[[getMonth()]]" item-label-path="name" item-value-path="id" value="{{search.endMonth}}"></vaadin-combo-box> 
+                            </div>
+                        </div>
+                        <div class="col-xs-3">
+                            <div class="box">
+                                <!-- <vaadin-date-picker label="ถึงวันที่" value="{{search.end_date}}"></vaadin-date-picker> -->
+                                 <vaadin-combo-box label="ปี" items="[[year]]" value="{{search.endYear}}"></vaadin-combo-box> 
+                            </div>
+                        </div>
+                         <div class="col-xs-6">
+                            <div class="box">
+                                <vaadin-combo-box label="บริษัท" loading="{{check}}" filter="{{word}}" items="[[company]]" item-label-path="company_name_th" item-value-path="company_taxno" value="{{search.exporter_id}}">
+                                    <template>
+                                        [[item.company_name_th]]
+                                    </template> 
+                                </vaadin-combo-box>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="box section">
+                                <paper-button class="gl-btn-primary" on-tap="searchData" raised>
+                                    <iron-icon icon="search"></iron-icon>
+                                    ค้นหา
+                                </paper-button>
+                            </div>
+                        </div>  
+                    </div>
+                </page-panel>
+                <div class="row end-xs">
+                    <div class="col-xs-6">
+                        <div class="box">
+                            <paper-button class="gl-btn-primary" on-tap="importReport" raised>
+                                <iron-icon icon="add"></iron-icon>
+                                นำเข้ารายงาน
+                            </paper-button>
+                        </div>
+                    </div>
+                </div>
+            </iron-collapse>
+        </ribbon-bar>
+
+        <!-- <div class="white-space"></div> -->
+        <!-- <main>  -->
+            <!-- <input class="radio" id="tabmain1" on-tap="notifyResize" type="radio" name="tabs" value="true" checked>
+            <label for="tabmain1">ในโควตา</label>
+
+            <input class="radio" id="tabmain2" on-tap="notifyResize" type="radio" name="tabs" value="false">
+            <label for="tabmain2">นอกโควตา</label> -->
+
+            <!-- <section id="contentmain1"> -->
+                <!-- <page-panel> -->
+                    
+            <iron-pages selected="{{selected}}" attr-for-selected="name">
+                <div name="period">
+                     <exporter-report-list height="[[h]]" id="list" data="[[searchList.inQuota]]" select="[[search]]"></exporter-report-list> 
+                </div>
+                <div name="period_update">
+                    <exporter-report-list height="[[h]]" id="list" data="[[searchList.externalQuota]]" select="[[search]]"></exporter-report-list>
+                </div>
+            </iron-pages>
+                    
+           
+        <!-- </page-panel> -->
+            <!-- </section> -->
+            <!-- <section id="contentmain2"> -->
+                <!-- <page-panel> -->
+                    <!-- <exporter-report-list height="[[h]]" id="list" data="[[searchList.externalQuota]]" select="[[search]]"></exporter-report-list> -->
+                <!-- </page-panel> -->
+            <!-- </section> -->
+        <!-- </main> -->
+        <sheet-tabs select="{{selected}}">
+            <sheet-tab name="period">ในโควตา</sheet-tab>
+            <sheet-tab name="period_update">นอกโควตา</sheet-tab>
+        </sheet-tabs> 
+        <nylon-panel-right title="จัดการรายงาน" width="95%">
+            <iron-pages selected="{{selectPage}}">
+                <div>
+                    <exporter-report-import id="import"></exporter-report-import>
+                </div>
+                <div>
+                    <exporter-report-manage select="[[search]]"></exporter-report-manage>
+                </div>
+            </iron-pages>
+        </nylon-panel-right>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'page-exporter-report',
+            behaviors: [NylonBehavior, ReduxBehavior, MonthBehavior],
+            observers: ['getTypeRice(search.year)','searchExporter(word)'],
+            listeners: { 'open-panel': 'openPanel' },
+            properties: {
+                year: {
+                    statePath: 'commonData.year'
+                },
+                typeRice:{
+                    statePath: 'commonData.type_rice'
+                },
+                search:{
+                    type:String,
+                    value:{}
+                },
+                searchList:{
+                    statePath: 'exporterReport.listSearch'
+                },
+                selectRibbon: {
+                    type: String,
+                    value: 'home',
+                    observer: '_selectRibbonChanged'
+                },
+                selected:{
+                    type:String,
+                    value:'period'
+                },
+                company: {
+                    statePath: 'commonData.companyReport',
+                    observer:'clearLoad'
+                },
+            },
+            _selectRibbonChanged: function (val) {
+                if (val !== "none") {
+                this.$.collapse.show();
+                } else {
+                this.$.collapse.hide();
+                }
+            },
+            searchExporter:function(value){
+                this.check = true;
+                this.debounce('searchItem', () => {
+                    // 
+                    if (typeof value != 'undefined' && value.length >= 3) {
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_REPORT', value);
+                    }
+                    else {
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_CLEAR');
+                    }
+
+                }, 1000)
+            },
+            clearLoad:function(val){
+                // console.log(val)
+                this.check = false;
+            },
+            closeSearchBox: function () {
+                this.selectRibbon = "none"
+            },
+            notifyResize:function(){
+                this.$.list.resize();
+            },
+            nylonPageActive: function () {
+                this.dispatchAction('COMMON_DATA_GET_YEAR');
+                // this.dispatchAction('COMMON_DATA_GET_TYPE_RICE');
+            },
+            getTypeRice:function(year){
+                // console.log(year)
+                if(year)
+                    this.dispatchAction('COMMON_DATA_SET_YEAR',year)
+            },
+            searchData:function(){
+                console.log(this.search)
+                this.dispatchAction('EXPORTER_REPORT_SET_SEARCH',this.search);
+                this.dispatchAction('EXPORTER_REPORT_SEARCH');
+                
+                // this.search = {};
+                this.selectRibbon = "none"
+            },
+            openPanel: function (e) {
+                console.log(e.detail.id)
+                this.selectPage = 1;
+                if(e.detail.id) 
+                    this.$$('nylon-panel-right').open();
+                else{
+                    this.dispatchAction('EXPORTER_REPORT_CLEAR')
+                    .then(()=>{
+                        this.$$('nylon-panel-right').open();
+                    })
+                }
+                // this.dispatchAction('EXPORTER_REPORT_CLEAR')
+                // .then(()=>{
+                    
+                // })
+                // .catch((error)=>{
+                //     console.log('error');
+                //     console.log(error);
+                // });
+            },
+            importReport:function(){
+                this.selectPage = 0;
+                this.$.import.data = [];
+                this.$.import.form = {license:'พณ'};
+                this.dispatchAction('EXPORTER_REPORT_CLEAR')
+                this.$$('nylon-panel-right').open();
+            }
+        });
+    </script>
+</dom-module>

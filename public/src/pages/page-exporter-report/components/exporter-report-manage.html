@@ -1,0 +1,82 @@
+
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="./../../../layout/shared-styles.html">
+<link rel="import" href="./../../components/page-panel.html">
+<link rel="import" href="./../../../../bower_components/pdf-browser-viewer/pdf-browser-viewer.html">
+<link rel="import" href="./../../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="./../../components/nylon-input.html">
+<link rel="import" href="./../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="./../../../redux-behavior.html">
+<link rel="import" href="./exporter-report-form.html">
+<link rel="import" href="./exporter-report-export.html">
+<link rel="import" href="./exporter-report-license.html">
+
+<dom-module id="exporter-report-manage">
+    <template>
+        <style include="shared-styles">
+            #subz1:checked~#subcontentz1,
+            #subz2:checked~#subcontentz2,
+            #subz3:checked~#subcontentz3 {
+                display: block;
+            }
+        </style>
+        <div style="padding:20px">
+             <main> 
+                <input class="radio" id="subz1" type="radio" name="sub" value="true" checked>
+                <label for="subz1">นำเข้าข้อมูล</label>
+
+                <input class="radio" id="subz2" type="radio" name="sub" value="false">
+                <label for="subz2">ข้อมูลใบขนสินค้าขาออก</label>
+
+                <input class="radio" id="subz3" type="radio" name="sub" value="false">
+                <label for="subz3">ข้อมูลใบอนุญาต</label> 
+
+                  <section id="subcontentz1">  
+                    <page-panel label="ตรวจสอบไฟล์">
+                        <exporter-report-form select="[[select]]"></exporter-report-form>
+                    </page-panel>
+                 </section> 
+                 <section id="subcontentz2">
+                     <page-panel label="ข้อมูลใบขนสินค้าขาออก">
+                         <exporter-report-export data="[[dataExporter]]"></exporter-report-export>
+                    </page-panel>
+                </section>
+
+                <section id="subcontentz3">
+                     <page-panel label="ใบอนุญาตให้ส่งสินค้าออกไปนอกราชอาณาจักร">
+                         <exporter-report-license></exporter-report-license>
+                    </page-panel>
+                </section> 
+             </main> 
+           
+         </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'exporter-report-manage',
+            behaviors:[ReduxBehavior],
+            properties:{
+                dataExporter:{
+                    statePath:'exporterReport.external',
+                    observer:'setPropertiesForm'
+                },
+                form:{
+                    type:Object,
+                    value:{}
+                }
+            },
+            setPropertiesForm:function(val){
+                this.set('form',
+                {
+                    id:val.id,
+                    weight_ton: val.weight_ton,
+                    type_rice_id: val.type_rice_id,
+                    exporter_id: val.company_taxno,
+                    exporter_name: val.company_name_th,
+                    license:[]
+                })
+            }
+
+        });
+    </script>
+</dom-module>

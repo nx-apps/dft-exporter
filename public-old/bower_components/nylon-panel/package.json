@@ -1,0 +1,27 @@
+{
+  "name": "nylon-panel",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/9lon/nylon-panel.git"
+  },
+  "keywords": [
+    "nylon-panel"
+  ],
+  "author": "kitz Parnupat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/9lon/nylon-panel/issues"
+  },
+  "homepage": "https://github.com/9lon/nylon-panel#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-replace": "^0.5.4"
+  }
+    
+}

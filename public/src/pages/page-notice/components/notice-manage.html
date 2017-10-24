@@ -1,0 +1,152 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid-column-group.html">
+<link rel="import" href="../../../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="./../../../../bower_components/vaadin-date-picker/vaadin-date-picker.html">
+<link rel="import" href="./../../../month-behavior.html">
+<link rel="import" href="../../components/format-number-behavior.html">
+<link rel="import" href="./../../components/page-panel.html">
+<dom-module id="notice-manage">
+    <template>
+        <style include="shared-styles">
+            .textRight{
+                text-align: right;
+            }
+        </style>
+
+        <page-panel label="ข้อมูลประกาศ">
+            <div class="row center-xs">
+                <div class="col-xs-10">
+                    <div class="box">
+                        <paper-input id="form" label="ชื่อ - นามสกุล(ผู้ลงนาม)" value="{{select.name}}" required></paper-input>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row around-xs">
+                <div class="col-xs-4">
+                    <div class="box">
+                        <vaadin-date-picker id="form" label="วันที่ระเบียบ" value="{{select.date_moc}}" required></vaadin-date-picker>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="box">
+                        <vaadin-date-picker id="form" label="วันที่ประกาศ" value="{{select.date_notify}}" required></vaadin-date-picker>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row end-xs">
+                <div class="col-xs-6">
+                    <div class="box" style="text-align:right">
+                        <paper-button class="gl-btn-primary" on-tap="openDialog" raised>อนุมัติประกาศ</paper-button>
+                    </div>
+                </div>
+            </div>
+        </page-panel>
+
+        <div class="white-space"></div>
+
+        <page-panel label="ข้อมูลบริษัท">
+            <div class="white-space"></div>
+            <vaadin-grid id="material" aria-label="Basic Binding Example" items="[[select.data]]">
+                <vaadin-grid-column flex-grow="0">
+                    <template class="header">ลำดับที่</template>
+                    <template>
+                        <div style="text-align:center">
+                             [[count(index)]]
+                        </div>
+                    </template>
+                    <!-- If necessary, the footer could be set using <template class="footer"> -->
+                    <!--<template class="footer">รวม</template>-->
+                </vaadin-grid-column>
+
+                <vaadin-grid-column resizable>
+                    <template class="header">ผู้ส่งออกข้าว</template>
+                    <template>[[item.exporter_name]]</template>
+                    <!--<template class="footer">First Name</template>-->
+                </vaadin-grid-column>
+                
+                <template is="dom-repeat" index-as="num" as="col" items="[[quantity]]">
+                    <vaadin-grid-column>
+                        <template class="header">งวดที่ [[col.period]] [[getMonthShortName(col.month)]]</template>
+                        <template>
+                            <div class="cell textRight">
+                                 [[getField(index,num,'weight_update')]]
+                            </div>
+                        </template>
+                        <!--<template class="footer">Address</template>-->
+                    </vaadin-grid-column>
+                </template>
+
+                <vaadin-grid-column>
+                    <template class="header">ปริมาณส่วนจัดสรรปี</template>
+                    <template><div class="cell textRight">[[formatNumber(item.amount_update)]]</div></template>
+                <!--<template class="footer">Last Name</template>-->
+                </vaadin-grid-column>
+                
+            </vaadin-grid>
+        </page-panel>
+    </template>
+    <script>
+        Polymer({
+            is: 'notice-manage',
+            behaviors: [ReduxBehavior,MonthBehavior,FormatNumberBehavior],
+            properties:{
+                select:{
+                    statePath: 'notice.select',
+                    observer: 'showData'
+                },
+                quantity:{
+                    type:Array,
+                    value:[]
+                },
+                yearSelect:String
+            },
+            count:function(val){
+                return val+1;
+            },  
+            showData:function(val){
+                // console.log(val);
+                if(typeof val.data != 'undefined') this.quantity = val.data[0].quantity;
+            },
+            getField:function(index,num,feild){
+                // console.log(num,index,feild);
+                return this.formatNumber(this.select.data[index].quantity[num][feild])
+            },
+            elementValidate:function(val){
+                var item = Polymer.dom(this.root).querySelectorAll(val).map(function(item){
+                    return item.validate();
+                })
+                return item.every(check=> check == true);
+            },
+            openDialog:function(){
+                this.fire('toast', {
+                    status: 'openDialog',
+                    text: 'ต้องการบันทึกข้อมูลใช่ไหม ?',
+                    confirmed: this.saveData.bind(this)
+                })
+            },
+            saveData:function(check){
+                if(check == true){
+                    if(this.elementValidate('#form') == true){
+                        var newData = {
+                            calculate_id : this.select.data[0].calculate_id,
+                            name : this.select.name,
+                            date_moc : this.select.date_moc,
+                            date_notify : this.select.date_notify
+                        }
+                        // console.log(newData);
+                        this.dispatchAction('NOTICE_UPDATE',newData,this.yearSelect);
+                    }
+                }
+               
+            }
+        });
+    </script>
+</dom-module>

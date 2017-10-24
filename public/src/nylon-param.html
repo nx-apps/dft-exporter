@@ -1,7 +1,5 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
 <dom-module id="nylon-param">
-  <template>
-    <app-location route="{{route}}"></app-location>
-  </template>
   <script>
     Polymer({
       is:'nylon-param',
@@ -12,10 +10,8 @@
         params:{
           type:Object,
           notify:true
-        }
-      },
-      ready:function(){
-        //console.log('a');
+        },
+        route:Object
       },
       observers:[
         '_getParam(route)'
@@ -24,15 +20,21 @@
         var path = this.route.path;
         var params = path.split("/");
         var pattern = this.pattern;
+
         if(pattern){
-          var getVar = pattern.split("/");
+          var getVar = pattern.split("/:");
+          getVar = getVar.slice(1,getVar.length);
         }
+
         var getPrarams = {
-          page:params[1]
+          page:this.route.prefix
         };
+
         if(getVar){
           getVar.map(function(obj,index){
-                getPrarams[obj] = params[index+2];
+              if(params[index+1]){
+                getPrarams[obj] = params[index+1];
+              }
           });
         }
         this.params = getPrarams;

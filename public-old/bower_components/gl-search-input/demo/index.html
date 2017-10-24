@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <title>gl-search-input demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+
+    <link rel="import" href="../gl-search-input.html">
+
+    <style is="custom-style" include="demo-pages-shared-styles">
+      .centered:not([style-scope]):not(.style-scope) {
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    </style>
+  </head>
+  <body>
+
+    <div class="vertical-section-container centered">
+      <h3>Basic gl-search-input Demo</h3>
+      
+      <demo-snippet>
+         <!--search-input
+          search-input-type 
+          search-input-type2
+          search-data-->
+        <template>
+          <gl-search-input result="{{result}}" 
+          search-input search-input-type  
+          >
+          </gl-search-input>
+        </template>
+      </demo-snippet>
+    </div>
+
+  </body>
+</html>

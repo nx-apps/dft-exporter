@@ -1,0 +1,32 @@
+{
+  "name": "element-resize-detector",
+  "description": "Resize event emitter for elements.",
+  "main": "dist/element-resize-detector.js",
+  "authors": [
+    "Lucas Wiener <lucas@wiener.se>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "element",
+    "resize"
+  ],
+  "homepage": "https://github.com/wnr/element-resize-detector",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "version": "1.1.12",
+  "_release": "1.1.12",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.1.12",
+    "commit": "ed7827e182bdfe6a0549fdd0694fc7071d64ae6e"
+  },
+  "_source": "https://github.com/wnr/element-resize-detector.git",
+  "_target": "^1.1.7",
+  "_originalSource": "element-resize-detector"
+}

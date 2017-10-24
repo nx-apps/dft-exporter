@@ -1,0 +1,70 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<script>
+    /**
+    * @polymerBehavior
+    */   
+    MonthBehavior={
+        getMonthName:function(id){
+            var month = ['-','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม',
+            'มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+            return month[id];
+        },
+        getMonthShortName:function(id){
+            var month = ['-','ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.',
+            'ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+            return month[id];
+        },
+        getMonth:function(){
+            return [
+                        {
+                            id: '1',
+                            name: 'มกราคม',
+                        },
+                        {
+                            id: '2',
+                            name: 'กุมภาพันธ์'
+                        },
+                        {
+                            id: '3',
+                            name: 'มีนาคม'
+                        },
+                        {
+                            id: '4',
+                            name: 'เมษายน'
+                        },
+                        {
+                            id: '5',
+                            name: 'พฤษภาคม'
+                        },
+                        {
+                            id: '6',
+                            name: 'มิถุนายน'
+                        },
+                        {
+                            id: '7',
+                            name: 'กรกฎาคม'
+                        },
+                        {
+                            id: '8',
+                            name: 'สิงหาคม'
+                        },
+                        {
+                            id: '9',
+                            name: 'กันยายน'
+                        },
+                        {
+                            id: '10',
+                            name: 'ตุลาคม'
+                        },
+                        {
+                            id: '11',
+                            name: 'พฤศจิกายน'
+                        },
+                        {
+                            id: '12',
+                            name: 'ธันวาคม'
+                        }
+                    ];
+        }
+    }
+</script>

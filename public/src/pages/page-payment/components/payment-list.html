@@ -1,0 +1,195 @@
+<link rel="import" href="../../components/format-number-behavior.html">
+<link rel="import" href="../../../month-behavior.html">
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../../layout/shared-styles.html">
+<link rel="import" href="../../../../bower_components/paper-checkbox/paper-checkbox.html">
+
+<link rel="import" href="../../../../bower_components/vaadin-grid/vaadin-grid-selection-column.html">
+
+<link rel="import" href="../../../redux-behavior.html">
+
+<dom-module id="payment-list">
+    <template>
+        <style include="shared-styles">
+            #material {
+                height: auto;
+            }
+        </style>
+        <page-panel>
+            <vaadin-grid slot="grid" id="material" items="[[data]]" size="200">
+                <!-- <template is="dom-if" if="{{checkBox}}"> -->
+                <vaadin-grid-selection-column width="100px" flex-grow="0" frozen>
+                    <template class="header">
+                        <div class="box" style="text-align:center;">
+                            เลือก
+                        </div>
+                    </template>
+                    <template>
+                        <div class="box">
+                            <paper-checkbox on-tap="setDataCheck" value="{{item}}" index="[[index]]" disabled="{{item.hidden}}"></paper-checkbox>
+                        </div>
+                    </template>
+                </vaadin-grid-selection-column> 
+                <!-- </template> -->
+
+                <!-- <vaadin-grid-column width="200px" flex="0">
+                    <template class="header">
+                        <div class="cell">ชื่อฟอร์ม</div>
+                    </template>
+                    <template>
+                        <div class="cell" check-group$="[[item.class]]">EC ในโควตา EU</div>
+                    </template>
+                </vaadin-grid-column> -->
+
+                <vaadin-grid-column width="200px" flex="0">
+                    <template class="header">
+                        <div class="cell">บริษัท</div>
+                    </template>
+                    <template>
+                        <div class="cell">[[item.exporter_name]]</div>
+                    </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="200px" flex="0">
+                    <template class="header">
+                        <div class="cell">เลขที่หนังสือรับรอง</div>
+                    </template>
+                    <template>
+                        <div class="cell">[[item.ec_number]]</div>
+                    </template>
+                </vaadin-grid-column>
+
+                <vaadin-grid-column width="200px" flex="0">
+                    <template class="header">
+                        <div class="cell">วันที่ส่ง</div>
+                    </template>
+                    <template>
+                        <div class="cell">[[item.req_date]]</div>
+                    </template>
+                </vaadin-grid-column>
+
+                <!-- <template is="dom-if" if="{{showData}}"> -->
+                    <vaadin-grid-column width="200px" flex="0">
+                        <template class="header">
+                            <div class="cell">ปริมาณ(ตัน)</div>
+                        </template>
+                        <template>
+                            <div class="cell" style="text-align:right">[[formatNumber(item.quantity)]]</div>
+                        </template>
+                        <template class="footer">
+                            <div class="cell" style="text-align:right">
+                                {{sum(data.*,'quantity')}}
+                            </div>
+                        </template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column width="200px" flex="0">
+                        <template class="header">
+                            <div class="cell">ราคาต่อหน่วย</div>
+                        </template>
+                        <template>
+                            <div class="cell" style="text-align:right">[[formatNumber(item.price)]]</div>
+                        </template>
+                        <template class="footer">
+                            <div class="cell" style="text-align:right">
+                                {{sum(data.*,'price')}}
+                                <!--{{sum(data.*,'balance')}}-->
+                            </div>
+                        </template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column width="200px" flex="0">
+                        <template class="header">
+                            <div class="cell">จำนวนเงิน</div>
+                        </template>
+                        <template>
+                            <div class="cell" style="text-align:right">[[formatNumber(item.amount)]]</div>
+                            <!--<div class="cell" style="text-align:right">[[mathMoney(item.quantity,item.price)]]</div>-->
+                        </template>
+                        <template class="footer">
+                            <div class="cell" style="text-align:right">
+                                {{sum(data.*,'amount')}}
+                                <!--{{sum(data.*,'balance')}}-->
+                            </div>
+                        </template>
+                    </vaadin-grid-column>
+            </vaadin-grid>
+            <div class="row end-xs">
+                <div class="col-xs-2">
+                    <div class="box">
+                        <paper-button class="gl-btn-primary" on-tap="getDataSelect" raised>ดำเนินการต่อ</paper-button>
+                    </div>
+                </div>
+            </div>
+        </page-panel>
+    </template>
+    <script>
+        Polymer({
+            is: 'payment-list',
+            behaviors: [ReduxBehavior,FormatNumberBehavior, MonthBehavior],
+            // observers: ['hiddenCheckBox(data.*)'],
+            properties: {
+                checkBox: {
+                    type: Boolean,
+                    value: false
+                },
+                data: {
+                    statePath: 'payment.paymentList'
+                }
+                // data: {
+                //     observer: 'setDataForCheckBox'
+                // }
+            },
+            _isSelected: function(inverted, selected) {
+                return inverted != selected;
+            },
+            converDate: function (val) {
+                if (typeof val != 'undefined') {
+                    var arr = val.split('/');
+                    var year = parseInt(arr[2]) + 543;
+                    var result = arr[0] + ' ' + this.getMonthShortName(arr[1]) + ' ' + year;
+                    return result
+                    //  console.log(val.split('/'));
+                }
+            },
+            sum: function (val, feild) {
+                // console.log(val,feild);
+                var sum = 0;
+                val.base.map((item) => {
+                    sum += item[feild]
+                })
+                return this.formatNumber(sum)
+            },
+            sumMoney: function (val) {
+                if (val.base.length > 0 && val.path == 'data') {
+                    var sum = 0;
+                    // console.log(val);
+                    val.base.map(function (item) {
+                        sum += (item.quantity * item.price);
+                    }.bind(this))
+                    return this.formatNumber(sum)
+                    // console.log('event',val.base);
+                }
+            },
+            setDataCheck: function (e){
+                console.log(e.target.index);
+                this.set('data.'+e.target.index+'.check',e.target.checked)
+                // if(e.target.checked == true){
+                //     this.$.material.selectItem(e.model.item)
+                // }
+                // else{
+                //     this.$.material.deselectItem(e.model.item);
+                // }
+            },
+            getDataSelect: function (e) {
+                this.fire('open-manage')
+                var item = this.data.filter(function(val){
+                    return val.check == true;
+                })
+                // console.log(item)
+                // console.log('sss',this.$.material.selectedItems)
+                this.dispatchAction('PAYMENT_CLEAR_DATA');
+                this.dispatchAction('PAYMENT_SELECT_DATA',item)
+            }
+        });
+    </script>
+</dom-module>

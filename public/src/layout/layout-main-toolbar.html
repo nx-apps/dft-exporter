@@ -1,25 +1,24 @@
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-
-<!--<link rel="import" href="bower_components/paper-/paper-.html">-->
-
 <link rel="import" href="../../bower_components/iron-image/iron-image.html">
 <link rel="import" href="./shared-styles.html">
-
 <link rel="import" href="../redux-behavior.html">
-
-<link rel="import" href="../i18n-behavior.html">
 
 <dom-module id="layout-main-toolbar">
 	<template>
 		<style is="custom-style" include="shared-styles">
+			:host{
+				position: fixed;
+				width: 100vw;
+			}
+
 			app-toolbar {
 				background-color: #f7941e;
 				color: white;
 				font-family: CSChatThaiUI, sans-serif;
 				-webkit-font-smoothing: antialiased;
 				--app-toolbar-font-size: 20px;
-				box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+				/* box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); */
 			}
 			
 			.background {
@@ -51,21 +50,62 @@
 				stroke: currentColor;
 				fill: currentColor;
 			}
+			
+			.titleTopic {
+				font-size: 1.1rem;
+			}
+			.titleTopic2 {
+				font-size: 1.1rem;
+				display: none;
+			}
+
+			@media only screen and (max-width: 540px) {
+
+				.titleTopic {
+					display: none;
+				}
+				.titleTopic2 {
+					font-size: 1.1rem;
+					display: inline;
+				}
+			}
+			
 		</style>
 		<app-toolbar>
 			<paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
-			<iron-image src="../../images/01/32.png"></iron-image>
-			<div main-title>ระบบขึ้นทะเบียนผู้ส่งออกข้าว</div>
-			<paper-button on-tap="changeLanguage">{{localize.Meg}}</paper-button>
+			<iron-image src="../../images/manifest/icon-48x48.png"></iron-image>
+			<div class="" main-title>
+				<div style="line-height: 1;">
+					<span class="titleTopic">ระบบจัดการโควตาข้าวภายใต้โควตาภาษีสหภาพยุโรป</span>
+					<span class="titleTopic2">จัดการโควตา</span>
+					<br> 
+					<br> 
+					<!-- <span class="titleNav">[[titleNav]]</span> -->
+					<!-- <span class="titleNav">[[titleNav]]</span> -->
+				</div>
+				
+			</div>
+			<!--[[user.name]]-->
+			<!--<div style="cursor: pointer" hidden="{{hidden}}">
+				<paper-icon-button icon="exit-to-app"></paper-icon-button>Logout
+			</div>-->
+			<!--<div style="cursor: pointer" on-tap="logout" hidden="{{!hidden}}">
+				<paper-icon-button icon="power-settings-new"></paper-icon-button>
+				Log-in
+			</div>-->
 		</app-toolbar>
 	</template>
 	<script>
 		Polymer({
 			is: 'layout-main-toolbar',
-			behaviors: [ReduxBehavior, i18nAction],
+			behaviors: [ReduxBehavior],
 			properties: {
-				localize:{
-					statePath : 'i18n.exporter'
+				user: {
+					statePath: 'auth.user',
+					observer: 'check'
+				},
+				titleNav:{
+					type:String
 				}
 			},
 			check: function () {
@@ -84,13 +124,25 @@
 				this.fire('toggle-drawer');
 			},
 			changeLanguage: function () {
-				var lang = this.localize.Meg;
-				if(lang == 'TH'){
-					lang = 'en';
-				}else{
-					lang = 'th';
+				if (this.language == 'th') {
+					this.nylonLocalizeChange('en');
+				} else {
+					this.nylonLocalizeChange('th');
 				}
-				this.dispatchAction('I18N_SELECT_LANGUAGE', lang);
+			},
+			logout: function () {
+				this.hidden = true;
+				//	localStorage.removeItem('token');
+				//	  _deleteCookie("token");
+				this.AUTH_CLEAR_USER(this.formLogin);
+				if (this.user.role == "none") {
+					this.fire('nylon-change-page', { path: '/login' })
+				}
+				//	}else{
+				//	window.location = "/login"
+				//}
+				//this.fire('nylon-change-page',{path:'/login'})
+				//  this.AUTH_LOGOUT();
 			}
 		});
 	</script>

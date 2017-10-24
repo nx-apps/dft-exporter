@@ -1,0 +1,806 @@
+<link rel="import" href="./../../../bower_components/polymer/polymer.html">
+<link rel="import" href="./../../layout/shared-styles.html">
+<link rel="import" href="./../../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="./../../nylon-behavior.html">
+<link rel="import" href="./../components/page-header.html">
+<link rel="import" href="./../components/page-panel.html">
+<link rel="import" href="./../components/format-number-behavior.html">
+<link rel="import" href="./../../../bower_components/vaadin-grid/vaadin-grid-column-group.html">
+<link rel="import" href="./../components/nylon-input.html">
+<link rel="import" href="./../../nylon-param.html">
+<link rel="import" href="./../../../bower_components/paper-input/paper-input.html">
+<!--<link rel="import" href="./../../layout/nylon-toast.html">-->
+<link rel="import" href="./../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../redux-behavior.html">
+<link rel="import" href="../../month-behavior.html">
+<!--<link rel="import" href="./../../../bower_components/nylon-panel/nylon-panel-right.html">-->
+
+<link rel="import" href="./../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+<link rel="import" href="./../../../bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="./../components/input-item.html">
+
+<link rel="import" href="../components/ribbon-bar/ribbon-bar.html">
+<link rel="import" href="../../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../components/sheet-tab/sheet-tabs.html">
+<link rel="import" href="../components/sheet-tab/sheet-tab.html">
+<link rel="import" href="../components/offset-value/offset-value.html">
+
+<!--<link rel="import" href="./../components/custom-grid-zoom.html">-->
+
+<dom-module id="page-calculate-detail">
+    <template>
+        <style include="shared-styles">
+            .headerGroup {
+                padding: 2px;
+                /*text-align: center;*/
+            }
+            vaadin-grid#material {
+                /* height: calc(100vh - var(--set-dynamic-height) - 107px); */
+                height: calc(100vh - var(--set-dynamic-height) - 107px);
+                --vaadin-grid-header-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    font-weight: bold;
+                }
+                --vaadin-grid-body-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    /*padding:0px;*/
+                }
+                --vaadin-grid-footer-cell: {
+                    font-size: 14px;
+                    height: 40px;
+                    font-weight: bold;
+                }
+            }
+
+            nylon-input {
+                --paper-input-container-input: {
+                    font-size: 14px;
+                }
+            }
+
+            .textRight {
+                text-align: right;
+            }
+
+            .textCenter {
+                text-align: center;
+            }
+
+            .borderRight {
+                border-right: 1px solid #ddd;
+            }
+
+            #dailog {
+                width: 100%;
+                height: auto;
+            }
+        </style>
+        <!-- <div class="section"></div> -->
+        <nylon-param route="[[_subroute]]" pattern="/:year/:id" params="{{paramsData}}"></nylon-param>
+        <!-- <ribbon-tabs select="{{selectRibbon}}">
+            <ribbon-tab name="home">รายละเอียดการคำนวณส่วนจัดสรร</ribbon-tab>
+        </ribbon-tabs> -->
+        <offset-value height="{{h}}">
+            <page-header label="รายละเอียดการคำนวณส่วนจัดสรร">
+                <template is="dom-if" if="[[!checkStatus(list.status)]]">
+                    <paper-button class="gl-btn-primary" on-tap="addData" raised>
+                        <!-- <iron-icon icon="add"></iron-icon> -->
+                        เพิ่มบริษัท
+                    </paper-button>
+                     <!-- <template is="dom-if" if="[[!checkStatus(list.status)]]"> -->
+                    <paper-button class="gl-btn-success" on-tap="saveData" raised>บันทึก</paper-button>
+                    <paper-button class="gl-btn-primary" on-tap="confirmOrdinal" raised>อนุมัติ</paper-button>
+        <!-- </template> -->
+                </template>
+            </page-header>
+        </offset-value>
+
+        <!-- <main>
+            <input class="radio" id="tabmain1" type="radio" on-tap="checkQuota" name="tabs" value="confirm" checked>
+            <label for="tabmain1">ปริมาณการส่งออกข้าวของ EU</label>
+            <template is="dom-if" if="[[checkAmount_percent(list.amount_percent)]]">
+                <input class="radio" id="tabmain2" type="radio" on-tap="checkQuota" name="tabs" value="custom">
+                <label for="tabmain2">ปริมาณและมูลค่าส่งออกข้าวตามกรมศุลกากรในรอบ 12 เดือน</label>
+            </template>
+            <input class="radio" id="tabmain3" type="radio" on-tap="checkQuota" name="tabs" value="sum">
+            <label for="tabmain3">โควตาที่ได้</label>
+            <input class="radio" id="tabmain4" type="radio" on-tap="checkQuota" name="tabs" value="all">
+            <label for="tabmain4">แสดงทั้งหมด</label>
+        </main> -->
+        <!-- <page-panel> -->
+        <!--<custom-grid-zoom>-->
+        <vaadin-grid id="material" items="{{list.calculate_detail}}" size="200">
+            <vaadin-grid-column-group frozen>
+                <template class="header">
+                    <div class="headerGroup"></div>
+                </template>
+                <vaadin-grid-column width="50px" flex-grow="0">
+                    <template class="header">
+                        <div class="cell">
+
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textCenter">
+                            [[count(index)]]
+                        </div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                    <template class="header">
+                        <div class="cell">
+                            ผู้ส่งออก
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell">
+                            [[item.exporter_name]]
+                            <template is="dom-if" if={{item.manual}}>
+                                <button on-click="confrimDeleteExporter" value="[[item.id]]">delete</button>
+                            </template>
+                        </div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell textCenter">ผลรวม</div>
+                    </template>
+                </vaadin-grid-column>
+            </vaadin-grid-column-group>
+            <!-- confirm -->
+            <vaadin-grid-column-group hidden="{{check.confirm}}">
+                <template class="header">
+                    <div class="headerGroup">ประวัติการส่งออกรวม</div>
+                </template>
+                <template is="dom-repeat" index-as="num" as="col" items="[[quantity]]">
+                    <vaadin-grid-column resizable>
+                        <template class="header">
+                            <div class="cell textRight">
+                                [[toBE(col.first_year)]] [[getMonthShortName(col.first_month)]] - [[toBE(col.last_year)]] [[getMonthShortName(col.last_month)]]
+                            </div>
+                        </template>
+                        <template>
+                            <div class="cell textRight">
+                                [[getField(item.report.quantity,num,'weight')]]
+                            </div>
+                        </template>
+                        <template class="footer">
+                            <div class="cell textRight">[[getField(list.report_year,num,'weight')]]</div>
+                        </template>
+                    </vaadin-grid-column>
+                </template>
+                <vaadin-grid-column>
+                    <template class="header">
+                        <div class="cell textRight">
+                            รวม[1]
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">
+                            [[formatNumber(item.report.amount)]]
+                        </div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell textRight"> [[formatNumber(list.report)]]</div>
+                    </template>
+                </vaadin-grid-column>
+            </vaadin-grid-column-group>
+            <vaadin-grid-column-group hidden="{{check.confirm}}">
+                <template class="header">
+                    <div class="headerGroup">ปริมาณส่วนจัดสรรที่ได้รับสุทธิ</div>
+                </template>
+                <template is="dom-repeat" index-as="num" as="col" items="[[quantity]]">
+                    <vaadin-grid-column>
+                        <template class="header">
+                            <div class="cell textRight">
+                                ปี[[toBE(col.last_year)]]
+                            </div>
+                        </template>
+                        <template>
+                            <div class="cell textRight">
+                                [[getField(item.confirm.quantity,num,'weight')]]
+                            </div>
+                        </template>
+                        <template class="footer">
+                            <div class="cell textRight">[[getField(list.confirm_year,num,'weight')]]</div>
+                        </template>
+                    </vaadin-grid-column>
+                </template>
+                <vaadin-grid-column>
+                    <template class="header">
+                        <div class="cell textRight">
+                            รวม[2]
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">
+                            [[formatNumber(item.confirm.amount)]]
+                        </div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell textRight">[[formatNumber(list.confirm)]]</div>
+                    </template>
+                </vaadin-grid-column>
+            </vaadin-grid-column-group>
+            <vaadin-grid-column-group hidden="{{check.confirm}}">
+                <template class="header">
+                    <div class="headerGroup textCenter">
+                        ประวัติส่งออกสุทธิ 3 ปี
+                    </div>
+                </template>
+                <vaadin-grid-column width="200px" resizable>
+                    <template class="header">
+                        <div class="cell textCenter">
+                            เพื่อคำนวณส่วนจัดสรรปี [[toBE(list.quota_year)]]
+                            <br> *[3] = [1] - [2]
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">
+                            [[formatNumber(item.dif)]]
+                        </div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell textRight">[[formatNumber(list.calculate)]]</div>
+                    </template>
+                </vaadin-grid-column>
+                <!--<vaadin-grid-column width="300px" resizable>
+                        <template class="header">
+                            <div class="cell textCenter">
+                               ปริมาณจัดสรร 100% <br>
+                                ปี [[list.quota_year]] <br>
+                                (PRORATA)
+                            </div>
+                        </template>
+                        <template>
+                            <div class="cell textRight">
+                                [[item.dif]]
+                            </div>
+                        </template>
+                    </vaadin-grid-column>-->
+
+            </vaadin-grid-column-group>
+            <!-- custom -->
+            <vaadin-grid-column-group hidden="{{check.custom}}">
+                <template class="header">
+                    <div class="headerGroup">ปริมาณ (ตัน)</div>
+                </template>
+                <vaadin-grid-column resizable>
+                    <template class="header">
+                        <div class="cell textRight">
+                            พ.ย. 57 - ต.ค. 58
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">
+                            [[formatNumber(item.custom.custom_weight_1)]]
+                        </div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell"></div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                    <template class="header">
+                        <div class="cell textRight">
+                            พ.ย. 56 - ต.ค. 57
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">
+                            [[formatNumber(item.custom.custom_weight_2)]]
+                        </div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell"></div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                    <template class="header">
+                        <div class="cell textRight">
+                            ส่วนต่าง
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">
+                            [[formatNumber(item.custom.abs_custom_weight)]]
+                        </div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell"></div>
+                    </template>
+                </vaadin-grid-column>
+            </vaadin-grid-column-group>
+            <!-- custom -->
+            <vaadin-grid-column-group hidden="{{check.custom}}">
+                <template class="header">
+                    <div class="headerGroup">มูลค่า (บาท)</div>
+                </template>
+                <vaadin-grid-column resizable>
+                    <template class="header">
+                        <div class="cell textRight">
+                            พ.ย. 57 - ต.ค. 58
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">
+                            [[formatNumber(item.custom.custom_value_1)]]
+                        </div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell"></div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                    <template class="header">
+                        <div class="cell textRight">
+                            พ.ย. 56 - ต.ค. 57
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">
+                            [[formatNumber(item.custom.custom_value_2)]]
+                        </div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell"></div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column resizable>
+                    <template class="header">
+                        <div class="cell textRight">
+                            ส่วนต่าง
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">
+                            [[formatNumber(item.custom.abs_custom_value)]]
+                        </div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell"></div>
+                    </template>
+                </vaadin-grid-column>
+                <!--<vaadin-grid-column width="200px" resizable>
+                        <template class="header">
+                            <div class="cell textRight">
+                                dif_custom_weight
+                            </div>
+                        </template>
+                        <template>
+                            <div class="cell textRight">
+                                [[formatNumber(item.custom.dif_custom_weight)]]
+                            </div>
+                        </template>
+                        <template class="footer">
+                            <div class="cell"></div>
+                        </template>
+                    </vaadin-grid-column>
+                    <vaadin-grid-column width="200px" resizable>
+                        <template class="header">
+                            <div class="cell textRight">
+                                dif_value_weight
+                            </div>
+                        </template>
+                        <template>
+                            <div class="cell textRight">
+                                [[formatNumber(item.custom.dif_value_weight)]]
+                            </div>
+                        </template>
+                        <template class="footer">
+                            <div class="cell"></div>
+                        </template>
+                    </vaadin-grid-column>-->
+            </vaadin-grid-column-group>
+            <!--sum-->
+            <vaadin-grid-column-group hidden="{{check.sum}}">
+                <template class="header">
+                    <div class="headerGroup">
+                        ปริมาณจัดสรร 100% ปี [[toBE(list.quota_year)]] (PRORATA)
+                    </div>
+                </template>
+                <vaadin-grid-column>
+                    <template class="header">
+                        <div class="cell textRight">
+                            ปริมาณโควตา
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">[[formatNumber(item.amount,'0\,0.000')]]</div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell textRight">[[formatNumber(list.amount,'0\,0.000')]]</div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                    <template class="header">
+                        <div class="cell textRight">
+                            ปริมาณโควตาที่คำนวณ
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">[[formatNumber(item.amount_cal,'0\,0.000')]]</div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell textRight">[[formatNumber(list.amount_cal,'0\,0.000')]]</div>
+                    </template>
+                </vaadin-grid-column>
+                <vaadin-grid-column>
+                    <template class="header">
+                        <div class="cell textRight">
+                            ยอดปรับปรุง
+                        </div>
+                    </template>
+                    <template>
+                        <div class="cell textRight">
+                            <template is="dom-if" if="[[checkStatus(list.status)]]">
+                                [[formatNumber(item.amount_update)]]
+                            </template>
+                            <template is="dom-if" if="[[!checkStatus(list.status)]]">
+                                <nylon-input format-number no-label-float item="{{item}}" index="{{index}}" on-change="pushData" on-input="setItem" value="{{item.amount_update}}"></nylon-input>
+                            </template>
+                        </div>
+                    </template>
+                    <template class="footer">
+                        <div class="cell textRight">[[formatNumber(list.amount_update,'0\,0.000')]]</div>
+                    </template>
+                </vaadin-grid-column>
+            </vaadin-grid-column-group>
+        </vaadin-grid>
+        <!--</custom-grid-zoom>-->
+       
+        <!-- </page-panel> -->
+
+        <sheet-tabs select="{{selected}}">
+            <sheet-tab name="confirm">ปริมาณการส่งออกข้าวของ EU</sheet-tab>
+            <template is="dom-if" if="[[checkAmount_percent(list.amount_percent)]]">
+                <sheet-tab name="custom">ปริมาณและมูลค่าส่งออกข้าวตามกรมศุลกากรในรอบ 12 เดือน</sheet-tab>
+            </template>
+            <sheet-tab name="sum">โควตาที่ได้</sheet-tab>
+            <sheet-tab name="all">แสดงทั้งหมด</sheet-tab>
+        </sheet-tabs>
+        <paper-dialog id="dailog" modal>
+            <h2>เพิ่มบริษัท</h2>
+            <p>
+                {{selectCompany}} {{searchInput(dataTest)}}
+                <vaadin-combo-box label="เลือกบริษัท" items="[[myItem]]" item-label-path="company_name_th" loading="{{check}}" item-value-path="company_taxno"
+                    filter="{{dataTest}}" value="{{selectCompany}}">
+                    <template>
+                        [[item.company_name_th]]
+                    </template>
+                </vaadin-combo-box>
+                <!--<input-item label="เลือกบริษัท" id="valExporter"></input-item>-->
+                <nylon-input format-number label="ปริมาณ" value="{{form.amount_update}}"></nylon-input>
+            </p>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button on-tap="addExporter" autofocus>OK</paper-button>
+            </div>
+        </paper-dialog>
+
+
+    </template>
+    <script>
+        Polymer({
+            is: 'page-calculate-detail',
+            behaviors: [NylonBehavior, ReduxBehavior, FormatNumberBehavior, MonthBehavior],
+            observers:['getHeight(h)'],
+            properties: {
+                form: {
+                    type: Object,
+                    value: {}
+                },
+                myItem: {
+                    statePath: 'commonData.companyReport',
+                    observer: 'checkItem'
+                },
+                list: {
+                    statePath: 'calculate.listDetail',
+                    observer: 'showData'
+                },
+                quantity: {
+                    type: Array,
+                    value: []
+                },
+                result: {
+                    type: Array,
+                    value: []
+                },
+                check: {
+                    type: Object,
+                    value: {
+                        confirm: false,
+                        sum: true,
+                        custom: true
+                    }
+                },
+                year: {
+                    type: String,
+                    value: ''
+                },
+                paramsData: {
+                    type: Object
+                },
+                _subroute: Object,
+                selected: {
+                    type: String,
+                    value: 'confirm',
+                    observer: 'checkQuota'
+                },
+                // selectRibbon: {
+                //     type: String,
+                //     value: 'home',
+                //     observer: '_selectRibbonChanged'
+                // }
+            },
+            toBE(val){
+                return val+543;
+            },
+            _validate(val){
+                console.log(val,this.list.amount)
+                if(val == this.list.amount){
+                    return false
+                }
+                else{
+                    return true
+                }
+                // console.log(this.list.amount)
+            },
+            count: function (val) {
+                return val + 1;
+            },
+            checkAmount_percent: function (val) {
+                // console.log(val);
+                if (val == 100) {
+                    return false
+                }
+                else {
+                    return true
+                }
+            },
+            nylonPageActive: function () {
+                // console.log(this.paramsData);
+                var url = window.location.href;
+                var data = url.split('/');
+                var length = data.length - 1;
+                var id = data[length];
+                this.year = data[length - 1]
+                // console.log(id);
+                // console.log(this.year);
+                this.dispatchAction('CALCULATE_SELECT', id);
+                // console.log('pageActive');
+            },
+            checkStatus: function (val) {
+                if (val == 'a' || val == 'cf') {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            },
+            showData: function (val) {
+                if (typeof val.calculate_detail != 'undefined') {
+                    console.log(this.quantity);
+                    this.quantity = val.calculate_detail[0].confirm.quantity.map((item) => {
+                        var newItme = {
+                            first_year: item.year - 1,
+                            first_month: 8,
+                            last_year: item.year,
+                            last_month: 7
+                        }
+                        return newItme;
+                    })
+                    // var getYear = val.calculate_detail[0].confirm.quantity
+                    // console.log(getYear,val.quantity);
+                }
+            },
+            getField: function (val, num, name) {
+                return this.formatNumber(val[num][name]);
+            },
+            pushData: function (e) {
+                var element = e.currentTarget;
+                var item = element.item;
+                var index = element.index;
+                var datas = {
+                    detail_id: item.id,
+                    detail_amount_update: item.amount_update
+                }
+                // console.log(newItem);
+                const checkId = function (data) {
+                    return data.detail_id == item.id;
+                }
+                if (this.result.length == 0) {
+                    this.push('result', datas)
+                }
+                else {
+                    var setIndex = this.result.findIndex(checkId);
+                    // console.log(setIndex);
+                    if (setIndex == -1) {
+                        this.push('result', datas)
+                    }
+                    else {
+                        this.set('result.' + setIndex, datas)
+                    }
+                }
+                // console.log(this.result);
+            },
+            setItem: function (e) {
+                var element = e.currentTarget;
+                var value = element.value;
+                var row = element.index;
+                var item = element.item;
+                var answer = 0;
+                this.set('list.calculate_detail.' + row + '.amount_update', this.unFormat(value));
+                this.list.calculate_detail.map(function (item) {
+                    answer += item.amount_update
+                })
+                this.set('list.amount_update', answer);
+            },
+            saveData: function () {
+                this.result.map((item) => {
+                    item.calculate_id = this.list.id;
+                    item.amount_update = this.list.amount_update;
+                })
+                // console.log(this.result)
+                this.fire('toast', { status: 'load' });
+                this.dispatchAction('CALCULATE_UPDATE_DETAIL', this.result)
+                    .then(() => {
+                        this.set('result', []);
+                        // this.result = [];
+                        this.dispatchAction('CALCULATE_GET_DATA', this.year);
+                        this.dispatchAction('CALCULATE_SELECT', this.list.id);
+                    })
+                    .catch(()=>{
+                         this.fire('toast',{status:'connectError',text:error.message,
+                         callback:function(){
+                         }})
+                    })
+            },
+            confirmOrdinal: function () {
+                // console.log(this.list.id);
+                this.fire('toast', {
+                    status: 'openDialog',
+                    text: 'ต้องการอนุมัติใช่หรือไม่ ?',
+                    confirmed: this.confirm.bind(this),
+                    data: this.list.id
+                })
+            },
+            confirm: function (check, val) {
+                if (check == true) {
+                    this.result.map((item) => {
+                        item.calculate_id = this.list.id;
+                        item.amount_update = this.list.amount_update;
+                    })
+                    // this.saveData();
+                    this.fire('toast',{status:'load'});
+                    this.dispatchAction('CALCULATE_UPDATE_DETAIL', this.result)
+                    .then(() => {
+                        this.set('result', []);
+                        this.dispatchAction('CALCULATE_CONFIRM_ORINAL', this.list.id)
+                        .then(function () {
+                            this.fire('toast', {
+                                status: 'success', text: 'บันทึกสำเร็จ',
+                                callback: function () {
+                                    this.dispatchAction('CALCULATE_GET_DATA', this.year);
+                                    this.dispatchAction('CALCULATE_SELECT', this.list.id);
+                                }.bind(this)
+                            });
+                        }.bind(this))
+                        .catch((error)=>{
+                            this.fire('toast',{status:'connectError',text:error.message,
+                            callback:function(){
+                            }})
+                        })
+                    })
+                    .catch((error)=>{
+                         this.fire('toast',{status:'connectError',text:error.message,
+                         callback:function(){
+                         }})
+                    })
+                  
+                }
+            },
+            checkQuota: function (val) {
+                this.$.material.notifyResize();
+                // console.log(this.$.material)
+                // console.log(e.currentTarget.value);
+                // var element = e.currentTarget;
+                var value = val;
+                // console.log(element.resizable);
+                this.check = {
+                    confirm: true,
+                    sum: true,
+                    custom: true
+                }
+                if (value == 'confirm') {
+                    // this.check.confirm = false;
+                    this.set('check.confirm', false);
+                }
+                else if (value == 'custom') {
+                    // this.check.custom = false;
+                    this.set('check.custom', false);
+                }
+                else if (value == 'sum') {
+                    // this.check.sum = false;
+                    this.set('check.sum', false)
+                }
+                else if (value == 'all') {
+                    // this.check.sum = false;
+                    if (this.list.amount_percent == 100) {
+                        this.set('check', {
+                            confirm: false,
+                            sum: false,
+                            custom: true
+                        })
+                    }
+                    else {
+                        this.set('check', {
+                            confirm: false,
+                            sum: false,
+                            custom: false
+                        })
+                    }
+
+                }
+
+            },
+            addData: function () {
+                this.$.dailog.open()
+            },
+            addExporter: function () {
+                var item = {
+                    calculate_id: this.list.id,
+                    amount_update: this.unFormat(this.form.amount_update),
+                    exporter_id: this.selectCompany
+                }
+                this.dispatchAction('CALCULATE_ADD_EXPORTER', item)
+                // console.log(item)
+            },
+            confrimDeleteExporter: function (e) {
+                this.fire('toast', {
+                    status: 'openDialog',
+                    text: 'ต้องการลบข้อมูลใช่หรือไม่ ?',
+                    confirmed: this.delteExporter.bind(this),
+                    data: e.currentTarget.value
+                })
+                console.log(e.currentTarget.value)
+            },
+            delteExporter: function (check, result) {
+                if (check == true) {
+                    console.log(result.data);
+                    this.dispatchAction('CALCULATE_DELETE_EXPORTER', result.data, this.list.id)
+                }
+            },
+            checkItem: function () {
+                this.check = false;
+            },
+            searchInput: function (value) {
+                this.check = true;
+                this.debounce('searchItem', () => {
+                    // 
+                    if (typeof value != 'undefined' && value.length >= 3) {
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_REPORT', value);
+                    }
+                    else {
+                        console.log('clear')
+                        this.dispatchAction('COMMON_DATA_GET_COMPANY_CLEAR');
+                    }
+
+                }, 500)
+            },
+            getHeight:function(h){
+                this.customStyle['--set-dynamic-height'] = h.toString() + 'px';
+                //console.log(this.customStyle['--set-dynamic-height'])
+                this.updateStyles();
+            }
+            // _selectRibbonChanged: function (val) {
+            //     if (val !== "none") {
+            //         this.$.collapse.show();
+            //     } else {
+            //         this.$.collapse.hide();
+            //     }
+            // },
+        });
+    </script>
+</dom-module>

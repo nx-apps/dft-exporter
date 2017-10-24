@@ -1,0 +1,154 @@
+
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<link rel="import" href="../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../bower_components/paper-spinner/paper-spinner.html">
+
+<link rel="import" href="./layout/layout-main.html">
+<link rel="import" href="./redux-behavior.html">
+<link rel="import" href="./nylon-auth.html">
+
+<link rel="import" href="./i18n-behavior.html">
+<script src="../bower_components/numeral/min/numeral.min.js"></script>
+
+
+<dom-module id="nylon-init">
+	<template>
+		<style is="custom-style">
+			app-toolbar {
+				background-color: #FBFBFB;
+				--app-toolbar-font-size: 24px;
+				box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+			}
+			
+			.loader {
+				border: 5px solid #f3f3f3;
+				border-radius: 50%;
+				border-top: 5px solid #3498db;
+				width: 30px;
+				height: 30px;
+				-webkit-animation: spin 0.5s linear infinite;
+				animation: spin 0.5s linear infinite;
+				margin: auto;
+			}
+				
+			@-webkit-keyframes spin {
+				0% {
+					-webkit-transform: rotate(0deg);
+				}
+				100% {
+					-webkit-transform: rotate(360deg);
+				}
+			}
+				
+			@keyframes spin {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+			}
+				
+			.middle {
+				position: fixed;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				z-index: 1;
+				display: -webkit-flex;
+				display: flex;
+			}
+			[hidden] {
+				display: none;
+			}
+
+			iron-pages>*:not([nylon-show]){
+				display: none;
+			}
+
+			[nylon-show]{
+				display: block;
+				animation: fadein 0.5s;
+				-moz-animation: fadein 0.5s; 
+				-webkit-animation: fadein 0.5s; 
+				-o-animation: fadein 0.5s; 
+			}
+
+			@keyframes fadein {
+				from {
+					opacity:0;
+				}
+				to {
+					opacity:1;
+				}
+			}
+			@-moz-keyframes fadein { /* Firefox */
+				from {
+					opacity:0;
+				}
+				to {
+					opacity:1;
+				}
+			}
+			@-webkit-keyframes fadein { /* Safari and Chrome */
+				from {
+					opacity:0;
+				}
+				to {
+					opacity:1;
+				}
+			}
+			@-o-keyframes fadein { /* Opera */
+				from {
+					opacity:0;
+				}
+				to {
+					opacity: 1;
+				}
+			}
+
+		</style>
+		
+		<div class="middle" hidden$="[[!loader]]">
+			<div class="loader"></div>
+		</div>
+		<layout-main path="[[selected]]">
+			<iron-pages role="main" selected="[[selected]]" attr-for-selected="path" selected-attribute="visible">
+				<page-admin-exporter path="admin-exporter" current-path="[[selected]]"></page-admin-exporter>
+				<page-draft path="draft" current-path="[[selected]]"></page-draft>
+				<page-setting path="setting" current-path="[[selected]]"></page-setting>	
+				<page-edit-exporter path="edit-exporter" current-path="[[selected]]"></page-edit-exporter>
+                <page-401 path="401"></page-401> <!-- ยังไม่ login -->
+                <page-403 path="403"></page-403> <!-- ไม่มีสิทธิ -->
+                <page-404 path="404"></page-404> <!-- ไม่พบไฟล์ -->
+            </iron-pages> 
+		</layout-main>
+
+	</template>
+
+
+	<script>
+        Polymer({
+            is:'nylon-init',
+			behaviors:[ReduxBehavior,i18nAction],
+			ready:function(){
+				this.loader = false;
+				this.dispatchAction('I18N_SELECT_LANGUAGE','th')
+				// this.loader = true;
+				// this.importHref(this.resolveUrl('/src/import.html'), (e)=>{
+				// 	this.rendered = true;
+				// 	this.loader = false;
+				// }, (e)=> {
+				// 	console.log('error')
+				// 	this.loader = false;
+				// });
+			}
+        });
+    </script>
+</dom-module>

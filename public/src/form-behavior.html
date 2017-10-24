@@ -1,0 +1,14 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<script>
+    /**
+    * @polymerBehavior
+    */  
+    FormBehavior = {
+        elementValidate:function(val){
+            var item = Polymer.dom(this.root).querySelectorAll(val).map(function(item){
+                return item.validate();
+            })
+            return item.every(check=> check == true);
+        }
+    }
+</script>

@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>gl-style demo</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+    <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+    <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../paper-button/paper-button.html">
+    <link rel="import" href="../../paper-toast/paper-toast.html">
+    <link rel="import" href="../../paper-spinner/paper-spinner.html">
+    <link rel="import" href="../../iron-icons/iron-icons.html">
+    <link rel="import" href="../../gl-font/gl-rsu-font.html">
+    <link rel="import" href="../gl-color.html">
+    <link rel="import" href="../gl-size.html">
+    <link rel="import" href="../gl-table.html">
+    <link rel="import" href="../gl-panel.html">
+    <link rel="import" href="../gl-toast.html">
+    
+    
+    <style is="custom-style" include="demo-pages-shared-styles gl-color gl-size gl-table gl-panel gl-toast">
+            .title {
+            font-size: var(--font-size-large);
+        }
+        
+        .primary {
+            color: var(--gl-primary-color);
+            font-size: var(--font-size-h1);
+        }
+        
+        .success {
+            color: var(--gl-success-color);
+            font-size: var(--font-size-h2);
+        }
+        
+        .info {
+            color: var(--gl-info-color);
+            font-size: var(--font-size-h3);
+        }
+        
+        .warning {
+            color: var(--gl-warning-color);
+            font-size: var(--font-size-h4);
+        }
+        
+        .danger {
+            color: var(--gl-danger-font-color);
+            font-size: var(--font-size-h5);
+        }
+        
+        .btn {
+            background-color: var(--gl-primary-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="vertical-section-container centered">
+        <h3>Basic gl-color Demo</h3>
+        <demo-snippet>
+            <div class="title">gl-style css color for webcomponents</div><br>
+            <div class="primary">primary color</div>--gl-primary-color <br><br>
+            <div class="success">success color</div>--gl-success-color<br><br>
+            <div class="info">info color</div>--gl-info-color<br><br>
+            <div class="warning">warning color</div>--gl-warning-color<br><br>
+            <div class="danger">danger color</div>--gl-danger-color
+            <br>
+            <br>class : ex-large<br>
+            <button class="gl-ex-large">gl-ex-large บันทึก</button> <br><br>class : large<br>
+            <button class="gl-large">gl-large บันทึก</button><br><br>class : default<br>
+            <button class="gl-default">gl-default บันทึก</button><br><br>class : small<br>
+            <button class="gl-small">gl-small บันทึก</button><br><br>class : ex-small<br>
+            <button class="gl-ex-small">gl-ex-small บันทึก</button><br>
+            <br>
+            <input type="text" class="danger gl-default" value="ทดสอบ"><br>
+            <input type="text" class=" ex-large gl-default" value="ทดสอบ"><br>
+
+            <p class="gl-bg-primary">gl-bg-primary</p>
+            <p class="gl-bg-success">gl-bg-success</p>
+            <p class="gl-bg-info">gl-bg-info</p>
+            <p class="gl-bg-warning">gl-bg-warning</p>
+            <p class="gl-bg-danger">gl-bg-danger</p>
+
+            <br>Button : Btn style and Icon size.<br><br><br>
+
+            <paper-button raised class="gl-btn-primary">
+                <iron-icon icon="favorite" class="gl-icon-size"></iron-icon>primary</paper-button><br><br>
+            <paper-button raised class="gl-btn-success">
+                <iron-icon icon="favorite" class="gl-icon-size"></iron-icon>success</paper-button><br><br>
+            <paper-button raised class="gl-btn-info">
+                <iron-icon icon="favorite" class="gl-icon-size"></iron-icon>info</paper-button><br><br>
+            <paper-button raised class="gl-btn-warning">
+                <iron-icon icon="favorite" class="gl-icon-size"></iron-icon>warning</paper-button><br><br>
+            <paper-button raised class="gl-btn-danger">
+                <iron-icon icon="favorite" class="gl-icon-size"></iron-icon>danger</paper-button>
+            
+             <br><br><br>Table : Table style.<br><br><br>
+             class : gl-table-default
+            <div style="overflow-x:auto;">
+            <table class="gl-table-default">
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>FirstName.</th>
+                        <th>LastName.</th>
+                        <th>Gender.</th>
+                        <th>Tel.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>fname1</td>
+                        <td>lname1</td>
+                        <td>m</td>
+                        <td>12345</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>fname2</td>
+                        <td>lname2</td>
+                        <td>m</td>
+                        <td>12345</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>fname3</td>
+                        <td>lname3</td>
+                        <td>f</td>
+                        <td>12345</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>fname4</td>
+                        <td>lname4</td>
+                        <td>f</td>
+                        <td>12345</td>
+                    </tr>
+                </tbody>
+            </table>
+            </div>
+
+            class : gl-panel-default
+            <div class="gl-panel-default">
+                <div class="gl-panel-default-header">
+                     Header
+                </div>
+                <div class="gl-panel-default-content">
+                    content
+                </div>
+            </div>
+
+            class : gl-toast-loading
+            <div>
+                <paper-button raised onclick="toast0.open()">Default toast</paper-button>
+                <paper-toast class="gl-toast-loading" id="toast0" positionTarget>
+                    <paper-spinner active></paper-spinner>
+                    <span>
+                        กำลังโหลด... 
+                    </span>
+                </paper-toast>     
+            </div>
+
+            class : gl-toast-loading
+            <div>
+                <paper-button raised onclick="toastDialog.open()">ToastDialog</paper-button>
+               <paper-toast class="gl-toast-dialog" id="toastDialog" duration="0">
+                    <span>ต้องการลบข้อมูลใช้หรือไม่ ? </span>
+                    <div>
+                        <paper-button class="gl-btn-success gl-small" onclick="toastDialog.toggle()" confirm>Yes</paper-button>
+                        <paper-button class="gl-bg-danger gl-small" onclick="toastDialog.toggle()">No</paper-button>
+                    </div>
+		        </paper-toast> 
+            </div>
+            class : gl-toast-success
+            <div>
+                <paper-button raised onclick="toastStatus.open()">ToastDialog</paper-button>
+                <paper-toast class ="gl-toast-success" id="toastStatus">
+                    <iron-icon icon ="done"></iron-icon>
+                    <span>
+                        เสร็จสิ้น..
+                    </span>
+		        </paper-toast>
+            </div>
+        </demo-snippet>
+    </div>
+
+</body>
+
+</html>

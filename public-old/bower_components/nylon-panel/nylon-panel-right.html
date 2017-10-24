@@ -1,0 +1,103 @@
+
+<link rel="import" href="./../polymer/polymer.html">
+<link rel="import" href="./../app-layout/app-layout.html">
+<link rel="import" href="./../gl-font/gl-rsu-font.html">
+
+<dom-module id="nylon-panel-right">
+    <template>
+        <style is="custom-style">
+            app-drawer{
+                /*--app-drawer-width: 80%;*/
+                z-index: 1;
+            }
+            paper-icon-button{
+                width: 40px;
+                height: 40px;
+            }
+            paper-icon-button:hover{
+                /*background-color: #C8C8C8;*/
+                border-radius: 100%;
+            }
+            app-toolbar{
+                background-color: #f7941e;
+                color: white;
+                font-size: 20px;
+                padding-left: 20px;
+            }
+            .iconLeft{
+                position: absolute;
+                left: 95%;
+            }
+            #bgPanel{
+                position: fixed;
+                background-color: #000;
+                width:100%;
+                height:100%;
+                top:0;
+                right:0;
+                opacity: 0.5;
+                z-index: 1;
+            }
+            .font{
+                font-family: 'rsuregular', sans-serif;
+                -webkit-font-smoothing: antialiased;
+            }
+        </style>
+        <div id="bgPanel" hidden$="[[!opened]]" on-tap="close"></div>
+        <app-drawer align="right" persistent opened="{{opened}}" on-tap="closeBgAppDrawer">
+            <div>
+            <app-toolbar>
+                <div class="font">
+                    {{title}}
+                </div>
+                <div class="iconLeft">
+                    <paper-icon-button icon="close" on-tap="close"></paper-icon-button>
+                </div>
+		    </app-toolbar>
+            </div>
+            <div style="height:90%; overflow: auto;">
+                <content></content>
+            </div>
+        </app-drawer>
+    </template>
+    <script>
+        Polymer({
+            is: 'nylon-panel-right',
+            properties:{
+                title:{
+                    type: String,
+                    value: 'title'
+                },
+                setWidth:{
+                    type: String,
+                    value: '80%'
+                }
+            },
+            attached:function(){
+                this.customStyle['--app-drawer-width'] = this.setWidth;
+                this.updateStyles();
+            },
+            toggle:function(){
+                this.$$('app-drawer').toggle();
+            },
+            _setWidth:function(width){
+                this.setWidth = width;
+                this.customStyle['--app-drawer-width'] = this.setWidth;
+                this.updateStyles();
+            },
+            open:function(){
+                document.documentElement.style.overflow = 'hidden';
+                this.$$('app-drawer').open();
+            },
+            close:function(e){
+                document.documentElement.style.overflow = 'auto';
+                this.$$('app-drawer').close();
+            },
+            closeBgAppDrawer:function(e){
+                if(e.target.is == "app-drawer"){
+                    this.close();
+                }
+            }
+        });
+    </script>
+</dom-module>

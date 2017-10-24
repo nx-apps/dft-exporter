@@ -1,0 +1,35 @@
+
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="gl-table">
+    <template>
+        <style>
+           .gl-table-default{
+               border-collapse: collapse;
+               width: 100%;
+               overflow-x:auto;
+           }
+           .gl-table-default,.gl-table-default > thead > tr > th,.gl-table-default > tbody > tr > td{
+               border-bottom: 1px solid #ddd;
+           }
+           .gl-table-default > thead > tr > th,.gl-table-default > tbody > tr > td{
+               padding: 15px;
+           }
+           .gl-table-default > thead > tr > th {
+              text-align: left;
+              background-color: #F1F1F1;
+           }
+           .gl-table-default > tbody > tr > td{
+               text-align: left;
+           }
+           .gl-table-default > tbody > tr:hover{
+               background-color: #F1F1F1;
+           }
+        </style>
+    </template>
+    <script>
+        Polymer({
+            is: 'gl-table'
+        });
+    </script>
+</dom-module>
