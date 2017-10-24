@@ -24,12 +24,12 @@ export function settingReducer(state = initialState, action) {
     }
 }
 export function settingAction(store) {
-    return [commonAction(),
+    return 
     {
         // SET BTN
         SETTING_BTN: function (data) {
             store.dispatch({ type: 'SETTING_BTN', payload: data })
-        },
+        }
         // GET ALL
         SETTING_GET_LIST_DOC: function () {
             axios.get('/doctype')
@@ -39,7 +39,7 @@ export function settingAction(store) {
                 .catch(function (error) {
                     console.log(error);
                 });
-        },
+        }
         SETTING_GET_LIST_LIC: function () {
             axios.get('/lictype')
                 .then((response) => {
@@ -48,7 +48,7 @@ export function settingAction(store) {
                 .catch(function (error) {
                     console.log(error);
                 });
-        },
+        }
         //get by id
         SETTING_GET_ID_DOC: function (id) {
             axios.get('/doctype/get?id=' + id)
@@ -58,7 +58,7 @@ export function settingAction(store) {
                 .catch(function (error) {
                     console.log(error);
                 });
-        },
+        }
         SETTING_GET_ID_LIC: function (id) {
             axios.get('/lictype/get?id=' + id)
                 .then((response) => {
@@ -67,35 +67,33 @@ export function settingAction(store) {
                 .catch(function (error) {
                     console.log(error);
                 });
-        },
+        }
         // post
         SETTING_POST_DOC: function (data) {
             return axios.post('/doctype/insert', data)
-        },
+        }
         SETTING_POST_LIC: function (data) {
             return axios.post('/lictype/insert', data)
-        },
+        }
         //update 
         SETTING_PUT_DOC: function (data) {
             return axios.put('/doctype/update', data)
-        },
+        }
         SETTING_PUT_LIC: function (data) {
             return axios.put('/lictype/update', data)
-        },
+        }
         //delete
         //update 
         SETTING_DELETE_DOC: function (id) {
             return axios.delete('/doctype/delete?id='+id)
-        },
+        }
         SETTING_DELETE_LIC: function (id) {
             return axios.delete('/lictype/delete?id='+id)
-        },
+        }
         SETTING_CLEAR_DOC_LIC: function (id) {
             // return axios.delete('/lic
             store.dispatch({ type: 'SETTING_GET_ID_LIC', payload: {} })
             store.dispatch({ type: 'SETTING_GET_ID_DOC', payload: {} })
-        },
-
+        }
     }
-    ]
 }

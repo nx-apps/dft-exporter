@@ -1,5 +1,4 @@
 import axios from '../axios'
-import { commonAction } from '../config'
 const initialState = {
     list: [],
     list_search: [],
@@ -31,14 +30,14 @@ export function exporterReducer(state = initialState, action) {
     }
 }
 export function exporterAction(store) {
-    return [commonAction(),
+    return 
     {
         CHECK_EXPORTER_NO: function (exporter_no) {
             return axios.get('./draft/check?no=' + exporter_no)
-        },
+        }
         UPDATE_DRAFT_EXPORTER_NO: function (exporter_no) {
             return axios.put('./exporter/close', data)
-        },
+        }
         EXPORTER_GET_DATA: function (page = 1) {
             // console.log(page);
             // &pluck=company,lic_type,export_status,date_load,date_expire
@@ -50,7 +49,7 @@ export function exporterAction(store) {
                 .catch(function (error) {
                     console.log(error);
                 });
-        },
+        }
         EXPORTER_GET_DATA_SEARCH: function (data, page = 1) {
             this.fire('toast', { status: 'load' })
             axios.get('./exporter/search?field=' + data.att_name + '&value=' + data.val + '&page=' + page + '&limit=100&close_status=false')
@@ -63,7 +62,7 @@ export function exporterAction(store) {
                     // })
                     // store.dispatch({ type: 'EXPORTER_GET_DATA_SEARCH', payload: response.data })
                 })
-        },
+        }
         EXPORTER_GET_PAGE: function () {
             axios.get('./exporter/page?limit=100')
                 .then((response) => {
@@ -74,7 +73,7 @@ export function exporterAction(store) {
                     // console.log(pages);
                     store.dispatch({ type: 'EXPORTER_GET_PAGE', payload: pages })
                 })
-        },
+        }
         EXPORTER_GET_DATA_ID: function (url) {
             // console.log(company_taxno);
             axios.get('./exporter/get/?' + url)
@@ -84,7 +83,7 @@ export function exporterAction(store) {
                 .catch(function (error) {
                     console.log(error);
                 });
-        },
+        }
 
         EXPORTER_GET_DOC_TYPE: function () {
             axios.get('./doctype')
@@ -94,7 +93,7 @@ export function exporterAction(store) {
                 .catch(function (error) {
                     console.log(error);
                 })
-        },
+        }
         EXPORTER_SEARCH: function (val, page, type) {
             if (type !== 'report') {
                 // console.log('search');
@@ -111,19 +110,18 @@ export function exporterAction(store) {
                 axios.get('./exporter' + val)
                     .then(function (response) { });
             }
-        },
+        }
         // new
         EXPORTER_UPDATE: (data) => {
             return axios.put('./exporter', data)
-        },
+        }
         EXPORTER_CLOSE: (data) => {
             return axios.put('./exporter/close', data)
-        },
+        }
 
         EXPORTER_CLEAR_LIST_SEARCH: function () {
             store.dispatch({ type: 'EXPORTER_CLEAR_LIST_SEARCH', payload: [] });
         }
         //-------------------------------------
     }
-    ]
 }

@@ -2,7 +2,7 @@ import axios from '../axios'
 const initialState = {
     list: [],
     list_search: [],
-    company_count:0,
+    company_count: 0,
     pages: [],
     data: {}
 }
@@ -29,7 +29,7 @@ export function companyReducer(state = initialState, action) {
     }
 }
 export function companyAction(store) {
-    return 
+    return
     {
         COMPANY_GET_DATA: function (page) {
             if (page == 'COMPANY_GET_DATA') {
@@ -58,7 +58,7 @@ export function companyAction(store) {
                 .catch((error) => {
                     console.log(error);
                 });
-        },
+        }
         COMPANY_GET_PAGE: function () {
             axios.get('./external/company/page?limit=100')
                 .then((response) => {
@@ -69,14 +69,14 @@ export function companyAction(store) {
                     // console.log(pages);
                     store.dispatch({ type: 'COMPANY_GET_PAGE', payload: pages })
                 })
-        },
-        COMPANY_COUNT : function (){
-           axios.get('./external/company/countCompany')
+        }
+        COMPANY_COUNT: function () {
+            axios.get('./external/company/countCompany')
                 .then((response) => {
                     // console.log(pages);
                     store.dispatch({ type: 'COMPANY_COUNT', payload: response.data })
-                }) 
-        },
+                })
+        }
         COMPANY_GET_DATA_SEARCH: function (data) {
             axios.get('./external/company/list_search?' + data.att_name + '=' + data.val + '&type=' + data.type)
                 .then((response) => {
@@ -89,7 +89,7 @@ export function companyAction(store) {
                 .catch((error) => {
                     console.log(error);
                 });
-        },
+        }
         COMPANY_SEARCH: function (id) {
             this.fire('toast', { status: 'load' });
             if (typeof id !== 'undefined') {
@@ -123,7 +123,7 @@ export function companyAction(store) {
                         })
                 }
             }
-        },
+        }
         COMPANY_INSERT: function (data) {
             axios.get('./external/check/duplicate?table=company&field=company_taxno&value=' + data.company_taxno)
                 .then((response) => {
@@ -152,7 +152,7 @@ export function companyAction(store) {
                         this.fire('toast', { status: 'connectError', text: 'เลขประจำตัวผู้เสียภาษีนี้มีอยู่แล้ว', callback: () => { } })
                     }
                 })
-        },
+        }
         COMPANY_UPDATE: function (data) {
             axios.get('./external/check/duplicate?table=company&field=company_name_th&value=' + data.company_name_th)
                 .then((response) => {
@@ -189,7 +189,7 @@ export function companyAction(store) {
                             })
                     }
                 })
-        },
+        }
         COMPANY_DELETE: function (id) {
             this.fire('toast', { status: 'load' });
             axios.delete('./external/company/delete/id/' + id)
@@ -202,13 +202,13 @@ export function companyAction(store) {
                         }
                     });
                 })
-        },
+        }
         COMPANY_CLEAR_DATA: function () {
             store.dispatch({ type: 'COMPANY_CLEAR_DATA', payload: { company_directors: [] } })
-        },
+        }
         COMPANY_CLEAR_LIST_SEARCH: function () {
             store.dispatch({ type: 'COMPANY_CLEAR_LIST_SEARCH', payload: [] })
-        },
+        }
         COMPANY_GET_TAXNO: function (taxno) {
             if (typeof taxno !== 'undefined' && taxno !== '') {
                 axios.get('./external/company/id/' + taxno)
@@ -232,5 +232,5 @@ export function companyAction(store) {
             }
         }
     }
-    
+
 }

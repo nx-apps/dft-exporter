@@ -1,0 +1,230 @@
+<link rel="import" href="../../../bower_components/vaadin-upload/vaadin-upload.html">
+<link rel="import" href="../../redux-behavior.html">
+<link rel="import" href="../../action/uploadAction.html">
+<link rel="import" href="./month-behavior.html">
+<link rel="import" href="../../layout/page-style.html">
+<link rel="import" href="../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="upload-file">
+    <style include="page-style">
+        paper-icon-button.crud:hover {
+            background-color: var(--paper-grey-200);
+            border-radius: 5px;
+            box-shadow: inset 0 0 3px 3px rgba(0, 0, 0, .2);
+        }
+
+        table.gl-table-default>tbody.table-body>tr>td {
+            /*cursor: pointer;*/
+            padding: 5px 15px;
+        }
+    </style>
+    <template>
+        <template is="dom-if" if="[[checkRefPath(refPath)]]">
+            <vaadin-upload class="thick-border" id="preFill" target="[[target]]" method="POST" timeout="300000" accept="[[accept]]" on-upload-success="fileChanged"
+                on-upload-request="_addHeader">
+                <div class="drop-label">
+                    <iron-icon icon="description"></iron-icon>
+                    {{localize.put_file}}
+                </div>
+            </vaadin-upload>
+        </template>
+        <template is="dom-if" if="[[!checkRefPath(refPath)]]">
+            <div class="borderDrop">
+                <iron-icon icon="description"></iron-icon>&nbsp;&nbsp;{{localize.upload_disabled}}
+            </div>
+        </template>
+
+        <div id="fileList" class="file-list">
+            <div id="fileList">
+                <h4>{{localize.files}}</h4>
+                <table class="gl-table-default">
+                    <thead class="table-head">
+                        <tr>
+                            <!-- <th>ลำดับ</th> -->
+                            <th style="width:25%;">{{localize.file_type}}</th>
+                            <th style="width:60%;">{{localize.file_name}}</th>
+                            <th style="text-align: center;width:15%;">{{localize.manage}}</th>
+                        </tr>
+                    </thead>
+                    <tbody class="table-body">
+                        <template is="dom-repeat" items={{listFiles}} as="files">
+                            <template is="dom-repeat" items={{files.reduction}} as="file">
+                                <tr>
+                                    <!-- <td>ๅ</td> -->
+                                    <td>[[files.group]]</td>
+                                    <td>[[file.filename]]</td>
+                                    <td style="text-align: center;">
+                                        <paper-icon-button class="crud" data="{{file}}" on-tap="downloadFile" icon="cloud-download"></paper-icon-button>
+                                        <paper-icon-button class="crud" data="{{file}}" on-tap="_deleteFile" icon="delete"></paper-icon-button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </template>
+                        <template is="dom-if" if={{checkArrayEmpty(listFiles)}}>
+                            <tr>
+                                <td colspan=4 style="text-align:center">{{localize.not_found}}</td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'upload-file',
+            behaviors: [ReduxBehavior, MonthBehavior],
+            properties: {
+                target: {
+                    type: String,
+                    value: "",
+                },
+                accept: {
+                    type: String,
+                    value: "",
+                },
+                refPath: {
+                    type: String,
+                    value: "",
+                    // observer: 'getList'
+                },
+                docTypeId: {
+                    type: String,
+                    value: "",
+                },
+                dataType: {
+                    type: String,
+                    value: "",
+                },
+                companyTaxno: {
+                    type: String,
+                    value: "",
+                },
+                draftId: {
+                    type: String,
+                    value: ''
+                },
+                companyId: {
+                    type: String,
+                    value: "",
+                    // observer: 'getList'
+                },
+                listFiles: {
+                    statePath: 'upload.fileList',
+                    // notify: true
+                },
+                localize: {
+                    statePath: 'i18n.exporter'
+                },
+
+            },
+            checkRefPath: function (refPath) {
+                return (refPath != "")
+            },
+            fileChanged: function (fileChange) {
+
+                if (fileChange.type === 'upload-success') {
+                    let file = fileChange.detail.file
+                    this.getList();
+                    this.fire('toast', { status: 'success', text: `${this.localize.upload_file} ${file.name} ${this.localize.success}`, callback: () => { } })
+                }
+            },
+            getList: function () {
+                if (this.dataType !== undefined) {
+                    // console.log(this.dataType);
+                    let draft = 'sign'
+                    // console.log(1111);
+                    switch (this.dataType) {
+                        case 'registerdraft':
+                            draft = 'sign'
+                            break;
+                        case 'renewdraft':
+                            draft = 'renew'
+                            break;
+                        case 'changedraft':
+                            draft = 'change'
+                            break;
+                        default:
+                            draft = ''
+                            break;
+                    }
+                    if (this.companyTaxno === '' || this.companyTaxno === undefined) {
+                        this.companyTaxno = ''
+                    }
+                    if (this.draftId === '' || this.draftId === undefined) {
+                        this.draftId = ''
+                    }
+                    let url = {
+                        draft_status: draft,
+                        company_taxno: this.companyTaxno,
+                        draft_id: this.draftId || '',
+                        file_status: true,
+                    }
+                    let newUrl = this.genUrl(url)
+                    // console.log(this.genUrl(url).length);
+                    if (newUrl.length > 0) {
+                        // console.log(newUrl);
+                        this.dispatchAction('UPLOAD_GET_LIST', newUrl)
+                    }
+                }
+
+
+            },
+            _addHeader: function (e) {
+                let draft = 'sign'
+                console.log(this.dataType );
+                // event.detail.xhr.setRequestHeader('ref-path', this.refPath);
+                event.detail.xhr.setRequestHeader('doc-type-id', this.docTypeId);
+                if (this.dataType === 'registerdraft') {
+                    draft = 'sign'
+                } else if (this.dataType === 'renewdraft') {
+                    draft = 'renew'
+                } else if (this.dataType === 'changedraft') {
+                    draft = 'change'
+                }
+                event.detail.xhr.setRequestHeader('draft-status', draft)
+                event.detail.xhr.setRequestHeader('company-taxno', this.companyTaxno)
+                event.detail.xhr.setRequestHeader('draft-id', this.draftId)
+            },
+            downloadFile: function (e) {
+                try {
+                    // console.log(e.currentTarget.data);
+                    window.open('/api/file/download?file_id=' + e.currentTarget.data.file_id);
+                } catch (error) {
+
+                }
+            },
+            _deleteFile: function (e) {
+                let file = e.currentTarget.data
+                this.fire('toast', {
+                    status: 'openDialog',
+                    text: this.localize.want_delete_file,
+                    confirmed: (result) => {
+                        let data = {
+                            file_id: file.file_id,
+                            file_status: false
+                        }
+                        if (result == true) {
+                            this.dispatchAction('UPLOAD_DELETE_RECOVERY', data)
+                                .then((response) => {
+                                    // console.log(response);
+                                    this.getList()
+                                    this.fire('toast', {
+                                        status: 'success', text: this.localize.delete_success, callback: () => {
+
+                                        }
+                                    });
+                                })
+                                .catch(function (error) {
+                                    // console.log(error);
+                                });
+                        } else {
+                            this.getList();
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</dom-module>

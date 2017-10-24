@@ -1,0 +1,818 @@
+<link rel="import" href="components/list-company.html">
+<link rel="import" href="components/detail-company.html">
+<link rel="import" href="components/fileup-company.html">
+<link rel="import" href="components/register-page.html">
+<link rel="import" href="./../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../nylon-behavior.html">
+<link rel="import" href="../components/panel-right/panel-right.html">
+<link rel="import" href="./../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="./../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="./../../../bower_components/gl-styles/gl-size.html">
+<link rel="import" href="./../../../bower_components/gl-styles/gl-color.html">
+<link rel="import" href="./../../../bower_components/gl-styles/gl-table.html">
+<!--<link rel="import" href="./../../../bower_components/gl-styles/gl-panel.html">-->
+
+<link rel="import" href="../../../bower_components/paper-dialog/paper-dialog.html">
+
+<link rel="import" href="../../../bower_components/paper-listbox/paper-listbox.html">
+
+<link rel="import" href="../../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="./../../../bower_components/gl-styles/gl-toast.html">
+<link rel="import" href="./../../../bower_components/gl-form/gl-form-input.html">
+<link rel="import" href="./../../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="./../../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="./../../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="./../../../bower_components/gl-form/gl-form-panel.html">
+<link rel="import" href="./../../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="./../../../bower_components/gl-grid/gl-grid-col.html">
+<link rel="import" href="./../../../bower_components/gl-grid/gl-grid-row.html">
+<link rel="import" href="./../../../bower_components/gl-form/gl-form-textarea.html">
+<link rel="import" href="./../../../bower_components/gl-form/gl-form-dropdown-menu.html">
+<link rel="import" href="./../../../bower_components/gl-form/gl-form-input.html">
+<link rel="import" href="./../../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="./../../../bower_components/paper-item/paper-item.html">
+
+<link rel="import" href="../components/month-behavior.html">
+<link rel="import" href="../components/validateFormBehaviors.html">
+<link rel="import" href="./components/detail-company.html">
+<link rel="import" href="../../redux-behavior.html">
+<link rel="import" href="../../nylon-behavior.html">
+<!-- <link rel="import" href="../../i18n-behavior.html"> -->
+<!-- <link rel="import" href="../../action/exporterAction.html"> -->
+<!-- <link rel="import" href="../../action/confirmAction.html"> -->
+<link rel="import" href="../../layout/page-style.html">
+<link rel="import" href="./components/list-report.html">
+
+<link rel="import" href="./components/date-approve.html">
+
+<!-- <link rel="import" href="./components/test-eml.html"> -->
+
+
+<dom-module id="page-draft">
+  <style is="custom-style" include="page-style iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
+    * {
+      font-family: 'CSChatThaiUI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .marginCheckbox {
+      margin: 10px 0px 0px 30px;
+    }
+
+    .gl-btn-defalse {
+      background-color: #FFF;
+      color: black;
+      min-height: var(--gl-btn-min-hight);
+      min-width: var(--gl-btn-min-width);
+      margin: var(--gl-btn-margin);
+    }
+
+    .searchBorder {
+      border: 1px solid var(--gl-gray-light-color);
+      margin: 15px;
+      border-radius: 3px;
+      background-color: #fff;
+    }
+
+    .text-table {
+      text-align: center;
+      font-size: var(--font-size-h5);
+    }
+
+    .gl-table-default {
+      border-collapse: collapse;
+      width: 100%;
+      white-space: nowrap;
+    }
+
+    .tabs {
+      background-color: #f7941e;
+      margin: 0px 15px 0px 15px;
+      color: #F2F2F2;
+      --paper-tabs-selection-bar: {
+        height: 5px;
+        background-color: var(--gl-info-color);
+      }
+    }
+
+    .tab:focus>div.tab-content {
+      background-color: yellow;
+      opacity: 1;
+      font-weight: 0;
+    }
+
+    .tab:not(:last-of-type) {
+      border-right: 3px solid var(--gl-gray-light-color);
+      font-size: var(--font-size-h5);
+    }
+
+    .tabs .tab.iron-selected {
+      font-size: var(--font-size-h5);
+      color: var(--gl-white-color);
+      background-color: var(--gl-info-color);
+    }
+
+    .table-head>tr>th:nth-child(2) {
+      width: 15%;
+    }
+
+    .btn {
+      margin: 15px 20px 5px 10px;
+    }
+
+    .btn-bottom {
+      margin: 0px 15px 15px 0px;
+    }
+
+
+    .container {
+      display: inline-block;
+      margin-left: 30px;
+      margin-right: 30px;
+    }
+    /* Need to position the badge to look like a text superscript */
+
+    .container>paper-badge {
+      --paper-badge-margin-left: 20px;
+      --paper-badge-margin-bottom: 0px;
+    }
+
+    .btn-back {
+      margin: 30px 30px 0px 0px;
+    }
+
+    paper-material {
+      background-color: var(--gl-white-color);
+      padding: 15px;
+      margin-top: 15px;
+      /*height: */
+    }
+
+    .head-title {
+      text-align: center;
+      font-size: var(--font-size-h3);
+      margin-top: 15px;
+    }
+
+    .searchBox {
+      padding: 5px;
+      background-color: var(--gl-gray-lighter-color);
+    }
+
+    .searchBorder {
+      border: 1px solid var(--gl-gray-light-color);
+      margin: 15px;
+      border-radius: 3px;
+    }
+
+    main {
+      padding: 5px;
+      margin: 0 auto;
+    }
+
+    section {
+      display: none;
+      border-top: 1px solid #ddd;
+    }
+
+    input {
+      display: none;
+    }
+
+    label {
+      display: inline-block;
+      margin: 0 0 -1px;
+      padding: 15px 25px;
+      font-weight: 600;
+      text-align: center;
+      color: #bbb;
+      border: 1px solid transparent;
+      background: #D5D8DC;
+    }
+
+    label:before {
+      font-family: fontawesome;
+      font-weight: normal;
+      margin-right: 10px;
+    }
+
+    label:hover {
+      color: #888;
+      cursor: pointer;
+    }
+
+    input:checked+label {
+      color: #555;
+      border: 1px solid #ddd;
+      border-top: 3px solid orange;
+      border-bottom: 1px solid #fff;
+      background: #fff;
+    }
+
+    #tab1:checked~#content1,
+    #tab2:checked~#content2,
+    #tab3:checked~#content3 {
+      display: block;
+    }
+
+    detail-company,
+    fileup-company,
+    list-report {
+      margin-top: 15px;
+      width: 98%;
+    }
+
+    .container {
+      display: inline-block;
+      margin-left: 30px;
+      margin-right: 30px;
+    }
+
+    table.gl-table-default>tbody.table-body>tr>td {
+      /*cursor: pointer;*/
+      padding: 10px 15px;
+    }
+  </style>
+  <template>
+    <date-approve id="dateApprove"></date-approve>
+    <paper-material elevation="1" class="elevation">
+      <div class="horizontal end-justified layout">
+        <div>
+          <paper-button class="button-top gl-btn-success" raised on-tap="registerdraft"> {{localize.register}}</paper-button>
+        </div>
+        <div>
+          <paper-button class="button-top gl-btn-primary" raised on-tap="renewdraft"> {{localize.bt_exporter_extend}}</paper-button>
+        </div>
+        <div>
+          <paper-button class="button-top gl-btn-warning" raised on-tap="changedraft"> {{localize.bt_change}}</paper-button>
+        </div>
+      </div>
+      </div>
+      <div class="head-title">{{localize.add_exporter}}</div>
+      <!-- <div class="horizontal layout center-justified searchBox searchBorder" style="margin-top:10px;">
+        <gl-form-input class="searchForm" hidden="{{isHidden}}" style="width:300px;" label="{{localize.tax_no}} :" value="{{companyId}}"
+          always-float-label allowed-pattern="[0-9]" maxlength="13">
+          <iron-icon icon="search" prefix style="width:20px;height:30px;"></iron-icon>
+          <paper-icon-button suffix on-tap="clearData" icon="clear" title="clear" style="height:30px;">
+        </gl-form-input>
+        <paper-button hidden="{{isHidden}}" class="gl-btn-info btn" raised on-tap="_search">{{localize.bt_search}}</paper-button>
+      </div> -->
+      <div name="listCompany">
+        <div class="" style="height:600px; overflow-x:auto; overflow-y:auto;border: 1px solid #ddd;">
+          <table class="gl-table-default">
+            <thead class="table-head">
+              <tr>
+                <th>
+                  <div class="text-table">{{localize.No}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.no_exporter_fullname}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.name_company}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.type_license}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.date_register}}</div>
+                </th>
+                <th>
+                  <div class="text-table">{{localize.status}}</div>
+                </th>
+              </tr>
+            </thead>
+
+            <template is="dom-repeat" items="{{companys}}">
+              <tbody>
+                <tr style="cursor:pointer;">
+                  <td>
+                    <div class="text-table">[[autoIndex(index)]]</div>
+                  </td>
+                  <td style="text-align:center">
+                    {{item.lic_type.lic_type_prefix}}{{item.exporter_no}}
+                  </td>
+                  <td on-tap="_selectData" data="[[item]]">
+                    <div>{{item.company.company_name_th}}</div>
+                  </td>
+                  <td on-tap="_selectData" data="[[item]]">
+                    <div>{{item.lic_type.lic_type_name}}</div>
+                  </td>
+                  <td on-tap="_selectData" data="[[item]]">
+                    <div class="text-table">{{changeDate(item.date_created)}}</div>
+                  </td>
+                  <td on-tap="_selectData" data="[[item]]">
+                    <div>{{obDraftStatus(item.draft_status, item.doc_status, item.approve_status)}}</div>
+                  </td>
+                </tr>
+            </template>
+            <template is="dom-if" if={{_checkData(companys)}}>
+              <tr>
+                <td colspan="6">
+                  <div class="text-table" style="margin:20px">{{localize.not_found}}</div>
+                </td>
+              </tr>
+            </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </paper-material>
+
+    <panel-right title="{{titleName}}">
+      <div class="left">
+
+        <iron-pages selected="{{layerContent}}" attr-for-selected="name">
+          <div name="register">
+            <register-page></register-page>
+          </div>
+          <div name="approve">
+            <main>
+              <input id="tab1" type="radio" name="tabs" checked>
+              <label for="tab1">
+                    <div class="container" tabindex="0">
+                      <span>1.{{localize.detail}}</span>
+                    </div>
+                  </label>
+
+              <input id="tab2" type="radio" name="tabs">
+              <label for="tab2">
+                  <div class="container" tabindex="0">
+                    <span>2.{{localize.doc_ev}}</span>
+                    </div>
+                  </label>
+
+              <input id="tab3" type="radio" name="tabs">
+              <label for="tab3">
+                      <div class="container" tabindex="0">
+                        <span>3.{{localize.report}}</span>
+                        </div>
+                      </label>
+
+
+              <section id="content1">
+                <gl-form-panel>
+                  <detail-company id="detailCompany" data={{resultCompany}} edit-exporter={{editExporter}} is-exporter-use={{isExporterUse}}></detail-company>
+                  <table class="gl-table-default" style="width: 100%;border: 1px solid #ddd; margin: 20px 0px 10px 0px;">
+                    <thead class="table-head">
+                      <tr>
+                        <th style="width :20%">{{localize.No}}</th>
+                        <th style="width :30%">{{localize.work_status}}</th>
+                        <th style="width : 30%">{{localize.date}}</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-body">
+                      <template is="dom-repeat" items="{{resultCompany.remark}}">
+                        <tr>
+                          <td>[[autoIndex(index)]]</td>
+                          <td>[[item.msg]]</td>
+                          <td>[[changeDateTime(item.date)]]</td>
+                        </tr>
+                      </template>
+
+                      <template is="dom-if" if={{checkArrayEmpty(resultCompany.remark)}}>
+                        <tr>
+                          <td colspan=3 style="text-align:center">{{localize.select_report}}</td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                  <div class="horizontal end-justified layout" style="margin:10px" hidden="{{!editExporter}}">
+                    <paper-button raised class="gl-btn-primary" on-tap="reSendDoc" hidden="[[_BtnShowReSend(resultCompany)]]">
+                      <iron-icon icon="check"></iron-icon>{{localize.send_doc}}</paper-button>
+                    <paper-button raised class="gl-btn-danger" on-tap="rejectDoc" hidden="[[_BtnShowDoc(resultCompany)]]">
+                      <iron-icon icon="close"></iron-icon>{{localize.doc_cannot_approve}}</paper-button>
+                    <paper-button raised class="gl-btn-primary" on-tap="approveDoc" hidden="[[_BtnShowDoc(resultCompany)]]">
+                      <iron-icon icon="check"></iron-icon>{{localize.doc_approve}}</paper-button>
+                    <paper-button raised class="gl-btn-danger" on-tap="rejectApprove" hidden="[[_BtnShowApprove(resultCompany)]]">
+                      <iron-icon icon="close"></iron-icon>{{localize.exporter_cannot_approve}}</paper-button>
+                    <paper-button raised class="gl-btn-primary" on-tap="waitaApprove" hidden="[[_BtnShowApprove(resultCompany)]]">
+                      <iron-icon icon="check"></iron-icon>{{localize.exporter_approve}}</paper-button>
+                  </div>
+                  <div class="horizontal end-justified layout" style="margin:10px" hidden="{{editExporter}}">
+                    <paper-button raised class="gl-btn-default" on-tap="cancelExporter">
+                      <iron-icon icon="clear"></iron-icon>{{localize.cancle_edit}}</paper-button>
+                    <paper-button raised class="gl-btn-primary" on-tap="updateExporter">
+                      <iron-icon icon="check"></iron-icon>{{localize.save_data}}</paper-button>
+
+                  </div>
+                </gl-form-panel>
+              </section>
+
+              <section id="content2">
+                <gl-form-panel>
+                  <fileup-company company-taxno="{{resultCompany.company_taxno}}" draft-id="{{resultCompany.id}}"></fileup-company>
+                </gl-form-panel>
+              </section>
+
+              <section id="content3">
+                <gl-form-panel>
+                  <list-report data={{draftById}} table="draft"></list-report>
+                </gl-form-panel>
+              </section>
+
+            </main>
+          </div>
+          <div name="renew">
+            <register-page></register-page>
+          </div>
+          <div name="changedraft">
+            <register-page></register-page>
+          </div>
+        </iron-pages>
+      </div>
+    </panel-right>
+    <paper-dialog id="rejectDoc">
+      <h2>{{textIsReason}}</h2>
+      <paper-dialog-scrollable>
+        <div style="margin:10px 30px;">
+          <gl-form-input label="{{textIsReason}}" value="{{docReason}}"></gl-form-input>
+        </div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss raised class="gl-btn-defalse">{{localize.bt_close}}</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="__rejectDocDia" raised class="gl-btn-primary">{{localize.bt_ok}}</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: "page-draft",
+      properties: {
+        pages: {
+          type: String,
+          value: 0
+        },
+        layerContent: {
+          type: String,
+          value: 'register'
+        },
+        isHidden: {
+          type: Boolean,
+          value: false
+        },
+        localize: {
+          statePath: 'i18n.exporter'
+        },
+        data: {
+          statePath: 'confirm.data'
+        },
+        companys: {
+          statePath: 'confirm.list'
+        },
+        draftById: {
+          statePath: 'confirm.draftById',
+          observer: 'setDataDraft'
+        },
+        resultCompany: {
+          type: Object,
+          value: {}
+        },
+        textIsReason: {
+          type: String,
+          value: 'หมายเหตุ'
+        },
+        editExporter: {
+          type: Boolean,
+          value: true
+        },
+        isExporterUse: {
+          type: Object,
+          value: {}
+        }
+      },
+      behaviors: [ReduxBehavior, nylonBehavior, uploadAction, MonthBehavior, i18nAction, confirmAction,
+        exporterAction, ValidateFormBehavior],
+      listeners: {
+        'back_page': '_backPage',
+        'clearData': 'clearData',
+        'approve-exporter': 'approveExporter'
+      },
+
+      setDataDraft(data) {
+        // console.log(data);
+        if (data.hasOwnProperty('id')) {
+          let url = {
+            draft_id: data.id,
+            file_status: true,
+            draft_status: data.draft_status,
+            company_taxno: data.company_taxno
+          }
+          this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
+          this.set('resultCompany', data)
+        }
+
+        // console.log(this.resultCompany);
+      },
+
+      nylonPageActive: function () {
+
+        this.dispatchAction('CONFIRM_GET_DATA');
+        // this.dispatchAction('//EXPORTER_GET_LIC_TYPE');
+        // ดึงประเภทเอกสารที่จะอัพโหลด
+        this.dispatchAction('EXPORTER_GET_DOC_TYPE');
+      },
+
+      _selectData: function (e) {
+        // console.log(this.$.detailCompany);
+        this.$.detailCompany.resetExporterNo()
+
+        this.set('titleName', this.localize.title_exporter)
+        let data = e.currentTarget.data
+        switch (data.draft_status) {
+          case "sign":
+            this.dispatchAction('CONFIRM_TYPE', 'registerdraft')
+            break;
+          case "renew":
+            this.dispatchAction('CONFIRM_TYPE', 'renewdraft')
+            break;
+          case "change":
+            this.dispatchAction('CONFIRM_TYPE', 'changedraft')
+            break;
+          default:
+            break;
+        }
+        this.dispatchAction('CONFIRM_SEARCH_DRAFT', data.id)
+        this.set('layerContent', 'approve')
+
+        this.$$('panel-right').open();
+      },
+
+      _backPage: function (data) {
+        this.$$('panel-right').close();
+        // this.pages = 0;
+        // this.isHidden = false;
+      },
+
+      checkArrayEmpty(arr) {
+        if (arr === undefined || arr.length === 0) {
+          return true
+        } else {
+          return false
+        }
+      },
+      _print: function (e) {
+        // console.log(this.draftById.draft_status);
+        if (e.target.getAttribute('report') == 'report1') {
+          // console.log(this.data.draft_status);
+          if (this.draftById.draft_status == 'sign') {
+            window.open('./api/report/normal/request?id=' + this.draftById.id);
+          } else if (this.data.draft_status == 'type') {
+            window.open('./api/external/report_exporter/approve_changtype/' + this.data.id);
+          } else {
+            window.open('./api/external/report_exporter/approve_renew_1/' + this.data.id);
+          }
+        } else {
+          if (this.data.draft_status == 'sign') {
+            window.open('./api/report/normal/company?id=' + this.draftById.id);
+          } else {
+            window.open('./api/external/report_exporter/approve_renew_2/' + this.data.id);
+          }
+        }
+
+      },
+
+      _search: function () {
+        if (this.companyId != '') {
+          this.dispatchAction('CONFIRM_SEARCH', this.companyId);
+          // this.pageSelected = "register";
+          this.queryFrom('.searchForm').map((el) => { el.reset(); });
+        }
+        else {
+          this.fire('toast', { status: 'connectError', text: this.localize.please_fill + this.localize.tax_no })
+        }
+      },
+
+      clearData: function () {
+        this.idCompany = {};
+        this.companyId = '';
+        this._backPage();
+      },
+
+      obDraftStatus: function (data, doc_status, approve_status) {
+        if (data == 'change') {
+          return this.localize.bt_change + ' (' + this.localize.wait_approve + ')'
+        }
+        if (data == 'renew') {
+          return this.localize.bt_exporter_extend + ' (' + this.localize.wait_approve + ')'
+        }
+        if (data == 'sign') {
+          if (doc_status === false) {
+            return this.localize.doc_reject
+          }
+          if (doc_status === null && approve_status === false) {
+            return this.localize.register + ' (' + this.localize.wait_approve_dov + ')'
+          }
+          else if (doc_status === true && approve_status === false) {
+            return this.localize.register + ' (' + this.localize.wait_approve + ')'
+          }
+        }
+      },
+      // --------------------------------------------------------------------------------------
+      registerdraft: function (e) {
+        this.set('layerContent', 'register')
+        this.dispatchAction('CONFIRM_SEARCH_RESET')
+        this.dispatchAction('CONFIRM_TYPE', 'registerdraft')
+        this.$$('panel-right').open();
+        this.set('titleName', this.localize.register)
+      },
+      renewdraft: function (e) {
+        this.set('layerContent', 'renew')
+
+        this.$$('panel-right').open();
+        this.dispatchAction('CONFIRM_SEARCH_RESET')
+        this.dispatchAction('CONFIRM_TYPE', 'renewdraft')
+        this.set('titleName', this.localize.bt_exporter_extend)
+      },
+      changedraft: function (e) {
+        this.set('layerContent', 'changedraft')
+        this.$$('panel-right').open();
+        this.dispatchAction('CONFIRM_SEARCH_RESET')
+        this.dispatchAction('CONFIRM_TYPE', 'changedraft')
+        this.set('titleName', this.localize.bt_change)
+      },
+      changeDate(date) {
+        let time = new Date(date)
+        date = new Date(time.setHours(time.getHours() + 7)).toISOString()
+        date = date.split("T")[0]
+        if (date.split('-')[0] !== '9999')
+          return `${date.split('-')[2]}/${date.split('-')[1]}/${Number(date.split('-')[0]) + 543}`
+        return date
+      },
+      changeDateTime(date) {
+        // console.log(1111);
+        Date.prototype.addHours = function (h) {
+          this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+          return this;
+        }
+        date = new Date(date).addHours(7).toISOString()
+        time = date.split("T")[1]
+        date = date.split("T")[0]
+        time = `${time.split(":")[0]}:${time.split(":")[1]}`
+        // console.log(time)
+        if (date.split('-')[0] !== '9999')
+          return `${date.split('-')[2]}/${date.split('-')[1]}/${Number(date.split('-')[0]) + 543} ${time}`
+        return date
+      },
+      _docAndApproce(remarkText, diaText, isDoc) {
+        Date.prototype.addHours = function (h) {
+          this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+          return this;
+        }
+        if (this.draftById.date_pkk !== undefined) {
+          // เก็บธรรมดา
+          let date_pkk = new Date(this.draftById.date_pkk).addHours(7).toISOString().split("T")[0]
+          this.set('draftById.date_pkk', date_pkk)
+        }
+        if (this.draftById.date_approve !== undefined) {
+          // let date_approve = new Date(this.draftById.date_approve).addHours(7).toISOString()
+          let time = new Date(this.draftById.date_approve)
+          let date = new Date(time.setHours(time.getHours() + 7)).toISOString()
+          let timeDay = date.split("T")[1].split(".")[0]
+          // let timeDay = date_approve.split("T")[1].split(".")[0]
+          this.set('draftById.date_approve', date.split("T")[0] + `T${timeDay}+07:00`)
+        }
+        let remarkLength = this.draftById.remark
+        this.draftById.remark.map((item, index) => {
+          let time = new Date(item.date)
+          let date = new Date(time.setHours(time.getHours() + 7)).toISOString()
+          let timeDay = date.split("T")[1].split(".")[0]
+          item.date = date.split("T")[0] + `T${timeDay}+07:00`
+          return item
+        })
+        let timeDay = new Date().addHours(7).toISOString().split('T')[1].split(".")[0]
+        // console.log(timeDay);
+        let remark = {
+          msg: remarkText,
+          date: new Date().toISOString().split('T')[0] + `T${timeDay}+07:00`
+        }
+        this.push('draftById.remark', remark)
+        let newData = {}
+
+        if (isDoc.hasOwnProperty('doc_status')) {
+          // console.log(isDoc);
+          newData = {
+            id: this.draftById.id,
+            exporter_no: Number(this.draftById.exporter_no),
+            remark: this.draftById.remark,
+            doc_status: isDoc.doc_status,
+            date_pkk: this.draftById.date_pkk
+          }
+          // console.log(1);
+        } else {
+          newData = {
+            id: this.draftById.id,
+            remark: this.draftById.remark,
+            approve_status: isDoc.approve_status,
+            date_approve: this.draftById.date_approve,
+            date_pkk: this.draftById.date_pkk
+          }
+          // console.log(2);
+        }
+        // console.log(newData);
+        this.fire('toast', {
+          status: 'openDialog',
+          text: diaText,
+          confirmed: (result) => {
+            if (result == true) {
+              this.dispatchAction('CONFIRM_DOC_AND_APPROVE', newData)
+                .then((res) => {
+                  this.dispatchAction('CONFIRM_SEARCH_DRAFT', newData.id);
+                  this.nylonPageActive()
+                  this._backPage()
+                  // this.$.detailCompany.resetExporterNo()
+                })
+                .catch((err) => {
+                  console.log(err);
+                })
+            }
+          }
+        })
+        // console.log(remark, diaText, isDoc);
+      },
+      reSendDoc() {
+        this._docAndApproce('ส่งเอกสารใหม่', this.localize.resend_doc, { doc_status: null })
+
+      },
+      rejectDoc() {
+        this._rejectDoc('ผลการตรวจสอบเอกสารเบื่องต้น')
+
+      },
+      _rejectDoc(docTitle = '') {
+        // ผลการตรวจสอบเอกสารเบื่องต้น
+        docTitle = docTitle || this.localize.reason
+        this.set('textIsReason', docTitle)
+        this.$.rejectDoc.open()
+
+      },
+      __rejectDocDia() {
+        this._docAndApproce(this.docReason || '', this.localize.reject, { doc_status: false })
+
+      },
+      approveDoc() {
+        this._docAndApproce('เอกสารผ่าน' || '', this.localize.doc_approve, { doc_status: true })
+
+      },
+      rejectApprove() {
+        this._rejectDoc('หมายเหตุ')
+        // console.log(this.draftById);
+      },
+      waitaApprove() {
+        // this._rejectDoc('หมายเหตุ')
+        this.$.dateApprove.openDia()
+        // this._docAndApproce('อนุมัติแล้ว' || '', this.localize.approve_exporter, { approve_status: true })
+      },
+      approveExporter(e) {
+        // date_approve
+        this.set('draftById.date_approve', e.detail)
+        this._docAndApproce('อนุมัติแล้ว' || '', this.localize.approve_exporter, { approve_status: true })
+        // console.log(this.draftById);
+        // console.log(e.detail);
+      },
+      _BtnShowReSend(resultCompany) {
+        if (resultCompany.doc_status === false && resultCompany.approve_status === false)
+          return false
+        return true
+      },
+      _BtnShowDoc(resultCompany) {
+        if (resultCompany.doc_status === null && resultCompany.approve_status === false)
+          return false
+        return true
+      },
+      _BtnShowApprove(resultCompany) {
+        if (resultCompany.doc_status === true && resultCompany.approve_status === false)
+          return false
+        return true
+      },
+      updateExporter() {
+
+        const save = () => {
+          // console.log(this.draftById)
+          this._docAndApproce('อัพเดทข้อมูล', 'อัพเดทข้อมูล', { doc_status: null })
+          this.$.detailCompany.resetExporterNo()
+          // this.cancelExporter()
+        }
+        let hasProperty = this.isExporterUse.hasOwnProperty('available')
+        if (hasProperty) {
+          if (this.isExporterUse.available != true) {
+            this.fire('toast', { status: 'connectError', text: 'ไม่สามารถบันทึกได้ เนื่องจากเลขผู้ส่งออกซ้ำกับที่มีอยู่ในระบบ' });
+          } else {
+            save()
+          }
+        } else {
+          save()
+        }
+
+        // console.log(this.isExporterUse);
+        // console.log(this.data);
+      },
+      cancelExporter() {
+        this.set('editExporter', !this.editExporter)
+        this.dispatchAction('CONFIRM_SEARCH_DRAFT', this.data.id)
+        this.$.detailCompany.resetExporterNo()
+      }
+    });
+  </script>
+</dom-module>

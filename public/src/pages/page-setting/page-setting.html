@@ -1,0 +1,180 @@
+<link rel="import" href="../../layout/page-style.html">
+<link rel="import" href="../../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../../bower_components/gl-styles/gl-size.html">
+<link rel="import" href="./components/exporter-type.html">
+<link rel="import" href="./components/doc-type.html">
+<link rel="import" href="../../../bower_components/gl-form/gl-form-panel.html">
+<link rel="import" href="../components/panel-right/panel-right.html">
+<link rel="import" href="../../redux-behavior.html">
+<link rel="import" href="../../nylon-behavior.html">
+<!-- <link rel="import" href="../../i18n-behavior.html"> -->
+<!-- <link rel="import" href="../../action/settingAction.html"> -->
+<link rel="import" href="./components/manage-doc-type.html">
+<link rel="import" href="./components/manage-lic-type.html">
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../../bower_components/gl-font/gl-cschatthai-font.html">
+
+<dom-module id="page-setting">
+    <template>
+        <style include=" gl-size">
+            * {
+                font-family: 'CSChatThaiUI', sans-serif;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            paper-material {
+                background-color: #FFF;
+                padding: 15px;
+                margin-top: 15px;
+                /*height: */
+            }
+
+            .head-title {
+                text-align: center;
+                font-size: var(--font-size-h3);
+                margin-top: 15px;
+            }
+
+            main {
+                padding: 5px;
+                margin: 0 auto;
+            }
+
+            section {
+                display: none;
+                border-top: 1px solid #ddd;
+            }
+
+            input {
+                display: none;
+            }
+
+            label {
+                display: inline-block;
+                margin: 0 0 -1px;
+                padding: 15px 25px;
+                font-weight: 600;
+                text-align: center;
+                color: #bbb;
+                border: 1px solid transparent;
+                background: #D5D8DC;
+            }
+
+            label:before {
+                font-family: fontawesome;
+                font-weight: normal;
+                margin-right: 10px;
+            }
+
+            label:hover {
+                color: #888;
+                cursor: pointer;
+            }
+
+            input:checked+label {
+                color: #555;
+                border: 1px solid #ddd;
+                border-top: 3px solid orange;
+                border-bottom: 1px solid #fff;
+                background: #fff;
+            }
+
+            #tab1:checked~#content1,
+            #tab2:checked~#content2 {
+                display: block;
+            }
+
+            exporter-type,
+            doc-type {
+                margin-top: 15px;
+                width: 98%;
+            }
+        </style>
+        <paper-material elevation="1">
+            <div class="head-title">{{localize.setting}}</div>
+            <main>
+                <input id="tab1" type="radio" name="tabs" checked>
+                <label for="tab1">
+                      <div class="container" tabindex="0">
+                        <span>1.{{localize.doc_type}}</span>
+                      </div>
+                    </label>
+
+                <input id="tab2" type="radio" name="tabs" >
+                <label for="tab2">
+                    <div class="container" tabindex="0">
+                      <span>2.{{localize.exporter_type}}</span>
+                      </div>
+                    </label>
+                <section id="content1">
+                    <doc-type></doc-type>
+                </section>
+
+                <section id="content2">
+                    <exporter-type></exporter-type>
+                </section>
+
+            </main>
+
+
+        </paper-material>
+
+        <panel-right title="{{titleName}}">
+            <div class="left">
+                <iron-pages selected="{{page}}">
+                    <manage-doc-type></manage-doc-type>
+                    <manage-lic-type></manage-lic-type>
+                </iron-pages>
+            </div>
+        </panel-right>
+    </template>
+    <script>
+        Polymer({
+            is: 'page-setting',
+            behaviors: [ReduxBehavior,i18nAction, nylonBehavior, settingAction],
+            properties: {
+                titleName: {
+                    type: String,
+                    value: ''
+                },
+                page: {
+                    type: Number,
+                    value: 0
+                },
+                localize: {
+                    statePath: 'i18n.setting'
+                },
+            },
+            listeners: {
+                'editPanel': '_editPanel',
+                'openPanel': '_openPanel',
+                'openDocLic': '_openDocLic',
+                'closePanel': '_closePanel'
+            },
+            nylonPageActive: function () {
+                this.dispatchAction('SETTING_GET_LIST_DOC');
+                // ดึงประเภทเอกสารที่จะอัพโหลด
+                this.dispatchAction('SETTING_GET_LIST_LIC');
+            },
+            _editPanel(e) {
+                let data = e.detail
+                this.dispatchAction(data.action, data.id)
+                this._openPanel(data.name)
+                this.set('page', data.page)
+            },
+            _openDocLic(e) {
+                let data = e.detail
+                this.set('page', data.page)
+                this._openPanel(data.name)
+            },
+            _openPanel(name) {
+                this.set('titleName', name)
+                // console.log(this.$$('panel-right'));
+                this.$$('panel-right').open();
+            },
+            _closePanel(e) {
+                this.$$('panel-right').close();
+            }
+        });
+    </script>
+</dom-module>

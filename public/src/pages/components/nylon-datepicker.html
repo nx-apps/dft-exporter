@@ -1,0 +1,327 @@
+<link rel="import" href="./../../../bower_components/polymer/polymer.html">
+<link rel="import" href="./../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="./../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="./../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+
+<dom-module id="nylon-datepicker">
+  <template>
+    <style include="iron-flex iron-flex-factors iron-flex-alignment">
+       :host {
+        display: block;
+      }
+
+      * {
+        text-align: left;
+        --suggestions-wrapper: {
+          width: auto;
+          /*background-color:red;*/
+        }
+      }
+
+       :host> ::slotted(:not(.iron-selected)) {
+        display: none !important;
+      }
+
+      paper-input {
+        margin: 0px 5px;
+        margin-bottom: 6px;
+      }
+    </style>
+    <!--<slot></slot>-->
+    <div class="horizontal center layout">
+      <!--<div class="flex">-->
+      <div class="flex-2">
+        <vaadin-combo-box id="day" label="วันที่" no-label-float item-label-path="text" item-value-path="value" items="[[day]]" value="{{data.day}}">
+          <template>
+            [[item.text]]
+          </template>
+        </vaadin-combo-box>
+      </div>
+      <!--<div class="flex autocomplete-wrapper">
+
+        <paper-input id="day" label="วัน" type="number" no-label-float 
+        value="{{data.day}}" 
+        min="{{limit.firstDayOfMonth}}" 
+        max="{{limit.lastDayOfMonth}}"
+        minlength="1" 
+        maxlength="2"
+        on-tap="getDay">
+          <iron-icon icon="arrow-drop-down" slot="suffix"></iron-icon>
+        </paper-input>
+        <paper-autocomplete-suggestions id="forDay" is-open={{setOpen.day}} for="day" source="[[day]]"></paper-autocomplete-suggestions>
+    </div>-->
+      <div class="flex-2" style="margin: 0px 0px 0px 5px">
+        <vaadin-combo-box id="month" l label="เดือน" no-label-float item-label-path="text" item-value-path="value" items="[[month]]"
+          value="{{data.month}}">
+          <template>
+            [[item.text]]
+          </template>
+        </vaadin-combo-box>
+      </div>
+      <!--<div class="flex-2 autocomplete-wrapper">
+        <paper-input id="month" label="เดือน" type="number" no-label-float value="{{data.month}}" min="{{limit.firstMonthOfYear}}"
+          max="{{limit.lastMonthOfYear}}" minlength="1" maxlength="2">
+          <iron-icon icon="arrow-drop-down" slot="suffix"></iron-icon>
+        </paper-input>
+        <paper-autocomplete-suggestions id="forMonth" for="month" source="[[month]]"></paper-autocomplete-suggestions>
+      </div>-->
+      <div class="flex " style="margin-top: 7px;">
+        <paper-input id="year" label="ปี" allowed-pattern="[0-9||,||.]" no-label-float value="{{data.year}}" minlength="4" maxlength="4">
+          <!--<iron-icon icon="arrow-drop-down" slot="suffix"></iron-icon>-->
+        </paper-input>
+        <!--<paper-autocomplete-suggestions id="forYear" for="year" source="[[year]]"></paper-autocomplete-suggestions>-->
+      </div>
+      <!--</div>-->
+
+    </div>
+
+
+
+  </template>
+
+  <script>
+    Polymer({
+      is: 'nylon-datepicker',
+      properties: {
+        attrForSelected: {
+          type: String,
+          value: 'name'
+        },
+        data: {
+          type: Object,
+          value: {
+            day: '',
+            month: '',
+            year: ''
+          },
+        },
+        value: {
+          type: String,
+          observer: 'initDate',
+          // notify: true
+        },
+        valueReturn: {
+          type: String,
+          value: '',
+          notify: true
+        },
+        day: {
+          type: Array,
+          value: [
+            { value: "01", text: "01" },
+            { value: "02", text: "02" },
+            { value: "03", text: "03" },
+            { value: "04", text: "04" },
+            { value: "05", text: "05" },
+            { value: "06", text: "06" },
+            { value: "07", text: "07" },
+            { value: "08", text: "08" },
+            { value: "09", text: "09" },
+            { value: "10", text: "10" },
+            { value: "11", text: "11" },
+            { value: "12", text: "12" },
+            { value: "13", text: "13" },
+            { value: "14", text: "14" },
+            { value: "15", text: "15" },
+            { value: "16", text: "16" },
+            { value: "17", text: "17" },
+            { value: "18", text: "18" },
+            { value: "19", text: "19" },
+            { value: "20", text: "20" },
+            { value: "21", text: "21" },
+            { value: "22", text: "22" },
+            { value: "23", text: "23" },
+            { value: "24", text: "24" },
+            { value: "25", text: "25" },
+            { value: "26", text: "26" },
+            { value: "27", text: "27" },
+            { value: "28", text: "28" },
+            { value: "29", text: "29" },
+            { value: "30", text: "30" },
+            { value: "31", text: "31" }
+          ]
+        },
+        month: {
+          type: Array,
+          value: [
+            {
+              value: '01',
+              text: 'มกราคม'
+            },
+            {
+              value: '02',
+              text: 'กุมภาพันธ์'
+            },
+            {
+              value: '03',
+              text: 'มีนาคม'
+            },
+            {
+              value: '04',
+              text: 'เมษายน'
+            },
+            {
+              value: '05',
+              text: 'พฤษภาคม'
+            },
+            {
+              value: '06',
+              text: 'มิถุนายน'
+            },
+            {
+              value: '07',
+              text: 'กรกฎาคม'
+            },
+            {
+              value: '08',
+              text: 'สิงหาคม'
+            },
+            {
+              value: '09',
+              text: 'กันยายน'
+            },
+            {
+              value: '10',
+              text: 'ตุลาคม'
+            },
+            {
+              value: '11',
+              text: 'พฤศจิกายน'
+            },
+            {
+              value: '12',
+              text: 'ธันวาคม'
+            }
+          ]
+
+        },
+        year: {
+          type: Array,
+          value: []
+        },
+        limit: {
+          type: Object,
+          value: {
+            firstDayOfMonth: 1,
+            lastDayOfMonth: 31,
+            firstMonthOfYear: 1,
+            lastMonthOfYear: 12
+          }
+        },
+        setOpen: {
+          type: Object,
+          value: {
+            day: false,
+            month: false,
+            year: false
+          }
+        },
+
+      },
+      observers: [
+        'setDate(data.*)'
+      ],
+      ready: function () {
+      },
+      attached: function () {
+        //set year
+        //   let thisYear = Number(new Date().toISOString().split('T')[0].split('-')[0]) + 000
+        //   let listYear = 100
+        //   let arrDivide = listYear / 2
+        //   let oldYear = thisYear - arrDivide
+        //   for (var index = 0; index < listYear; index++) {
+        //     this.push('year', {
+        //       value: String(oldYear + index),
+        //       text: String(oldYear + index)
+        //     })
+        //   }
+      },
+
+      initDate(date) {
+        if (date === '' || date === undefined) {
+          // let dates = new Date().toISOString().split('T')[0]
+          // this.set('data.day', dates.split('-')[2])
+          // this.set('data.month', data.split('-')[1])
+          // this.set('data.year', String(Number(data.split('-')[0]) + 000))
+          // console.log(111);
+        } else {
+          // console.log(Number(date.split('-')[0]) + 543);
+          // console.log(date.split('-')[2]);
+          this.set('data.day', date.split('-')[2])
+          this.set('data.month', date.split('-')[1])
+          this.set('data.year', String(Number(date.split('-')[0]) + 000))
+        }
+        let yearSet = this.data.year - 000
+        // console.log(yearSet);
+        if (this.data.day === '' || this.data.month === '' || this.data.year === '') {
+          this.set('valueReturn', '')
+        } else {
+          let yearSet = this.data.year - 000
+          this.set('valueReturn', `${yearSet}-${this.data.month}-${this.data.day}`)
+        }
+        // console.log(this.valueReturn);
+      },
+      setDate(date) {
+        if (this.data.year !== '') {
+          let firstDayOfMonth = new Date(Number(this.data.year) - 543, Number(this.data.month - 1), 1)
+          let lastDayOfMonth = new Date(Number(this.data.year) - 543, Number(this.data.month - 1) + 1, 0)
+          this.set('limit.firstDayOfMonth', firstDayOfMonth.getDate())
+          this.set('limit.lastDayOfMonth', lastDayOfMonth.getDate())
+
+          this.set('day', [])
+          for (var index = firstDayOfMonth.getDate(); index <= lastDayOfMonth.getDate(); index++) {
+            let ofDay = new Date(Number(this.data.year) - 543, Number(this.data.month - 1), index)
+            // console.log(this.idDay(ofDay.getDay()))
+            if (index < 10) {
+              this.push('day', { value: '0' + String(index), text: this.idDay(ofDay.getDay()) + '0' + String(index) }, )
+            } else {
+              this.push('day', { value: String(index), text: this.idDay(ofDay.getDay()) + String(index) }, )
+            }
+          }
+          if (this.data.month === '02' && (Number(this.data.day) > lastDayOfMonth.getDate())) {
+            // console.log(lastDayOfMonth.getDate());
+            this.set('data.day', String(lastDayOfMonth.getDate()))
+          }
+
+          if (this.data.day === '' || this.data.month === '' || this.data.year === '') {
+            this.set('valueReturn', '')
+          } else {
+            let yearSet = this.data.year - 000
+            this.set('valueReturn', `${yearSet}-${this.data.month}-${this.data.day}`)
+          }
+
+
+
+        }
+      },
+      idDay(date) {
+        let day = ' '
+        switch (date) {
+          case 1:
+            day = 'จ. '
+            break;
+          case 2:
+            day = 'อ. '
+            break;
+          case 3:
+            day = 'พ. '
+            break;
+          case 4:
+            day = 'พฤ. '
+            break;
+          case 5:
+            day = 'ศ. '
+            break;
+          case 6:
+            day = 'ส. '
+            break;
+          default:
+            day = 'อา. '
+            break;
+        }
+        return day
+      },
+
+    });
+  </script>
+</dom-module>

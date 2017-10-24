@@ -1,0 +1,400 @@
+<link rel="import" href="./../../components/validateFormBehaviors.html">
+<link rel="import" href="../../components/gl-form-textarea-my-com.html">
+<link rel="import" href="../../../../bower_components/gl-form/gl-form-textarea.html">
+<link rel="import" href="../../../../bower_components/gl-form/gl-form-input.html">
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="../../../layout/page-style.html">
+
+<link rel="import" href="../../../../bower_components/paper-input/paper-input.html">
+
+<link rel="import" href="../../../../bower_components/iron-icon/iron-icon.html">
+
+<link rel="import" href="../../../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../../../../bower_components/gl-form/gl-form-dropdown-menu.html">
+<link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../../../bower_components/paper-tooltip/paper-tooltip.html">
+
+
+<dom-module id="detail-company">
+  <style is="custom-style" include="page-style iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
+    * {
+      font-family: 'CSChatThaiUI', sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .title-head {
+      text-align: center;
+      font-size: var(--font-size-h3);
+      color: white;
+    }
+
+    .title {
+      text-align: center;
+      font-size: var(--font-size-h4);
+      font-family: 'rsubold', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      margin: 20px 0px 20px 0px;
+    }
+
+    paper-icon-button {
+      margin-top: 20px;
+    }
+
+    .padding {
+      padding: 20px;
+    }
+
+    .text {
+      margin-top: 25px;
+      font-size: var(--font-size-h5);
+    }
+
+    .boxNortify {
+      border: 2px solid red;
+      background-color: red;
+      padding: 5px;
+    }
+
+    .boxChange_status {
+      border: 2px solid #6699FF;
+      background-color: #6699FF;
+      padding: 5px;
+    }
+
+    .input {
+      text-align: left;
+    }
+  </style>
+  <template>
+    {{checkExpoterNo(data.draft_status,data.doc_status)}}
+    <template is="dom-if" if={{checkExpoter}}>
+      <div class="horizontal end-justified layout">
+        <paper-icon-button id="editExporter" icon="create" class="crud" disabled={{!editExporter}} on-tap="_editExCode"></paper-icon-button>
+        <paper-tooltip for="editExporter" offset="0">{{localize.edit_data}}</paper-tooltip>
+      </div>
+    </template>
+
+    <div class="title">{{localize.detail_data}}</div>
+    <!-- {{data.exporter_no}} -->
+    <template is="dom-if" if={{data.exporter_no}}>
+      <div class="start-justified horizontal  center layout">
+        <template is="dom-if" if={{editExporter}}>
+          <div class="flex flex-padding input">
+            <gl-form-input always-float-label label="{{localize.no_exporter}} :" value="[[data.exporter_no]]" disabled></gl-form-input>
+          </div>
+        </template>
+        <template is="dom-if" if={{!editExporter}}>
+          <div class="flex-2 flex-padding input">
+            <gl-form-input always-float-label allowed-pattern="[0-9]" label="{{localize.no_exporter}} :" value="{{data.exporter_no}}"
+              on-value-changed="getCheckExporter">
+              <iron-icon id='exporter_no_input' suffix></iron-icon>
+            </gl-form-input>
+          </div>
+          <div class="flex-2 flex-padding input">
+            <gl-form-input id="idAvablie" always-float-label label="{{localize.no_exporter_update}} :" value="" disabled></gl-form-input>
+          </div>
+          <div class="flex-8 flex-padding input">
+          </div>
+        </template>
+      </div>
+    </template>
+
+
+    <!-- {{data.draft_status}}//{{data.doc_status}}// -->
+    <div class="horizontal start-justified layout">
+      <div class="flex flex-padding">
+        <gl-form-input always-float-label label="{{localize.tax_no}} :" value="{{data.company_taxno}}" disabled></gl-form-input>
+      </div>
+      <div class="flex flex-padding">
+        <gl-form-textarea always-float-label label="{{localize.name_company}} :" value="{{data.company.company_name_th}}" disabled></gl-form-textarea>
+      </div>
+      <div class="flex">
+        <gl-form-textarea always-float-label label="{{localize.name_company}} ({{localize.eng}}) :" value="{{data.company.company_name_en}}"
+          disabled></gl-form-textarea>
+      </div>
+    </div>
+    <div class="horizontal start-justified layout">
+      <div class="flex">
+        <gl-form-textarea always-float-label label="{{localize.address}} :" value="{{data.company.company_address_th}}" disabled></gl-form-textarea>
+      </div>
+    </div>
+
+    <div class="horizontal start-justified layout">
+      <div class="flex">
+        <gl-form-textarea always-float-label label="{{localize.address}} ({{localize.eng}}) :" value="{{data.company.company_address_en}}"
+          disabled></gl-form-textarea>
+      </div>
+    </div>
+    <div class="horizontal start-justified layout">
+      <div class="flex flex-padding">
+        <gl-form-textarea always-float-label label="{{localize.email}} :" value="{{data.company.company_email}}" disabled></gl-form-textarea>
+      </div>
+      <div class="flex flex-padding">
+        <gl-form-textarea always-float-label label="{{localize.tel}} :" value="{{data.company.company_phone}}" disabled></gl-form-textarea>
+      </div>
+      <div class="flex">
+        <gl-form-input always-float-label label="{{localize.fax}} :" value="{{data.company.company_fax}}" disabled></gl-form-input>
+      </div>
+    </div>
+
+
+
+
+    <!-- {{isShow.date}} -->
+    <template is="dom-if" if={{isShow.date}}>
+      <div class="start-justified horizontal  center layout">
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.date_load}} :" value="{{data.date_load}}" type=date disabled></gl-form-textarea>
+        </div>
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.date_approve}} :" value="{{data.date_approve}}" type=date disabled></gl-form-textarea>
+        </div>
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.date_expire}} :" value="{{data.date_expire}}" type=date disabled></gl-form-textarea>
+        </div>
+      </div>
+    </template>
+
+    <template is="dom-if" if={{isObject(data.lic_type)}}>
+      <div class="start-justified horizontal  center layout">
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.pkk_code}} :" value="{{data.pkk_code}}"></gl-form-textarea>
+        </div>
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.date_pkk}} :" value="{{data.date_pkk}}" type=date></gl-form-textarea>
+        </div>
+        <div class="flex">
+          <gl-form-dropdown-menu always-float-label style="width:60%;" class="checkValidate" label="{{localize.is_member}}" placeholder="{{localize.is_member}}"
+            required>
+            <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.is_member}}">
+              <paper-item value="0">[[localize.is_member_0]]</paper-item>
+              <paper-item value="1">[[localize.is_member_1]]</paper-item>
+            </paper-menu>
+          </gl-form-dropdown-menu>
+        </div>
+      </div>
+      <div class="horizontal start-justified layout">
+        <div class="flex-4">
+          <gl-form-dropdown-menu always-float-label style="width:60%;" class="checkValidate" label="{{localize.type_license}}" placeholder="{{localize.select_type}}"
+            disabled="[[obItem(data.company_id)]]" required>
+            <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.lic_type_id}}" name="lic_type_id">
+              <template is="dom-repeat" items={{lic_type_array}}>
+                <paper-item value="[[item.id]]">{{item.lic_type_name}}</paper-item>
+              </template>
+            </paper-menu>
+          </gl-form-dropdown-menu>
+        </div>
+        <div class="flex-8"> </div>
+      </div>
+    </template>
+
+    <template is="dom-if" if={{!isObject(data.lic_type)}}>
+      <div class="horizontal start-justified center layout">
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.pkk_code}} :" value="{{data.pkk_code}}" disabled="{{formInput}}"></gl-form-textarea>
+        </div>
+        <div class="flex flex-padding input">
+          <gl-form-input always-float-label label="{{localize.date_pkk}} :" value="{{data.date_pkk}}" type=date disabled="{{formInput}}"></gl-form-textarea>
+        </div>
+        <div class="flex">
+          <!-- checked "{{data.is_member}}" d -->
+          <gl-form-dropdown-menu always-float-label style="width:60%;" class="checkValidate" label="{{localize.is_member}}" placeholder="{{localize.is_member}}"
+            disabled="{{formInput}}" required>
+            <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{data.is_member}}">
+              <paper-item value="0">[[localize.is_member_0]]</paper-item>
+              <paper-item value="1">[[localize.is_member_1]]</paper-item>
+            </paper-menu>
+          </gl-form-dropdown-menu>
+        </div>
+      </div>
+      <gl-form-textarea always-float-label label="{{localize.type_license}} :" value="{{data.lic_type.lic_type_name}}" disabled></gl-form-textarea>
+    </template>
+
+
+
+    <div class="horizontal layout">
+      <div class="text">{{localize.list_board}}</div>
+    </div>
+    <ol>
+      <template is="dom-repeat" items="{{data.company.company_directors}}">
+        <li>{{item.TitleNameTH}} {{item.FirstNameTH}} {{item.LastNameTH}}</li>
+      </template>
+    </ol>
+
+    <div class="horizontal end-justified layout">
+      <div class="flex">
+        <gl-form-input label="{{localize.note}} : " value="{{data.company_remark}}" disabled></gl-form-input>
+      </div>
+    </div>
+    </gl-form-panel>
+  </template>
+  <script>
+    Polymer({
+      is: "detail-company",
+      behaviors: [ReduxBehavior, ValidateFormBehavior],
+      properties: {
+        data: {
+          type: Object,
+          value: {},
+          observer: 'checkIsArray',
+          notify: true
+        },
+        oldDate: {
+          type: Object,
+          value: {}
+        },
+        localize: {
+          statePath: 'i18n.exporter'
+        },
+        lic_type_object: {
+          type: Object,
+          value: {},
+        },
+        lic_type_array: {
+          type: Array,
+          value: [],
+        },
+        formInput: {
+          type: Boolean,
+          value: true
+        },
+        isShow: {
+          typw: Object,
+          value: {
+            numCompany: false,
+            date: false
+          }
+        },
+        checkExpoter: {
+          type: Boolean,
+          value: false
+        },
+        editExporter: {
+          type: Boolean,
+          value: true,
+          notify: true
+        },
+        isExporterUse: {
+          type: Object,
+          value: {},
+          notify: true
+        }
+      },
+      checkExpoterNo(draft_status, doc_status) {
+        if (draft_status === 'sign' && doc_status === null) {
+          this.set('checkExpoter', true)
+        } else {
+          this.set('checkExpoter', false)
+        }
+      },
+      _editExCode() {
+        this.set('editExporter', !this.editExporter)
+        this.set('formInput',!this.formInput)
+      },
+      getCheckExporter(e) {
+        let exporter_no = e.detail.value
+
+        // console.log(Polymer.dom(this.root).querySelector('#exporter_no_input'));
+        // console.log(this.$.exporter_no_input);
+        this.debounce('exporter', () => {
+          this.fire('toast', { status: 'load' })
+          let el = Polymer.dom(this.root).querySelector('#exporter_no_input')
+          // console.log(exporter_no);
+          // console.log(this.oldDate.exporter_no);
+          if (Number(exporter_no) === this.oldDate.exporter_no) {
+            el.icon = 'check'
+            el.style = 'color:green'
+            this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback: function () { } })
+            this.set('isExporterUse', { available: true })
+          } else {
+            this.dispatchAction('CHECK_EXPORTER_NO', exporter_no)
+              .then(res => {
+                this.set('isExporterUse', res.data)
+                // console.log(res.data);
+                // console.log(idAvablie);
+                Polymer.dom(this.root).querySelector('#idAvablie').value = res.data.new_no
+
+                if (res.data.available) {
+                  el.icon = 'check'
+                  el.style = 'color:green'
+                } else {
+                  el.icon = 'clear'
+                  el.style = 'color:red'
+                }
+                this.fire('toast', { status: 'success', text: 'ค้นหาข้อมูลสำเร็จ', callback: function () { } })
+              })
+          }
+        }, 500)
+
+
+        // this.dispatchAction('CHECK_EXPORTER_NO',exporter_no)
+
+      },
+      checkIsArray(data) {
+        this.set('oldDate', JSON.parse(JSON.stringify(data)))
+        if (Array.isArray(data.lic_type)) {
+          this.set('lic_type_array', data.lic_type)
+        } else {
+          this.set('lic_type_object', data.lic_type)
+        }
+      },
+      __retiveData() {
+        return this.data
+      },
+      backPage: function () {
+        this.fire('backPage');
+      },
+      isObject(data) {
+        if (Array.isArray(data)) {
+          return true
+        }
+      },
+      obItem: function (val) {
+        if (typeof val != 'undefined' && val != undefined) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      validate: function () {
+        var check = this.validateForm('.checkValidate')
+        return check
+      },
+      obExporter: function (val) {
+        if (typeof val === 'undefined' && val == undefined) {
+          return true
+        } else if (val === true) {
+          return false
+        } else {
+          return true
+        }
+      },
+      checkStatusType: function (val) {
+        if (val == 'type') {
+          return true
+        } else {
+          return false
+        }
+      },
+      checkStatusExtend: function (val) {
+        if (val == 'extend') {
+          return true
+        } else {
+          return false
+        }
+      },
+      resetValidate: function () {
+        this.queryFrom('.checkValidate').map((el) => { el.reset(); });
+      },
+      resetExporterNo() {
+        this.set('checkExpoter', false)
+        this.set('editExporter', true)
+        this.set('isExporterUse', true)
+        this.set('formInput',true)
+      }
+    });
+  </script>
+</dom-module>

@@ -3,6 +3,7 @@
   "shell": "src/nylon-app.html",
   "fragments": [
     "src/pages/page-401/page-401.html",
+    "src/pages/page-403/page-403.html",
     "src/pages/page-404/page-404.html",
     "src/pages/page-draft/page-draft.html",
     "src/pages/page-admin-exporter/page-admin-exporter.html",
@@ -13,13 +14,18 @@
     "images/**/*",
     "bower.json",
     "fonts/**/*",
-    "bower_components/gl-font/**/*",
-    "service-worker.js"
+    "bower_components/gl-font/**/*"
   ],
   "extraDependencies": [
     "bundle.js",
     "manifest.json",
-    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js",
+    "bower_components/gl-font/fonts/rsu/rsu_bold-webfont.woff2",
+    "bower_components/gl-font/fonts/rsu/rsu_bold-webfont.woff",
+    "fonts/CSChatThaiUI.eot",
+    "fonts/CSChatThaiUI.svg",
+    "fonts/CSChatThaiUI.ttf",
+    "fonts/CSChatThaiUI.woff"
   ],
   "builds": [
     {

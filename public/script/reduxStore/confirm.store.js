@@ -1,5 +1,4 @@
 import axios from '../axios'
-import { commonAction } from '../config'
 const initialState = {
     list: [],
     data: {},
@@ -32,7 +31,7 @@ export function confirmReducer(state = initialState, action) {
     }
 }
 export function confirmAction(store) {
-    return [commonAction(),
+    return 
     {
         CONFIRM_GET_DATA: function () {
             axios.get('./draft/')
@@ -49,13 +48,13 @@ export function confirmAction(store) {
                 .catch(function (error) {
                     console.log(error);
                 });
-        },
+        }
         CONFIRM_TYPE: function (data) {
             store.dispatch({ type: 'CONFIRM_TYPE', payload: { data } })
-        },
+        }
         CONFIRM_SEARCH_RESET: function () {
             store.dispatch({ type: 'CONFIRM_SEARCH', payload: {} })
-        },
+        }
         CONFIRM_RENEW: function (company_taxno) {
             this.fire('toast', { status: 'load', text: 'กำลังค้นหาข้อมูล...' })
             axios.get('./draft/renew?company_taxno=' + company_taxno)
@@ -75,7 +74,7 @@ export function confirmAction(store) {
                 .catch((err) => {
                     console.log(err)
                 })
-        },
+        }
         CONFIRM_CHANGE_DRAFT: function (company_taxno) {
             this.fire('toast', { status: 'load', text: 'กำลังค้นหาข้อมูล...' })
             axios.get('./draft/change?company_taxno=' + company_taxno)
@@ -95,12 +94,12 @@ export function confirmAction(store) {
                 .catch((err) => {
                     console.log(err)
                 })
-        },
+        }
         // ใช้สำหรับยกเลิก ยืนยัน กับพวก  doc และ app
         CONFIRM_DOC_AND_APPROVE: function (draft) {
             // console.log(draft);
             return axios.put('./draft/insert', draft)
-        },
+        }
         CONFIRM_CHANGE: function (company_taxno) {
             this.fire('toast', { status: 'load', text: 'กำลังค้นหาข้อมูล...' })
             axios.get('./draft/insert?company_taxno=' + company_taxno)
@@ -120,7 +119,7 @@ export function confirmAction(store) {
                 .catch((err) => {
                     console.log(err)
                 })
-        },
+        }
         CONFIRM_SEARCH_DRAFT: function (idDraft) {
             this.fire('toast', { status: 'load', text: 'กำลังค้นหาข้อมูล...' })
             axios.get('./draft/get?id=' + idDraft)
@@ -135,7 +134,7 @@ export function confirmAction(store) {
                 .catch((err) => {
                     console.log(err)
                 })
-        },
+        }
         CONFIRM_SEARCH: function (company_taxno) {
             this.fire('toast', { status: 'load', text: 'กำลังค้นหาข้อมูล...' })
             axios.get('./draft/insert?company_taxno=' + company_taxno)
@@ -155,146 +154,18 @@ export function confirmAction(store) {
                 .catch((err) => {
                     console.log(err)
                 })
-        },
+        }
         CONFIRM_REGISTER: function (company) {
             return axios.post('./draft/insert?company_taxno=' + company.company_taxno, company)
-        },
+        }
         CONFIRM_RENEW_UPDATE: function (company) {
             // console.log(company);
             return axios.put('./draft/renew', company)
-        },
+        }
         CONFIRM_CHANGE_DRAFT_UPDATE: function (company) {
             // console.log(company);
             return axios.put('./draft/change', company)
-        },
-        //-------------------------------------------
-        
-        // CONFIRM_ADMIN_REJECT: function (data) {
-        //     // console.log(data);
-        //     this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-        //     axios.put('./external/draft/update', data)
-        //         .then((response) => {
-        //             this.fire('toast', {
-        //                 status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-        //                     this.CONFIRM_GET_DATA();
-        //                 }
-        //             });
-        //         });
-        // },
-        // CONFIRM_COMPANY_REJECT: function (data) {
-        //     this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-        //     axios.put('./external/draft/update', data)
-        //         .then((response) => {
-        //             this.fire('toast', {
-        //                 status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-        //                     this.CONFIRM_GET_DATA();
-        //                     this.CONFIRM_SEARCH(data.company_taxno);
-        //                     // this.fire('back_page');
-        //                     this.fire('clearData');
-        //                 }
-        //             });
-        //         });
-        // },
-        // CONFIRM_ACCEPT_PASS: function (data) {
-        //     this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-        //     axios.put('./external/draft/update', data)
-        //         .then((response) => {
-        //             this.fire('toast', {
-        //                 status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-        //                     this.CONFIRM_GET_DATA();
-        //                     this._backPage();
-        //                 }
-        //             });
-        //         });
-        // },
-        // CONFIRM_ADMIN_APPROVE: function (data) {
-        //     if (data.draft_status == 'type') {
-        //         let { id, exporter_id, lic_type_id } = data;
-        //         let newData = { id, exporter_id, lic_type_id };
-        //         this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-        //         axios.put('./external/draft/changetype', newData)
-        //             .then((response) => {
-        //                 this.fire('toast', {
-        //                     status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-        //                         this.CONFIRM_GET_DATA();
-        //                         this._backPage();
-        //                     }
-        //                 });
-        //             })
-        //     } else {
-        //         let { exporter_no, company_id, company_taxno, id, lic_type_id, approve_status, doc_status } = data;
-        //         let newData = { exporter_no, company_id, company_taxno, lic_type_id };
-        //         newData.draft_id = data.id;
-        //         // newData.exporter_status = false;
-        //         // newData.expire_status = false;
-        //         // console.log(newData);
-        //         this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-        //         axios.post('./external/draft/approve', newData)
-        //             .then((response) => {
-        //                 this.fire('toast', {
-        //                     status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-        //                         this.CONFIRM_GET_DATA();
-        //                         this._backPage();
-        //                     }
-        //                 });
-        //             })
-        //     }
-        // },
-        // CONFIRM_ADMIN_EXTEND: function (data) {
-        //     // console.log(data);
-        //     this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-        //     axios.put('./external/exporter/update/date', data)
-        //         .then((response) => {
-        //             this.fire('toast', {
-        //                 status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-        //                     this.CONFIRM_GET_DATA();
-        //                     this._backPage();
-        //                 }
-        //             });
-        //         })
-        //         .catch(function (err) {
-        //             console.log(err);
-        //         })
-        // },
-        // CONFIRM_OB_DATA: function (id) {
-        //     return axios.get('./external/confirm_exporter/get/' + id)
-        // },
-        // CONFIRM_CHANGE_EXPORTER_NO: function (data) {
-        //     axios.get('./external/check/duplicate?table=draft&field=exporter_no&value=' + data.exporter_no)
-        //         .then((response) => {
-        //             if (response.data == 0) {
-        //                 this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-        //                 axios.put('./external/draft/update', data)
-        //                     .then((response2) => {
-        //                         this.fire('toast', {
-        //                             status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-        //                                 this.CONFIRM_GET_DATA();
-        //                             }
-        //                         });
-        //                     })
-        //             } else {
-        //                 axios.get('./external/check/duplicate?table=draft&id=' + data.id + '&field=exporter_no&value=' + data.exporter_no)
-        //                     .then((response2) => {
-        //                         if (response2.data == 1) {
-        //                             this.fire('toast', { status: 'load', text: 'กำลังบันทึกข้อมูล...' })
-        //                             axios.put('./external/draft/update', data)
-        //                                 .then((response3) => {
-        //                                     this.fire('toast', {
-        //                                         status: 'success', text: 'บันทึกสำเร็จ', callback: () => {
-        //                                             this.CONFIRM_GET_DATA();
-        //                                         }
-        //                                     });
-        //                                 })
-        //                         } else {
-        //                             this.fire('toast', {
-        //                                 status: 'connectError', text: 'เลข ข. นี้มีอยู่แล้ว',
-        //                                 callback: function () { }
-        //                             })
-        //                         }
-        //                     })
-        //             }
-        //         })
-        // }
+        }
     }
-    ]
+    
 }

@@ -3,13 +3,8 @@
 <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
-<link rel="import" href="./../../bower_components/paper-spinner/paper-spinner.html">
-<link rel="import" href="./../../bower_components/iron-icon/iron-icon.html">
-
 <dom-module id="nylon-toast">
-   
-    <template>
-		 <style>
+    <style>
       paper-spinner{
 			--paper-spinner-stroke-width: 3px;
 		}
@@ -94,6 +89,7 @@
       		-webkit-font-smoothing: antialiased;
     	}*/
     </style>
+    <template>
 		<div id="bgToast" hidden$="[[!opened]]"></div>
 		<div id="bgToast" hidden$="[[!openedload]]"></div>
         <paper-toast class="toastLoading" id="toastLoading" opened="{{openedload}}" positionTarget duration="0" text="">

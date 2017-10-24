@@ -8,7 +8,7 @@
     "watch": "browser-sync start --proxy localhost:5000 --files \"public/src/**/*.*, index.html, *.js\"",
     "dev": "npm-run-all --parallel webpack polymer",
     "build": "cd public && polymer build",
-    "polyserve": "polymer serve ./public/build/default --port 8086",
+    "polyserve": "polymer serve ./public/build/default --port 8087",
     "test:build": "npm-run-all build polyserve",
     "nylon": "nylon-cli serve",
     "bower": "cd ./public && bower install",

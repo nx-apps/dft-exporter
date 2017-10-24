@@ -1,0 +1,102 @@
+<link rel="import" href="./../../components/upload-file.html">
+
+<link rel="import" href="../../../redux-behavior.html">
+
+<link rel="import" href="../../../layout/page-style.html">
+
+<link rel="import" href="../../../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<link rel="import" href="../../../../bower_components/vaadin-combo-box/vaadin-combo-box.html">
+
+<dom-module id="fileup-company">
+  <style include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color">
+    .title {
+      font-size: 17px;
+      font-family: 'rsubold', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      /*text-decoration:underline;*/
+      margin: 10px 0px 10px 5px;
+    }
+
+    upload-file {
+      --divider-color: white;
+      --primary-color: #339933;
+      --vaadin-upload-drag-ripple: {
+        border: 2px solid #ddd;
+      }
+    }
+
+    .title-head {
+      text-align: center;
+      font-size: var(--font-size-h4);
+      font-family: 'rsubold', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      /*text-decoration:underline;*/
+      margin: 30px 0px 20px 0px;
+    }
+  </style>
+  <template>
+    <div class="title-head">{{localize.doc_attach}}</div>
+    <div class="title">[[item.doc_type_th]]</div>
+    <div class="start-justified layout">
+      <div class="flex">
+        <vaadin-combo-box label="{{localize.doc_type}}" always-float-label item-label-path="doc_type_th" item-value-path="id" items='{{docType}}'
+          on-selected-item-changed="_getData">
+          <template>
+            [[item.doc_type_th]]
+          </template>
+        </vaadin-combo-box>
+      </div>
+      <div class="flex-3">
+        <upload-file target="/api/file/upload/" accept="application/pdf" ref-path="[[selectDoctype]]" doc-type-id="[[selectDoctype]]"
+          data-type="[[dataTypeSet.data]]" company-taxno="[[companyTaxno]]" draft-id="[[draftId]]">
+        </upload-file>
+      </div>
+    </div>
+    <div style="margin-bottom:20px;"></div>
+  </template>
+  <script>
+    Polymer({
+      is: "fileup-company",
+      behaviors: [ReduxBehavior],
+      properties: {
+        localize: {
+          statePath: 'i18n.exporter'
+        },
+        data: {
+          statePath: 'confirm.data'
+        },
+        docType: {
+          statePath: 'exporter.docType',
+          // observer:'setTypeDoc'
+        },
+        dataTypeSet: {
+          statePath: 'confirm.confirmType',
+
+        },
+        selectDoctype: {
+          type: String,
+          value: ''
+        },
+      },
+      observers: [
+        '_dataInput(data)'
+      ],
+      _getData: function (data) {
+        if (data.detail.value !== null) {
+          this.set('selectDoctype', data.detail.value.id)
+        } else {
+          this.set('selectDoctype', '')
+        }
+
+      },
+      _dataInput: function (data) {
+        if (data.company_id === undefined) {
+          this.companyId = data.id;
+        } else {
+          this.companyId = data.company_id;
+        }
+      }
+    });
+  </script>
+</dom-module>

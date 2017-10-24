@@ -1,0 +1,455 @@
+<link rel="import" href="detail-company.html">
+<link rel="import" href="fileup-company.html">
+<link rel="import" href="./../../components/validateFormBehaviors.html">
+<link rel="import" href="./../../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../redux-behavior.html">
+<link rel="import" href="../../components/month-behavior.html">
+<dom-module id="register-page">
+  <style is="custom-style" include="iron-flex iron-flex-factors iron-flex-alignment gl-size gl-color gl-table gl-toast">
+    .title {
+      text-align: center;
+      font-size: var(--font-size-h4);
+      font-family: 'rsubold', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      margin: 20px 0px 20px 0px;
+    }
+
+    .searchBox {
+      padding: 5px;
+      background-color: var(--gl-gray-lighter-color);
+    }
+
+    .searchBorder {
+      border: 1px solid var(--gl-gray-light-color);
+      margin: 15px;
+      border-radius: 3px
+    }
+
+    paper-tabs {
+      background-color: #f7941e;
+      margin: 15px;
+      color: #F2F2F2;
+      --paper-tabs-selection-bar: {
+        height: 5px;
+        background-color: var(--gl-info-color);
+      }
+    }
+
+    paper-tab:focus>div.tab-content {
+      background-color: yellow;
+      opacity: 1;
+      font-weight: 0;
+    }
+
+    paper-tab:not(:last-of-type) {
+      border-right: 3px solid var(--gl-gray-light-color);
+      font-size: var(--font-size-h5);
+    }
+
+    paper-tabs paper-tab.iron-selected {
+      font-size: var(--font-size-h5);
+      color: var(--gl-white-color);
+      background-color: var(--gl-info-color);
+    }
+
+
+
+    main {
+      padding: 5px;
+      margin: 0 auto;
+    }
+
+    section {
+      display: none;
+      border-top: 1px solid #ddd;
+    }
+
+    input {
+      display: none;
+    }
+
+    label {
+      display: inline-block;
+      margin: 0 0 -1px;
+      padding: 15px 25px;
+      font-weight: 600;
+      text-align: center;
+      color: #bbb;
+      border: 1px solid transparent;
+      background: #D5D8DC;
+    }
+
+    label:before {
+      font-family: fontawesome;
+      font-weight: normal;
+      margin-right: 10px;
+    }
+
+    label:hover {
+      color: #888;
+      cursor: pointer;
+    }
+
+    input:checked+label {
+      color: #555;
+      border: 1px solid #ddd;
+      border-top: 3px solid orange;
+      border-bottom: 1px solid #fff;
+      background: #fff;
+    }
+
+    #tab1:checked~#content1,
+    #tab2:checked~#content2 {
+      display: block;
+    }
+
+    detail-company,
+    fileup-company {
+      margin-top: 15px;
+      width: 98%;
+    }
+
+    .container {
+      display: inline-block;
+      margin-left: 30px;
+      margin-right: 30px;
+    }
+    /* Need to position the badge to look like a text superscript */
+  </style>
+  <template>
+    <div class="horizontal layout center center-justified searchBox searchBorder" style="margin-top:10px;">
+      {{localize.tax_no}} :
+      <gl-form-input type="search" class="searchForm" style="width:300px;" value="{{company_taxno}}" no-label-float allowed-pattern="[0-9]"
+        maxlength="13" on-search="_search">
+      </gl-form-input>
+      <paper-button class="gl-btn-info btn" raised on-tap="_search">{{localize.bt_search}}</paper-button>
+    </div>
+
+    <template is="dom-if" if={{isShow}}>
+      <main>
+        <input id="tab1" type="radio" name="tabs" checked>
+        <label for="tab1">
+          <div class="container" tabindex="0">
+            <span>1.{{localize.detail}}</span>
+          </div>
+        </label>
+
+        <input id="tab2" type="radio" name="tabs">
+        <label for="tab2">
+        <div class="container" tabindex="0">
+          <span>2.{{localize.doc_ev}}</span>
+          </div>
+        </label>
+
+
+        <section id="content1">
+          <gl-form-panel>
+            <detail-company id="detailCompany" data={{resultCompany}}></detail-company>
+          </gl-form-panel>
+        </section>
+
+        <section id="content2">
+          <gl-form-panel>{{resultCompany.id}}
+            <fileup-company company-taxno="{{company_taxno}}"></fileup-company>
+          </gl-form-panel>
+        </section>
+      </main>
+
+
+
+
+      <div class="horizontal end-justified layout" style="margin:10px">
+        <paper-button raised class="gl-btn-primary" on-tap="_register" hidden="{{btnCheck.register}}">
+          <iron-icon icon="add"></iron-icon>{{localize.bt_register}}</paper-button>
+
+        <paper-button raised class="gl-btn-primary" on-tap="_renew" hidden="{{btnCheck.renew}}">
+          <iron-icon icon="add"></iron-icon>{{localize.bt_exporter_extend}}</paper-button>
+
+        <paper-button raised class="gl-btn-primary" on-tap="draftChangeFn" hidden="{{btnCheck.checge}}">
+          <iron-icon icon="add"></iron-icon>{{localize.bt_change}}</paper-button>
+
+
+      </div>
+    </template>
+    <paper-dialog id="changeDraft">
+      <h2>{{localize.reason}}</h2>
+      <paper-dialog-scrollable>
+        <div style="margin:10px 30px;">
+          <gl-form-input label="{{localize.reason}}" value="{{docReason}}"></gl-form-input>
+        </div>
+      </paper-dialog-scrollable>
+      <div class="buttons">
+        <paper-button dialog-dismiss raised class="gl-btn-defalse">{{localize.bt_close}}</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="_draftChange" raised class="gl-btn-primary">{{localize.bt_ok}}</paper-button>
+      </div>
+    </paper-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: "register-page",
+      behaviors: [ReduxBehavior, ValidateFormBehavior, MonthBehavior],
+      properties: {
+        pages: {
+          type: Number,
+          notify: true,
+          value: 0
+        },
+        dataRegister: {
+          statePath: 'confirm.data',
+          observer: 'checkHaveData'
+        },
+        dataRenew: {
+          statePath: 'confirm.dataRenew',
+          observer: 'checkHaveData'
+        },
+        draftChange: {
+          statePath: 'confirm.draftChange',
+          observer: 'checkHaveData'
+        },
+        dataTypeSet: {
+          statePath: 'confirm.confirmType',
+        },
+        localize: {
+          statePath: 'i18n.exporter'
+        },
+        company_taxno: {
+          type: Number,
+        },
+        isShow: {
+          type: Boolean,
+          value: false
+        },
+        resultCompany: {
+          type: Object,
+          // observer: 'checkSelectType'
+        },
+        docReason: {
+          type: String,
+          value: 'ขอเปลี่ยนประเภท'
+        },
+        btnCheck: {
+          type: Object,
+          value: {
+            register: true,
+            renew: true,
+            checge: true
+          }
+        }
+      },
+      listeners: {
+        'refresh-exporterTrader': 'getExporterTrader'
+      },
+      checkHaveData(data) {
+        // console.log(data.hasOwnProperty('company_taxno'));
+        if (data.hasOwnProperty('company_taxno')) {
+
+          if (data.lic_type.length === 0) {
+            this.set('isShow', false)
+            // this.localize
+            if (this.dataTypeSet.data === 'registerdraft') {
+              this.fire('toast', { status: 'connectError', text: 'สมัครครบแล้ว', callback: () => { } })
+            } else if (this.dataTypeSet.data === 'renewdraft') {
+              this.fire('toast', { status: 'connectError', text: 'ยังไม่มีรายการที่หมดอายุ', callback: () => { } })
+            } else {
+              this.fire('toast', { status: 'connectError', text: 'ไม่สามารถเปลี่ยนได้', callback: () => { } })
+            }
+          } else {
+            if (this.dataTypeSet.data === 'registerdraft') {
+              this.set('btnCheck.register', false)
+              this.set('btnCheck.renew', true)
+              this.set('btnCheck.checge', true)
+            } else if (this.dataTypeSet.data === 'renewdraft') {
+              this.set('btnCheck.register', true)
+              this.set('btnCheck.renew', false)
+              this.set('btnCheck.checge', true)
+            } else if (this.dataTypeSet.data === 'changedraft') {
+              this.set('btnCheck.register', true)
+              this.set('btnCheck.renew', true)
+              this.set('btnCheck.checge', false)
+            }
+            this.set('isShow', true)
+            this.set('resultCompany', data)
+          }
+
+        } else {
+          this.set('isShow', false)
+        }
+      },
+      _register: function () {
+        // console.log(this.$.detailCompany)
+
+        // // this.set('result.lic_type',lic_type)
+
+        this.fire('toast', {
+          status: 'openDialog',
+          text: 'คุณต้องการจะสมัครผู้ส่งออกใช่หรือไม่ ?',
+          confirmed: (result) => {
+            if (result == true) {
+
+              var check = this.$$('detail-company').validate();
+              if (check == true) {
+                let idLic_type = this.resultCompany.lic_type_id
+                let data = JSON.parse(JSON.stringify(this.resultCompany))
+                // console.log(this.resultCompany);
+                let lic_type = data.lic_type.find((item) => item.id === idLic_type)
+                data.lic_type = lic_type
+                data.date_pkk = data.date_pkk
+                this.dispatchAction('CONFIRM_REGISTER', data)
+                  .then((res) => {
+                    this.fire('toast', {
+                      status: 'success', text: 'ลงทะเบียนสำเร็จ', callback: () => {
+                        this.dispatchAction('CONFIRM_GET_DATA');
+                      }
+                    });
+                    // console.log(res);
+
+                  })
+                  .catch((err) => {
+                    this.fire('toast', { status: 'connectError', text: 'ไม่สามารถลงทะเบียนได้' });
+                    console.log(err);
+                  })
+                //   this.$$('detail-company').resetValidate();
+              } else {
+                this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' });
+              }
+            }
+          }
+        });
+      },
+      _renew: function (data) {
+        this.fire('toast', {
+          status: 'openDialog',
+          text: 'คุณต้องการจะสมัครผู้ส่งออกใช่หรือไม่ ?',
+          confirmed: (result) => {
+            if (result == true) {
+              // console.log(this.resultCompany);
+
+              var check = this.$$('detail-company').validate();
+              if (check == true) {
+                let idLic_type = this.resultCompany.lic_type_id
+                let data = JSON.parse(JSON.stringify(this.resultCompany))
+                let lic_type = data.lic_type.find((item) => item.id === idLic_type)
+                // console.log(lic_type);
+                let newData = {
+                  lic_type: lic_type,
+                  company_taxno: this.resultCompany.company_taxno
+                }
+                this.dispatchAction('CONFIRM_RENEW_UPDATE', newData)
+                  .then((res) => {
+                    this.fire('toast', {
+                      status: 'success', text: 'ต่ออายุสำเร็จ', callback: () => {
+                        this.dispatchAction('CONFIRM_GET_DATA');
+                      }
+                    })
+                    this.fire('back_page', 'reload')
+
+                  })
+                  .catch((err) => {
+                    this.fire('toast', { status: 'connectError', text: 'ไม่สามารถต่ออายุได้' });
+                    // console.log(err);
+                  })
+                //   this.$$('detail-company').resetValidate();
+              } else {
+                this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' });
+              }
+            }
+          }
+        });
+      },
+      draftChangeFn() {
+        this.$.changeDraft.open()
+      },
+      _draftChange() {
+        Date.prototype.addHours = function (h) {
+          this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+          return this;
+        }
+        this.fire('toast', {
+          status: 'openDialog',
+          text: 'คุณต้องการจะเปลี่ยนประเภท ใช่หรือไม่ ?',
+          confirmed: (result) => {
+            if (result == true) {
+              this.resultCompany.remark.map((item) => {
+                let time = new Date(item.date)
+                let date = new Date(time.setHours(time.getHours() + 7)).toISOString()
+                let timeDay = date.split("T")[1].split(".")[0]
+                item.date = date.split("T")[0] + `T${timeDay}+07:00`
+                return item
+              })
+              let timeDay = new Date().addHours(7).toISOString().split('T')[1].split(".")[0]
+              let remark = {
+                msg: this.docReason,
+                date: new Date().toISOString().split('T')[0] + `T${timeDay}+07:00`
+              }
+              this.push('resultCompany.remark', remark)
+
+              // var check = this.$$('detail-company').validate();
+              // if (check == true) {
+
+              let newData = {
+                id: this.resultCompany.id,
+                company_taxno: this.resultCompany.company_taxno,
+                remark: this.resultCompany.remark
+              }
+              // console.log(newData);
+              this.dispatchAction('CONFIRM_CHANGE_DRAFT_UPDATE', newData)
+                .then((res) => {
+                  this.fire('toast', {
+                    status: 'success', text: 'ขอเปลี่ยนสำเร็จ', callback: () => {
+                      this.dispatchAction('CONFIRM_GET_DATA');
+                    }
+                  })
+                  this.fire('back_page', 'reload')
+                  // console.log(res);
+                })
+                .catch((err) => {
+                  this.fire('toast', { status: 'connectError', text: 'ไม่สามารถขอเปลี่ยนได้' });
+                  console.log(err);
+                })
+              this.$$('detail-company').resetValidate();
+              // } else {
+              //   this.fire('toast', { status: 'connectError', text: 'กรุณากรอกข้อมูลให้ครบ' });
+              // }
+            }
+          }
+        });
+      },
+      //--------------------------------------------------------------------------------
+
+      _search: function () {
+        // console.log(this.dataTypeSet);
+        if (this.company_taxno != '') {
+          let draft = ''
+
+          if (this.dataTypeSet.data === 'registerdraft') {
+            // console.log(1);
+            draft = 'sign'
+            this.dispatchAction('CONFIRM_SEARCH', this.company_taxno);
+          } else if (this.dataTypeSet.data === 'renewdraft') {
+            // console.log(2);
+            draft = 'renew'
+            this.dispatchAction('CONFIRM_RENEW', this.company_taxno);
+          } else {
+            // console.log(3);
+            draft = 'change'
+            this.dispatchAction('CONFIRM_CHANGE_DRAFT', this.company_taxno);
+          }
+          this.draftId = this.draftId || ''
+          let url = {
+            draft_status: draft,
+            company_taxno: this.company_taxno,
+            draft_id: this.draftId,
+            file_status: true,
+          }
+          // console.log(6666);
+          this.dispatchAction('UPLOAD_GET_LIST', this.genUrl(url))
+
+          this.queryFrom('.searchForm').map((el) => { el.reset(); });
+        }
+        else {
+          this.fire('toast', { status: 'connectError', text: 'กรุณากรอกเลขประจำตัวผู้ส่งออก' })
+        }
+      },
+    });
+  </script>
+</dom-module>
