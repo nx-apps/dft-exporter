@@ -122,7 +122,7 @@ exports.search = function (req, res) {
         rows_count: table.count(),
         data: table.coerceTo('array').skip(skip).limit(limit)
     })
-    
+
     table.run()
         .then(function (result) {
             res.json(pageResult(result, page, limit))
@@ -174,4 +174,22 @@ const pageResult = (result, page, limit) => {
     )
     result.start_rowindex = (result.pages_current - 1) * limit;
     return result;
+}
+exports.getExporterNo = function (req, res) {
+    r.table('exporter').getAll([req.query.taxno, false], { index: 'taxNoCloseStatus' })
+        // .pluck('company', 'exporter_no', 'lic_type', 'export_status', 'date_approve', 'date_expire', 'date_load', 'company_taxno')
+        .map(function (m) {
+            return m('company').pluck('company_taxno', 'company_name_th', 'company_name_en').merge({
+                exporter_no: m('lic_type')('lic_type_prefix').add(m('exporter_no').coerceTo('string')),
+                exporter_status: m('export_status'),
+                exporter_type: m('lic_type')('lic_type_fullname'),
+                date_approve: m('date_approve').toISO8601(),
+                date_expire: m('date_expire').toISO8601(),
+                date_load: m('date_load').toISO8601()
+            })
+        })
+        .run()
+        .then(function (result) {
+            res.json(result)
+        })
 }
