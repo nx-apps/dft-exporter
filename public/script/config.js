@@ -24,5 +24,5 @@ export function dispatchActionBehavior(){
 }
 
 //export const baseURL = `https://${window.location.hostname}:${location.port}`;
-window.baseURL = `https://${window.location.hostname}:3004`
+window.baseURL = `https://${window.location.hostname}:${location.port}`
 export const baseURL = window.baseURL

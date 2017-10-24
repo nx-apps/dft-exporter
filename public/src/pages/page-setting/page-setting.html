@@ -95,17 +95,17 @@
             <main>
                 <input id="tab1" type="radio" name="tabs" checked>
                 <label for="tab1">
-                      <div class="container" tabindex="0">
+                    <div class="container" tabindex="0">
                         <span>1.{{localize.doc_type}}</span>
-                      </div>
-                    </label>
+                    </div>
+                </label>
 
-                <input id="tab2" type="radio" name="tabs" >
+                <input id="tab2" type="radio" name="tabs">
                 <label for="tab2">
                     <div class="container" tabindex="0">
-                      <span>2.{{localize.exporter_type}}</span>
-                      </div>
-                    </label>
+                        <span>2.{{localize.exporter_type}}</span>
+                    </div>
+                </label>
                 <section id="content1">
                     <doc-type></doc-type>
                 </section>
@@ -131,7 +131,7 @@
     <script>
         Polymer({
             is: 'page-setting',
-            behaviors: [ReduxBehavior,i18nAction, nylonBehavior, settingAction],
+            behaviors: [ReduxBehavior, NylonBehavior],
             properties: {
                 titleName: {
                     type: String,

@@ -131,6 +131,7 @@
       margin-left: 30px;
       margin-right: 30px;
     }
+
     /* Need to position the badge to look like a text superscript */
 
     .container>paper-badge {
@@ -332,24 +333,24 @@
             <main>
               <input id="tab1" type="radio" name="tabs" checked>
               <label for="tab1">
-                    <div class="container" tabindex="0">
-                      <span>1.{{localize.detail}}</span>
-                    </div>
-                  </label>
+                <div class="container" tabindex="0">
+                  <span>1.{{localize.detail}}</span>
+                </div>
+              </label>
 
               <input id="tab2" type="radio" name="tabs">
               <label for="tab2">
-                  <div class="container" tabindex="0">
-                    <span>2.{{localize.doc_ev}}</span>
-                    </div>
-                  </label>
+                <div class="container" tabindex="0">
+                  <span>2.{{localize.doc_ev}}</span>
+                </div>
+              </label>
 
               <input id="tab3" type="radio" name="tabs">
               <label for="tab3">
-                      <div class="container" tabindex="0">
-                        <span>3.{{localize.report}}</span>
-                        </div>
-                      </label>
+                <div class="container" tabindex="0">
+                  <span>3.{{localize.report}}</span>
+                </div>
+              </label>
 
 
               <section id="content1">
@@ -483,8 +484,7 @@
           value: {}
         }
       },
-      behaviors: [ReduxBehavior, nylonBehavior, uploadAction, MonthBehavior, i18nAction, confirmAction,
-        exporterAction, ValidateFormBehavior],
+      behaviors: [ReduxBehavior, NylonBehavior, MonthBehavior, ValidateFormBehavior],
       listeners: {
         'back_page': '_backPage',
         'clearData': 'clearData',

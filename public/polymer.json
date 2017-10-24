@@ -30,7 +30,7 @@
   "builds": [
     {
       "name": "default",
-      "bundle": true,
+      "bundle": false,
       "html": {
         "minify": true
       },
