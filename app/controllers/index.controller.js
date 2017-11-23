@@ -267,15 +267,29 @@ exports.importData = function (req, res) {
     //normal => where Allow_ID='ทั่วไป' and Tax_ID != '3' and Company_ID not like 'ช%'
     //package =>   where allow_id='ไม่เกิน 12 ก.ก'
     req.jdbc.query('mssql', `
-            select cast(replace(company_id,'ข','') as int) as exporter_no,
-                tax_id as company_taxno,
-                convert(varchar(10),allow_date,120) as date_approve,
-                convert(varchar(10),expire_date,120) as date_expire,
-                pkk_code,
-                convert(varchar(10),pkk_expiredate,120) as date_pkk,
-                isMember as is_member
-            from Exporter_Companys
-            where Allow_ID='ทั่วไป' and Tax_ID != '3' and Company_ID not like 'ช%'
+    select cast(replace(company_id,'ข','') as int) as exporter_no,
+    tax_id as company_taxno,
+	company_name_th,
+	company_name_en,
+	address_th as company_address_th,
+	address_en as company_address_en,
+	province_th+' '+zipcode as company_province_th,
+	province_en+' '+zipcode as company_province_en,
+	email as company_email,
+	tel_no as company_phone,
+	fax_no as company_fax,
+	case 
+		when allow_id='ไม่เกิน 12 ก.ก' then 'PACKAGE'
+		when allow_id='ทั่วไป' then 'NORMAL'
+	end as lic_type_id,
+	convert(varchar(10),allow_date,120) as company_date,
+    convert(varchar(10),allow_date,120) as date_approve,
+    convert(varchar(10),expire_date,120) as date_expire,
+    pkk_code,
+    convert(varchar(10),pkk_expiredate,120) as date_pkk,
+    isMember as is_member
+from Exporter_Companys
+where allow_id='ไม่เกิน 12 ก.ก' or (Allow_ID='ทั่วไป' and Tax_ID != '3' and Company_ID not like 'ช%')
      `,
         [], function (err, data) {
             data = JSON.parse(data);
@@ -286,37 +300,52 @@ exports.importData = function (req, res) {
             var c = 1;
             async.eachOfLimit(data, 25, function (value, index, callback) {
                 company.getCompany([value.company_taxno], function (companyData) {
+                    let companyObj = companyData[0];
                     if (companyData.length > 0 && companyData[0].hasOwnProperty('company_name_th')) {
-                        var newDraft = r.expr({ company: companyData[0], company_taxno: value.company_taxno })
-                            .merge({
-                                lic_type: r.table('license_type').get('NORMAL'),
-                                approve_status: true,
-                                doc_status: true,
-                                draft_status: 'sign',
-                                exporter_no: value.exporter_no,
-                                lic_type_id: 'NORMAL',
-                                pkk_code: value.pkk_code,
-                                is_member: value.is_member,
-                                date_approve: r.ISO8601(value.date_approve + 'T00:00:00+07:00'),
-                                date_expire: r.ISO8601(value.date_expire + 'T00:00:00+07:00'),
-                                date_pkk: value.date_pkk,
-                                date_created: r.now().inTimezone('+07'),
-                                date_updated: r.now().inTimezone('+07'),
-                                creater: 'admin',
-                                updater: 'admin',
-                                remark: []
-                            });
-                        r.table('draft').insert(newDraft)
-                            .run()
-                            .then(function (data) {
-                                insertExporter(data.generated_keys[0], function () {
-                                    console.log(c++);
-                                    callback();
-                                });
-                            })
+
                     } else {
-                        callback();
+                        // console.log(companyData[0])
+                        companyObj.company_name_th = value.company_name_th;
+                        companyObj.company_name_en = value.company_name_en;
+                        companyObj.company_address_th = value.company_address_th;
+                        companyObj.company_address_en = value.company_address_en;
+                        companyObj.company_province_th = value.company_province_th;
+                        companyObj.company_province_en = value.company_province_en;
+                        companyObj.company_fax = value.company_fax;
+                        companyObj.company_phone = value.company_phone;
+                        companyObj.company_email = value.company_email;
+                        companyObj.company_date = r.ISO8601(value.company_date + 'T00:00:00+07:00');
+                        companyObj.company_directors = [];
                     }
+                    var newDraft = r.expr({ company: companyObj, company_taxno: value.company_taxno })
+                        .merge({
+                            lic_type: r.table('license_type').get(value.lic_type_id),
+                            lic_type_id: value.lic_type_id,
+                            approve_status: true,
+                            close_status: false,
+                            doc_status: true,
+                            draft_status: 'sign',
+                            exporter_no: value.exporter_no,
+                            pkk_code: value.pkk_code,
+                            is_member: value.is_member,
+                            date_approve: r.ISO8601(value.date_approve + 'T00:00:00+07:00'),
+                            date_expire: r.ISO8601(value.date_expire + 'T00:00:00+07:00'),
+                            date_pkk: value.date_pkk,
+                            date_created: r.now().inTimezone('+07'),
+                            date_updated: r.now().inTimezone('+07'),
+                            creater: 'admin',
+                            updater: 'admin',
+                            remark: []
+                        });
+                    r.table('draft').insert(newDraft)
+                        .run()
+                        .then(function (data) {
+                            insertExporter(data.generated_keys[0], () => {
+                                console.log(c++);
+                                callback();
+                            });
+                        })
+                    // callback();
                 })
             }, function (err) {
                 if (err !== null) {
@@ -371,4 +400,25 @@ exports.data = function (req, res) {
             html += '</tbody></table>';
             res.send(html)
         })
+}
+
+exports.getCompany = function (req, res) { //['1234567890123',...,'xxxx']
+    var soap = require('soap');
+    // var company = require('../global/company');
+    // company.getCompany([req.query.taxno], function (companyData) {
+    //     res.json(companyData)
+    // });
+    var url = 'http://reg-users.dft.go.th/RegistrationService.asmx?WSDL';
+    // soap.createClient(url, function (err, client) {
+    //     var args = { CompanyTaxNo: req.query.taxno, BranchNo: 0 };
+    //     client.GetCompanyProfile(args, function (err, result) {
+    //         res.json(result);
+    //     });
+    // });
+    soap.createClient(url, function (err, client) {
+        var args = { CompanyTaxNo: req.params.taxno };
+        client.GetCompanyProfile2(args, function (err, result) {
+            res.json(result);
+        });
+    });
 }
