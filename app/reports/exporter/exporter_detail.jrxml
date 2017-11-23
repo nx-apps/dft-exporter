@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="exporter_detail" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="565c4997-3404-44bd-9657-6a131df9cec1">
 	<property name="ireport.zoom" value="1.1269722013523664"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="63"/>
 	<import value="nylon.report.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String">
 		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
@@ -17,11 +17,11 @@
 	<field name="company_phone" class="java.lang.String"/>
 	<field name="company_taxno" class="java.lang.String"/>
 	<field name="trader_no" class="java.lang.String"/>
-	<field name="exporter_status_name" class="java.lang.String"/>
-	<field name="type_lic_name" class="java.lang.String"/>
-	<field name="exporter_no_name" class="java.lang.String"/>
-	<field name="exporter_date_approve" class="java.lang.String"/>
-	<field name="company_agent" class="java.lang.Object"/>
+	<field name="exporter_status" class="java.lang.String"/>
+	<field name="lic_type_name" class="java.lang.String"/>
+	<field name="exporter_no" class="java.lang.String"/>
+	<field name="date_approve" class="java.lang.String"/>
+	<field name="company_directors" class="java.lang.Object"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -37,6 +37,24 @@
 		</band>
 	</title>
 	<detail>
+		<band height="40">
+			<staticText>
+				<reportElement x="21" y="0" width="174" height="20" uuid="5dc63e92-78ba-4120-8b13-d3031322239b"/>
+				<box leftPadding="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[เลขประจำตัวผู้ส่งออกข้าว :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="21" y="20" width="174" height="20" uuid="a1204248-d8ae-453f-b70f-791abca9be0f"/>
+				<box leftPadding="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{exporter_no}]]></textFieldExpression>
+			</textField>
+		</band>
 		<band height="40">
 			<staticText>
 				<reportElement x="21" y="0" width="174" height="20" uuid="8efb5d40-3e72-49cd-8b22-2875aacabb42"/>
@@ -97,7 +115,11 @@
 				<text><![CDATA[ที่อยู่ :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
+<<<<<<< HEAD
 				<reportElement x="21" y="20" width="287" height="20" uuid="53d43981-3b86-42e9-844c-c60cb4d277ee"/>
+=======
+				<reportElement x="21" y="20" width="350" height="20" uuid="53d43981-3b86-42e9-844c-c60cb4d277ee"/>
+>>>>>>> redux
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
@@ -115,7 +137,11 @@
 				<text><![CDATA[ที่อยู่ (อังกฤษ) :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
+<<<<<<< HEAD
 				<reportElement x="21" y="20" width="287" height="20" uuid="dbdc44ef-fcd8-4d5f-a1e6-1f1f15888980"/>
+=======
+				<reportElement x="21" y="20" width="350" height="20" uuid="dbdc44ef-fcd8-4d5f-a1e6-1f1f15888980"/>
+>>>>>>> redux
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
@@ -123,6 +149,7 @@
 				<textFieldExpression><![CDATA[($F{company_address_en}!="")?$F{company_address_en}:"-"]]></textFieldExpression>
 			</textField>
 		</band>
+<<<<<<< HEAD
 		<band height="136">
 			<staticText>
 				<reportElement x="21" y="0" width="174" height="20" uuid="b52bc975-a1d5-4609-bf7b-5ad66ce0a450"/>
@@ -150,6 +177,11 @@
 			</staticText>
 			<staticText>
 				<reportElement x="333" y="40" width="174" height="20" uuid="5fc5a7d2-610d-4559-8aff-143aa1f8954d"/>
+=======
+		<band height="99">
+			<staticText>
+				<reportElement x="21" y="40" width="174" height="20" uuid="5fc5a7d2-610d-4559-8aff-143aa1f8954d"/>
+>>>>>>> redux
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
@@ -157,7 +189,11 @@
 				<text><![CDATA[สถานะเป็นสมาชิกผู้ส่งออกข้าว :]]></text>
 			</staticText>
 			<staticText>
+<<<<<<< HEAD
 				<reportElement x="605" y="40" width="174" height="20" uuid="d135e323-165d-4088-8bac-c4b22adecef0"/>
+=======
+				<reportElement x="333" y="40" width="174" height="20" uuid="d135e323-165d-4088-8bac-c4b22adecef0"/>
+>>>>>>> redux
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
@@ -165,6 +201,7 @@
 				<text><![CDATA[ประเภทอนุญาต:]]></text>
 			</staticText>
 			<staticText>
+<<<<<<< HEAD
 				<reportElement x="21" y="40" width="174" height="20" uuid="be126081-352d-4da3-be85-7d470cdff167"/>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
@@ -182,6 +219,9 @@
 			</staticText>
 			<staticText>
 				<reportElement x="333" y="80" width="174" height="20" uuid="df2138c2-f17a-4872-9253-335d9db02571"/>
+=======
+				<reportElement x="605" y="40" width="174" height="20" uuid="df2138c2-f17a-4872-9253-335d9db02571"/>
+>>>>>>> redux
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
@@ -205,37 +245,50 @@
 				<textFieldExpression><![CDATA[($F{company_fax}!="")?$F{company_fax}:"-"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="21" y="100" width="174" height="20" uuid="a1204248-d8ae-453f-b70f-791abca9be0f"/>
+				<reportElement x="21" y="60" width="174" height="20" uuid="74ab9698-b2c5-4377-a096-3c5629117b4a"/>
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{exporter_no_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{exporter_status}]]></textFieldExpression>
 			</textField>
 			<textField>
+<<<<<<< HEAD
 				<reportElement x="333" y="60" width="174" height="20" uuid="74ab9698-b2c5-4377-a096-3c5629117b4a"/>
+=======
+				<reportElement x="333" y="60" width="174" height="20" uuid="80d6941e-8638-41b1-abe5-68f69771ab24"/>
+>>>>>>> redux
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{exporter_status_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{lic_type_name}]]></textFieldExpression>
 			</textField>
 			<textField>
+<<<<<<< HEAD
 				<reportElement x="605" y="60" width="174" height="20" uuid="80d6941e-8638-41b1-abe5-68f69771ab24"/>
+=======
+				<reportElement x="605" y="60" width="174" height="20" uuid="bff8075b-85ff-480a-9834-cad66cb0eec5"/>
+>>>>>>> redux
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{type_lic_name}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new nylon.utility.NumberFormat().toThaiDate($F{date_approve})]]></textFieldExpression>
 			</textField>
 			<textField>
+<<<<<<< HEAD
 				<reportElement x="333" y="100" width="174" height="20" uuid="bff8075b-85ff-480a-9834-cad66cb0eec5"/>
+=======
+				<reportElement x="605" y="20" width="174" height="20" uuid="eea6cfa3-72ec-4e13-a69c-22b00d5e1697"/>
+>>>>>>> redux
 				<box leftPadding="10"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="TH SarabunPSK" size="14" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{exporter_date_approve}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{company_email}!="")?$F{company_email}:"-"]]></textFieldExpression>
 			</textField>
+<<<<<<< HEAD
 			<textField>
 				<reportElement x="605" y="20" width="174" height="20" uuid="eea6cfa3-72ec-4e13-a69c-22b00d5e1697"/>
 				<box leftPadding="10"/>
@@ -252,6 +305,32 @@
 				</textElement>
 				<textFieldExpression><![CDATA["-"]]></textFieldExpression>
 			</textField>
+=======
+			<staticText>
+				<reportElement x="21" y="0" width="174" height="20" uuid="b52bc975-a1d5-4609-bf7b-5ad66ce0a450"/>
+				<box leftPadding="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[หมายเลขโทรศัพท์ :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="333" y="0" width="174" height="20" uuid="687b9a00-b715-45a8-80f0-6f22706df68b"/>
+				<box leftPadding="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[FAX :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="605" y="0" width="174" height="20" uuid="2c3e8ad5-3d06-47d9-a345-5b2a30ad38fa"/>
+				<box leftPadding="10"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="TH SarabunPSK" size="16" isBold="true" pdfFontName="THSarabun.ttf" pdfEncoding="Identity-H" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[E-MAIL Address:]]></text>
+			</staticText>
+>>>>>>> redux
 		</band>
 		<band height="41">
 			<staticText>
@@ -264,7 +343,7 @@
 			</staticText>
 			<subreport>
 				<reportElement x="21" y="20" width="200" height="20" uuid="f1e22eb6-e91a-41fd-8aea-0ad1e531991b"/>
-				<dataSourceExpression><![CDATA[new iJsonDS($F{company_agent})]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[new iJsonDS($F{company_directors})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR}+"/exporter/exporter_detail_subreport1.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
