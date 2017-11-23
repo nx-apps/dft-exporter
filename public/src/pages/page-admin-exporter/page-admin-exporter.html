@@ -227,16 +227,7 @@
   </style>
   <template>
     <paper-material elevation="1" class="elevation">
-<<<<<<< HEAD
-
-      <div class="layout vertical" style="margin: 20px;">
-        <div class="layout horizontal end-justified">
-          <paper-button raised class="gl-btn-primary" on-tap="_register" title="{{localize('add_exporter')}}" id="addRedRegExporter">
-          <iron-icon icon="add"></iron-icon>{{localize('add_exporter')}}</paper-button>
-        </div>
-=======
       <div class="layout vertical" style="margin: 20px 20px 10px 20px;">
->>>>>>> redux
 
         <div class="flex title">
           {{localize.title_exporter}}
@@ -244,41 +235,6 @@
 
 
         <div class="searchBox searchBorder">
-<<<<<<< HEAD
-          <gl-grid-row width="{{getWidth}}">
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,6]]">
-              <gl-combo-box label="{{localize('name_exporter')}}" items="{{exporter_id}}" item-label-path="company_name" item-value-path="id"
-                value="{{dataSelected.id}}" on-value-changed="_checkID">
-                <template>[[item.company_name]]</template>
-                </gl-combo-box>
-            </gl-grid-col>
-          </gl-grid-row>
-
-          <gl-grid-row>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-                <gl-form-dropdown-menu label="{{localize('type_license')}}" placeholder="{{localize('all')}}">
-                  <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.type_lic_id}}" name="type_lic_id">
-                    <paper-item>{{localize('all')}}</paper-item>
-                    <template is="dom-repeat" items={{typeLic}}>
-                      <paper-item value="[[item.type_lic_id]]">{{item.type_lic_name}}</paper-item>
-                    </template>
-                  </paper-menu>
-                </gl-form-dropdown-menu>
-              </gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <gl-form-dropdown-menu label="{{localize('status_export')}}" placeholder="{{localize('all')}}">
-                <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.exporter_status}}" name="exporter_status">
-                  <paper-item>{{localize('all')}}</paper-item>
-                  <paper-item value="yes">{{localize('member')}}</paper-item>
-                  <paper-item value="no">{{localize('no_member')}}</paper-item>
-                </paper-menu>
-              </gl-form-dropdown-menu>
-            </gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <gl-form-dropdown-menu label="{{localize('status_exporter')}}" placeholder="{{localize('all')}}">
-=======
           <div class="horizontal start-justified layout">
             <div class="flex-3"></div>
             <div class="flex-2 flex-padding">
@@ -319,62 +275,12 @@
             </div>
             <div class="flex-2 flex-padding">
               <gl-form-dropdown-menu class="searchForm" label="{{localize.status_exporter}}" placeholder="{{localize.all}}">
->>>>>>> redux
                 <paper-menu class="dropdown-content" attr-for-selected="value" selected="{{dataSelected.export_status}}" name="exporter_active">
                   <paper-item>{{localize.all}}</paper-item>
                   <paper-item value="true">{{localize.normally}}</paper-item>
                   <paper-item value="false">{{localize.expire}}</paper-item>
                 </paper-menu>
               </gl-form-dropdown-menu>
-<<<<<<< HEAD
-            </gl-grid-col>
-          </gl-grid-row>
-
-          <gl-grid-row>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]"></gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,1]]">
-              <div style="margin-top:30px; text-align:right;">{{localize('register')}}</div>
-            </gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <vaadin-date-picker class="bg-title" label="{{localize('date')}}" value="{{dataSelected.date_start}}" name="date_start"></vaadin-date-picker>
-            </gl-grid-col>
-            <div style="margin-top:30px;"> {{localize('to')}} </div>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,2]]">
-              <vaadin-date-picker label="{{localize('date')}}" value="{{dataSelected.date_end}}" name="date_end"></vaadin-date-picker>
-            </gl-grid-col>
-          </gl-grid-row>
-          <gl-grid-row>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,5]]"></gl-grid-col>
-            <gl-grid-col width="[[getWidth]]" grid="[[300,12],[500,3]]">
-              <paper-button class="gl-btn-info" style="margin: 30px 0px 10px 50px;" on-tap="_search" title="{{localize('bt_search')}}" raised>{{localize('bt_search')}}</paper-button>
-            </gl-grid-col>
-          </gl-grid-row>
-        </div>
-
-        <div class="horizontal layout end-justified">
-            <div style="margin:30px 10px 0px 20px;"><iron-icon icon="print"></iron-icon></div>
-            <gl-form-dropdown-menu style="width:250px; margin-right:20px;" placeholder="{{localize('select_report')}}" name="report">
-              <paper-menu class="dropdown-content" attr-for-selected="report" selected="{{report}}">
-                <paper-item on-tap="_report" report="report1">{{localize('report1')}}</paper-item>
-                <paper-item on-tap="_report" report="report2">{{localize('report2')}}</paper-item>
-                <paper-item on-tap="_report" report="report3">{{localize('report3')}}</paper-item>
-              </paper-menu>
-            </gl-form-dropdown-menu>
-          </div>
-
-        <div class="searchBorder" style="overflow-x:auto;">
-          <table class="gl-table-default">
-            <thead class="table-head">
-              <tr>
-                <th><div class="text-table">{{localize('No')}}</div></th>
-                <th><div class="text-table">{{localize('no_exporter')}}</div></th>
-                <th><div class="text-table">{{localize('no_tax')}}</div></th>
-                <th><div class="text-table">{{localize('name_company')}}</div></th>
-                <th><div class="text-table">{{localize('type_license')}}</div></th>
-                <th><div class="text-table">{{localize('status_export')}}</div></th>
-                <th><div class="text-table">{{localize('status_exporter')}}</div></th>
-                <th><div class="text-table">{{localize('date_expire')}}</div></th>
-=======
             </div>
             <div class="flex-3"></div>
           </div>
@@ -443,7 +349,6 @@
                 <th>
                   <div class="text-table">{{localize.date_expire}}</div>
                 </th>
->>>>>>> redux
               </tr>
             </thead>
 
